@@ -181,7 +181,7 @@ const Gallery = () => {
             <p className="text-muted-foreground">We're curating an exceptional collection for you.</p>
           </div>
         ) : (
-          <div className="relative" style={{ background: '#0a0603' }}>
+          <div className="relative" style={{ background: isDark ? '#0a0603' : '#f5f0eb' }}>
             {/* Top rule */}
             <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #9B6844 30%, #D4A96A 50%, #9B6844 70%, transparent 95%)' }} />
 
