@@ -181,61 +181,103 @@ const Gallery = () => {
             <p className="text-muted-foreground">We're curating an exceptional collection for you.</p>
           </div>
         ) : (
-          <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-12 md:py-16">
-            <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 [column-fill:_balance]">
+          <div className="relative" style={{ background: '#0a0603' }}>
+            {/* Top rule */}
+            <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #9B6844 30%, #D4A96A 50%, #9B6844 70%, transparent 95%)' }} />
+
+            {/* Section label */}
+            <div className="flex items-center justify-between px-6 md:px-10 py-6">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-px" style={{ background: '#C4906A' }} />
+                <span className="text-[9px] tracking-[0.35em] uppercase font-black" style={{ color: 'rgba(196,144,106,0.6)' }}>The Collection</span>
+              </div>
+              <span className="text-[9px] tracking-[0.25em] uppercase font-black" style={{ color: 'rgba(196,144,106,0.35)' }}>
+                {filteredItems.length} Pieces
+              </span>
+            </div>
+
+            {/* Mosaic grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" style={{ gap: '3px' }}>
               {filteredItems.map((item, index) => {
-                const isTall = index % 5 === 0 || index % 7 === 3;
+                // Intentional editorial sizing pattern
+                const mod = index % 9;
+                const isFeature = mod === 0;          // wide 2-col card
+                const isTall    = mod === 3 || mod === 7; // taller aspect
+
                 return (
                   <div
                     key={item.id}
-                    className={`break-inside-avoid mb-3 md:mb-4 group cursor-pointer relative overflow-hidden rounded-2xl transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                    style={{ transitionDelay: `${Math.min(index * 35, 400)}ms` }}
+                    className={`group cursor-pointer relative overflow-hidden transition-all duration-700
+                      ${isFeature ? 'col-span-2' : ''}
+                      ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
+                    `}
+                    style={{
+                      aspectRatio: isFeature ? '16/8' : isTall ? '3/4' : '4/5',
+                      transitionDelay: `${Math.min(index * 40, 500)}ms`,
+                    }}
                     onClick={() => openLightbox(index)}
                   >
-                    <div className="relative overflow-hidden rounded-2xl" style={{ aspectRatio: isTall ? '3/4' : '4/5' }}>
-                      <img
-                        src={item.image}
-                        alt={item.description || 'Flenix Jewels'}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        loading="lazy" decoding="async"
-                      />
+                    {/* Image */}
+                    <img
+                      src={item.image}
+                      alt={item.description || 'Flenix Jewels'}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy" decoding="async"
+                    />
 
-                      {/* Gradient overlay */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-                        style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.90) 0%, rgba(6,3,1,0.40) 50%, transparent 80%)' }} />
+                    {/* Always-on: editorial number top-left */}
+                    <div className="absolute top-3 left-3.5 z-10">
+                      <span style={{ fontSize: '9px', fontWeight: 900, letterSpacing: '0.2em', color: 'rgba(196,144,106,0.55)', textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                    </div>
 
-                      {/* Gold shine sweep */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                        style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.12) 0%, transparent 60%)' }} />
-
-                      {/* View icon */}
-                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                        <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.25)' }}>
-                          <ZoomIn className="h-4 w-4 text-white" />
-                        </div>
+                    {/* Always-on: base scrim + category tag at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 h-14 z-10" style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 100%)' }} />
+                    {item.category && (
+                      <div className="absolute bottom-2.5 left-3 z-10">
+                        <span style={{ fontSize: '8px', fontWeight: 900, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(196,144,106,0.75)', textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
+                          {item.category}
+                        </span>
                       </div>
+                    )}
 
-                      {/* Bottom content */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-3 group-hover:translate-y-0">
-                        {item.description && (
-                          <p className="text-white text-xs leading-relaxed line-clamp-2 mb-3">{item.description}</p>
-                        )}
-                        <div className="flex items-center gap-2">
-                          <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, #C4906A, transparent)' }} />
-                          <span className="text-[9px] tracking-[0.22em] uppercase font-black" style={{ color: '#C4906A' }}>View</span>
-                        </div>
+                    {/* Hover: deep overlay */}
+                    <div className="absolute inset-0 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
+                      style={{ background: 'linear-gradient(to top, rgba(4,2,0,0.92) 0%, rgba(4,2,0,0.45) 45%, rgba(196,144,106,0.06) 100%)' }} />
+
+                    {/* Hover: gold border frame */}
+                    <div className="absolute inset-0 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
+                      style={{ boxShadow: 'inset 0 0 0 1.5px rgba(196,144,106,0.55)' }} />
+
+                    {/* Hover: top-right zoom pill */}
+                    <div className="absolute top-3 right-3 z-30 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1.5 group-hover:translate-y-0">
+                      <div className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5"
+                        style={{ background: 'rgba(196,144,106,0.18)', backdropFilter: 'blur(10px)', border: '1px solid rgba(196,144,106,0.40)' }}>
+                        <ZoomIn className="h-3 w-3" style={{ color: '#D4A96A' }} />
+                        <span style={{ fontSize: '8px', fontWeight: 900, letterSpacing: '0.18em', color: '#D4A96A' }}>VIEW</span>
                       </div>
+                    </div>
 
-                      {/* Gold corner accent */}
-                      <div className="absolute top-0 left-0 w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                        style={{ borderTop: '1.5px solid rgba(196,144,106,0.7)', borderLeft: '1.5px solid rgba(196,144,106,0.7)', borderRadius: '12px 0 0 0' }} />
-                      <div className="absolute bottom-0 right-0 w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                        style={{ borderBottom: '1.5px solid rgba(196,144,106,0.7)', borderRight: '1.5px solid rgba(196,144,106,0.7)', borderRadius: '0 0 12px 0' }} />
+                    {/* Hover: description + gold rule at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 z-30 p-4 opacity-0 group-hover:opacity-100 transition-all duration-350 translate-y-2 group-hover:translate-y-0">
+                      {item.description && (
+                        <p className="text-[11px] leading-relaxed mb-2.5 line-clamp-2" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                          {item.description}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, #C4906A, rgba(196,144,106,0.2))' }} />
+                        <Gem className="h-2.5 w-2.5" style={{ color: '#C4906A' }} />
+                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
+
+            {/* Bottom rule */}
+            <div className="h-px mt-1" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.25) 50%, transparent 95%)' }} />
           </div>
         )}
 
