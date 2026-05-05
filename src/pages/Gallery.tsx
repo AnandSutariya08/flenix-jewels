@@ -132,7 +132,7 @@ const Gallery = () => {
                 style={{ transitionDelay: `${index * 40}ms` }}
                 onClick={() => setSelectedIndex(index)}
               >
-                <div className="relative overflow-hidden rounded-lg bg-white border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg">
+                <div className="relative overflow-hidden rounded-lg bg-white border border-stone-200 hover:border-[#C4906A] transition-all duration-300 hover:shadow-lg">
                   {/* Image Container */}
                   <div className="aspect-square overflow-hidden bg-gray-50">
                     <img 
@@ -159,16 +159,16 @@ const Gallery = () => {
 
         {/* CTA Section */}
         {galleryItems.length > 0 && (
-          <div className="mt-16 text-center bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-10 shadow-lg">
+          <div className="mt-16 text-center p-10 shadow-lg">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
               Find Your Perfect Piece
             </h2>
-            <p className="text-lg text-blue-50 mb-6 max-w-2xl mx-auto">
+            <p className="text-lg mb-6 max-w-2xl mx-auto">
               Connect with us to explore our collection and find the jewelry that speaks to you
             </p>
             <Button 
               onClick={() => window.open(`https://wa.me/${whatsappNumber}`, '_blank')}
-              className="bg-white hover:bg-gray-50 text-blue-600 px-8 py-6 rounded-lg text-base font-semibold shadow-md hover:shadow-lg transition-all duration-300"
+              className="bg-white hover:bg-stone-50 text-[#9B6844] px-8 py-6 rounded-lg text-base font-semibold shadow-md hover:shadow-lg transition-all duration-300"
             >
               <FaWhatsapp className="h-5 w-5 mr-2 text-[#25D366]" />
               Connect With Us

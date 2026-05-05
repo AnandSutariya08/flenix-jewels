@@ -81,7 +81,7 @@ const About = () => {
 
   const coreValues = [
     { icon: Award, title: 'Excellence', description: 'We never compromise on quality, ensuring every piece meets our exacting standards.', color: 'from-amber-500/20 to-yellow-500/20' },
-    { icon: Shield, title: 'Integrity', description: 'Transparency and honesty in all our dealings, from sourcing to customer service.', color: 'from-blue-500/20 to-cyan-500/20' },
+    { icon: Shield, title: 'Integrity', description: 'Transparency and honesty in all our dealings, from sourcing to customer service.', color: 'from-amber-500/20 to-stone-400/20' },
     { icon: Heart, title: 'Passion', description: 'Every creation is infused with love and dedication to the art of jewelry making.', color: 'from-rose-500/20 to-pink-500/20' },
     { icon: Globe, title: 'Sustainability', description: 'Committed to ethical sourcing and environmentally responsible practices.', color: 'from-emerald-500/20 to-green-500/20' },
   ];

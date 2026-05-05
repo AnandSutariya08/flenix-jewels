@@ -24,40 +24,37 @@ const Header = ({ promoHeader }: HeaderProps) => {
   const hasPromo = promoHeader?.enabled && promoHeader?.text;
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setIsMenuOpen(false); }, [location.pathname]);
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Categories', path: '/categories' },
-    { name: 'Gallery', path: '/gallery' },
-    { name: 'Blog', path: '/blog' },
+    { name: 'Home',         path: '/' },
+    { name: 'Categories',   path: '/categories' },
+    { name: 'Gallery',      path: '/gallery' },
+    { name: 'Blog',         path: '/blog' },
     { name: 'Buying Guide', path: '/buying-guide' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'About',        path: '/about' },
+    { name: 'Contact',      path: '/contact' },
   ];
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
-      {/* Promo Header - Hidden on scroll */}
-      <div 
-        className={`bg-blue-600 text-white overflow-hidden transition-all duration-300 ease-in-out ${
+      {/* Promo bar — rose gold */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
           hasPromo && !isScrolled ? 'h-6 opacity-100' : 'h-0 opacity-0'
         }`}
+        style={{ background: 'linear-gradient(90deg, #9B6844, #C4906A, #D4A96A, #C4906A, #9B6844)' }}
       >
         <div className="h-full flex items-center">
           <div className="animate-marquee whitespace-nowrap inline-block">
             {[...Array(4)].map((_, i) => (
-              <span key={i} className="inline-block text-sm font-medium px-16">
+              <span key={i} className="inline-block text-sm font-medium px-16 text-white">
                 {promoHeader?.text}
               </span>
             ))}
@@ -65,66 +62,65 @@ const Header = ({ promoHeader }: HeaderProps) => {
         </div>
       </div>
 
-      {/* Main Header */}
+      {/* Main header */}
       <header
         ref={headerRef}
-        className={`transition-all duration-500 ease-in-out
-          ${isScrolled 
-            ? 'mx-2 mt-2 rounded-2xl bg-white/95 dark:bg-gray-900/95 shadow-lg border border-gray-200/50 dark:border-gray-700/50' 
-            : 'bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/30 dark:border-gray-700/30'
-          }
-          backdrop-blur-xl`}
+        className={`transition-all duration-500 ease-in-out backdrop-blur-xl ${
+          isScrolled
+            ? 'mx-2 mt-2 rounded-2xl bg-white/95 dark:bg-stone-900/95 shadow-lg border border-stone-200/60 dark:border-stone-700/40'
+            : 'bg-white/85 dark:bg-stone-900/85 border-b border-stone-200/30 dark:border-stone-700/30'
+        }`}
       >
         <div className="w-full px-4 md:px-8 lg:px-12">
           <div className={`flex items-center justify-between transition-all duration-300 ${isScrolled ? 'h-16' : 'h-20'}`}>
             {/* Logo */}
             <Link to="/" className="flex items-center z-50">
-              <img 
-                src={logo} 
-                alt="Starlink Jewels - Premium Diamond Jewelry Store" 
-                className={`w-auto transition-all duration-300 ${isScrolled ? 'h-9' : 'h-11'}`} 
+              <img
+                src={logo}
+                alt="Flenix Jewels - Premium Diamond Jewelry"
+                className={`w-auto transition-all duration-300 ${isScrolled ? 'h-9' : 'h-11'}`}
                 loading="eager"
                 decoding="async"
                 fetchpriority="high"
               />
             </Link>
 
-            {/* Desktop Nav */}
+            {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-6">
               <nav className="flex items-center gap-6" role="navigation" aria-label="Main navigation">
-                {navLinks.map((link) => (
+                {navLinks.map(link => (
                   <Link
                     key={link.path}
                     to={link.path}
                     className={`text-sm font-medium transition-all duration-300 relative group ${
                       location.pathname === link.path
-                        ? 'text-blue-600'
-                        : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                        ? 'text-[#C4906A]'
+                        : 'text-stone-700 dark:text-stone-300 hover:text-[#C4906A] dark:hover:text-[#DEB48A]'
                     }`}
                   >
                     {link.name}
                     <span
-                      className={`absolute -bottom-1 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${
+                      className={`absolute -bottom-1 left-0 h-0.5 transition-all duration-300 ${
                         location.pathname === link.path ? 'w-full' : 'w-0 group-hover:w-full'
                       }`}
+                      style={{ background: 'linear-gradient(90deg, #9B6844, #D4A96A)' }}
                     />
                   </Link>
                 ))}
               </nav>
 
-              {/* Theme Toggle */}
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="rounded-full hover:bg-stone-100 dark:hover:bg-stone-800"
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile menu button */}
             <Button
               variant="ghost"
               size="icon"
@@ -137,27 +133,28 @@ const Header = ({ promoHeader }: HeaderProps) => {
             </Button>
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile menu */}
           <div className={`md:hidden overflow-hidden transition-all duration-300 ${isMenuOpen ? 'max-h-96 py-4' : 'max-h-0'}`}>
-            <nav className="flex flex-col gap-3 border-t border-gray-200/50 dark:border-gray-700/50 pt-4" role="navigation" aria-label="Mobile navigation">
-              {navLinks.map((link) => (
+            <nav className="flex flex-col gap-3 border-t border-stone-200/50 dark:border-stone-700/50 pt-4"
+              role="navigation" aria-label="Mobile navigation">
+              {navLinks.map(link => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMenuOpen(false)}
                   className={`text-base font-medium py-2 transition-colors ${
-                    location.pathname === link.path 
-                      ? 'text-blue-600' 
-                      : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                    location.pathname === link.path
+                      ? 'text-[#C4906A]'
+                      : 'text-stone-700 dark:text-stone-300 hover:text-[#C4906A]'
                   }`}
                 >
                   {link.name}
                 </Link>
               ))}
-              <div className="pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
+              <div className="pt-4 border-t border-stone-200/50 dark:border-stone-700/50">
                 <Button
                   variant="ghost"
-                  className="w-full justify-start hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="w-full justify-start hover:bg-stone-100 dark:hover:bg-stone-800"
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                 >
                   {theme === 'dark' ? <Sun className="h-5 w-5 mr-2" /> : <Moon className="h-5 w-5 mr-2" />}
@@ -168,25 +165,6 @@ const Header = ({ promoHeader }: HeaderProps) => {
           </div>
         </div>
       </header>
-
-      <style>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        
-        .animate-marquee {
-          animation: marquee 25s linear infinite;
-        }
-        
-        .animate-marquee:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
     </div>
   );
 };

@@ -260,8 +260,8 @@ const ProductDialog = ({ product, open, onOpenChange }: ProductDialogProps) => {
                     onClick={() => setSelectedIndex(i)}
                     className={`relative flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
                       selectedIndex === i
-                        ? 'border-emerald-500 scale-105 shadow-md'
-                        : 'border-zinc-200 dark:border-zinc-700 opacity-60 hover:opacity-100 hover:border-emerald-300'
+                        ? 'border-[#C4906A] scale-105 shadow-md'
+                        : 'border-zinc-200 dark:border-zinc-700 opacity-60 hover:opacity-100 hover:border-[#DEB48A]'
                     }`}
                   >
                     {renderMedia(item, true, i)}
@@ -280,16 +280,16 @@ const ProductDialog = ({ product, open, onOpenChange }: ProductDialogProps) => {
               {product.name}
             </h1>
             <div className="grid grid-cols-3 gap-2">
-              <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-200 dark:border-emerald-800">
-                <Truck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br [rgba(196,144,106,0.08)] border-[rgba(196,144,106,0.30)]">
+                <Truck className="h-5 w-5 text-[#9B6844]" />
                 <span className="text-[10px] font-semibold text-center text-zinc-700 dark:text-zinc-300 leading-tight">Free<br/>Shipping</span>
               </div>
-              <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200 dark:border-blue-800">
-                <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br [rgba(212,169,106,0.08)] border-[rgba(212,169,106,0.30)]">
+                <Shield className="h-5 w-5 text-[#C4906A]" />
                 <span className="text-[10px] font-semibold text-center text-zinc-700 dark:text-zinc-300 leading-tight">Secure<br/>Payment</span>
               </div>
-              <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border border-purple-200 dark:border-purple-800">
-                <Zap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br [rgba(155,104,68,0.08)] border-[rgba(155,104,68,0.30)]">
+                <Zap className="h-5 w-5 text-[#9B6844]" />
                 <span className="text-[10px] font-semibold text-center text-zinc-700 dark:text-zinc-300 leading-tight">Fast<br/>Delivery</span>
               </div>
             </div>
@@ -372,7 +372,7 @@ const ProductDialog = ({ product, open, onOpenChange }: ProductDialogProps) => {
                       onClick={() => setSelectedIndex(i)}
                       className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
                         selectedIndex === i
-                          ? 'border-emerald-500 shadow-lg scale-105'
+                          ? 'border-[#C4906A] shadow-lg scale-105'
                           : 'border-zinc-300 dark:border-zinc-600 opacity-60 hover:opacity-100 hover:scale-105'
                       }`}
                     >
@@ -395,16 +395,16 @@ const ProductDialog = ({ product, open, onOpenChange }: ProductDialogProps) => {
               </h1>
               <div className="pb-5 border-b border-zinc-200 dark:border-zinc-800" />
               <div className="grid grid-cols-3 gap-3">
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border border-emerald-200 dark:border-emerald-800 hover:scale-105 transition-transform">
-                  <Truck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-br [rgba(196,144,106,0.08)] border-[rgba(196,144,106,0.30)] hover:scale-105 transition-transform">
+                  <Truck className="h-4 w-4 text-[#9B6844]" />
                   <span className="text-[9px] font-semibold text-center text-zinc-700 dark:text-zinc-300">Free Shipping</span>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200 dark:border-blue-800 hover:scale-105 transition-transform">
-                  <Shield className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-br [rgba(212,169,106,0.08)] border-[rgba(212,169,106,0.30)] hover:scale-105 transition-transform">
+                  <Shield className="h-4 w-4 text-[#C4906A]" />
                   <span className="text-[9px] font-semibold text-center text-zinc-700 dark:text-zinc-300">Secure Payment</span>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border border-purple-200 dark:border-purple-800 hover:scale-105 transition-transform">
-                  <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-br [rgba(155,104,68,0.08)] border-[rgba(155,104,68,0.30)] hover:scale-105 transition-transform">
+                  <Zap className="h-4 w-4 text-[#9B6844]" />
                   <span className="text-[9px] font-semibold text-center text-zinc-700 dark:text-zinc-300">Fast Delivery</span>
                 </div>
               </div>

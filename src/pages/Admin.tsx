@@ -43,8 +43,8 @@ const AdminBuyingGuides = lazy(() => import('@/components/admin/AdminBuyingGuide
 const SectionFallback = () => (
   <div className="flex items-center justify-center min-h-[360px]">
     <div className="flex flex-col items-center gap-3">
-      <div className="w-8 h-8 border-4 border-violet-400 border-t-transparent rounded-full animate-spin" />
-      <span className="text-sm text-slate-400">Loading section…</span>
+      <div className="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#C4906A', borderTopColor: 'transparent' }} />
+      <span className="text-sm" style={{ color: '#9B6844' }}>Loading section…</span>
     </div>
   </div>
 );
@@ -66,19 +66,35 @@ const NAV_ITEMS = [
 ];
 
 const SECTION_MAP: Record<string, ReactNode> = {
-  promo:          <AdminPromoHeader />,
-  banners:        <AdminBanners />,
-  categories:     <AdminCategories />,
-  products:       <AdminProducts />,
-  gallery:        <AdminGallery />,
-  featured:       <AdminFeaturedCollection />,
-  testimonials:   <AdminTestimonials />,
-  blogs:          <AdminBlogs />,
-  instagram:      <AdminInstagram />,
-  contact:        <AdminContact />,
-  offices:        <AdminOffices />,
-  visitors:       <AdminVisitors />,
-  'buying-guides':<AdminBuyingGuides />,
+  promo:           <AdminPromoHeader />,
+  banners:         <AdminBanners />,
+  categories:      <AdminCategories />,
+  products:        <AdminProducts />,
+  gallery:         <AdminGallery />,
+  featured:        <AdminFeaturedCollection />,
+  testimonials:    <AdminTestimonials />,
+  blogs:           <AdminBlogs />,
+  instagram:       <AdminInstagram />,
+  contact:         <AdminContact />,
+  offices:         <AdminOffices />,
+  visitors:        <AdminVisitors />,
+  'buying-guides': <AdminBuyingGuides />,
+};
+
+/* ── colour tokens (rose gold / espresso palette) ── */
+const C = {
+  espresso:      '#1C0D05',
+  espressoDark:  '#130900',
+  espressoMid:   '#2A1208',
+  espressoLight: '#3D1C0E',
+  roseGold:      '#C4906A',
+  roseGoldDark:  '#9B6844',
+  roseGoldLight: '#DEB48A',
+  gold:          '#D4A96A',
+  cream:         '#FDF5EC',
+  creamDark:     '#F5E8D8',
+  warmText:      '#4A2D18',
+  mutedText:     '#9B8070',
 };
 
 /* ───────────────────────── Login page ───────────────────────── */
@@ -86,67 +102,58 @@ const LoginPage = ({ onLogin }: { onLogin: (u: string, p: string) => void }) => 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onLogin(username, password);
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' }}>
+      style={{ background: `linear-gradient(135deg, ${C.espressoDark} 0%, ${C.espressoMid} 50%, ${C.espressoDark} 100%)` }}>
 
-      {/* Decorative blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 rounded-full opacity-20"
-        style={{ background: 'radial-gradient(circle, #a78bfa, transparent 70%)' }} />
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full opacity-20"
-        style={{ background: 'radial-gradient(circle, #f472b6, transparent 70%)' }} />
+      {/* Decorative glows */}
+      <div className="absolute top-[-15%] left-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, ${C.roseGold}22, transparent 70%)` }} />
+      <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{ background: `radial-gradient(circle, ${C.gold}22, transparent 70%)` }} />
+
+      {/* Floating diamond particles */}
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="absolute w-1.5 h-1.5 rotate-45 animate-float pointer-events-none"
+          style={{ background: C.roseGoldLight, opacity: 0.25,
+            left: `${10 + i * 11}%`, top: `${20 + (i % 4) * 20}%`,
+            animationDelay: `${i * 0.4}s`, animationDuration: `${4 + i * 0.5}s` }} />
+      ))}
 
       <div className="relative z-10 w-full max-w-md mx-4">
-        {/* Glass card */}
         <div className="rounded-2xl p-8 shadow-2xl"
-          style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)' }}>
+          style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(24px)',
+            border: `1px solid ${C.roseGold}33` }}>
 
-          {/* Logo area */}
+          {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 shadow-lg"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #ec4899)' }}>
-              <Gem className="h-8 w-8 text-white" />
+            <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-4 shadow-xl"
+              style={{ background: `linear-gradient(135deg, ${C.roseGoldDark}, ${C.roseGold}, ${C.gold})` }}>
+              <Gem className="h-10 w-10 text-white drop-shadow" />
             </div>
-            <h1 className="text-3xl font-bold text-white tracking-wide">FLENIX JEWELS</h1>
-            <p className="text-slate-400 text-sm mt-1">Admin Control Panel</p>
+            <img src="/flenix-logo.png" alt="Flenix Jewels" className="h-12 w-auto mb-2 object-contain" />
+            <p className="text-sm" style={{ color: C.roseGoldLight }}>Admin Control Panel</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={e => { e.preventDefault(); onLogin(username, password); }} className="space-y-5">
             <div className="space-y-1.5">
-              <Label htmlFor="username" className="text-slate-300 text-sm">Username</Label>
-              <Input
-                id="username"
-                type="text"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-                placeholder="Enter username"
-                required
-                className="h-12 text-white placeholder:text-slate-500 border-0 rounded-xl"
-                style={{ background: 'rgba(255,255,255,0.1)' }}
-              />
+              <Label htmlFor="username" className="text-sm" style={{ color: C.creamDark }}>Username</Label>
+              <Input id="username" type="text" value={username}
+                onChange={e => setUsername(e.target.value)} placeholder="Enter username" required
+                className="h-12 rounded-xl border-0 text-white placeholder:text-stone-500"
+                style={{ background: 'rgba(255,255,255,0.08)' }} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-slate-300 text-sm">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="h-12 text-white placeholder:text-slate-500 border-0 rounded-xl"
-                style={{ background: 'rgba(255,255,255,0.1)' }}
-              />
+              <Label htmlFor="password" className="text-sm" style={{ color: C.creamDark }}>Password</Label>
+              <Input id="password" type="password" value={password}
+                onChange={e => setPassword(e.target.value)} placeholder="••••••••" required
+                className="h-12 rounded-xl border-0 text-white placeholder:text-stone-500"
+                style={{ background: 'rgba(255,255,255,0.08)' }} />
             </div>
             <button type="submit"
-              className="w-full h-12 rounded-xl text-white font-semibold text-base mt-2 transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #ec4899)' }}>
-              Sign In
+              className="w-full h-12 rounded-xl text-white font-semibold text-base transition-all duration-200 hover:opacity-90 active:scale-[0.98] shadow-lg mt-2"
+              style={{ background: `linear-gradient(135deg, ${C.roseGoldDark}, ${C.roseGold}, ${C.gold})` }}>
+              Sign In to Dashboard
             </button>
           </form>
         </div>
@@ -155,44 +162,30 @@ const LoginPage = ({ onLogin }: { onLogin: (u: string, p: string) => void }) => 
   );
 };
 
-/* ─────────────────────── Sidebar nav item ─────────────────────── */
+/* ── Sidebar nav item ── */
 const NavItem = ({
-  item,
-  active,
-  onClick,
-  collapsed,
-}: {
-  item: typeof NAV_ITEMS[0];
-  active: boolean;
-  onClick: () => void;
-  collapsed: boolean;
-}) => {
+  item, active, onClick, collapsed,
+}: { item: typeof NAV_ITEMS[0]; active: boolean; onClick: () => void; collapsed: boolean }) => {
   const Icon = item.icon;
   return (
-    <button
-      onClick={onClick}
-      title={collapsed ? item.label : undefined}
-      className={`
-        w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
-        transition-all duration-150 group relative
-        ${active
-          ? 'text-white shadow-md'
-          : 'text-slate-400 hover:text-white hover:bg-white/10'
-        }
-      `}
-      style={active ? { background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)' } : {}}
+    <button onClick={onClick} title={collapsed ? item.label : undefined}
+      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group relative"
+      style={{
+        background: active ? `linear-gradient(135deg, ${C.roseGoldDark}CC, ${C.roseGold}BB)` : 'transparent',
+        color: active ? '#fff' : C.mutedText,
+      }}
+      onMouseEnter={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = `${C.roseGold}18`; }}
+      onMouseLeave={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
     >
-      {/* Active left accent strip */}
+      {/* Active strip */}
       {active && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-pink-400" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full"
+          style={{ background: C.gold }} />
       )}
-      <Icon className={`flex-shrink-0 h-4 w-4 ${active ? 'text-white' : 'text-slate-400 group-hover:text-violet-400'} transition-colors`} />
-      {!collapsed && (
-        <span className="truncate flex-1 text-left">{item.label}</span>
-      )}
-      {!collapsed && active && (
-        <ChevronRight className="h-3.5 w-3.5 text-pink-300 flex-shrink-0" />
-      )}
+      <Icon className="flex-shrink-0 h-4 w-4 transition-colors"
+        style={{ color: active ? '#fff' : C.roseGold }} />
+      {!collapsed && <span className="truncate flex-1 text-left">{item.label}</span>}
+      {!collapsed && active && <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" style={{ color: C.gold }} />}
     </button>
   );
 };
@@ -207,7 +200,7 @@ const Admin = () => {
   const handleLogin = (username: string, password: string) => {
     if (username === 'StarLala' && password === 'Panchkutir32') {
       setIsAuthenticated(true);
-      toast.success('Welcome back, Flenix Jewels Admin!');
+      toast.success('Welcome back — Flenix Jewels Admin');
     } else {
       toast.error('Invalid credentials');
     }
@@ -221,93 +214,99 @@ const Admin = () => {
 
   if (!isAuthenticated) return <LoginPage onLogin={handleLogin} />;
 
-  const activeLabel = NAV_ITEMS.find(n => n.key === activeSection)?.label ?? '';
-  const ActiveIcon = NAV_ITEMS.find(n => n.key === activeSection)?.icon ?? LayoutDashboard;
+  const activeItem = NAV_ITEMS.find(n => n.key === activeSection);
+  const ActiveIcon = activeItem?.icon ?? LayoutDashboard;
+  const activeLabel = activeItem?.label ?? '';
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#f1f0fb' }}>
+    <div className="min-h-screen flex" style={{ background: C.cream }}>
 
       {/* ── Sidebar ── */}
-      <aside
-        className="flex flex-col flex-shrink-0 h-screen sticky top-0 overflow-y-auto transition-all duration-300 shadow-2xl"
-        style={{
-          width: sidebarCollapsed ? '72px' : '240px',
-          background: 'linear-gradient(180deg, #1e1b4b 0%, #2d1b69 50%, #1e1b4b 100%)',
-        }}
-      >
+      <aside className="flex flex-col flex-shrink-0 h-screen sticky top-0 overflow-y-auto transition-all duration-300 shadow-2xl"
+        style={{ width: sidebarCollapsed ? '72px' : '240px',
+          background: `linear-gradient(180deg, ${C.espressoDark} 0%, ${C.espressoMid} 50%, ${C.espressoDark} 100%)` }}>
+
         {/* Brand */}
-        <div className={`flex items-center gap-3 px-4 py-5 border-b border-white/10 ${sidebarCollapsed ? 'justify-center' : ''}`}>
+        <div className={`flex items-center gap-3 px-4 py-5 border-b ${sidebarCollapsed ? 'justify-center' : ''}`}
+          style={{ borderColor: `${C.roseGold}22` }}>
           <div className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg"
-            style={{ background: 'linear-gradient(135deg, #7c3aed, #ec4899)' }}>
+            style={{ background: `linear-gradient(135deg, ${C.roseGoldDark}, ${C.roseGold})` }}>
             <Gem className="h-5 w-5 text-white" />
           </div>
           {!sidebarCollapsed && (
             <div className="overflow-hidden">
-              <p className="text-white font-bold text-sm leading-tight tracking-wide">FLENIX JEWELS</p>
-              <p className="text-violet-400 text-[11px] leading-tight">Admin Panel</p>
+              <p className="font-bold text-sm leading-tight tracking-wide" style={{ color: C.roseGoldLight }}>FLENIX JEWELS</p>
+              <p className="text-[11px] leading-tight" style={{ color: C.mutedText }}>Admin Panel</p>
             </div>
           )}
         </div>
 
-        {/* Nav items */}
+        {/* Nav */}
         <nav className="flex-1 px-2 py-4 space-y-0.5">
           {NAV_ITEMS.map(item => (
-            <NavItem
-              key={item.key}
-              item={item}
-              active={activeSection === item.key}
-              onClick={() => setActiveSection(item.key)}
-              collapsed={sidebarCollapsed}
-            />
+            <NavItem key={item.key} item={item} active={activeSection === item.key}
+              onClick={() => setActiveSection(item.key)} collapsed={sidebarCollapsed} />
           ))}
         </nav>
 
         {/* Logout */}
-        <div className="px-2 pb-4 border-t border-white/10 pt-3">
-          <button
-            onClick={handleLogout}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all text-sm font-medium ${sidebarCollapsed ? 'justify-center' : ''}`}
-          >
+        <div className="px-2 pb-4 pt-3 border-t" style={{ borderColor: `${C.roseGold}22` }}>
+          <button onClick={handleLogout}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${sidebarCollapsed ? 'justify-center' : ''}`}
+            style={{ color: C.mutedText }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(180,60,40,0.15)'; (e.currentTarget as HTMLButtonElement).style.color = '#e88'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = C.mutedText; }}>
             <LogOut className="h-4 w-4 flex-shrink-0" />
             {!sidebarCollapsed && <span>Logout</span>}
           </button>
         </div>
       </aside>
 
-      {/* ── Main content ── */}
+      {/* ── Main ── */}
       <div className="flex-1 flex flex-col min-w-0">
 
-        {/* Top header */}
-        <header className="sticky top-0 z-40 flex items-center gap-4 px-6 py-4 shadow-sm border-b border-white/60"
-          style={{ background: 'rgba(241,240,251,0.85)', backdropFilter: 'blur(12px)' }}>
-          <button
-            onClick={() => setSidebarCollapsed(v => !v)}
-            className="p-2 rounded-lg text-slate-500 hover:text-violet-700 hover:bg-violet-100 transition-all"
-          >
+        {/* Top bar */}
+        <header className="sticky top-0 z-40 flex items-center gap-4 px-6 py-4 shadow-sm"
+          style={{ background: `rgba(253,245,236,0.90)`, backdropFilter: 'blur(12px)',
+            borderBottom: `1px solid ${C.roseGold}30` }}>
+          <button onClick={() => setSidebarCollapsed(v => !v)}
+            className="p-2 rounded-lg transition-all"
+            style={{ color: C.roseGoldDark }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = `${C.roseGold}18`; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}>
             {sidebarCollapsed ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
           </button>
 
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #ec4899)' }}>
+              style={{ background: `linear-gradient(135deg, ${C.roseGoldDark}, ${C.gold})` }}>
               <ActiveIcon className="h-3.5 w-3.5 text-white" />
             </div>
-            <h2 className="text-lg font-semibold text-slate-800">{activeLabel}</h2>
+            <h2 className="text-lg font-semibold" style={{ color: C.warmText }}>{activeLabel}</h2>
           </div>
 
-          <div className="ml-auto flex items-center gap-2">
-            <span className="text-xs text-slate-500 hidden sm:block">Flenix Jewels</span>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
-              style={{ background: 'linear-gradient(135deg, #7c3aed, #ec4899)' }}>
+          <div className="ml-auto flex items-center gap-3">
+            <span className="text-xs hidden sm:block" style={{ color: C.mutedText }}>Flenix Jewels Ltd.</span>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow"
+              style={{ background: `linear-gradient(135deg, ${C.roseGoldDark}, ${C.gold})` }}>
               FJ
             </div>
           </div>
         </header>
 
-        {/* Page content */}
+        {/* Content */}
         <main className="flex-1 p-6 overflow-auto">
-          <div className="rounded-2xl shadow-sm border border-white/70 min-h-[600px] p-6 sm:p-8"
-            style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(8px)' }}>
+          {/* Decorative background pattern */}
+          <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+            <div className="absolute top-[10%] right-[5%] w-80 h-80 rounded-full"
+              style={{ background: `radial-gradient(circle, ${C.roseGold}0D, transparent 70%)` }} />
+            <div className="absolute bottom-[15%] left-[8%] w-64 h-64 rounded-full"
+              style={{ background: `radial-gradient(circle, ${C.gold}0D, transparent 70%)` }} />
+          </div>
+
+          <div className="relative z-10 rounded-2xl shadow-sm min-h-[600px] p-6 sm:p-8"
+            style={{ background: 'rgba(255,252,248,0.92)', backdropFilter: 'blur(8px)',
+              border: `1px solid ${C.roseGold}28` }}>
             <Suspense fallback={<SectionFallback />}>
               {SECTION_MAP[activeSection]}
             </Suspense>
