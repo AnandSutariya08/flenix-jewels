@@ -414,8 +414,8 @@ export default function Index() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {features.map(({ icon: Icon, label, sub, detail }) => (
-              <div key={label} className="group relative p-7 md:p-8 rounded-3xl overflow-hidden cursor-default transition-all duration-500 hover:-translate-y-2"
-                style={{ background: '#faf7f3', border: '1px solid rgba(196,144,106,0.18)', boxShadow: '0 2px 20px rgba(196,144,106,0.06)' }}>
+              <div key={label} className="group relative p-7 md:p-8 rounded-3xl overflow-hidden cursor-default transition-all duration-500 hover:-translate-y-2 bg-card"
+                style={{ border: '1px solid rgba(196,144,106,0.18)', boxShadow: '0 2px 20px rgba(196,144,106,0.06)' }}>
                 {/* Top gold bar on hover */}
                 <div className="absolute top-0 left-6 right-6 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-400"
                   style={{ background: GOLD, transitionDuration: '400ms' }} />

@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState, memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Banner } from '@/lib/storage';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight, ArrowRight, Gem } from 'lucide-react';
 import { preloadMedia } from '@/lib/preload';
 import heroFallback from '@/assets/hero-banner-1.jpg';
 
@@ -10,21 +9,19 @@ interface BannerCarouselProps {
   banners?: Banner[];
 }
 
+const TRUST_ITEMS = ['GIA Certified', 'IGI Graded', 'Free Worldwide Shipping', 'Lifetime Guarantee', '12K+ Happy Clients', '30+ Countries', 'Ethically Sourced', 'Custom Design'];
+
 const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadedIndexes, setLoadedIndexes] = useState<Set<number>>(new Set());
   const [fallbackImage, setFallbackImage] = useState<string | null>(heroFallback);
+  const [isAnimating, setIsAnimating] = useState(false);
   const hasMultiple = banners.length > 1;
   const currentBanner = banners[currentIndex];
   const safeTitle = currentBanner?.title?.trim() || 'Flenix Jewels';
   const safeDesc =
     currentBanner?.description?.trim() ||
     'Certified diamonds. Timeless designs. Crafted with precision.';
-
-  const slideLabel = useMemo(() => {
-    if (banners.length <= 1) return null;
-    return `${currentIndex + 1} / ${banners.length}`;
-  }, [banners.length, currentIndex]);
 
   const markLoaded = useCallback((index: number) => {
     setLoadedIndexes((prev) => {
@@ -35,18 +32,14 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
     });
   }, []);
 
-  useEffect(() => {
-    setLoadedIndexes(new Set());
-  }, [banners.length]);
+  useEffect(() => { setLoadedIndexes(new Set()); }, [banners.length]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
       const cached = window.localStorage.getItem('flenix_hero_fallback');
       if (cached) setFallbackImage(cached);
-    } catch {
-      // ignore storage errors
-    }
+    } catch { /* ignore */ }
   }, []);
 
   useEffect(() => {
@@ -56,18 +49,14 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
     try {
       window.localStorage.setItem('flenix_hero_fallback', first.image);
       setFallbackImage(first.image);
-    } catch {
-      // ignore storage errors
-    }
+    } catch { /* ignore */ }
   }, [banners]);
 
   useEffect(() => {
     if (banners.length === 0) return;
-
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % banners.length);
     }, 7000);
-
     return () => clearInterval(interval);
   }, [banners.length]);
 
@@ -85,204 +74,219 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
     preloadMedia(urls);
   }, [banners, currentIndex]);
 
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % banners.length);
-  };
+  const navigate = useCallback((newIndex: number) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setCurrentIndex(newIndex);
+    setTimeout(() => setIsAnimating(false), 800);
+  }, [isAnimating]);
 
-  const goToPrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
-  };
+  const goToNext = useCallback(() => navigate((currentIndex + 1) % banners.length), [navigate, currentIndex, banners.length]);
+  const goToPrev = useCallback(() => navigate((currentIndex - 1 + banners.length) % banners.length), [navigate, currentIndex, banners.length]);
 
   if (banners.length === 0) {
     return (
-      <div className="relative h-[72vh] md:h-[80vh] min-h-[520px] max-h-[880px] bg-gradient-to-br from-primary/20 via-primary/10 to-background flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary),0.1),transparent_50%)]" />
-        {fallbackImage ? (
-          <img
-            src={fallbackImage}
-            alt="Hero background"
-            className="w-full h-full object-cover"
-            loading="eager"
-            decoding="async"
-          />
-        ) : (
-          <div className="text-center px-4 sm:px-6 relative z-10">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-lg text-muted-foreground">Loading...</p>
-          </div>
+      <div className="relative h-[88vh] md:h-[92vh] min-h-[600px] max-h-[1000px] overflow-hidden w-full bg-[#0c0703]">
+        {fallbackImage && (
+          <img src={fallbackImage} alt="Hero background" className="absolute inset-0 w-full h-full object-cover opacity-60" loading="eager" decoding="async" />
         )}
-
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full px-4 sm:px-6 md:px-10 lg:px-16 max-w-[1400px]">
-          <div className="max-w-2xl rounded-3xl border border-border/40 bg-background/70 backdrop-blur-xl p-6 sm:p-8 shadow-2xl">
-            <p className="text-[10px] tracking-[0.38em] uppercase font-black text-primary mb-3">✦ Fine Jewelry</p>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.05]">{safeTitle}</h2>
-            <p className="mt-4 text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">{safeDesc}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="rounded-full px-7">
-                <Link to="/categories">Explore Collections</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="rounded-full px-7">
-                <Link to="/contact">Book Consultation</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, rgba(6,3,1,0.72) 0%, rgba(6,3,1,0.45) 45%, rgba(6,3,1,0.80) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 70% at 20% 50%, rgba(196,144,106,0.18) 0%, transparent 60%)' }} />
+        <HeroContent title={safeTitle} description={safeDesc} isActive />
+        <TrustTicker />
       </div>
     );
   }
 
-  const nextIndex = banners.length > 0 ? (currentIndex + 1) % banners.length : 0;
-  const prevIndex = banners.length > 0 ? (currentIndex - 1 + banners.length) % banners.length : 0;
+  const nextIndex = (currentIndex + 1) % banners.length;
+  const prevIndex = (currentIndex - 1 + banners.length) % banners.length;
   const visibleIndexes = new Set([currentIndex, nextIndex, prevIndex]);
 
   return (
-    <div className="relative h-[72vh] md:h-[80vh] min-h-[520px] max-h-[880px] overflow-hidden w-full bg-muted">
+    <div className="relative h-[88vh] md:h-[92vh] min-h-[600px] max-h-[1000px] overflow-hidden w-full bg-[#0c0703]">
+      {/* Fallback image while loading */}
       {fallbackImage && (
-        <div
-          className={`absolute inset-0 transition-opacity duration-700 ${
-            loadedIndexes.has(currentIndex) ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          <img
-            src={fallbackImage}
-            alt="Hero background"
-            className="w-full h-full object-cover"
-            loading="eager"
-            decoding="async"
-          />
+        <div className={`absolute inset-0 transition-opacity duration-700 ${loadedIndexes.has(currentIndex) ? 'opacity-0' : 'opacity-100'}`}>
+          <img src={fallbackImage} alt="Hero" className="w-full h-full object-cover" loading="eager" decoding="async" />
         </div>
       )}
+
+      {/* Slides */}
       {banners.map((banner, index) => {
         if (!visibleIndexes.has(index)) return null;
+        const isActive = index === currentIndex;
         return (
-        <div
-          key={banner.id}
-          className={`absolute inset-0 transition-all duration-1000 ease-out ${
-            index === currentIndex ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-110 z-0'
-          }`}
-        >
-          {index === currentIndex && !loadedIndexes.has(index) && !fallbackImage && (
-            <div className="absolute inset-0 bg-muted animate-pulse" />
-          )}
-          {banner.mediaType === 'video' ? (
-            <video
-              src={banner.image}
-              className="w-full h-full object-cover"
-              autoPlay={index === currentIndex}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              poster={fallbackImage || undefined}
-              onLoadedData={() => markLoaded(index)}
-            />
-          ) : (
-            <img
-              src={banner.image}
-              alt={banner.title}
-              className="w-full h-full object-cover transition-opacity duration-500"
-              loading={index === currentIndex ? 'eager' : 'lazy'}
-              decoding="async"
-              fetchpriority={index === currentIndex ? 'high' : 'auto'}
-              sizes="100vw"
-              onLoad={() => markLoaded(index)}
-            />
-          )}
-          
-          {/* Overlay gradients for depth */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(196,144,106,0.25)_0%,transparent_55%)]" />
-          
-          {/* Content */}
-          <div className="absolute inset-0 flex items-end justify-center pb-8 sm:pb-10 md:pb-12">
-            <div className="w-full px-4 sm:px-6 md:px-10 lg:px-16 max-w-[1400px]">
-              <div
-                className={`max-w-2xl rounded-3xl border border-white/12 bg-black/35 backdrop-blur-xl p-6 sm:p-8 shadow-2xl transition-all duration-1000 ease-out ${
-                  index === currentIndex ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                }`}
-                style={{ transitionDelay: '160ms' }}
-              >
-                <div className="flex items-center justify-between gap-3 mb-3">
-                  <p className="text-[10px] tracking-[0.38em] uppercase font-black text-white/85">✦ Fine Jewelry</p>
-                  {slideLabel && (
-                    <span className="text-[10px] tracking-[0.3em] uppercase font-black text-white/65">
-                      {slideLabel}
-                    </span>
-                  )}
-                </div>
+          <div key={banner.id} className={`absolute inset-0 transition-all duration-1000 ease-out ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
+            {banner.mediaType === 'video' ? (
+              <video src={banner.image} className="w-full h-full object-cover" autoPlay={isActive} muted loop playsInline preload="metadata"
+                poster={fallbackImage || undefined} onLoadedData={() => markLoaded(index)} />
+            ) : (
+              <img src={banner.image} alt={banner.title} className={`w-full h-full object-cover transition-transform duration-[8000ms] ease-out ${isActive ? 'scale-110' : 'scale-100'}`}
+                loading={isActive ? 'eager' : 'lazy'} decoding="async"
+                fetchpriority={isActive ? 'high' : 'auto'} sizes="100vw" onLoad={() => markLoaded(index)} />
+            )}
 
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.04] tracking-tight">
-                  {banner.title}
-                </h2>
+            {/* Multi-layer overlays for depth */}
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, rgba(6,3,1,0.78) 0%, rgba(6,3,1,0.32) 45%, rgba(6,3,1,0.75) 100%)' }} />
+            <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 75% 65% at 18% 48%, rgba(196,144,106,0.22) 0%, transparent 58%)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(4,2,1,0.88) 0%, transparent 45%)' }} />
 
-                <p className="mt-4 text-sm sm:text-base md:text-lg text-white/85 font-light max-w-xl leading-relaxed">
-                  {banner.description}
-                </p>
+            {/* Decorative gold accent line */}
+            <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.7) 30%, rgba(212,169,106,0.9) 50%, rgba(196,144,106,0.7) 70%, transparent 95%)' }} />
 
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <Button asChild size="lg" className="rounded-full px-7 bg-white text-primary hover:bg-white/90">
-                    <Link to="/categories">Explore Collections</Link>
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="rounded-full px-7 border-white/25 text-white hover:bg-white/10 hover:text-white"
-                  >
-                    <Link to="/contact">Book Consultation</Link>
-                  </Button>
-                </div>
-
-                <div className="mt-6 flex flex-wrap gap-2.5 text-[11px] font-semibold tracking-wide text-white/70">
-                  <span className="px-3 py-1 rounded-full border border-white/14 bg-white/5">GIA / IGI Certified</span>
-                  <span className="px-3 py-1 rounded-full border border-white/14 bg-white/5">Worldwide Shipping</span>
-                  <span className="px-3 py-1 rounded-full border border-white/14 bg-white/5">Custom Designs</span>
-                </div>
-              </div>
+            {/* Floating diamond accents */}
+            <div className={`absolute top-[15%] right-[8%] transition-all duration-1000 ${isActive ? 'opacity-30 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '400ms' }}>
+              <Gem className="h-8 w-8 md:h-12 md:w-12" style={{ color: '#C4906A' }} />
             </div>
+            <div className={`absolute top-[35%] right-[18%] transition-all duration-1000 ${isActive ? 'opacity-15 translate-y-0' : 'opacity-0 -translate-y-4'}`} style={{ transitionDelay: '600ms' }}>
+              <span className="text-4xl md:text-6xl" style={{ color: '#D4A96A' }}>✦</span>
+            </div>
+
+            {/* Content */}
+            {isActive && <HeroContent title={banner.title} description={banner.description} isActive={isActive} />}
           </div>
-        </div>
         );
       })}
 
+      {/* Navigation arrows */}
       {hasMultiple && (
         <>
-          <button
-            type="button"
-            onClick={goToPrev}
-            aria-label="Previous slide"
-            className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/35 backdrop-blur border border-white/15 text-white hover:bg-black/45 transition-colors"
-          >
-            <ChevronLeft className="h-5 w-5" />
+          <button type="button" onClick={goToPrev} aria-label="Previous slide"
+            className="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full transition-all duration-300 hover:scale-110 group"
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(196,144,106,0.35)', backdropFilter: 'blur(12px)' }}>
+            <ChevronLeft className="h-6 w-6 text-white group-hover:text-[#C4906A] transition-colors" />
           </button>
-          <button
-            type="button"
-            onClick={goToNext}
-            aria-label="Next slide"
-            className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/35 backdrop-blur border border-white/15 text-white hover:bg-black/45 transition-colors"
-          >
-            <ChevronRight className="h-5 w-5" />
+          <button type="button" onClick={goToNext} aria-label="Next slide"
+            className="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full transition-all duration-300 hover:scale-110 group"
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(196,144,106,0.35)', backdropFilter: 'blur(12px)' }}>
+            <ChevronRight className="h-6 w-6 text-white group-hover:text-[#C4906A] transition-colors" />
           </button>
-          <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 sm:gap-3 z-20">
+
+          {/* Slide indicators — stylish vertical bar on right */}
+          <div className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-30 hidden md:flex flex-col gap-3">
             {banners.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`h-1 sm:h-1.5 md:h-2 rounded-full transition-all duration-500 ${
-                  index === currentIndex 
-                    ? 'bg-white w-8 sm:w-10 md:w-12 lg:w-16 shadow-lg' 
-                    : 'bg-white/40 w-1 sm:w-1.5 md:w-2 hover:bg-white/60'
-                }`}
-              />
+              <button key={index} onClick={() => navigate(index)} aria-label={`Go to slide ${index + 1}`}
+                className="rounded-full transition-all duration-500"
+                style={{
+                  width: 3,
+                  height: index === currentIndex ? 40 : 16,
+                  background: index === currentIndex
+                    ? 'linear-gradient(180deg, #9B6844, #C4906A, #D4A96A)'
+                    : 'rgba(255,255,255,0.25)',
+                  boxShadow: index === currentIndex ? '0 0 12px rgba(196,144,106,0.6)' : 'none',
+                }} />
             ))}
+          </div>
+
+          {/* Mobile bottom dots */}
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 z-30 md:hidden">
+            {banners.map((_, index) => (
+              <button key={index} onClick={() => navigate(index)}
+                className="rounded-full transition-all duration-500"
+                style={{
+                  height: 3,
+                  width: index === currentIndex ? 28 : 8,
+                  background: index === currentIndex ? 'linear-gradient(90deg, #9B6844, #C4906A)' : 'rgba(255,255,255,0.30)',
+                }} />
+            ))}
+          </div>
+
+          {/* Slide counter */}
+          <div className="absolute top-8 right-8 z-30 md:right-24"
+            style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'monospace', fontSize: 11, letterSpacing: '0.2em', fontWeight: 700 }}>
+            {String(currentIndex + 1).padStart(2, '0')} / {String(banners.length).padStart(2, '0')}
           </div>
         </>
       )}
+
+      {/* Trust ticker at very bottom */}
+      <TrustTicker />
     </div>
   );
 });
 
-BannerCarousel.displayName = 'BannerCarousel';
+const HeroContent = ({ title, description, isActive }: { title: string; description: string; isActive: boolean }) => (
+  <div className="absolute inset-0 flex items-center z-20">
+    <div className="w-full px-6 sm:px-10 md:px-16 lg:px-24 max-w-[1500px] mx-auto">
+      <div className={`max-w-2xl xl:max-w-3xl transition-all duration-1000 ease-out ${isActive ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`} style={{ transitionDelay: '150ms' }}>
 
+        {/* Eyebrow */}
+        <div className="flex items-center gap-3 mb-6 md:mb-8">
+          <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, #9B6844, #C4906A)' }} />
+          <p className="text-[10px] md:text-[11px] tracking-[0.4em] uppercase font-black" style={{ color: '#C4906A' }}>Fine Jewelry · Est. 2011</p>
+        </div>
+
+        {/* Main headline */}
+        <h1 className="font-bold leading-[1.02] tracking-tight mb-6 md:mb-8 text-white"
+          style={{ fontSize: 'clamp(2.4rem, 6vw, 5.5rem)' }}>
+          {title}
+        </h1>
+
+        {/* Gold divider */}
+        <div className="flex items-center gap-3 mb-6 md:mb-8">
+          <div className="h-[1.5px] w-16 md:w-24 rounded-full" style={{ background: 'linear-gradient(90deg, #9B6844, #C4906A, #D4A96A)' }} />
+          <span style={{ color: 'rgba(196,144,106,0.6)', fontSize: 10 }}>✦</span>
+        </div>
+
+        {/* Description */}
+        <p className="text-base md:text-lg lg:text-xl leading-relaxed mb-8 md:mb-10 max-w-xl" style={{ color: 'rgba(255,255,255,0.72)', fontWeight: 300 }}>
+          {description}
+        </p>
+
+        {/* CTAs */}
+        <div className="flex flex-wrap gap-4">
+          <Link to="/categories"
+            className="inline-flex items-center gap-2.5 font-bold text-[12px] md:text-[13px] tracking-[0.14em] uppercase rounded-full transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-2xl group"
+            style={{
+              padding: '14px 36px',
+              background: 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)',
+              color: '#fff',
+              boxShadow: '0 8px 40px -8px rgba(155,104,68,0.65)',
+            }}>
+            Explore Collections
+            <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </Link>
+          <Link to="/contact"
+            className="inline-flex items-center gap-2.5 font-bold text-[12px] md:text-[13px] tracking-[0.14em] uppercase rounded-full transition-all duration-300 hover:scale-105 active:scale-95"
+            style={{
+              padding: '14px 36px',
+              background: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.22)',
+              color: 'rgba(255,255,255,0.90)',
+              backdropFilter: 'blur(8px)',
+            }}>
+            Book Consultation
+          </Link>
+        </div>
+
+        {/* Trust badges */}
+        <div className="flex flex-wrap gap-2.5 mt-8 md:mt-10">
+          {['GIA / IGI Certified', 'Free Worldwide Shipping', 'Custom Designs'].map(item => (
+            <span key={item}
+              className="text-[10px] md:text-[11px] font-semibold tracking-wider px-3.5 py-1.5 rounded-full"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.65)' }}>
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const TrustTicker = () => (
+  <div className="absolute bottom-0 left-0 right-0 z-30 overflow-hidden"
+    style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(196,144,106,0.22)', height: 44 }}>
+    <div className="flex items-center h-full animate-[scroll_30s_linear_infinite] whitespace-nowrap">
+      {[...TRUST_ITEMS, ...TRUST_ITEMS, ...TRUST_ITEMS].map((item, i) => (
+        <span key={i} className="inline-flex items-center gap-3 px-6">
+          <span className="text-[9px] tracking-[0.32em] uppercase font-black" style={{ color: 'rgba(255,255,255,0.75)' }}>{item}</span>
+          <span style={{ color: 'rgba(196,144,106,0.55)', fontSize: 8 }}>✦</span>
+        </span>
+      ))}
+    </div>
+  </div>
+);
+
+BannerCarousel.displayName = 'BannerCarousel';
 export default BannerCarousel;
