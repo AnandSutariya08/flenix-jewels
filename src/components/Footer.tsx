@@ -37,16 +37,17 @@ const Footer = () => {
     <footer className="border-t border-border mt-20" style={{ background: 'hsl(var(--card))' }}>
       <div className="container mx-auto px-4 py-12">
 
-        {/* Trust bar — warm rose gold */}
-        <div className="py-6 px-8 rounded-xl mb-8"
-          style={{ background: 'linear-gradient(135deg, #2A1208, #3D1C0E, #2A1208)' }}>
+        {/* Trust bar — light warm cream */}
+        <div className="py-6 px-8 rounded-xl mb-8 border"
+          style={{ background: 'linear-gradient(135deg, #FDF5EC, #FAF0E2, #FDF5EC)', borderColor: 'rgba(196,144,106,0.25)' }}>
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 text-center lg:text-left">
             <div className="flex flex-col items-center lg:items-start gap-2">
+              <p className="text-xs font-semibold tracking-widest uppercase mb-2" style={{color:'#9B6844'}}>Certified &amp; Trusted By</p>
               <div className="flex items-center gap-3 flex-wrap justify-center lg:justify-start">
                 {trustedBadges.map(b => (
                   <img key={b.name} src={b.logo} alt={b.name} title={b.name}
-                    className="h-20 w-20 rounded-full object-contain p-0.5 shadow-sm"
-                    style={{ background: 'rgba(196,144,106,0.15)' }}
+                    className="h-14 w-14 rounded-lg object-contain p-1 shadow-sm"
+                    style={{ background: '#fff', border: '1px solid rgba(196,144,106,0.20)' }}
                     loading="lazy" decoding="async" fetchpriority="low" />
                 ))}
               </div>
@@ -58,11 +59,12 @@ const Footer = () => {
             </div>
 
             <div className="flex flex-col items-center lg:items-end gap-2">
+              <p className="text-xs font-semibold tracking-widest uppercase mb-2" style={{color:'#9B6844'}}>Payment Methods</p>
               <div className="flex items-center gap-3 flex-wrap justify-center lg:justify-end">
                 {paymentMethods.map(m => (
                   <img key={m.name} src={m.logo} alt={m.name} title={m.name}
-                    className="h-20 w-20 rounded-full object-contain p-0.5 shadow-sm"
-                    style={{ background: 'rgba(196,144,106,0.15)' }}
+                    className="h-14 w-14 rounded-lg object-contain p-1 shadow-sm"
+                    style={{ background: '#fff', border: '1px solid rgba(196,144,106,0.20)' }}
                     loading="lazy" decoding="async" fetchpriority="low" />
                 ))}
               </div>

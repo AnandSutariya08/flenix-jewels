@@ -78,7 +78,7 @@ const Header = ({ promoHeader }: HeaderProps) => {
               <img
                 src={logo}
                 alt="Flenix Jewels - Premium Diamond Jewelry"
-                className={`w-auto transition-all duration-300 ${isScrolled ? 'h-9' : 'h-11'}`}
+                className={`w-auto transition-all duration-300 ${isScrolled ? 'h-[50px]' : 'h-[62px]'}`}
                 loading="eager"
                 decoding="async"
                 fetchpriority="high"

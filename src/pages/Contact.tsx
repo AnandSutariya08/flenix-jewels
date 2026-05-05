@@ -154,8 +154,11 @@ const Contact = () => {
         <section className="py-12 md:py-20">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-              <div>
-                <h3 className="text-3xl font-bold mb-4">Send Us a Message</h3>
+              <div className="flenix-card p-8" style={{background:'linear-gradient(160deg,#FDF5EC 0%,#FAF0E2 100%)'}}>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 rounded-full" style={{background:'linear-gradient(180deg,#9B6844,#D4A96A)'}} />
+                  <h3 className="text-3xl font-bold">Send Us a Message</h3>
+                </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2"><Label htmlFor="name">Your Name *</Label><Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" required /></div>
                   <div className="space-y-2"><Label htmlFor="email">Your Email *</Label><Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" required /></div>
