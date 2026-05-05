@@ -109,9 +109,9 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
         className="p-0 overflow-hidden gap-0 border-0"
         style={{
           width: '96vw',
-          maxWidth: 1140,
-          height: '92vh',
-          maxHeight: 840,
+          maxWidth: 1260,
+          height: '82vh',
+          maxHeight: 700,
           borderRadius: 24,
           background: '#080504',
           boxShadow: '0 40px 120px -20px rgba(0,0,0,0.85), 0 0 0 1px rgba(196,144,106,0.18)',
