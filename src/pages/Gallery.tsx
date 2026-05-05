@@ -283,7 +283,7 @@ const Gallery = () => {
 
         {/* ── CTA ── */}
         {filteredItems.length > 0 && (
-          <section className="relative overflow-hidden mx-4 md:mx-10 lg:mx-16 mb-24 rounded-3xl" style={{ background: '#0c0703' }}>
+          <section className="relative overflow-hidden mx-4 md:mx-10 lg:mx-16 mt-14 md:mt-20 mb-24 rounded-3xl" style={{ background: '#0c0703' }}>
             <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(196,144,106,0.18) 0%, transparent 70%)' }} />
             <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 10%, rgba(196,144,106,0.5) 40%, rgba(212,169,106,0.7) 50%, rgba(196,144,106,0.5) 60%, transparent 90%)' }} />
             <div className="relative z-10 text-center py-16 md:py-20 px-6">
