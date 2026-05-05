@@ -74,19 +74,19 @@ export default function Header({ promoHeader }: HeaderProps) {
       {/* ── Outer shell — padding animates to create floating pill ── */}
       <div
         className="transition-all duration-500 ease-in-out"
-        style={{ padding: isScrolled ? '10px 20px 0' : '0' }}
+        style={{ padding: isScrolled ? '10px 10px 0' : '0' }}
       >
         <header
           className="relative transition-all duration-500 ease-in-out overflow-hidden"
           style={{
-            borderRadius:    isScrolled ? 9999 : 0,
-            background:      isScrolled ? 'rgba(10,6,4,0.90)' : 'rgba(253,248,243,0.94)',
-            backdropFilter:  'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-            border:          isScrolled ? '1px solid rgba(196,144,106,0.28)' : 'none',
+            borderRadius:         isScrolled ? 9999 : 0,
+            background:           isScrolled ? 'rgba(18,11,6,0.45)' : 'rgba(253,248,243,0.94)',
+            backdropFilter:       isScrolled ? 'blur(40px) saturate(180%)' : 'blur(24px)',
+            WebkitBackdropFilter: isScrolled ? 'blur(40px) saturate(180%)' : 'blur(24px)',
+            border:          isScrolled ? '1px solid rgba(196,144,106,0.32)' : 'none',
             borderBottom:    isScrolled ? undefined : '1px solid rgba(196,144,106,0.14)',
             boxShadow:       isScrolled
-              ? '0 12px 48px -8px rgba(0,0,0,0.55), inset 0 1px 0 rgba(196,144,106,0.12)'
+              ? '0 8px 32px -4px rgba(0,0,0,0.40), 0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,220,180,0.10), inset 0 -1px 0 rgba(196,144,106,0.08)'
               : '0 1px 0 rgba(196,144,106,0.10)',
           }}
         >
