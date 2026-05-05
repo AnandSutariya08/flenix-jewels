@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Header from '@/components/Header';
 import MiniHeader from '@/components/MiniHeader';
 import Footer from '@/components/Footer';
@@ -9,138 +7,58 @@ import BannerCarousel from '@/components/BannerCarousel';
 import SEOHead from '@/components/SEOHead';
 import ServicesSection from '@/components/ServicesSection';
 import BlogDialog from '@/components/BlogDialog';
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData } from "@/store/contentSlice";
-import { Button } from '@/components/ui/button';
-import { Truck, Gift, ShieldCheck, Quote, Star, Award, Sparkles, BadgeCheck } from 'lucide-react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData } from '@/store/contentSlice';
+import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle } from 'lucide-react';
 import { BlogPost } from '@/lib/storage';
 
-gsap.registerPlugin(ScrollTrigger);
+const WHATSAPP = 'https://wa.me/919967381180?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.';
+const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 
-const Index = () => {
-  const {
-    banners,
-    categories,
-    featuredCollection,
-    galleryItems,
-    blogs,
-    instagramPosts,
-    testimonials,
-    promoHeader,
-    contactInfo
-  } = useAppSelector(selectGlobalData);
-  const dispatch = useAppDispatch();
-  const blogsLoaded = useAppSelector(selectBlogsLoaded);
-  const blogsStatus = useAppSelector(selectBlogsStatus);
+const faqItems = [
+  { question: 'Do you offer both lab-grown and natural diamonds?', answer: 'Yes. Flenix Jewels offers certified lab-grown diamonds and natural diamonds with authenticated grading and quality checks.' },
+  { question: 'Can I customize an engagement ring or jewelry design?', answer: 'Yes. We provide custom design and manufacturing for engagement rings, wedding bands, and fine jewelry.' },
+  { question: 'Do you ship internationally?', answer: 'Yes. We ship globally with secure packaging and insured delivery options for select regions.' },
+];
 
-  const animationRef = useRef<gsap.Context | null>(null);
-  const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
+const trustItems = ['GIA Certified', 'IGI Graded', 'Free Shipping', 'Lifetime Guarantee', '12K+ Happy Clients', '30+ Countries Served', 'Ethically Sourced', 'Custom Design'];
+
+const features = [
+  { icon: Truck,       label: 'Free Worldwide Shipping',  sub: '30+ Countries',    detail: 'Fully insured express delivery to your door.' },
+  { icon: Gift,        label: 'Luxury Packaging',         sub: 'Orders $500+',     detail: 'Complimentary gift box with every purchase.' },
+  { icon: ShieldCheck, label: 'Secure Payments',          sub: '100% Encrypted',   detail: 'Bank-level security on every transaction.' },
+  { icon: Award,       label: 'Certified Authentic',      sub: 'GIA / IGI',        detail: 'Lifetime guarantee on all certified pieces.' },
+];
+
+export default function Index() {
+  const { banners, categories, featuredCollection, galleryItems, blogs, instagramPosts, testimonials, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
+  const dispatch   = useAppDispatch();
+  const blogsLoaded  = useAppSelector(selectBlogsLoaded);
+  const blogsStatus  = useAppSelector(selectBlogsStatus);
+  const [selectedBlog, setSelectedBlog]     = useState<BlogPost | null>(null);
   const [isBlogDialogOpen, setIsBlogDialogOpen] = useState(false);
 
-  const sortedBlogs = useMemo(
-    () => [...blogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
-    [blogs]
-  );
+  const sortedBlogs = useMemo(() => [...blogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()), [blogs]);
 
   useEffect(() => {
-    if (!blogsLoaded && blogsStatus === "idle") {
-      const timeoutId = window.setTimeout(() => {
-        dispatch(loadBlogs());
-      }, 1800);
-
-      return () => window.clearTimeout(timeoutId);
+    if (!blogsLoaded && blogsStatus === 'idle') {
+      const t = window.setTimeout(() => dispatch(loadBlogs()), 1800);
+      return () => window.clearTimeout(t);
     }
   }, [blogsLoaded, blogsStatus, dispatch]);
 
-  const handleBlogClick = (blog: BlogPost) => {
-    setSelectedBlog(blog);
-    setIsBlogDialogOpen(true);
-  };
-
-  const hasPromo = promoHeader?.enabled && promoHeader?.text;
+  const hasPromo   = promoHeader?.enabled && promoHeader?.text;
   const promoHeight = hasPromo ? 40 : 0;
-  const paddingTop = promoHeight + 80 + 52 + 12;
+  const paddingTop  = promoHeight + 80 + 52 + 12;
 
-  useEffect(() => {
-    if (animationRef.current) {
-      animationRef.current.revert();
-    }
-
-    animationRef.current = gsap.context(() => {
-      gsap.from('.hero-title', {
-        scrollTrigger: { trigger: '.hero-title', start: 'top 85%', once: true },
-        y: 60, opacity: 0, duration: 1, ease: 'power3.out',
-      });
-
-      gsap.from('.category-card', {
-        scrollTrigger: { trigger: '.categories-section', start: 'top 80%', once: true },
-        y: 80, opacity: 0, stagger: 0.12, duration: 0.8, ease: 'power2.out',
-      });
-
-      gsap.from('.feature-card', {
-        scrollTrigger: { trigger: '.features-section', start: 'top 75%', once: true },
-        y: 60, opacity: 0, stagger: 0.15, duration: 0.9, ease: 'power3.out',
-      });
-    });
-
-    return () => { animationRef.current?.revert(); };
-  }, [categories.length, sortedBlogs.length]);
-
-  const aboutFeatures = [
-    { 
-      icon: Truck, 
-      title: 'Express Worldwide Delivery', 
-      description: 'Fast, Insured Delivery Worldwide',
-      stats: '30+ Countries',
-      highlight: 'Fully Insured'
-    },
-    { 
-      icon: Gift, 
-      title: 'Complimentary Global Shipping', 
-      description: 'Free Shipping With Luxury Packaging',
-      stats: 'Orders $500+',
-      highlight: 'Premium Packaging'
-    },
-    { 
-      icon: ShieldCheck, 
-      title: 'Certified & Secure Payments', 
-      description: 'Encrypted Payments With Safest Portal',
-      stats: '100% Secure',
-      highlight: 'Bank-Level Security'
-    },
-    { 
-      icon: Award, 
-      title: 'Authenticity Guaranteed', 
-      description: 'Certified Jewelry With Lifetime Guarantee',
-      stats: 'GIA / IGI Certified',
-      highlight: 'Lifetime Guarantee'
-    },
-  ];
-
-  const faqItems = [
-    {
-      question: "Do you offer both lab-grown and natural diamonds?",
-      answer:
-        "Yes. Flenix Jewels offers certified lab-grown diamonds and natural diamonds with authenticated grading and quality checks.",
-    },
-    {
-      question: "Can I customize an engagement ring or jewelry design?",
-      answer:
-        "Yes. We provide custom design and manufacturing for engagement rings, wedding bands, and fine jewelry to match your preferences.",
-    },
-    {
-      question: "Do you ship internationally?",
-      answer:
-        "Yes. We ship globally with secure packaging and insured delivery options for select regions.",
-    },
-  ];
+  const openBlog = (blog: BlogPost) => { setSelectedBlog(blog); setIsBlogDialogOpen(true); };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
         title="Premium Diamond & Gold Jewelry | Lab Grown & Natural Diamonds | Flenix Jewels"
-        description="Shop certified lab-grown and natural diamond jewelry at Flenix Jewels. Explore GIA certified engagement rings, wedding bands, necklaces, earrings & bracelets. Free worldwide shipping. Best prices guaranteed."
-        keywords="diamond jewelry, gold rings, engagement rings, wedding bands, lab grown diamonds, natural diamonds, certified jewelry, luxury jewelry store, GIA certified diamonds, platinum rings, solitaire rings, diamond necklaces, gold earrings, diamond bracelets, custom jewelry design, wholesale diamond jewelry, buy diamonds online, best diamond jewelry store, affordable diamond rings, diamond jewelry Mumbai India"
+        description="Shop certified lab-grown and natural diamond jewelry at Flenix Jewels. Explore GIA certified engagement rings, wedding bands, necklaces, earrings & bracelets. Free worldwide shipping."
+        keywords="diamond jewelry, gold rings, engagement rings, wedding bands, lab grown diamonds, natural diamonds, certified jewelry, luxury jewelry store"
         canonicalUrl="https://www.flenixjewels.com"
         faqItems={faqItems}
       />
@@ -149,276 +67,442 @@ const Index = () => {
       <MiniHeader categories={categories} promoHeight={promoHeight} />
 
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
-        {/* Hero Banner */}
-        <section className="w-full px-4 md:px-6 mb-16 md:mb-20">
+
+        {/* ═══════════════════════════════════════════════════════
+            1. HERO — full-bleed carousel
+        ═══════════════════════════════════════════════════════ */}
+        <section className="w-full">
           <BannerCarousel banners={banners} />
         </section>
 
-        {/* About Section */}
-        <section className="about-section container mx-auto px-4 mb-16 md:mb-20">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">Crafting Excellence Since 2011</h2>
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-            Flenix Jewels Is a Premier Destination for Luxury Jewelry, Combining Traditional Craftsmanship with Contemporary Design. from Ethically Sourced Diamonds to Handcrafted Settings, Every Piece Tells a Unique Story.
-            </p>
-          </div>
-
-          <div className="text-center mt-8">
-            <Link to="/about"><Button size="lg" variant="outline">Read More</Button></Link>
-          </div>
-        </section>
-
-        {/* Categories Section */}
-        {categories.length > 0 && (
-          <section className="categories-section container mx-auto px-4 mb-20">
-            <div className="text-center mb-12">
-              <h2 className="hero-title text-4xl md:text-5xl font-bold mb-4">Explore Our Collections</h2>
-              <p className="text-lg text-muted-foreground">Discover jewelry for every occasion</p>
+        {/* ═══════════════════════════════════════════════════════
+            2. TRUST MARQUEE STRIP
+        ═══════════════════════════════════════════════════════ */}
+        <div style={{ background: '#0c0703', borderTop: '1px solid rgba(196,144,106,0.22)', borderBottom: '1px solid rgba(196,144,106,0.22)' }}>
+          <div className="overflow-hidden py-3.5">
+            <div className="flex gap-0 animate-marquee whitespace-nowrap">
+              {[...Array(4)].map((_, rep) => (
+                <div key={rep} className="flex items-center gap-0 flex-shrink-0">
+                  {trustItems.map(t => (
+                    <span key={t} className="inline-flex items-center gap-3 px-8 text-[10.5px] font-bold tracking-[0.22em] uppercase flex-shrink-0" style={{ color: 'rgba(196,144,106,0.75)' }}>
+                      <span style={{ color: '#C4906A', opacity: 0.6 }}>✦</span>{t}
+                    </span>
+                  ))}
+                </div>
+              ))}
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-              {categories.slice(0, 6).map((category) => (
-                <Link key={category.id} to={`/category/${category.id}`} className="category-card group">
-                  <div className="aspect-square rounded-2xl overflow-hidden mb-3 bg-muted">
-                    <img src={category.image} alt={category.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" decoding="async" fetchpriority="low" />
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════
+            3. COLLECTIONS — asymmetric editorial grid
+        ═══════════════════════════════════════════════════════ */}
+        {categories.length > 0 && (
+          <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1600px] mx-auto">
+            {/* Section header */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+              <div>
+                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Collections</p>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight">
+                  Crafted for<br />Every Occasion
+                </h2>
+              </div>
+              <div className="lg:pb-2 max-w-sm">
+                <p className="text-muted-foreground leading-relaxed mb-5">
+                  Each piece is a testament to exceptional artisanship and timeless elegance, designed to be cherished forever.
+                </p>
+                <Link to="/categories" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase transition-all group" style={{ color: '#C4906A' }}>
+                  View All Collections
+                  <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Grid — large + small cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" style={{ gridAutoRows: '220px' }}>
+
+              {/* Hero card — spans 2×2 */}
+              {categories[0] && (
+                <Link to={`/category/${categories[0].id}`}
+                  className="relative col-span-2 row-span-2 overflow-hidden rounded-3xl group block"
+                  style={{ gridRow: 'span 2' }}>
+                  <img src={categories[0].image} alt={categories[0].name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                  <div className="absolute inset-0 transition-opacity duration-500"
+                    style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.88) 0%, rgba(6,3,1,0.28) 45%, transparent 100%)' }} />
+                  {/* Hover gold overlay */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{ background: 'linear-gradient(135deg, rgba(155,104,68,0.12), transparent)' }} />
+                  <div className="absolute bottom-0 left-0 p-7 md:p-9">
+                    <p className="text-[9px] tracking-[0.3em] uppercase font-black mb-2.5" style={{ color: '#D4A96A' }}>Featured</p>
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight">{categories[0].name}</h3>
+                    <p className="text-white/55 text-sm mb-6 max-w-[240px] leading-relaxed hidden md:block">{categories[0].description}</p>
+                    <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-wider uppercase px-5 py-2.5 rounded-full transition-all duration-200 group-hover:shadow-xl"
+                      style={{ background: GOLD, color: '#fff', boxShadow: '0 4px 20px -4px rgba(155,104,68,0.5)' }}>
+                      Explore <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
                   </div>
-                  <h3 className="font-semibold text-center group-hover:text-primary transition-colors">{category.name}</h3>
+                </Link>
+              )}
+
+              {/* Small cards */}
+              {categories.slice(1, 5).map((cat, i) => (
+                <Link key={cat.id} to={`/category/${cat.id}`}
+                  className="relative overflow-hidden group block"
+                  style={{ borderRadius: i === 0 || i === 2 ? '20px 20px 20px 20px' : '20px' }}>
+                  <img src={cat.image} alt={cat.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                  <div className="absolute inset-0 transition-opacity duration-300"
+                    style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.78) 0%, transparent 60%)' }} />
+                  {/* Gold border on hover */}
+                  <div className="absolute inset-0 rounded-[20px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{ boxShadow: 'inset 0 0 0 2px rgba(196,144,106,0.65)' }} />
+                  <div className="absolute bottom-0 left-0 p-5">
+                    <h3 className="text-base md:text-lg font-bold text-white leading-tight">{cat.name}</h3>
+                  </div>
                 </Link>
               ))}
             </div>
-
-            <div className="text-center mt-8">
-              <Link to="/categories"><Button size="lg" className="luxury-gradient">View All Categories</Button></Link>
-            </div>
           </section>
         )}
 
-        {/* Featured Collection */}
+        {/* ═══════════════════════════════════════════════════════
+            4. FEATURED COLLECTION SCROLL
+        ═══════════════════════════════════════════════════════ */}
         {featuredCollection.length > 0 && (
-          <section className="mb-16 md:mb-20 overflow-hidden">
-            <div className="text-center mb-8 md:mb-12 px-4">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">Featured Collection</h2>
-              <p className="text-sm sm:text-base md:text-lg text-muted-foreground">Handpicked treasures for the discerning</p>
+          <section className="pb-24 overflow-hidden" style={{ background: 'linear-gradient(180deg, transparent 0%, rgba(250,247,243,0.6) 100%)' }}>
+            <div className="flex items-end justify-between px-4 md:px-16 mb-10">
+              <div>
+                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-2.5" style={{ color: '#C4906A' }}>✦ Curated For You</p>
+                <h2 className="text-3xl md:text-5xl font-bold">Featured Collection</h2>
+              </div>
             </div>
-            <div className="flex gap-3 sm:gap-4 animate-[scroll_10s_linear_infinite] sm:animate-[scroll_18s_linear_infinite] hover:pause pl-4">
-              {[...featuredCollection, ...featuredCollection].map((item, index) => (
-                <div key={`${item.id}-${index}`} className="flex-shrink-0 w-[280px] sm:w-72 md:w-80 rounded-xl sm:rounded-2xl overflow-hidden bg-card border border-border shadow-lg hover:shadow-2xl transition-all duration-300">
-                  <div className="w-full h-[280px] sm:h-72 md:h-80 overflow-hidden">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" fetchpriority="low" />
+            <div className="flex gap-4 md:gap-5 animate-[scroll_22s_linear_infinite] hover:pause pl-4 md:pl-16">
+              {[...featuredCollection, ...featuredCollection].map((item, i) => (
+                <div key={`${item.id}-${i}`} className="flex-shrink-0 w-60 md:w-72 group cursor-pointer">
+                  <div className="relative h-68 md:h-80 rounded-2xl overflow-hidden mb-3.5" style={{ height: '280px' }}>
+                    <img src={item.image} alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-108" loading="lazy"
+                      style={{ transition: 'transform 0.6s ease' }} />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{ background: 'linear-gradient(to top, rgba(155,104,68,0.45), transparent 60%)' }} />
                   </div>
-                  <div className="p-3 sm:p-4">
-                    <h3 className="text-base sm:text-lg font-bold mb-1 line-clamp-1">{item.title}</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{item.description}</p>
-                  </div>
+                  <h3 className="font-semibold text-sm md:text-base line-clamp-1">{item.title}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground line-clamp-1 mt-0.5">{item.description}</p>
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        {/* Enhanced Features Section with Premium Background */}
-        <section className="features-section py-20 md:py-28 mb-16 md:mb-20 relative overflow-hidden bg-gradient-to-br from-muted/40 via-background to-muted/30">
-          {/* Decorative background elements */}
-          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-          <div className="absolute top-1/2 left-1/2 w-[300px] h-[300px] bg-primary/3 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center mb-16 md:mb-20">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 mb-6 shadow-lg backdrop-blur-sm">
-                <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-                <span className="text-sm font-bold text-primary uppercase tracking-wider">Our Best Service for You</span>
-                <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+        {/* ═══════════════════════════════════════════════════════
+            5. DARK EDITORIAL — About + Stats
+        ═══════════════════════════════════════════════════════ */}
+        <section className="relative overflow-hidden" style={{ background: '#0c0703' }}>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
+          {/* Ambient glow */}
+          <div className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at top right, rgba(196,144,106,0.10) 0%, transparent 65%)', transform: 'translate(30%, -30%)' }} />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at bottom left, rgba(196,144,106,0.08) 0%, transparent 65%)', transform: 'translate(-30%, 30%)' }} />
+
+          <div className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-16 py-24 md:py-36">
+            <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+
+              {/* Left — copy */}
+              <div>
+                <p className="text-[10px] tracking-[0.35em] uppercase font-black mb-7" style={{ color: '#C4906A' }}>✦ Our Story</p>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.08] tracking-tight mb-8">
+                  Crafting<br />Excellence<br />Since 2011
+                </h2>
+                <p className="text-white/50 text-lg leading-[1.8] mb-10 max-w-md">
+                  Flenix Jewels is a premier destination for luxury jewelry — combining traditional artisanship with contemporary design. From ethically sourced diamonds to handcrafted settings, every piece tells a unique story.
+                </p>
+                <div className="flex flex-wrap gap-2.5 mb-12">
+                  {['GIA Certified', 'Ethically Sourced', 'Lifetime Guarantee', 'Custom Design'].map(tag => (
+                    <span key={tag} className="text-[10.5px] font-bold tracking-wider uppercase px-4 py-2 rounded-full"
+                      style={{ border: '1px solid rgba(196,144,106,0.30)', color: 'rgba(196,144,106,0.85)' }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <Link to="/about" className="inline-flex items-center gap-3 font-bold text-sm tracking-widest uppercase transition-all duration-200 group"
+                  style={{ color: '#D4A96A' }}>
+                  Our Full Story
+                  <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
+                </Link>
               </div>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 md:mb-8 bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent">
-                Excellence in Every Detail
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Discover the Unparalleled Benefits that Make Us the Preferred Choice for Discerning Jewelry Enthusiasts Worldwide
-              </p>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-[1400px] mx-auto mb-5">
-              {aboutFeatures.map((feature, index) => (
-                <div 
-                  key={index} 
-                  className="feature-card group relative"
-                >
-                  <div className="h-full p-7 md:p-9 rounded-3xl bg-card/90 backdrop-blur-md border-2 border-border/50 hover:border-primary/40 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 overflow-hidden">
-                    {/* Animated gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/0 group-hover:from-primary/10 group-hover:via-primary/5 group-hover:to-primary/10 transition-all duration-700 pointer-events-none" />
-                    
-                    {/* Decorative corner accents */}
-                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
-                    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
-                    
-                    <div className="relative z-10">
-                      {/* Icon with animated ring */}
-                      <div className="mb-6 relative">
-                        <div className="relative inline-block">
-                          {/* Outer animated ring */}
-                          <div className="absolute inset-0 w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-primary/20 group-hover:scale-110 transition-transform duration-500 blur-sm" />
-                          
-                          {/* Main icon container */}
-                          <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-xl">
-                            <feature.icon className="h-10 w-10 md:h-12 md:w-12 text-primary drop-shadow-lg" />
-                          </div>
-                        </div>
-                        
-                        {/* Stats badge with glow effect */}
-                        <div className="absolute -top-3 -right-3 px-3 py-1.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-bold shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
-                          <span className="relative z-10">{feature.stats}</span>
-                          <div className="absolute inset-0 bg-primary/50 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        </div>
-                      </div>
-
-                      {/* Content */}
-                      <h3 className="font-bold text-xl md:text-2xl mb-4 text-foreground group-hover:text-primary transition-colors duration-300">
-                        {feature.title}
-                      </h3>
-                      
-                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed ">
-                        {feature.description}
-                      </p>
-
-                      {/* Highlight badge with icon */}
-                      {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 border border-primary/30 mt-auto group-hover:bg-primary/15 group-hover:border-primary/40 transition-all duration-300 shadow-md">
-                        <BadgeCheck className="h-4 w-4 text-primary group-hover:scale-110 transition-transform duration-300" />
-                        <span className="text-xs font-bold text-primary uppercase tracking-wide">{feature.highlight}</span>
-                      </div> */}
+              {/* Right — stats grid */}
+              <div className="grid grid-cols-2 gap-4 md:gap-5">
+                {[
+                  { num: '10+',  label: 'Years of Excellence', icon: Award },
+                  { num: '12K+', label: 'Happy Customers',     icon: Star },
+                  { num: '30+',  label: 'Countries Served',    icon: Truck },
+                  { num: '100%', label: 'Satisfaction Rate',   icon: CheckCircle },
+                ].map(({ num, label, icon: Icon }) => (
+                  <div key={label} className="relative p-7 md:p-8 rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-1"
+                    style={{ background: 'rgba(196,144,106,0.065)', border: '1px solid rgba(196,144,106,0.14)' }}>
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{ background: 'rgba(196,144,106,0.04)' }} />
+                    <Icon className="h-5 w-5 mb-5 relative z-10" style={{ color: 'rgba(196,144,106,0.45)' }} />
+                    <div className="text-4xl md:text-5xl font-black mb-2 relative z-10"
+                      style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                      {num}
                     </div>
+                    <p className="text-[10.5px] font-bold tracking-[0.18em] uppercase relative z-10" style={{ color: 'rgba(255,255,255,0.38)' }}>
+                      {label}
+                    </p>
                   </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Trust indicators with enhanced styling */}
-            <div className="mt-20 pt-16 border-t-2 border-border/30">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 max-w-5xl mx-auto">
-                <div className="text-center group cursor-default">
-                  <div className="mb-3 relative inline-block">
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">
-                      10+
-                    </div>
-                    <div className="absolute inset-0 blur-xl bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <div className="text-sm md:text-base font-semibold text-muted-foreground uppercase tracking-wider">Years of Excellence</div>
-                </div>
-                
-                <div className="text-center group cursor-default">
-                  <div className="mb-3 relative inline-block">
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">
-                      12K+
-                    </div>
-                    <div className="absolute inset-0 blur-xl bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <div className="text-sm md:text-base font-semibold text-muted-foreground uppercase tracking-wider">Happy Customers</div>
-                </div>
-                
-                <div className="text-center group cursor-default">
-                  <div className="mb-3 relative inline-block">
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">
-                      30+
-                    </div>
-                    <div className="absolute inset-0 blur-xl bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <div className="text-sm md:text-base font-semibold text-muted-foreground uppercase tracking-wider">Countries Served</div>
-                </div>
-                
-                <div className="text-center group cursor-default">
-                  <div className="mb-3 relative inline-block">
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-black bg-gradient-to-br from-primary via-primary to-primary/70 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">
-                      100%
-                    </div>
-                    <div className="absolute inset-0 blur-xl bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <div className="text-sm md:text-base font-semibold text-muted-foreground uppercase tracking-wider">Satisfaction Rate</div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
+          <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.3) 35%, rgba(212,169,106,0.4) 50%, rgba(196,144,106,0.3) 65%, transparent 95%)' }} />
         </section>
 
-        {/* Gallery */}
+        {/* ═══════════════════════════════════════════════════════
+            6. WHY US — Feature cards
+        ═══════════════════════════════════════════════════════ */}
+        <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1600px] mx-auto">
+          <div className="text-center mb-16">
+            <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3.5" style={{ color: '#C4906A' }}>✦ Why Choose Us</p>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Excellence in Every Detail</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {features.map(({ icon: Icon, label, sub, detail }) => (
+              <div key={label} className="group relative p-7 md:p-8 rounded-3xl overflow-hidden cursor-default transition-all duration-500 hover:-translate-y-2"
+                style={{ background: '#faf7f3', border: '1px solid rgba(196,144,106,0.18)', boxShadow: '0 2px 20px rgba(196,144,106,0.06)' }}>
+                {/* Top gold bar on hover */}
+                <div className="absolute top-0 left-6 right-6 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-400"
+                  style={{ background: GOLD, transitionDuration: '400ms' }} />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
+                  style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.05), transparent)', transitionDuration: '400ms' }} />
+
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-7 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
+                    style={{ background: 'rgba(196,144,106,0.10)' }}>
+                    <Icon className="h-6 w-6" style={{ color: '#C4906A' }} />
+                  </div>
+                  <h3 className="font-bold text-[17px] mb-1.5 leading-snug">{label}</h3>
+                  <p className="text-[10px] font-black tracking-[0.2em] uppercase mb-4" style={{ color: '#C4906A' }}>{sub}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════
+            7. GALLERY — Bento grid
+        ═══════════════════════════════════════════════════════ */}
         {galleryItems.length > 0 && (
-          <section className="mb-16 md:mb-20 overflow-hidden">
-            <div className="text-center mb-8 md:mb-12 px-4">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">Gallery Showcase</h2>
-              <p className="text-sm sm:text-base md:text-lg text-muted-foreground">Exquisite moments captured in time</p>
+          <section className="px-4 md:px-10 lg:px-16 mb-24 max-w-[1600px] mx-auto">
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Gallery</p>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Moments in Gold</h2>
+              </div>
+              <Link to="/gallery" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase group" style={{ color: '#C4906A' }}>
+                Full Gallery <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
+              </Link>
             </div>
-            <div className="flex gap-3 sm:gap-4 animate-[scroll_9s_linear_infinite] sm:animate-[scroll_15s_linear_infinite] hover:pause pl-4">
-              {[...galleryItems, ...galleryItems].map((item, index) => (
-                <div key={`${item.id}-${index}`} className="flex-shrink-0 w-[260px] sm:w-72 md:w-80 h-[260px] sm:h-72 md:h-80 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
-                  <img src={item.image} alt={item.description || 'Gallery'} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" loading="lazy" decoding="async" fetchpriority="low" />
+
+            {galleryItems.length >= 5 ? (
+              /* Bento grid */
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" style={{ gridAutoRows: '210px' }}>
+                <div className="col-span-2 row-span-2 rounded-3xl overflow-hidden group">
+                  <img src={galleryItems[0].image} alt="Gallery showcase"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                </div>
+                {galleryItems.slice(1, 5).map((item, i) => (
+                  <div key={item.id} className="rounded-2xl overflow-hidden group" style={{ borderRadius: 18 }}>
+                    <img src={item.image} alt={item.description || 'Gallery'}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              /* Fallback — scroll row */
+              <div className="flex gap-4 overflow-x-auto scrollbar-hide">
+                {galleryItems.map(item => (
+                  <div key={item.id} className="flex-shrink-0 w-72 h-72 rounded-2xl overflow-hidden group">
+                    <img src={item.image} alt={item.description || 'Gallery'}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════
+            8. TESTIMONIALS — Scroll marquee
+        ═══════════════════════════════════════════════════════ */}
+        {testimonials.length > 0 && (
+          <section className="py-20 overflow-hidden" style={{ background: 'linear-gradient(180deg, #faf7f3 0%, #f5ede3 100%)' }}>
+            <div className="text-center mb-14 px-4">
+              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3.5" style={{ color: '#C4906A' }}>✦ Client Love</p>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">What Our Clients Say</h2>
+            </div>
+            <div className="flex gap-5 animate-[scroll_28s_linear_infinite] hover:pause pl-6 md:pl-16">
+              {[...testimonials, ...testimonials].map((t, i) => (
+                <div key={`${t.id}-${i}`} className="flex-shrink-0 w-[320px] md:w-[380px] p-8 rounded-3xl bg-white"
+                  style={{ border: '1px solid rgba(196,144,106,0.18)', boxShadow: '0 4px 32px rgba(196,144,106,0.07)' }}>
+                  {/* Stars */}
+                  <div className="flex gap-0.5 mb-5">
+                    {[...Array(5)].map((_, j) => (
+                      <Star key={j} className={`h-4 w-4 ${j < t.rating ? 'fill-[#D4A96A] text-[#D4A96A]' : 'text-stone-200'}`} />
+                    ))}
+                  </div>
+                  {/* Large serif quote mark */}
+                  <p className="text-6xl leading-none font-serif mb-1" style={{ color: 'rgba(196,144,106,0.22)', fontFamily: 'Georgia, serif' }}>"</p>
+                  <p className="text-[14.5px] leading-[1.75] mb-7 line-clamp-4" style={{ color: 'rgba(30,20,14,0.72)' }}>{t.text}</p>
+                  <div className="flex items-center gap-3.5 pt-5" style={{ borderTop: '1px solid rgba(196,144,106,0.14)' }}>
+                    <div className="w-11 h-11 rounded-full flex items-center justify-center font-black text-white text-sm flex-shrink-0"
+                      style={{ background: GOLD }}>
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm text-foreground">{t.name}</p>
+                      <p className="text-[11px] tracking-wide text-muted-foreground">Verified Customer</p>
+                    </div>
+                  </div>
                 </div>
               ))}
-            </div>
-            <div className="text-center mt-6 md:mt-8 px-4">
-              <Link to="/gallery"><Button size="lg" variant="outline">View Full Gallery</Button></Link>
             </div>
           </section>
         )}
 
-        {/* Blog Section */}
+        {/* ═══════════════════════════════════════════════════════
+            9. BLOG — Editorial magazine layout
+        ═══════════════════════════════════════════════════════ */}
         {sortedBlogs.length > 0 && (
-          <section className="blog-section container mx-auto px-4 mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">Latest Stories</h2>
-              <p className="text-lg text-muted-foreground">Insights from the world of luxury jewelry</p>
+          <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
+            <div className="flex items-end justify-between mb-14">
+              <div>
+                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ The Journal</p>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Latest Stories</h2>
+              </div>
+              <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase group" style={{ color: '#C4906A' }}>
+                All Articles <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
+              </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {sortedBlogs.slice(0, 3).map((blog) => {
-                const plainText = blog.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
-                return (
-                  <article
-                    key={blog.id}
-                    className="group cursor-pointer hover-lift rounded-2xl overflow-hidden bg-card border border-border shadow-lg"
-                    onClick={() => handleBlogClick(blog)}
-                  >
-                    <div className="aspect-video overflow-hidden bg-muted">
-                      <img src={blog.thumbnail || blog.image} alt={blog.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" decoding="async" fetchpriority="low" />
+
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
+              {/* Featured — 3 cols */}
+              {sortedBlogs[0] && (
+                <article className="lg:col-span-3 group cursor-pointer" onClick={() => openBlog(sortedBlogs[0])}>
+                  <div className="relative h-64 md:h-[400px] rounded-3xl overflow-hidden mb-6">
+                    <img src={sortedBlogs[0].thumbnail || sortedBlogs[0].image} alt={sortedBlogs[0].title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.55) 0%, transparent 55%)' }} />
+                    <span className="absolute top-5 left-5 text-[10px] font-black tracking-[0.2em] uppercase px-3.5 py-1.5 rounded-full"
+                      style={{ background: GOLD, color: '#fff' }}>
+                      Featured
+                    </span>
+                  </div>
+                  <time className="text-[11px] text-muted-foreground tracking-widest uppercase font-semibold">
+                    {new Date(sortedBlogs[0].date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  </time>
+                  <h3 className="text-2xl md:text-3xl font-bold mt-2.5 mb-3 leading-snug tracking-tight group-hover:text-[#C4906A] transition-colors duration-200">
+                    {sortedBlogs[0].title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed line-clamp-2">
+                    {sortedBlogs[0].content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()}
+                  </p>
+                </article>
+              )}
+
+              {/* Sidebar — 2 cols */}
+              <div className="lg:col-span-2 flex flex-col gap-7">
+                {sortedBlogs.slice(1, 3).map(blog => (
+                  <article key={blog.id} className="group cursor-pointer flex gap-5" onClick={() => openBlog(blog)}>
+                    <div className="flex-shrink-0 w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden">
+                      <img src={blog.thumbnail || blog.image} alt={blog.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
                     </div>
-                    <div className="p-6">
-                      <time className="text-sm text-muted-foreground mb-2 block">{new Date(blog.date).toLocaleDateString()}</time>
-                      <h3 className="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">{blog.title}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-3">{plainText}</p>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <time className="text-[10.5px] text-muted-foreground tracking-widest uppercase font-semibold mb-1.5">
+                        {new Date(blog.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </time>
+                      <h3 className="font-bold text-base leading-snug group-hover:text-[#C4906A] transition-colors duration-200 line-clamp-2 mb-2">
+                        {blog.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                        {blog.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()}
+                      </p>
                     </div>
                   </article>
-                );
-              })}
-            </div>
-            <div className="text-center mt-8">
-              <Link to="/blog"><Button size="lg" variant="outline">Read More Articles</Button></Link>
-            </div>
-          </section>
-        )}
-
-        {/* Instagram Posts */}
-        {instagramPosts.length > 0 && (
-          <section className="mb-16 md:mb-20 overflow-hidden">
-            <div className="px-4">
-              <div className="text-center mb-8 md:mb-12">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">Follow Our Journey</h2>
-                <p className="text-sm sm:text-base md:text-lg text-muted-foreground">Connect with us on Instagram</p>
+                ))}
               </div>
             </div>
-            <div className="flex gap-3 sm:gap-4 animate-[scroll_10s_linear_infinite] sm:animate-[scroll_20s_linear_infinite] hover:pause pl-4">
-              {[...instagramPosts.slice(0, 10), ...instagramPosts.slice(0, 10)].map((post, index) => {
-                const getEmbedUrl = (url: string) => {
-                  const postMatch = url.match(/instagram\.com\/(p|reel)\/([^/?]+)/);
-                  return postMatch ? `https://www.instagram.com/${postMatch[1]}/${postMatch[2]}/embed/` : null;
-                };
-                const embedUrl = getEmbedUrl(post.url);
+          </section>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════
+            10. WHATSAPP CTA — Dark full-bleed
+        ═══════════════════════════════════════════════════════ */}
+        <section className="relative overflow-hidden mx-4 md:mx-10 lg:mx-16 mb-24 rounded-3xl" style={{ background: '#0c0703' }}>
+          {/* Ambient glow */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(196,144,106,0.18) 0%, transparent 70%)' }} />
+          {/* Gold borders */}
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 10%, rgba(196,144,106,0.5) 40%, rgba(212,169,106,0.6) 50%, rgba(196,144,106,0.5) 60%, transparent 90%)' }} />
+          <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 10%, rgba(196,144,106,0.3) 40%, rgba(196,144,106,0.3) 60%, transparent 90%)' }} />
+          {/* Decorative corner diamonds */}
+          <span className="absolute top-8 left-10 text-2xl opacity-20" style={{ color: '#C4906A' }}>✦</span>
+          <span className="absolute top-8 right-10 text-2xl opacity-20" style={{ color: '#C4906A' }}>✦</span>
+          <span className="absolute bottom-8 left-10 text-lg opacity-10" style={{ color: '#C4906A' }}>✦</span>
+          <span className="absolute bottom-8 right-10 text-lg opacity-10" style={{ color: '#C4906A' }}>✦</span>
+
+          <div className="relative z-10 text-center py-20 md:py-28 px-6">
+            <p className="text-[10px] tracking-[0.45em] uppercase font-black mb-7" style={{ color: '#C4906A' }}>✦ Let's Create Together</p>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.12] tracking-tight">
+              Your Dream Piece<br />Awaits
+            </h2>
+            <p className="mb-12 max-w-lg mx-auto leading-[1.8] text-lg" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              Connect with our jewelry experts for a personalized consultation. We craft bespoke pieces that tell your unique story.
+            </p>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 font-bold text-[13px] tracking-[0.12em] uppercase rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
+              style={{
+                padding: '17px 44px',
+                background: GOLD,
+                color: '#fff',
+                boxShadow: '0 10px 50px -8px rgba(155,104,68,0.7)',
+              }}
+            >
+              <MessageCircle className="h-5 w-5" />
+              Enquire on WhatsApp
+            </a>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════════════════
+            11. INSTAGRAM — If available
+        ═══════════════════════════════════════════════════════ */}
+        {instagramPosts.length > 0 && (
+          <section className="mb-20 overflow-hidden">
+            <div className="text-center mb-12 px-4">
+              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Instagram</p>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Follow Our Journey</h2>
+            </div>
+            <div className="flex gap-4 animate-[scroll_22s_linear_infinite] hover:pause pl-6">
+              {[...instagramPosts.slice(0, 8), ...instagramPosts.slice(0, 8)].map((post, i) => {
+                const m = post.url.match(/instagram\.com\/(p|reel)\/([^/?]+)/);
+                const embed = m ? `https://www.instagram.com/${m[1]}/${m[2]}/embed/` : null;
                 return (
-                  <div
-                    key={`${post.id}-${index}`}
+                  <div key={`${post.id}-${i}`}
                     onClick={() => window.open(post.url, '_blank')}
-                    className="flex-shrink-0 w-[280px] sm:w-72 md:w-80 h-[320px] sm:h-[350px] rounded-xl sm:rounded-2xl overflow-hidden hover-lift bg-background border border-border shadow-lg cursor-pointer"
-                  >
-                    {embedUrl ? (
-                      <iframe src={embedUrl} className="w-full h-full" frameBorder="0" scrolling="no" title={`Instagram post ${post.id}`} />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-sm text-muted-foreground">Instagram Post</div>
-                    )}
+                    className="flex-shrink-0 w-72 h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg"
+                    style={{ border: '1px solid rgba(196,144,106,0.15)' }}>
+                    {embed
+                      ? <iframe src={embed} className="w-full h-full" frameBorder="0" scrolling="no" title={`Instagram ${i}`} />
+                      : <div className="w-full h-full flex items-center justify-center text-sm text-muted-foreground">Instagram</div>}
                   </div>
                 );
               })}
@@ -426,34 +510,6 @@ const Index = () => {
           </section>
         )}
 
-        {/* Testimonials */}
-        {testimonials.length > 0 && (
-          <section className="mb-16 md:mb-20 overflow-hidden">
-            <div className="text-center mb-8 md:mb-12 px-4">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">What Our Customers Say</h2>
-              <p className="text-sm sm:text-base md:text-lg text-muted-foreground">Real experiences from our valued customers</p>
-            </div>
-            <div className="flex gap-4 sm:gap-6 animate-[scroll_25s_linear_infinite] sm:animate-[scroll_18s_linear_infinite] hover:pause pl-4">
-              {[...testimonials, ...testimonials].map((testimonial, index) => (
-                <div key={`${testimonial.id}-${index}`} className="flex-shrink-0 w-[300px] sm:w-80 md:w-96 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-card border border-border shadow-lg">
-                  <Quote className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-primary/30 mb-3 sm:mb-4" />
-                  <p className="text-sm sm:text-base text-foreground/90 mb-3 sm:mb-4 line-clamp-4">{testimonial.text}</p>
-                  <div className="flex items-center gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-base sm:text-lg font-bold text-primary">{testimonial.name.charAt(0)}</span>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-sm sm:text-base">{testimonial.name}</h4>
-                      <div className="flex gap-0.5">{[...Array(5)].map((_, i) => <Star key={i} className={`h-3 w-3 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`} />)}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Services Section */}
         <ServicesSection />
       </main>
 
@@ -467,6 +523,4 @@ const Index = () => {
       />
     </div>
   );
-};
-
-export default Index;
+}
