@@ -217,12 +217,14 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
         {/* ── MOBILE  (< lg) ────────────────────────────────────────── */}
         <div className="lg:hidden flex flex-col h-full overflow-hidden" style={{ background: '#0f0906' }}>
 
-          {/* Media area — fills remaining height above info strip */}
-          <div className="relative flex-1 overflow-hidden" style={{ minHeight: 0 }}>
-            {/* Skeleton */}
+          {/* Media — fixed clamp height: never too small on tiny phones, never too tall on big ones */}
+          <div
+            className="relative flex-shrink-0 w-full overflow-hidden"
+            style={{ height: 'clamp(220px, 46vw, 320px)', background: '#0f0906' }}
+          >
             {!loaded && (
               <div className="absolute inset-0 z-10" style={{ background: '#1C0D05' }}>
-                <div className="absolute inset-0 animate-pulse" style={{ background: 'rgba(196,144,106,0.06)' }} />
+                <div className="absolute inset-0 animate-pulse" style={{ background: 'rgba(196,144,106,0.07)' }} />
               </div>
             )}
 
@@ -261,20 +263,19 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
             )}
           </div>
 
-          {/* Thumbnail strip — fixed height, no overflow cut */}
+          {/* Thumbnail strip */}
           {multi && (
             <div className="flex-shrink-0 px-3 py-2" style={{ background: '#0f0906', borderTop: '1px solid rgba(196,144,106,0.15)' }}>
               <div ref={thumbsRef} className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                 {media.map((item, i) => <Thumb key={i} item={item} i={i} />)}
-                <div className="flex-shrink-0 w-1" /> {/* trailing spacer so last thumb isn't flush */}
+                <div className="flex-shrink-0 w-2" />
               </div>
             </div>
           )}
 
-          {/* Info — scrollable */}
-          <div className="flex-shrink-0 overflow-y-auto pb-20" style={{ maxHeight: '42%', background: '#fdf5ec' }}>
+          {/* Info — flex-1 takes remaining height, scrolls internally */}
+          <div className="flex-1 overflow-y-auto min-h-0" style={{ background: '#fdf5ec' }}>
             <div className="px-5 pt-5 pb-4 space-y-4">
-              {/* Gold accent line */}
               <div className="flex items-center gap-3">
                 <div className="w-6 h-px" style={{ background: 'linear-gradient(90deg,#9B6844,#D4A96A)' }} />
                 <span className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: '#9B6844' }}>Flenix Jewels</span>
@@ -285,10 +286,12 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                 <div className="text-sm leading-relaxed text-zinc-600 prose prose-sm max-w-none"
                   dangerouslySetInnerHTML={{ __html: product.description }} />
               )}
+              {/* bottom breathing room so content doesn't hide behind CTA */}
+              <div className="h-2" />
             </div>
           </div>
 
-          {/* Sticky CTA */}
+          {/* CTA — always pinned at bottom */}
           <div className="flex-shrink-0 px-4 py-3" style={{ background: '#fdf5ec', borderTop: '1px solid rgba(196,144,106,0.20)' }}>
             <WhatsAppButton product={product} className="w-full h-11 text-sm font-semibold rounded-xl" />
           </div>
