@@ -16,7 +16,7 @@ const Gallery = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [filter, setFilter] = useState('all');
   const [isLoaded, setIsLoaded] = useState(false);
-  const [thumbsRef] = useState(() => ({ current: null as HTMLDivElement | null }));
+  const thumbsRef = useRef<HTMLDivElement>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
@@ -323,7 +323,7 @@ const Gallery = () => {
                 </div>
 
                 <button onClick={handleWhatsApp}
-                  className="w-full flex items-center justify-center gap-3 font-bold text-sm tracking-wider uppercase rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 py-4"
+                  className="hidden lg:flex w-full items-center justify-center gap-3 font-bold text-sm tracking-wider uppercase rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 py-4"
                   style={{ background: 'linear-gradient(135deg, #128C7E, #25D366)', color: '#fff', boxShadow: '0 8px 24px -6px rgba(37,211,102,0.35)' }}>
                   <FaWhatsapp className="h-5 w-5" />
                   Enquire on WhatsApp
@@ -369,7 +369,7 @@ const Gallery = () => {
           {/* Thumbnail filmstrip */}
           <div className="flex-shrink-0 px-4 py-3" style={{ borderTop: '1px solid rgba(196,144,106,0.10)', background: 'rgba(0,0,0,0.5)' }}>
             <div
-              ref={el => { thumbsRef.current = el; }}
+              ref={thumbsRef}
               className="flex gap-2 overflow-x-auto scrollbar-hide"
               style={{ scrollSnapType: 'x mandatory' }}
             >
