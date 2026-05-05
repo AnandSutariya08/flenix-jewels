@@ -17,24 +17,24 @@ const Categories = () => {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': 'https://www.starlinkjewels.com/categories#collectionpage',
-    name: 'Jewelry Collections - Premium Diamond & Gold Jewelry | Starlink Jewels',
+    '@id': 'https://www.flenixjewels.com/categories#collectionpage',
+    name: 'Jewelry Collections - Premium Diamond & Gold Jewelry | Flenix Jewels',
     description: 'Explore our premium jewelry collections featuring GIA certified diamonds, gold, platinum rings, necklaces, earrings, and bracelets.',
-    url: 'https://www.starlinkjewels.com/categories',
-    mainEntityOfPage: 'https://www.starlinkjewels.com/categories',
+    url: 'https://www.flenixjewels.com/categories',
+    mainEntityOfPage: 'https://www.flenixjewels.com/categories',
     mainEntity: {
       '@type': 'ItemList',
-      '@id': 'https://www.starlinkjewels.com/categories#itemlist',
+      '@id': 'https://www.flenixjewels.com/categories#itemlist',
       itemListElement: categories.map((cat, index) => ({
         '@type': 'ListItem',
         position: index + 1,
         item: {
           '@type': 'Product',
-          '@id': `https://www.starlinkjewels.com/category/${cat.id}#category`,
+          '@id': `https://www.flenixjewels.com/category/${cat.id}#category`,
           name: cat.name,
           description: cat.description,
           image: cat.image,
-          url: `https://www.starlinkjewels.com/category/${cat.id}`
+          url: `https://www.flenixjewels.com/category/${cat.id}`
         }
       }))
     }
@@ -61,14 +61,14 @@ const Categories = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Jewelry Collections - Diamond Rings, Gold Necklaces, Earrings & Bracelets | Starlink Jewels"
+        title="Jewelry Collections - Diamond Rings, Gold Necklaces, Earrings & Bracelets | Flenix Jewels"
         description="Explore our curated jewelry collections. Shop premium GIA certified diamond rings, 18K gold necklaces, elegant earrings, platinum bracelets. Best prices, free shipping worldwide."
         keywords="jewelry collections, diamond rings collection, gold necklaces, diamond earrings, bracelets, engagement rings, wedding bands, solitaire rings, tennis bracelets, pearl necklaces, gemstone jewelry, ruby rings, emerald jewelry, sapphire earrings, custom jewelry"
-        canonicalUrl="https://www.starlinkjewels.com/categories"
+        canonicalUrl="https://www.flenixjewels.com/categories"
         structuredData={structuredData}
         breadcrumbs={[
-          { name: "Home", url: "https://www.starlinkjewels.com" },
-          { name: "Categories", url: "https://www.starlinkjewels.com/categories" },
+          { name: "Home", url: "https://www.flenixjewels.com" },
+          { name: "Categories", url: "https://www.flenixjewels.com/categories" },
         ]}
         faqItems={faqItems}
       />

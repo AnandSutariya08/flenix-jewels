@@ -200,7 +200,7 @@ const AdminOffices = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g., office@starlinkjewels.com"
+                placeholder="e.g., office@flenixjewels.com"
                 maxLength={255}
               />
             </div>

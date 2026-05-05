@@ -1,4 +1,4 @@
-// Firebase data management for Starlink Jewels
+// Firebase data management for Flenix Jewels
 import { 
   collection, 
   doc, 
@@ -165,9 +165,9 @@ export const initializeDefaultData = async () => {
       const defaultContact: ContactInfo = {
         address: '123 Diamond Street, Mumbai, India',
         phone: '+91 9967381180',
-        email: 'info@starlinkjewels.com',
-        instagram: 'https://instagram.com/starlinkjewels',
-        facebook: 'https://facebook.com/starlinkjewels',
+        email: 'info@flenixjewels.com',
+        instagram: 'https://instagram.com/flenixjewels',
+        facebook: 'https://facebook.com/flenixjewels',
         whatsapp: '9967381180',
       };
       await setDoc(doc(db, COLLECTIONS.CONTACT, 'main'), defaultContact);
@@ -547,7 +547,7 @@ const processImage = async (file: File, path: string, addMark: boolean): Promise
         ctx.fillStyle = 'rgba(255, 255, 255, 0.20)';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('STARLINK JEWELS', canvas.width / 2, canvas.height / 2);
+        ctx.fillText('FLENIX JEWELS', canvas.width / 2, canvas.height / 2);
       }
       
       // Convert canvas to blob
@@ -672,7 +672,7 @@ const addVideoWatermark = async (file: File): Promise<File> => {
         ctx.fillStyle = "rgba(255, 255, 255, 0.20)";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("STARLINK JEWELS", canvas.width / 2, canvas.height / 2);
+        ctx.fillText("FLENIX JEWELS", canvas.width / 2, canvas.height / 2);
 
         if (!video.paused && !video.ended) {
           requestAnimationFrame(drawFrame);

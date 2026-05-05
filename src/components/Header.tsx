@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import logo from '@/assets/starlink-logo-horizontal.png';
+import logo from '@/assets/flenix-logo-horizontal.png';
 import { PromoHeader as PromoHeaderType } from '@/lib/storage';
 
 gsap.registerPlugin(ScrollTrigger);

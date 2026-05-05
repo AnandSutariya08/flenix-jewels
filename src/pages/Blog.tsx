@@ -73,31 +73,31 @@ const Blog = () => {
   const baseStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    '@id': 'https://www.starlinkjewels.com/blog#blog',
-    name: 'Starlink Jewels Blog - Expert Jewelry Insights & Guides',
-    description: 'Expert insights, trends, and comprehensive guides about luxury jewelry, diamonds, gemstones, and precious metals from Starlink Jewels.',
-    url: 'https://www.starlinkjewels.com/blog',
-    mainEntityOfPage: 'https://www.starlinkjewels.com/blog',
+    '@id': 'https://www.flenixjewels.com/blog#blog',
+    name: 'Flenix Jewels Blog - Expert Jewelry Insights & Guides',
+    description: 'Expert insights, trends, and comprehensive guides about luxury jewelry, diamonds, gemstones, and precious metals from Flenix Jewels.',
+    url: 'https://www.flenixjewels.com/blog',
+    mainEntityOfPage: 'https://www.flenixjewels.com/blog',
     publisher: {
       '@type': 'Organization',
-      name: 'Starlink Jewels',
+      name: 'Flenix Jewels',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://www.starlinkjewels.com/icon.png'
+        url: 'https://www.flenixjewels.com/icon.png'
       }
     },
     blogPost: sortedBlogs.slice(0, 10).map(blog => ({
       '@type': 'BlogPosting',
-      '@id': `https://www.starlinkjewels.com/blog/${blog.id}#blogpost`,
+      '@id': `https://www.flenixjewels.com/blog/${blog.id}#blogpost`,
       headline: blog.title,
       datePublished: blog.date,
       dateModified: blog.date,
       image: blog.image,
       description: blog.content.substring(0, 160),
-      mainEntityOfPage: `https://www.starlinkjewels.com/blog/${blog.id}`,
+      mainEntityOfPage: `https://www.flenixjewels.com/blog/${blog.id}`,
       author: {
         '@type': 'Organization',
-        name: 'Starlink Jewels'
+        name: 'Flenix Jewels'
       }
     })),
   };
@@ -106,7 +106,7 @@ const Blog = () => {
     ? {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
-        '@id': `https://www.starlinkjewels.com/blog/${selectedBlog.id}#blogpost`,
+        '@id': `https://www.flenixjewels.com/blog/${selectedBlog.id}#blogpost`,
         headline: selectedBlog.title,
         datePublished: selectedBlog.date,
         dateModified: selectedBlog.date,
@@ -114,9 +114,9 @@ const Blog = () => {
         description: buildMetaDescriptionForBlog(selectedBlog.content),
         author: {
           '@type': 'Organization',
-          name: 'Starlink Jewels',
+          name: 'Flenix Jewels',
         },
-        mainEntityOfPage: `https://www.starlinkjewels.com/blog/${selectedBlog.id}`,
+        mainEntityOfPage: `https://www.flenixjewels.com/blog/${selectedBlog.id}`,
       }
     : undefined;
 
@@ -127,15 +127,15 @@ const Blog = () => {
 
   const seoTitle = selectedBlog
     ? (selectedBlog.metaTitle || buildMetaTitleForBlog(selectedBlog.title))
-    : "Jewelry Blog - Diamond Tips, Engagement Ring Guides & Luxury Trends | Starlink Jewels";
+    : "Jewelry Blog - Diamond Tips, Engagement Ring Guides & Luxury Trends | Flenix Jewels";
 
   const seoDescription = selectedBlog
     ? (selectedBlog.metaDescription || buildMetaDescriptionForBlog(selectedBlog.content))
-    : "Discover expert jewelry insights, diamond buying guides, engagement ring tips, gemstone education, and the latest luxury jewelry trends from Starlink Jewels experts.";
+    : "Discover expert jewelry insights, diamond buying guides, engagement ring tips, gemstone education, and the latest luxury jewelry trends from Flenix Jewels experts.";
 
   const defaultFaqItems = [
     {
-      question: "What topics do you cover in the Starlink Jewels blog?",
+      question: "What topics do you cover in the Flenix Jewels blog?",
       answer:
         "We cover diamond buying guides, engagement ring tips, jewelry care, gemstone education, and luxury jewelry trends.",
     },
@@ -158,11 +158,11 @@ const Blog = () => {
         title={seoTitle}
         description={seoDescription}
         keywords="jewelry blog, diamond buying guide, engagement ring tips, jewelry trends 2024, gemstone guide, diamond education, luxury jewelry tips, how to buy diamonds, jewelry care tips, wedding ring guide, precious stones, gold jewelry guide, platinum jewelry, custom jewelry design, jewelry investment"
-        canonicalUrl={`https://www.starlinkjewels.com/blog${selectedBlog ? `/${selectedBlog.id}` : ''}`}
+        canonicalUrl={`https://www.flenixjewels.com/blog${selectedBlog ? `/${selectedBlog.id}` : ''}`}
         structuredData={structuredData}
         breadcrumbs={[
-          { name: "Home", url: "https://www.starlinkjewels.com" },
-          { name: "Blog", url: "https://www.starlinkjewels.com/blog" },
+          { name: "Home", url: "https://www.flenixjewels.com" },
+          { name: "Blog", url: "https://www.flenixjewels.com/blog" },
         ]}
         faqItems={faqItems}
       />

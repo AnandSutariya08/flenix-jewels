@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
-import logo from '@/assets/starlink-logo-full.png';
+import logo from '@/assets/flenix-logo-full.png';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import Zelle from '@/assets/paylogo/Zelle_(payment_service)-Logo.wine.png';

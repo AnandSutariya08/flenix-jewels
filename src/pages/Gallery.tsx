@@ -58,18 +58,18 @@ const Gallery = () => {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'ImageGallery',
-    '@id': 'https://www.starlinkjewels.com/gallery#imagegallery',
-    name: 'Starlink Jewels Gallery - Diamond & Gold Jewelry Collection',
+    '@id': 'https://www.flenixjewels.com/gallery#imagegallery',
+    name: 'Flenix Jewels Gallery - Diamond & Gold Jewelry Collection',
     description: 'Browse our stunning collection of GIA certified diamond jewelry, engagement rings, gold necklaces, and luxury pieces.',
-    url: 'https://www.starlinkjewels.com/gallery',
+    url: 'https://www.flenixjewels.com/gallery',
     image: galleryItems.slice(0, 10).map(item => item.image),
     numberOfItems: galleryItems.length,
-    mainEntityOfPage: 'https://www.starlinkjewels.com/gallery'
+    mainEntityOfPage: 'https://www.flenixjewels.com/gallery'
   };
 
   const faqItems = [
     {
-      question: "What is shown in the Starlink Jewels gallery?",
+      question: "What is shown in the Flenix Jewels gallery?",
       answer:
         "Our gallery showcases premium diamond and gold jewelry, including rings, earrings, necklaces, and bracelets.",
     },
@@ -88,14 +88,14 @@ const Gallery = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <SEOHead
-        title="Jewelry Gallery - Diamond & Gold Collection Photos | Starlink Jewels"
+        title="Jewelry Gallery - Diamond & Gold Collection Photos | Flenix Jewels"
         description="Browse our gallery of exquisite GIA certified diamond jewelry. View stunning engagement rings, gold necklaces, earrings, bracelets. High-quality photos of luxury jewelry pieces."
         keywords="jewelry gallery, diamond jewelry photos, gold jewelry images, engagement ring photos, luxury jewelry collection, diamond necklace gallery, gold earrings photos, jewelry design gallery, real jewelry photos, diamond ring images"
-        canonicalUrl="https://www.starlinkjewels.com/gallery"
+        canonicalUrl="https://www.flenixjewels.com/gallery"
         structuredData={structuredData}
         breadcrumbs={[
-          { name: "Home", url: "https://www.starlinkjewels.com" },
-          { name: "Gallery", url: "https://www.starlinkjewels.com/gallery" },
+          { name: "Home", url: "https://www.flenixjewels.com" },
+          { name: "Gallery", url: "https://www.flenixjewels.com/gallery" },
         ]}
         faqItems={faqItems}
       />

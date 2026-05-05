@@ -30,7 +30,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
-      const cached = window.localStorage.getItem('starlink_hero_fallback');
+      const cached = window.localStorage.getItem('flenix_hero_fallback');
       if (cached) setFallbackImage(cached);
     } catch {
       // ignore storage errors
@@ -42,7 +42,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
     const first = banners[0];
     if (!first || first.mediaType === 'video') return;
     try {
-      window.localStorage.setItem('starlink_hero_fallback', first.image);
+      window.localStorage.setItem('flenix_hero_fallback', first.image);
       setFallbackImage(first.image);
     } catch {
       // ignore storage errors

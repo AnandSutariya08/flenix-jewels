@@ -1,10 +1,10 @@
 export const SITE = {
-  name: "Starlink Jewels",
-  url: "https://www.starlinkjewels.com",
-  ogImage: "https://www.starlinkjewels.com/icon.png",
+  name: "Flenix Jewels",
+  url: "https://www.flenixjewels.com",
+  ogImage: "https://www.flenixjewels.com/icon.png",
   phonePrimary: "+91 9967381180",
   phoneWhatsApp: "+91 9967381180",
-  email: "info@starlinkjewels.com",
+  email: "info@flenixjewels.com",
   areaServed: ["US", "CA", "AU", "DE", "GB", "IN"],
   addressIndia: {
     country: "IN",
@@ -19,9 +19,9 @@ export const SITE = {
     country: "US",
   },
   sameAs: [
-    "https://instagram.com/starlinkjewels",
-    "https://facebook.com/starlinkjewels",
-    "https://pinterest.com/starlinkjewels",
+    "https://instagram.com/flenixjewels",
+    "https://facebook.com/flenixjewels",
+    "https://pinterest.com/flenixjewels",
   ],
   keywords: [
     "lab grown diamond jewelry",

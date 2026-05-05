@@ -59,17 +59,17 @@ const BuyingGuidePage = () => {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    '@id': `https://www.starlinkjewels.com/buying-guide${slug ? `/${slug}` : ''}#howto`,
+    '@id': `https://www.flenixjewels.com/buying-guide${slug ? `/${slug}` : ''}#howto`,
     name: selected?.title || 'Jewelry Buying Guide',
     description: selected?.content
       ? buildMetaDescriptionFromHtml(selected.content, 160)
       : 'Expert advice to help you make the perfect jewelry choice.',
-    mainEntityOfPage: `https://www.starlinkjewels.com/buying-guide${slug ? `/${slug}` : ''}`,
+    mainEntityOfPage: `https://www.flenixjewels.com/buying-guide${slug ? `/${slug}` : ''}`,
   };
 
   const defaultFaqItems = [
     {
-      question: "What are Starlink Jewels buying guides?",
+      question: "What are Flenix Jewels buying guides?",
       answer:
         "They are expert guides covering diamond quality, ring styles, certifications, and purchase tips.",
     },
@@ -93,10 +93,10 @@ const BuyingGuidePage = () => {
           title="Jewelry Buying Guide"
           description="Learn how to buy jewelry like a pro."
           keywords="jewelry buying guide, diamond buying guide, lab grown diamond guide, engagement ring guide, jewelry education"
-          canonicalUrl="https://www.starlinkjewels.com/buying-guide"
+          canonicalUrl="https://www.flenixjewels.com/buying-guide"
           breadcrumbs={[
-            { name: "Home", url: "https://www.starlinkjewels.com" },
-            { name: "Buying Guide", url: "https://www.starlinkjewels.com/buying-guide" },
+            { name: "Home", url: "https://www.flenixjewels.com" },
+            { name: "Buying Guide", url: "https://www.flenixjewels.com/buying-guide" },
           ]}
           faqItems={faqItems}
         />
@@ -128,10 +128,10 @@ const BuyingGuidePage = () => {
           title="Jewelry Buying Guide"
           description="Learn how to buy jewelry like a pro."
           keywords="jewelry buying guide, diamond buying guide, lab grown diamond guide, engagement ring guide, jewelry education"
-          canonicalUrl="https://www.starlinkjewels.com/buying-guide"
+          canonicalUrl="https://www.flenixjewels.com/buying-guide"
           breadcrumbs={[
-            { name: "Home", url: "https://www.starlinkjewels.com" },
-            { name: "Buying Guide", url: "https://www.starlinkjewels.com/buying-guide" },
+            { name: "Home", url: "https://www.flenixjewels.com" },
+            { name: "Buying Guide", url: "https://www.flenixjewels.com/buying-guide" },
           ]}
           faqItems={faqItems}
         />
@@ -156,12 +156,12 @@ const BuyingGuidePage = () => {
           ? (selected.metaDescription || buildMetaDescriptionFromHtml(selected.content, 160))
           : 'Comprehensive jewelry buying guides.'}
         keywords="jewelry buying guide, diamond 4cs"
-        canonicalUrl={`https://www.starlinkjewels.com/buying-guide${slug ? `/${slug}` : ''}`}
+        canonicalUrl={`https://www.flenixjewels.com/buying-guide${slug ? `/${slug}` : ''}`}
         structuredData={structuredData}
         breadcrumbs={[
-          { name: "Home", url: "https://www.starlinkjewels.com" },
-          { name: "Buying Guide", url: "https://www.starlinkjewels.com/buying-guide" },
-          ...(selected ? [{ name: selected.title, url: `https://www.starlinkjewels.com/buying-guide/${selected.slug}` }] : []),
+          { name: "Home", url: "https://www.flenixjewels.com" },
+          { name: "Buying Guide", url: "https://www.flenixjewels.com/buying-guide" },
+          ...(selected ? [{ name: selected.title, url: `https://www.flenixjewels.com/buying-guide/${selected.slug}` }] : []),
         ]}
         faqItems={faqItems}
       />

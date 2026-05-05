@@ -25,7 +25,7 @@ const COUNTRIES: CountryConfig[] = [
     locale: "en-US",
     headline: "Diamond Jewelry Delivered Across the USA",
     description:
-      "Shop certified lab-grown and natural diamond jewelry from Starlink Jewels with secure worldwide delivery to the United States. Custom designs, premium craftsmanship, and WhatsApp support.",
+      "Shop certified lab-grown and natural diamond jewelry from Flenix Jewels with secure worldwide delivery to the United States. Custom designs, premium craftsmanship, and WhatsApp support.",
     shippingText:
       "Fast, insured international shipping to all US states with secure packaging and tracking.",
     keywords:
@@ -61,7 +61,7 @@ const COUNTRIES: CountryConfig[] = [
     locale: "en-DE",
     headline: "Certified Diamond Jewelry Delivered to Germany",
     description:
-      "Explore Starlink Jewels luxury diamond collections with secure delivery to Germany. Lab-grown and natural diamonds, custom jewelry, and expert support.",
+      "Explore Flenix Jewels luxury diamond collections with secure delivery to Germany. Lab-grown and natural diamonds, custom jewelry, and expert support.",
     shippingText:
       "Reliable international shipping to Germany with secure packaging and tracking.",
     keywords:
@@ -87,7 +87,7 @@ const CountryLanding = () => {
         <SEOHead
           title="Country Page Not Found"
           description="The requested country page could not be found."
-          canonicalUrl={`https://www.starlinkjewels.com/${country || ""}`}
+          canonicalUrl={`https://www.flenixjewels.com/${country || ""}`}
         />
         <Header promoHeader={promoHeader} />
         <MiniHeader categories={categories} promoHeight={promoHeight} />
@@ -110,7 +110,7 @@ const CountryLanding = () => {
         title={`${config.name} Diamond Jewelry Shipping`}
         description={config.description}
         keywords={config.keywords}
-        canonicalUrl={`https://www.starlinkjewels.com/${config.slug}`}
+        canonicalUrl={`https://www.flenixjewels.com/${config.slug}`}
       />
 
       <Header promoHeader={promoHeader} />
@@ -129,7 +129,7 @@ const CountryLanding = () => {
           </div>
 
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-2">Why Starlink Jewels</h2>
+            <h2 className="text-xl font-semibold mb-2">Why Flenix Jewels</h2>
             <ul className="text-muted-foreground space-y-2">
               <li>Certified lab-grown and natural diamonds.</li>
               <li>Custom design and manufacturing support.</li>

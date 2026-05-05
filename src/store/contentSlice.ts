@@ -56,8 +56,8 @@ interface ContentState {
   blogsLoaded: boolean;
 }
 
-const SESSION_KEY = "starlink_global_data_v3";
-const LOCAL_KEY = "starlink_global_data_v3_persisted";
+const SESSION_KEY = "flenix_global_data_v3";
+const LOCAL_KEY = "flenix_global_data_v3_persisted";
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const emptyData: GlobalData = {

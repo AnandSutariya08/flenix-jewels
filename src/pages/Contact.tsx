@@ -50,15 +50,15 @@ const Contact = () => {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
-    '@id': 'https://www.starlinkjewels.com/contact#contactpage',
-    name: 'Contact Starlink Jewels - Diamond Jewelry Store',
-    description: 'Contact Starlink Jewels for premium diamond jewelry, custom designs, engagement rings, and wholesale inquiries.',
-    url: 'https://www.starlinkjewels.com/contact',
-    mainEntityOfPage: 'https://www.starlinkjewels.com/contact',
+    '@id': 'https://www.flenixjewels.com/contact#contactpage',
+    name: 'Contact Flenix Jewels - Diamond Jewelry Store',
+    description: 'Contact Flenix Jewels for premium diamond jewelry, custom designs, engagement rings, and wholesale inquiries.',
+    url: 'https://www.flenixjewels.com/contact',
+    mainEntityOfPage: 'https://www.flenixjewels.com/contact',
     mainEntity: {
       '@type': 'Organization',
-      '@id': 'https://www.starlinkjewels.com/#jewelry-store',
-      name: 'Starlink Jewels',
+      '@id': 'https://www.flenixjewels.com/#jewelry-store',
+      name: 'Flenix Jewels',
       telephone: contactInfo?.phone,
       email: contactInfo?.email,
       address: {
@@ -71,7 +71,7 @@ const Contact = () => {
 
   const faqItems = [
     {
-      question: "How can I contact Starlink Jewels?",
+      question: "How can I contact Flenix Jewels?",
       answer:
         "You can contact us via phone or WhatsApp for product inquiries, custom orders, and wholesale requests.",
     },
@@ -90,14 +90,14 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Contact Us - Diamond Jewelry Inquiries & Custom Orders | Starlink Jewels"
-        description="Contact Starlink Jewels for inquiries about GIA certified diamonds, custom jewelry designs, engagement rings, wholesale orders. Global offices in Mumbai, New York, Dubai. 24/7 WhatsApp support."
-        keywords="contact starlink jewels, jewelry store contact, diamond jewelry inquiries, custom jewelry design, wholesale diamond jewelry, engagement ring consultation, buy diamonds online, jewelry showroom Mumbai, diamond dealer contact"
-        canonicalUrl="https://www.starlinkjewels.com/contact"
+        title="Contact Us - Diamond Jewelry Inquiries & Custom Orders | Flenix Jewels"
+        description="Contact Flenix Jewels for inquiries about GIA certified diamonds, custom jewelry designs, engagement rings, wholesale orders. Global offices in Mumbai, New York, Dubai. 24/7 WhatsApp support."
+        keywords="contact flenix jewels, jewelry store contact, diamond jewelry inquiries, custom jewelry design, wholesale diamond jewelry, engagement ring consultation, buy diamonds online, jewelry showroom Mumbai, diamond dealer contact"
+        canonicalUrl="https://www.flenixjewels.com/contact"
         structuredData={structuredData}
         breadcrumbs={[
-          { name: "Home", url: "https://www.starlinkjewels.com" },
-          { name: "Contact", url: "https://www.starlinkjewels.com/contact" },
+          { name: "Home", url: "https://www.flenixjewels.com" },
+          { name: "Contact", url: "https://www.flenixjewels.com/contact" },
         ]}
         faqItems={faqItems}
       />

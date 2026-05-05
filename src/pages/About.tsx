@@ -44,15 +44,15 @@ const About = () => {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
-    '@id': 'https://www.starlinkjewels.com/about#aboutpage',
-    name: 'About Starlink Jewels - Premium Diamond Jewelry Since 2011',
-    description: 'Learn about Starlink Jewels - a premier luxury jewelry brand with over 29 years of excellence in diamond and gold jewelry craftsmanship.',
-    url: 'https://www.starlinkjewels.com/about',
-    mainEntityOfPage: 'https://www.starlinkjewels.com/about',
+    '@id': 'https://www.flenixjewels.com/about#aboutpage',
+    name: 'About Flenix Jewels - Premium Diamond Jewelry Since 2011',
+    description: 'Learn about Flenix Jewels - a premier luxury jewelry brand with over 29 years of excellence in diamond and gold jewelry craftsmanship.',
+    url: 'https://www.flenixjewels.com/about',
+    mainEntityOfPage: 'https://www.flenixjewels.com/about',
     mainEntity: {
       '@type': 'Organization',
-      '@id': 'https://www.starlinkjewels.com/#jewelry-store',
-      name: 'Starlink Jewels',
+      '@id': 'https://www.flenixjewels.com/#jewelry-store',
+      name: 'Flenix Jewels',
       foundingDate: '2011',
       numberOfEmployees: '50+',
       areaServed: 'Worldwide',
@@ -63,7 +63,7 @@ const About = () => {
 
   const faqItems = [
     {
-      question: "How long has Starlink Jewels been in business?",
+      question: "How long has Flenix Jewels been in business?",
       answer:
         "We have 11+ years of experience in diamond and gold jewelry design, manufacturing, and exports.",
     },
@@ -96,14 +96,14 @@ const About = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="About Us - 11+ Years of Diamond Jewelry Excellence | Starlink Jewels"
-        description="Discover Starlink Jewels - 11+ years of crafting exceptional GIA certified diamond and gold jewelry. Master craftsmanship, ethical sourcing, 50K+ happy clients worldwide. Learn our story."
-        keywords="about starlink jewels, jewelry brand story, luxury jewelry heritage, diamond jewelry craftsmanship, GIA certified jeweler, ethical diamond sourcing, custom jewelry makers, best jewelry store India, diamond manufacturer, wholesale jewelry supplier"
-        canonicalUrl="https://www.starlinkjewels.com/about"
+        title="About Us - 11+ Years of Diamond Jewelry Excellence | Flenix Jewels"
+        description="Discover Flenix Jewels - 11+ years of crafting exceptional GIA certified diamond and gold jewelry. Master craftsmanship, ethical sourcing, 50K+ happy clients worldwide. Learn our story."
+        keywords="about flenix jewels, jewelry brand story, luxury jewelry heritage, diamond jewelry craftsmanship, GIA certified jeweler, ethical diamond sourcing, custom jewelry makers, best jewelry store India, diamond manufacturer, wholesale jewelry supplier"
+        canonicalUrl="https://www.flenixjewels.com/about"
         structuredData={structuredData}
         breadcrumbs={[
-          { name: "Home", url: "https://www.starlinkjewels.com" },
-          { name: "About", url: "https://www.starlinkjewels.com/about" },
+          { name: "Home", url: "https://www.flenixjewels.com" },
+          { name: "About", url: "https://www.flenixjewels.com/about" },
         ]}
         faqItems={faqItems}
       />
@@ -128,7 +128,7 @@ const About = () => {
                 Crafting Dreams Into Reality
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              For Over 11 Years, Starlink Jewels Has Been Transforming Precious Metals and Gems Into Timeless Masterpieces that Celebrate Life's Most Precious Moments.
+              For Over 11 Years, Flenix Jewels Has Been Transforming Precious Metals and Gems Into Timeless Masterpieces that Celebrate Life's Most Precious Moments.
               </p>
             </div>
           </div>
@@ -146,7 +146,7 @@ const About = () => {
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">A Legacy of Excellence</h2>
                 <div className="w-20 h-1 bg-gradient-to-r from-primary to-primary/50 rounded-full" />
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                Founded withStarlink Jewels Is a Modern Fine Jewelry Manufacturer and Supplier, Specializing in Both Lab-Grown and Natural Diamond Jewelry. with A Strong Focus on Craftsmanship, Ethical Sourcing, and Precision, We Create Timeless Designs that Blend Luxury with Everyday Wearability. Every Piece Is Made to Order, Ensuring Superior Quality, Attention to Detail, and Complete Customization for Our Clients.
+                Founded withFlenix Jewels Is a Modern Fine Jewelry Manufacturer and Supplier, Specializing in Both Lab-Grown and Natural Diamond Jewelry. with A Strong Focus on Craftsmanship, Ethical Sourcing, and Precision, We Create Timeless Designs that Blend Luxury with Everyday Wearability. Every Piece Is Made to Order, Ensuring Superior Quality, Attention to Detail, and Complete Customization for Our Clients.
 
                 </p>
                 <p className="text-lg text-muted-foreground leading-relaxed">

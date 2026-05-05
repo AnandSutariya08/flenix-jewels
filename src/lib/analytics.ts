@@ -2,7 +2,7 @@
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 
-const VISITOR_KEY_PREFIX = 'starlink_visitor_logged';
+const VISITOR_KEY_PREFIX = 'flenix_visitor_logged';
 
 const getDailyVisitorKey = () => {
   const host = window.location.hostname;
