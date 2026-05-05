@@ -1,5 +1,6 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from 'next-themes';
 import Header from '@/components/Header';
 import MiniHeader from '@/components/MiniHeader';
 import Footer from '@/components/Footer';
@@ -9,7 +10,7 @@ import ServicesSection from '@/components/ServicesSection';
 import BlogDialog from '@/components/BlogDialog';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData } from '@/store/contentSlice';
-import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle } from 'lucide-react';
+import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BlogPost } from '@/lib/storage';
 
 const WHATSAPP = 'https://wa.me/919967381180?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.';
@@ -37,6 +38,32 @@ export default function Index() {
   const blogsStatus  = useAppSelector(selectBlogsStatus);
   const [selectedBlog, setSelectedBlog]     = useState<BlogPost | null>(null);
   const [isBlogDialogOpen, setIsBlogDialogOpen] = useState(false);
+
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+
+  /* Featured Collection scroll state */
+  const featuredScrollRef = useRef<HTMLDivElement>(null);
+  const [featuredIdx, setFeaturedIdx] = useState(0);
+
+  const scrollFeatured = useCallback((dir: 'prev' | 'next') => {
+    const el = featuredScrollRef.current;
+    if (!el) return;
+    const cardW = el.firstElementChild ? (el.firstElementChild as HTMLElement).offsetWidth : 280;
+    el.scrollBy({ left: dir === 'next' ? cardW : -cardW, behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
+    const el = featuredScrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const cardW = el.firstElementChild ? (el.firstElementChild as HTMLElement).offsetWidth : 280;
+      const idx = Math.round(el.scrollLeft / cardW);
+      setFeaturedIdx(Math.min(idx, featuredCollection.length - 1));
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [featuredCollection.length]);
 
   const sortedBlogs = useMemo(() => [...blogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()), [blogs]);
 
@@ -152,20 +179,55 @@ export default function Index() {
             4. FEATURED COLLECTION — editorial lookbook
         ═══════════════════════════════════════════════════════ */}
         {featuredCollection.length > 0 && (
-          <section className="py-20 md:py-28" style={{ background: '#0c0703' }}>
-            {/* Header */}
+          <section className="py-20 md:py-28" style={{ background: isDark ? '#0c0703' : '#f5ede3' }}>
+
+            {/* Header + chevrons row */}
             <div className="flex items-end justify-between px-4 md:px-10 lg:px-16 mb-14 max-w-[1600px] mx-auto">
               <div>
                 <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Curated For You</p>
-                <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">Featured Collection</h2>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight" style={{ color: isDark ? '#fff' : '#1a0f06' }}>
+                  Featured Collection
+                </h2>
               </div>
-              <p className="hidden md:block text-sm max-w-xs text-right leading-relaxed" style={{ color: 'rgba(255,255,255,0.32)' }}>
-                Handpicked treasures for the discerning connoisseur
-              </p>
+
+              <div className="flex items-center gap-4">
+                <p className="hidden lg:block text-sm max-w-[200px] text-right leading-relaxed"
+                  style={{ color: isDark ? 'rgba(255,255,255,0.32)' : 'rgba(90,55,20,0.5)' }}>
+                  Handpicked treasures for the discerning connoisseur
+                </p>
+                {/* Desktop chevrons */}
+                <div className="hidden md:flex items-center gap-2">
+                  <button
+                    onClick={() => scrollFeatured('prev')}
+                    disabled={featuredIdx === 0}
+                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-30"
+                    style={{
+                      border: `1px solid ${isDark ? 'rgba(196,144,106,0.35)' : 'rgba(196,144,106,0.45)'}`,
+                      background: isDark ? 'rgba(196,144,106,0.08)' : 'rgba(196,144,106,0.10)',
+                      color: '#C4906A',
+                    }}
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => scrollFeatured('next')}
+                    disabled={featuredIdx === featuredCollection.length - 1}
+                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-30"
+                    style={{
+                      background: GOLD,
+                      color: '#fff',
+                      boxShadow: '0 4px 16px -4px rgba(155,104,68,0.5)',
+                    }}
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Snap-scroll lookbook track */}
             <div
+              ref={featuredScrollRef}
               className="flex gap-0 overflow-x-auto pl-4 md:pl-10 lg:pl-16 pr-4"
               style={{
                 scrollSnapType: 'x mandatory',
@@ -203,7 +265,7 @@ export default function Index() {
                       className="absolute top-6 right-6 font-black leading-none select-none pointer-events-none"
                       style={{
                         fontSize: 'clamp(56px, 8vw, 96px)',
-                        color: 'rgba(196,144,106,0.12)',
+                        color: 'rgba(196,144,106,0.15)',
                         fontVariantNumeric: 'tabular-nums',
                         letterSpacing: '-0.04em',
                       }}
@@ -214,14 +276,12 @@ export default function Index() {
                     {/* Bottom content */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
                       <p className="text-[9px] tracking-[0.3em] uppercase font-black mb-2" style={{ color: '#C4906A' }}>Flenix Jewels</p>
-                      <h3 className="font-bold text-white leading-snug mb-1.5"
-                        style={{ fontSize: 'clamp(16px, 2vw, 22px)' }}>
+                      <h3 className="font-bold text-white leading-snug mb-1.5" style={{ fontSize: 'clamp(16px, 2vw, 22px)' }}>
                         {item.title}
                       </h3>
                       <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
                         {item.description}
                       </p>
-                      {/* Gold underline accent */}
                       <div className="mt-5 w-8 h-px" style={{ background: GOLD }} />
                     </div>
                   </div>
@@ -231,20 +291,56 @@ export default function Index() {
               <div className="flex-shrink-0 w-4 md:w-16" />
             </div>
 
-            {/* Scroll hint dots */}
-            <div className="flex items-center justify-center gap-1.5 mt-8 px-4">
-              {featuredCollection.map((_, i) => (
-                <div key={i} className="rounded-full transition-all duration-300"
-                  style={{ width: i === 0 ? 20 : 6, height: 4, background: i === 0 ? '#C4906A' : 'rgba(196,144,106,0.25)' }} />
-              ))}
+            {/* Live dots + mobile chevrons */}
+            <div className="flex items-center justify-center gap-4 mt-8 px-4">
+              {/* Mobile prev */}
+              <button
+                onClick={() => scrollFeatured('prev')}
+                disabled={featuredIdx === 0}
+                className="md:hidden w-9 h-9 rounded-full flex items-center justify-center disabled:opacity-30 transition-opacity"
+                style={{ border: '1px solid rgba(196,144,106,0.4)', color: '#C4906A' }}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+
+              {/* Dots */}
+              <div className="flex items-center gap-1.5">
+                {featuredCollection.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      const el = featuredScrollRef.current;
+                      if (!el || !el.firstElementChild) return;
+                      const cardW = (el.firstElementChild as HTMLElement).offsetWidth;
+                      el.scrollTo({ left: i * cardW, behavior: 'smooth' });
+                    }}
+                    className="rounded-full transition-all duration-300"
+                    style={{
+                      width: featuredIdx === i ? 24 : 6,
+                      height: 4,
+                      background: featuredIdx === i ? '#C4906A' : isDark ? 'rgba(196,144,106,0.28)' : 'rgba(196,144,106,0.35)',
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Mobile next */}
+              <button
+                onClick={() => scrollFeatured('next')}
+                disabled={featuredIdx === featuredCollection.length - 1}
+                className="md:hidden w-9 h-9 rounded-full flex items-center justify-center disabled:opacity-30 transition-opacity"
+                style={{ background: GOLD, color: '#fff' }}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </section>
         )}
 
         {/* ═══════════════════════════════════════════════════════
-            5. DARK EDITORIAL — About + Stats
+            5. EDITORIAL — About + Stats (theme-aware)
         ═══════════════════════════════════════════════════════ */}
-        <section className="relative overflow-hidden" style={{ background: '#0c0703' }}>
+        <section className="relative overflow-hidden" style={{ background: isDark ? '#0c0703' : '#1a0f06' }}>
           <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
           {/* Ambient glow */}
           <div className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
@@ -258,10 +354,10 @@ export default function Index() {
               {/* Left — copy */}
               <div>
                 <p className="text-[10px] tracking-[0.35em] uppercase font-black mb-7" style={{ color: '#C4906A' }}>✦ Our Story</p>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.08] tracking-tight mb-8">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight mb-8" style={{ color: '#fff' }}>
                   Crafting<br />Excellence<br />Since 2011
                 </h2>
-                <p className="text-white/50 text-lg leading-[1.8] mb-10 max-w-md">
+                <p className="text-lg leading-[1.8] mb-10 max-w-md" style={{ color: 'rgba(255,255,255,0.50)' }}>
                   Flenix Jewels is a premier destination for luxury jewelry — combining traditional artisanship with contemporary design. From ethically sourced diamonds to handcrafted settings, every piece tells a unique story.
                 </p>
                 <div className="flex flex-wrap gap-2.5 mb-12">
@@ -288,15 +384,15 @@ export default function Index() {
                   { num: '100%', label: 'Satisfaction Rate',   icon: CheckCircle },
                 ].map(({ num, label, icon: Icon }) => (
                   <div key={label} className="relative p-7 md:p-8 rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-1"
-                    style={{ background: 'rgba(196,144,106,0.065)', border: '1px solid rgba(196,144,106,0.14)' }}>
+                    style={{ background: 'rgba(196,144,106,0.07)', border: '1px solid rgba(196,144,106,0.16)' }}>
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ background: 'rgba(196,144,106,0.04)' }} />
-                    <Icon className="h-5 w-5 mb-5 relative z-10" style={{ color: 'rgba(196,144,106,0.45)' }} />
+                      style={{ background: 'rgba(196,144,106,0.05)' }} />
+                    <Icon className="h-5 w-5 mb-5 relative z-10" style={{ color: 'rgba(196,144,106,0.5)' }} />
                     <div className="text-4xl md:text-5xl font-black mb-2 relative z-10"
                       style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                       {num}
                     </div>
-                    <p className="text-[10.5px] font-bold tracking-[0.18em] uppercase relative z-10" style={{ color: 'rgba(255,255,255,0.38)' }}>
+                    <p className="text-[10.5px] font-bold tracking-[0.18em] uppercase relative z-10" style={{ color: 'rgba(255,255,255,0.40)' }}>
                       {label}
                     </p>
                   </div>
