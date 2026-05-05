@@ -437,45 +437,121 @@ export default function Index() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════
-            7. GALLERY — Bento grid
+            7. GALLERY — Immersive showcase
         ═══════════════════════════════════════════════════════ */}
         {galleryItems.length > 0 && (
-          <section className="px-4 md:px-10 lg:px-16 mb-24 max-w-[1600px] mx-auto">
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Gallery</p>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Moments in Gold</h2>
-              </div>
-              <Link to="/gallery" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase group" style={{ color: '#C4906A' }}>
-                Full Gallery <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
-              </Link>
-            </div>
+          <section className="py-20 md:py-28 relative overflow-hidden" style={{ background: isDark ? '#080400' : '#0e0804' }}>
+            {/* Ambient glow */}
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"
+              style={{ background: 'radial-gradient(ellipse at top right, rgba(196,144,106,0.10) 0%, transparent 65%)', transform: 'translate(20%,-20%)' }} />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] pointer-events-none"
+              style={{ background: 'radial-gradient(ellipse at bottom left, rgba(212,169,106,0.08) 0%, transparent 65%)', transform: 'translate(-20%,20%)' }} />
+            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
 
-            {galleryItems.length >= 5 ? (
-              /* Bento grid */
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" style={{ gridAutoRows: '210px' }}>
-                <div className="col-span-2 row-span-2 rounded-3xl overflow-hidden group">
-                  <img src={galleryItems[0].image} alt="Gallery showcase"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+            <div className="relative z-10 max-w-[1600px] mx-auto px-4 md:px-10 lg:px-16">
+              {/* Header */}
+              <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+                <div>
+                  <p className="text-[10px] tracking-[0.35em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Gallery</p>
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.06] text-white">
+                    Moments<br className="hidden md:block" /> in Gold
+                  </h2>
                 </div>
-                {galleryItems.slice(1, 5).map((item, i) => (
-                  <div key={item.id} className="rounded-2xl overflow-hidden group" style={{ borderRadius: 18 }}>
-                    <img src={item.image} alt={item.description || 'Gallery'}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-                  </div>
-                ))}
+                <div className="lg:pb-2">
+                  <p className="text-sm leading-relaxed mb-5 max-w-xs" style={{ color: 'rgba(255,255,255,0.38)' }}>
+                    Each piece is a testament to exceptional artisanship — photographed to reveal every facet.
+                  </p>
+                  <Link to="/gallery"
+                    className="inline-flex items-center gap-2.5 text-[11px] font-bold tracking-[0.22em] uppercase transition-all duration-200 group"
+                    style={{ color: '#C4906A' }}>
+                    Explore Full Gallery
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1.5" />
+                  </Link>
+                </div>
               </div>
-            ) : (
-              /* Fallback — scroll row */
-              <div className="flex gap-4 overflow-x-auto scrollbar-hide">
-                {galleryItems.map(item => (
-                  <div key={item.id} className="flex-shrink-0 w-72 h-72 rounded-2xl overflow-hidden group">
-                    <img src={item.image} alt={item.description || 'Gallery'}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-                  </div>
-                ))}
+
+              {/* Main showcase grid */}
+              {galleryItems.length >= 5 ? (
+                <div className="grid grid-cols-12 gap-3 md:gap-4" style={{ gridAutoRows: '180px' }}>
+
+                  {/* Hero tall image — 5 cols × 3 rows */}
+                  <Link to="/gallery"
+                    className="col-span-12 md:col-span-5 row-span-3 relative overflow-hidden rounded-3xl group block"
+                    style={{ gridRow: 'span 3' }}>
+                    <img src={galleryItems[0].image} alt={galleryItems[0].description || 'Gallery'}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.85) 0%, rgba(6,3,1,0.25) 50%, transparent 80%)' }} />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.12), transparent)' }} />
+                    {/* Gold corner frames */}
+                    <div className="absolute top-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                      style={{ borderTop: '2px solid rgba(196,144,106,0.7)', borderLeft: '2px solid rgba(196,144,106,0.7)', borderRadius: '20px 0 0 0' }} />
+                    <div className="absolute bottom-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                      style={{ borderBottom: '2px solid rgba(196,144,106,0.7)', borderRight: '2px solid rgba(196,144,106,0.7)', borderRadius: '0 0 20px 0' }} />
+                    <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
+                      <p className="text-[9px] tracking-[0.28em] uppercase font-black mb-1.5" style={{ color: '#C4906A' }}>✦ Featured</p>
+                      {galleryItems[0].description && (
+                        <p className="text-white text-sm leading-relaxed line-clamp-2">{galleryItems[0].description}</p>
+                      )}
+                    </div>
+                  </Link>
+
+                  {/* Top-right wide — 7 cols × 2 rows */}
+                  <Link to="/gallery"
+                    className="col-span-12 md:col-span-7 row-span-2 relative overflow-hidden rounded-2xl group block">
+                    <img src={galleryItems[1].image} alt={galleryItems[1].description || 'Gallery'}
+                      className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105" loading="lazy" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                      style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)' }} />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                      style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.10), transparent)' }} />
+                    {galleryItems[1].description && (
+                      <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
+                        <p className="text-white text-sm leading-relaxed line-clamp-1">{galleryItems[1].description}</p>
+                      </div>
+                    )}
+                  </Link>
+
+                  {/* Bottom-right 3 small tiles */}
+                  {galleryItems.slice(2, 5).map((item, i) => (
+                    <Link key={item.id} to="/gallery"
+                      className="col-span-4 md:col-span-3 row-span-1 relative overflow-hidden group block"
+                      style={{ borderRadius: 16 }}>
+                      <img src={item.image} alt={item.description || 'Gallery'}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.80) 0%, transparent 65%)' }} />
+                      <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                        style={{ boxShadow: 'inset 0 0 0 1.5px rgba(196,144,106,0.55)' }} />
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                /* Fallback — editorial scroll */
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                  {galleryItems.map(item => (
+                    <Link key={item.id} to="/gallery" className="flex-shrink-0 w-64 h-80 rounded-2xl overflow-hidden group relative block">
+                      <img src={item.image} alt={item.description || 'Gallery'}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)' }} />
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              {/* Count pill */}
+              <div className="flex items-center justify-center mt-10">
+                <Link to="/gallery"
+                  className="inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.2em] uppercase px-7 py-3.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                  style={{ background: GOLD, color: '#fff', boxShadow: '0 8px 30px -6px rgba(155,104,68,0.5)' }}>
+                  View All {galleryItems.length} Pieces
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
-            )}
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.25) 50%, transparent 95%)' }} />
           </section>
         )}
 
