@@ -3,6 +3,7 @@ import { getInstagramPosts, saveInstagramPost, deleteInstagramPost, InstagramPos
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, ExternalLink, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
@@ -10,6 +11,9 @@ import { toast } from 'sonner';
 const AdminInstagram = () => {
   const [posts, setPosts] = useState<InstagramPost[]>([]);
   const [url, setUrl] = useState('');
+  const [location, setLocation] = useState('');
+  const [song, setSong] = useState('');
+  const [caption, setCaption] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -21,12 +25,18 @@ const AdminInstagram = () => {
   const handleEdit = (post: InstagramPost) => {
     setEditingId(post.id);
     setUrl(post.url);
+    setLocation(post.location ?? '');
+    setSong(post.song ?? '');
+    setCaption(post.caption ?? '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
     setUrl('');
+    setLocation('');
+    setSong('');
+    setCaption('');
   };
 
   const handleAddPost = async () => {
@@ -45,12 +55,18 @@ const AdminInstagram = () => {
       const postData: InstagramPost = {
         id: editingId || Date.now().toString(),
         url,
+        location: location.trim() || undefined,
+        song: song.trim() || undefined,
+        caption: caption.trim() || undefined,
       };
 
       await saveInstagramPost(postData);
       const updated = await getInstagramPosts();
       setPosts(updated);
       setUrl('');
+      setLocation('');
+      setSong('');
+      setCaption('');
       setEditingId(null);
       toast.success(editingId ? 'Instagram post updated' : 'Instagram post added');
     } catch (error) {
@@ -88,6 +104,38 @@ const AdminInstagram = () => {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://www.instagram.com/p/..."
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="instagram-location">Location</Label>
+              <Input
+                id="instagram-location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="e.g. Mumbai, India"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="instagram-song">Song</Label>
+              <Input
+                id="instagram-song"
+                value={song}
+                onChange={(e) => setSong(e.target.value)}
+                placeholder="e.g. Artist — Track name"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="instagram-caption">Caption</Label>
+            <Textarea
+              id="instagram-caption"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="Paste the Instagram caption here…"
+              className="min-h-[110px]"
             />
           </div>
           <div className="flex gap-2">

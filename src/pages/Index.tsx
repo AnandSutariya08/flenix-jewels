@@ -8,6 +8,7 @@ import BannerCarousel from '@/components/BannerCarousel';
 import SEOHead from '@/components/SEOHead';
 import ServicesSection from '@/components/ServicesSection';
 import BlogDialog from '@/components/BlogDialog';
+import InstagramJourneyCarousel from '@/components/InstagramJourneyCarousel';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData } from '@/store/contentSlice';
 import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -111,7 +112,7 @@ export default function Index() {
             {/* Section header */}
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
               <div>
-                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Collections</p>
+                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3 text-primary">✦ Collections</p>
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight">
                   Crafted for<br />Every Occasion
                 </h2>
@@ -120,7 +121,7 @@ export default function Index() {
                 <p className="text-muted-foreground leading-relaxed mb-5">
                   Each piece is a testament to exceptional artisanship and timeless elegance, designed to be cherished forever.
                 </p>
-                <Link to="/categories" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase transition-all group" style={{ color: '#C4906A' }}>
+                <Link to="/categories" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase transition-all group text-primary">
                   View All Collections
                   <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
                 </Link>
@@ -143,7 +144,7 @@ export default function Index() {
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{ background: 'linear-gradient(135deg, rgba(155,104,68,0.12), transparent)' }} />
                   <div className="absolute bottom-0 left-0 p-7 md:p-9">
-                    <p className="text-[9px] tracking-[0.3em] uppercase font-black mb-2.5" style={{ color: '#D4A96A' }}>Featured</p>
+                    <p className="text-[9px] tracking-[0.3em] uppercase font-black mb-2.5 text-gold">Featured</p>
                     <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight">{categories[0].name}</h3>
                     <p className="text-white/55 text-sm mb-6 max-w-[240px] leading-relaxed hidden md:block">{categories[0].description}</p>
                     <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-wider uppercase px-5 py-2.5 rounded-full transition-all duration-200 group-hover:shadow-xl"
@@ -482,25 +483,28 @@ export default function Index() {
             8. TESTIMONIALS — Scroll marquee
         ═══════════════════════════════════════════════════════ */}
         {testimonials.length > 0 && (
-          <section className="py-20 overflow-hidden" style={{ background: 'linear-gradient(180deg, #faf7f3 0%, #f5ede3 100%)' }}>
+          <section className="py-20 overflow-hidden bg-secondary/60 dark:bg-secondary/20">
             <div className="text-center mb-14 px-4">
-              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3.5" style={{ color: '#C4906A' }}>✦ Client Love</p>
+              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3.5 text-primary">✦ Client Love</p>
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight">What Our Clients Say</h2>
             </div>
             <div className="flex gap-5 animate-[scroll_28s_linear_infinite] hover:pause pl-6 md:pl-16">
               {[...testimonials, ...testimonials].map((t, i) => (
-                <div key={`${t.id}-${i}`} className="flex-shrink-0 w-[320px] md:w-[380px] p-8 rounded-3xl bg-white"
-                  style={{ border: '1px solid rgba(196,144,106,0.18)', boxShadow: '0 4px 32px rgba(196,144,106,0.07)' }}>
+                <div
+                  key={`${t.id}-${i}`}
+                  className="flex-shrink-0 w-[320px] md:w-[380px] p-8 rounded-3xl bg-card border border-border/50 shadow-sm"
+                  style={{ boxShadow: '0 4px 32px rgba(196,144,106,0.07)' }}
+                >
                   {/* Stars */}
                   <div className="flex gap-0.5 mb-5">
                     {[...Array(5)].map((_, j) => (
-                      <Star key={j} className={`h-4 w-4 ${j < t.rating ? 'fill-[#D4A96A] text-[#D4A96A]' : 'text-stone-200'}`} />
+                      <Star key={j} className={`h-4 w-4 ${j < t.rating ? 'fill-gold text-gold' : 'text-muted-foreground/30'}`} />
                     ))}
                   </div>
                   {/* Large serif quote mark */}
-                  <p className="text-6xl leading-none font-serif mb-1" style={{ color: 'rgba(196,144,106,0.22)', fontFamily: 'Georgia, serif' }}>"</p>
-                  <p className="text-[14.5px] leading-[1.75] mb-7 line-clamp-4" style={{ color: 'rgba(30,20,14,0.72)' }}>{t.text}</p>
-                  <div className="flex items-center gap-3.5 pt-5" style={{ borderTop: '1px solid rgba(196,144,106,0.14)' }}>
+                  <p className="text-6xl leading-none font-serif mb-1 text-primary/25" style={{ fontFamily: 'Georgia, serif' }}>"</p>
+                  <p className="text-[14.5px] leading-[1.75] mb-7 line-clamp-4 text-foreground/80">{t.text}</p>
+                  <div className="flex items-center gap-3.5 pt-5 border-t border-border/50">
                     <div className="w-11 h-11 rounded-full flex items-center justify-center font-black text-white text-sm flex-shrink-0"
                       style={{ background: GOLD }}>
                       {t.name.charAt(0)}
@@ -625,7 +629,7 @@ export default function Index() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════
-            11. INSTAGRAM — Bento mosaic grid
+            11. INSTAGRAM — Journey cards
         ═══════════════════════════════════════════════════════ */}
         {instagramPosts.length > 0 && (
           <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1600px] mx-auto mb-4">
@@ -647,56 +651,7 @@ export default function Index() {
               </a>
             </div>
 
-            {/* Bento mosaic */}
-            {(() => {
-              const posts = instagramPosts.slice(0, 5);
-              const getEmbed = (url: string) => {
-                const m = url.match(/instagram\.com\/(p|reel)\/([^/?]+)/);
-                return m ? `https://www.instagram.com/${m[1]}/${m[2]}/embed/` : null;
-              };
-
-              const Cell = ({ post, className, style }: { post: typeof posts[0]; className?: string; style?: React.CSSProperties }) => {
-                const embed = getEmbed(post.url);
-                return (
-                  <div
-                    onClick={() => window.open(post.url, '_blank')}
-                    className={`relative overflow-hidden rounded-2xl cursor-pointer group ${className ?? ''}`}
-                    style={{ border: '1px solid rgba(196,144,106,0.12)', ...style }}
-                  >
-                    {embed ? (
-                      <iframe src={embed} className="w-full h-full pointer-events-none" frameBorder="0" scrolling="no" title={`IG ${post.id}`} />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-muted text-sm text-muted-foreground">View Post</div>
-                    )}
-                    {/* Gold hover overlay */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                      style={{ boxShadow: 'inset 0 0 0 2px rgba(196,144,106,0.5)', borderRadius: 16 }} />
-                  </div>
-                );
-              };
-
-              if (posts.length >= 5) {
-                return (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4" style={{ gridAutoRows: '280px' }}>
-                    {/* Large left — row-span-2 */}
-                    <Cell post={posts[0]} className="row-span-2" style={{ borderRadius: 24 }} />
-                    {/* Top-right two */}
-                    <Cell post={posts[1]} />
-                    <Cell post={posts[2]} />
-                    {/* Bottom-right two */}
-                    <Cell post={posts[3]} />
-                    <Cell post={posts[4]} />
-                  </div>
-                );
-              }
-
-              // Fewer posts — simple grid
-              return (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4" style={{ gridAutoRows: '320px' }}>
-                  {posts.map(post => <Cell key={post.id} post={post} />)}
-                </div>
-              );
-            })()}
+            <InstagramJourneyCarousel posts={instagramPosts} />
           </section>
         )}
 

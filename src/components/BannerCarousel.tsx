@@ -1,4 +1,5 @@
-import { useEffect, useState, memo, useCallback } from 'react';
+import { useEffect, useMemo, useState, memo, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { Banner } from '@/lib/storage';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,17 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadedIndexes, setLoadedIndexes] = useState<Set<number>>(new Set());
   const [fallbackImage, setFallbackImage] = useState<string | null>(heroFallback);
+  const hasMultiple = banners.length > 1;
+  const currentBanner = banners[currentIndex];
+  const safeTitle = currentBanner?.title?.trim() || 'Flenix Jewels';
+  const safeDesc =
+    currentBanner?.description?.trim() ||
+    'Certified diamonds. Timeless designs. Crafted with precision.';
+
+  const slideLabel = useMemo(() => {
+    if (banners.length <= 1) return null;
+    return `${currentIndex + 1} / ${banners.length}`;
+  }, [banners.length, currentIndex]);
 
   const markLoaded = useCallback((index: number) => {
     setLoadedIndexes((prev) => {
@@ -83,7 +95,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
 
   if (banners.length === 0) {
     return (
-      <div className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] min-h-[400px] max-h-[800px] bg-gradient-to-br from-primary/20 via-primary/10 to-background flex items-center justify-center overflow-hidden rounded-lg border border-border/20">
+      <div className="relative h-[72vh] md:h-[80vh] min-h-[520px] max-h-[880px] bg-gradient-to-br from-primary/20 via-primary/10 to-background flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary),0.1),transparent_50%)]" />
         {fallbackImage ? (
           <img
@@ -99,6 +111,23 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
             <p className="text-lg text-muted-foreground">Loading...</p>
           </div>
         )}
+
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full px-4 sm:px-6 md:px-10 lg:px-16 max-w-[1400px]">
+          <div className="max-w-2xl rounded-3xl border border-border/40 bg-background/70 backdrop-blur-xl p-6 sm:p-8 shadow-2xl">
+            <p className="text-[10px] tracking-[0.38em] uppercase font-black text-primary mb-3">✦ Fine Jewelry</p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight leading-[1.05]">{safeTitle}</h2>
+            <p className="mt-4 text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">{safeDesc}</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button asChild size="lg" className="rounded-full px-7">
+                <Link to="/categories">Explore Collections</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="rounded-full px-7">
+                <Link to="/contact">Book Consultation</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -108,7 +137,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const visibleIndexes = new Set([currentIndex, nextIndex, prevIndex]);
 
   return (
-    <div className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] min-h-[400px] max-h-[800px] overflow-hidden w-full shadow-2xl rounded-lg border border-border/20 bg-muted">
+    <div className="relative h-[72vh] md:h-[80vh] min-h-[520px] max-h-[880px] overflow-hidden w-full bg-muted">
       {fallbackImage && (
         <div
           className={`absolute inset-0 transition-opacity duration-700 ${
@@ -129,7 +158,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
         return (
         <div
           key={banner.id}
-          className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+          className={`absolute inset-0 transition-all duration-1000 ease-out ${
             index === currentIndex ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-110 z-0'
           }`}
         >
@@ -162,36 +191,53 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
           )}
           
           {/* Overlay gradients for depth */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(196,144,106,0.25)_0%,transparent_55%)]" />
           
           {/* Content */}
-          <div className="absolute inset-0 flex items-start justify-center pt-8 sm:pt-12 md:pt-16 lg:pt-20">
-            <div className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24">
-              <div className="max-w-4xl">
-                <div className="mb-3 sm:mb-4 md:mb-6 overflow-hidden">
-                  <h2 className={`text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight tracking-tight transition-all duration-1000 ${
-                    index === currentIndex ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-                  }`} style={{ transitionDelay: '200ms' }}>
-                    {banner.title}
-                  </h2>
+          <div className="absolute inset-0 flex items-end justify-center pb-8 sm:pb-10 md:pb-12">
+            <div className="w-full px-4 sm:px-6 md:px-10 lg:px-16 max-w-[1400px]">
+              <div
+                className={`max-w-2xl rounded-3xl border border-white/12 bg-black/35 backdrop-blur-xl p-6 sm:p-8 shadow-2xl transition-all duration-1000 ease-out ${
+                  index === currentIndex ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+                }`}
+                style={{ transitionDelay: '160ms' }}
+              >
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <p className="text-[10px] tracking-[0.38em] uppercase font-black text-white/85">✦ Fine Jewelry</p>
+                  {slideLabel && (
+                    <span className="text-[10px] tracking-[0.3em] uppercase font-black text-white/65">
+                      {slideLabel}
+                    </span>
+                  )}
                 </div>
-                <div className="mb-4 sm:mb-6 md:mb-8 overflow-hidden">
-                  <p className={`text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-white/95 font-light max-w-2xl leading-relaxed transition-all duration-1000 ${
-                    index === currentIndex ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-                  }`} style={{ transitionDelay: '400ms' }}>
-                    {banner.description}
-                  </p>
-                </div>
-                <div className={`transition-all duration-1000 ${
-                  index === currentIndex ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-                }`} style={{ transitionDelay: '600ms' }}>
-                  <Button 
-                    size="lg" 
-                    className="text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 py-4 sm:py-5 md:py-6 rounded-full bg-white text-primary hover:bg-white/90 shadow-2xl hover:scale-105 transition-all duration-300"
-                  >
-                    Explore Collection
+
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.04] tracking-tight">
+                  {banner.title}
+                </h2>
+
+                <p className="mt-4 text-sm sm:text-base md:text-lg text-white/85 font-light max-w-xl leading-relaxed">
+                  {banner.description}
+                </p>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Button asChild size="lg" className="rounded-full px-7 bg-white text-primary hover:bg-white/90">
+                    <Link to="/categories">Explore Collections</Link>
                   </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="rounded-full px-7 border-white/25 text-white hover:bg-white/10 hover:text-white"
+                  >
+                    <Link to="/contact">Book Consultation</Link>
+                  </Button>
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-2.5 text-[11px] font-semibold tracking-wide text-white/70">
+                  <span className="px-3 py-1 rounded-full border border-white/14 bg-white/5">GIA / IGI Certified</span>
+                  <span className="px-3 py-1 rounded-full border border-white/14 bg-white/5">Worldwide Shipping</span>
+                  <span className="px-3 py-1 rounded-full border border-white/14 bg-white/5">Custom Designs</span>
                 </div>
               </div>
             </div>
@@ -200,8 +246,24 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
         );
       })}
 
-      {banners.length > 1 && (
+      {hasMultiple && (
         <>
+          <button
+            type="button"
+            onClick={goToPrev}
+            aria-label="Previous slide"
+            className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/35 backdrop-blur border border-white/15 text-white hover:bg-black/45 transition-colors"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={goToNext}
+            aria-label="Next slide"
+            className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-20 h-12 w-12 items-center justify-center rounded-full bg-black/35 backdrop-blur border border-white/15 text-white hover:bg-black/45 transition-colors"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
           <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 sm:gap-3 z-20">
             {banners.map((_, index) => (
               <button

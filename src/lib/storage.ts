@@ -88,6 +88,9 @@ export interface BlogPost {
 export interface InstagramPost {
   id: string;
   url: string;
+  caption?: string;
+  location?: string;
+  song?: string;
 }
 
 export interface ContactInfo {
