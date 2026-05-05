@@ -75,24 +75,6 @@ export default function Index() {
           <BannerCarousel banners={banners} />
         </section>
 
-        {/* ═══════════════════════════════════════════════════════
-            2. TRUST MARQUEE STRIP
-        ═══════════════════════════════════════════════════════ */}
-        <div style={{ background: '#0c0703', borderTop: '1px solid rgba(196,144,106,0.22)', borderBottom: '1px solid rgba(196,144,106,0.22)' }}>
-          <div className="overflow-hidden py-3.5">
-            <div className="flex gap-0 animate-marquee whitespace-nowrap">
-              {[...Array(4)].map((_, rep) => (
-                <div key={rep} className="flex items-center gap-0 flex-shrink-0">
-                  {trustItems.map(t => (
-                    <span key={t} className="inline-flex items-center gap-3 px-8 text-[10.5px] font-bold tracking-[0.22em] uppercase flex-shrink-0" style={{ color: 'rgba(196,144,106,0.75)' }}>
-                      <span style={{ color: '#C4906A', opacity: 0.6 }}>✦</span>{t}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
         {/* ═══════════════════════════════════════════════════════
             3. COLLECTIONS — asymmetric editorial grid
@@ -167,29 +149,93 @@ export default function Index() {
         )}
 
         {/* ═══════════════════════════════════════════════════════
-            4. FEATURED COLLECTION SCROLL
+            4. FEATURED COLLECTION — editorial lookbook
         ═══════════════════════════════════════════════════════ */}
         {featuredCollection.length > 0 && (
-          <section className="pb-24 overflow-hidden" style={{ background: 'linear-gradient(180deg, transparent 0%, rgba(250,247,243,0.6) 100%)' }}>
-            <div className="flex items-end justify-between px-4 md:px-16 mb-10">
+          <section className="py-20 md:py-28" style={{ background: '#0c0703' }}>
+            {/* Header */}
+            <div className="flex items-end justify-between px-4 md:px-10 lg:px-16 mb-14 max-w-[1600px] mx-auto">
               <div>
-                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-2.5" style={{ color: '#C4906A' }}>✦ Curated For You</p>
-                <h2 className="text-3xl md:text-5xl font-bold">Featured Collection</h2>
+                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Curated For You</p>
+                <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">Featured Collection</h2>
               </div>
+              <p className="hidden md:block text-sm max-w-xs text-right leading-relaxed" style={{ color: 'rgba(255,255,255,0.32)' }}>
+                Handpicked treasures for the discerning connoisseur
+              </p>
             </div>
-            <div className="flex gap-4 md:gap-5 animate-[scroll_22s_linear_infinite] hover:pause pl-4 md:pl-16">
-              {[...featuredCollection, ...featuredCollection].map((item, i) => (
-                <div key={`${item.id}-${i}`} className="flex-shrink-0 w-60 md:w-72 group cursor-pointer">
-                  <div className="relative h-68 md:h-80 rounded-2xl overflow-hidden mb-3.5" style={{ height: '280px' }}>
-                    <img src={item.image} alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-108" loading="lazy"
-                      style={{ transition: 'transform 0.6s ease' }} />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ background: 'linear-gradient(to top, rgba(155,104,68,0.45), transparent 60%)' }} />
+
+            {/* Snap-scroll lookbook track */}
+            <div
+              className="flex gap-0 overflow-x-auto pl-4 md:pl-10 lg:pl-16 pr-4"
+              style={{
+                scrollSnapType: 'x mandatory',
+                WebkitOverflowScrolling: 'touch',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+              }}
+            >
+              {featuredCollection.map((item, i) => (
+                <div
+                  key={item.id}
+                  className="flex-shrink-0 group cursor-pointer relative"
+                  style={{ scrollSnapAlign: 'start', width: 'clamp(260px, 28vw, 380px)', marginRight: '2px' }}
+                >
+                  {/* Gold hairline divider between cards */}
+                  {i > 0 && (
+                    <div className="absolute left-0 top-12 bottom-12 w-px pointer-events-none"
+                      style={{ background: 'linear-gradient(to bottom, transparent, rgba(196,144,106,0.25) 30%, rgba(196,144,106,0.25) 70%, transparent)' }} />
+                  )}
+
+                  <div className="relative overflow-hidden mx-2" style={{ height: 'clamp(380px, 52vw, 520px)', borderRadius: 20 }}>
+                    <img
+                      src={item.image} alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    {/* Always-on bottom fade */}
+                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(4,2,1,0.92) 0%, rgba(4,2,1,0.4) 35%, transparent 65%)' }} />
+                    {/* Hover gold sheen */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.08), transparent 60%)' }} />
+
+                    {/* Large editorial index number */}
+                    <span
+                      className="absolute top-6 right-6 font-black leading-none select-none pointer-events-none"
+                      style={{
+                        fontSize: 'clamp(56px, 8vw, 96px)',
+                        color: 'rgba(196,144,106,0.12)',
+                        fontVariantNumeric: 'tabular-nums',
+                        letterSpacing: '-0.04em',
+                      }}
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+
+                    {/* Bottom content */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                      <p className="text-[9px] tracking-[0.3em] uppercase font-black mb-2" style={{ color: '#C4906A' }}>Flenix Jewels</p>
+                      <h3 className="font-bold text-white leading-snug mb-1.5"
+                        style={{ fontSize: 'clamp(16px, 2vw, 22px)' }}>
+                        {item.title}
+                      </h3>
+                      <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                        {item.description}
+                      </p>
+                      {/* Gold underline accent */}
+                      <div className="mt-5 w-8 h-px" style={{ background: GOLD }} />
+                    </div>
                   </div>
-                  <h3 className="font-semibold text-sm md:text-base line-clamp-1">{item.title}</h3>
-                  <p className="text-xs md:text-sm text-muted-foreground line-clamp-1 mt-0.5">{item.description}</p>
                 </div>
+              ))}
+              {/* Trailing spacer */}
+              <div className="flex-shrink-0 w-4 md:w-16" />
+            </div>
+
+            {/* Scroll hint dots */}
+            <div className="flex items-center justify-center gap-1.5 mt-8 px-4">
+              {featuredCollection.map((_, i) => (
+                <div key={i} className="rounded-full transition-all duration-300"
+                  style={{ width: i === 0 ? 20 : 6, height: 4, background: i === 0 ? '#C4906A' : 'rgba(196,144,106,0.25)' }} />
               ))}
             </div>
           </section>
@@ -483,30 +529,78 @@ export default function Index() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════
-            11. INSTAGRAM — If available
+            11. INSTAGRAM — Bento mosaic grid
         ═══════════════════════════════════════════════════════ */}
         {instagramPosts.length > 0 && (
-          <section className="mb-20 overflow-hidden">
-            <div className="text-center mb-12 px-4">
-              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Instagram</p>
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Follow Our Journey</h2>
+          <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1600px] mx-auto mb-4">
+            {/* Header — split layout */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+              <div>
+                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Instagram</p>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Follow Our Journey</h2>
+              </div>
+              <a
+                href="https://instagram.com/flenixjewels"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 font-bold text-sm tracking-widest uppercase transition-all duration-200 group self-start md:self-end"
+                style={{ color: '#C4906A' }}
+              >
+                @flenixjewels
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
+              </a>
             </div>
-            <div className="flex gap-4 animate-[scroll_22s_linear_infinite] hover:pause pl-6">
-              {[...instagramPosts.slice(0, 8), ...instagramPosts.slice(0, 8)].map((post, i) => {
-                const m = post.url.match(/instagram\.com\/(p|reel)\/([^/?]+)/);
-                const embed = m ? `https://www.instagram.com/${m[1]}/${m[2]}/embed/` : null;
+
+            {/* Bento mosaic */}
+            {(() => {
+              const posts = instagramPosts.slice(0, 5);
+              const getEmbed = (url: string) => {
+                const m = url.match(/instagram\.com\/(p|reel)\/([^/?]+)/);
+                return m ? `https://www.instagram.com/${m[1]}/${m[2]}/embed/` : null;
+              };
+
+              const Cell = ({ post, className, style }: { post: typeof posts[0]; className?: string; style?: React.CSSProperties }) => {
+                const embed = getEmbed(post.url);
                 return (
-                  <div key={`${post.id}-${i}`}
+                  <div
                     onClick={() => window.open(post.url, '_blank')}
-                    className="flex-shrink-0 w-72 h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg"
-                    style={{ border: '1px solid rgba(196,144,106,0.15)' }}>
-                    {embed
-                      ? <iframe src={embed} className="w-full h-full" frameBorder="0" scrolling="no" title={`Instagram ${i}`} />
-                      : <div className="w-full h-full flex items-center justify-center text-sm text-muted-foreground">Instagram</div>}
+                    className={`relative overflow-hidden rounded-2xl cursor-pointer group ${className ?? ''}`}
+                    style={{ border: '1px solid rgba(196,144,106,0.12)', ...style }}
+                  >
+                    {embed ? (
+                      <iframe src={embed} className="w-full h-full pointer-events-none" frameBorder="0" scrolling="no" title={`IG ${post.id}`} />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-muted text-sm text-muted-foreground">View Post</div>
+                    )}
+                    {/* Gold hover overlay */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                      style={{ boxShadow: 'inset 0 0 0 2px rgba(196,144,106,0.5)', borderRadius: 16 }} />
                   </div>
                 );
-              })}
-            </div>
+              };
+
+              if (posts.length >= 5) {
+                return (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4" style={{ gridAutoRows: '280px' }}>
+                    {/* Large left — row-span-2 */}
+                    <Cell post={posts[0]} className="row-span-2" style={{ borderRadius: 24 }} />
+                    {/* Top-right two */}
+                    <Cell post={posts[1]} />
+                    <Cell post={posts[2]} />
+                    {/* Bottom-right two */}
+                    <Cell post={posts[3]} />
+                    <Cell post={posts[4]} />
+                  </div>
+                );
+              }
+
+              // Fewer posts — simple grid
+              return (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4" style={{ gridAutoRows: '320px' }}>
+                  {posts.map(post => <Cell key={post.id} post={post} />)}
+                </div>
+              );
+            })()}
           </section>
         )}
 
