@@ -80,9 +80,9 @@ export default function Header({ promoHeader }: HeaderProps) {
           className="relative transition-all duration-500 ease-in-out overflow-hidden"
           style={{
             borderRadius:         isScrolled ? 9999 : 0,
-            background:           isScrolled ? 'rgba(18,11,6,0.45)' : 'rgba(253,248,243,0.94)',
-            backdropFilter:       isScrolled ? 'blur(40px) saturate(180%)' : 'blur(24px)',
-            WebkitBackdropFilter: isScrolled ? 'blur(40px) saturate(180%)' : 'blur(24px)',
+            background:           isScrolled ? 'rgba(14,8,4,0.62)' : 'rgba(253,248,243,0.94)',
+            backdropFilter:       isScrolled ? 'blur(48px) saturate(200%) brightness(0.85)' : 'blur(24px)',
+            WebkitBackdropFilter: isScrolled ? 'blur(48px) saturate(200%) brightness(0.85)' : 'blur(24px)',
             border:          isScrolled ? '1px solid rgba(196,144,106,0.32)' : 'none',
             borderBottom:    isScrolled ? undefined : '1px solid rgba(196,144,106,0.14)',
             boxShadow:       isScrolled
@@ -104,7 +104,7 @@ export default function Header({ promoHeader }: HeaderProps) {
 
           <div
             className="flex items-center justify-between transition-all duration-300"
-            style={{ padding: isScrolled ? '0 20px' : '0 24px', height: isScrolled ? 52 : 70 }}
+            style={{ padding: isScrolled ? '0 22px' : '0 24px', height: isScrolled ? 64 : 70 }}
           >
             {/* ── Logo ── */}
             <Link to="/" className="flex items-center flex-shrink-0 z-10">
@@ -113,8 +113,8 @@ export default function Header({ promoHeader }: HeaderProps) {
                 alt="Flenix Jewels - Premium Diamond Jewelry"
                 className="w-auto transition-all duration-300"
                 style={{
-                  height:      isScrolled ? 36 : 50,
-                  filter:      isScrolled ? 'brightness(1.15) contrast(0.95)' : 'none',
+                  height:      isScrolled ? 42 : 50,
+                  filter:      isScrolled ? 'brightness(1.2) contrast(0.9)' : 'none',
                 }}
                 loading="eager"
                 decoding="async"
@@ -155,9 +155,9 @@ export default function Header({ promoHeader }: HeaderProps) {
                         letterSpacing: '0.07em',
                         textTransform: 'uppercase',
                         color: active
-                          ? '#C4906A'
+                          ? isScrolled ? '#FFD99A' : '#C4906A'
                           : isScrolled
-                          ? hovered ? '#DEB48A' : 'rgba(255,255,255,0.62)'
+                          ? hovered ? '#F0C890' : 'rgba(255,255,255,0.88)'
                           : hovered ? '#9B6844' : '#5a4535',
                       }}
                     >
