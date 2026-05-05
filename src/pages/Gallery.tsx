@@ -197,7 +197,7 @@ const Gallery = () => {
             </div>
 
             {/* Mosaic grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" style={{ gap: '3px' }}>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-4 md:px-8 pb-14" style={{ gap: '14px' }}>
               {filteredItems.map((item, index) => {
                 // Intentional editorial sizing pattern
                 const mod = index % 9;
@@ -207,7 +207,7 @@ const Gallery = () => {
                 return (
                   <div
                     key={item.id}
-                    className={`group cursor-pointer relative overflow-hidden transition-all duration-700
+                    className={`group cursor-pointer relative overflow-hidden transition-all duration-700 rounded-2xl
                       ${isFeature ? 'col-span-2' : ''}
                       ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
                     `}
