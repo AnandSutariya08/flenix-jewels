@@ -367,29 +367,63 @@ const Gallery = () => {
           </div>
 
           {/* Thumbnail filmstrip */}
-          <div className="flex-shrink-0 px-4 py-3" style={{ borderTop: '1px solid rgba(196,144,106,0.10)', background: 'rgba(0,0,0,0.5)' }}>
+          <div className="flex-shrink-0 relative" style={{ borderTop: '1px solid rgba(196,144,106,0.15)', background: 'rgba(6,3,1,0.95)' }}>
+            {/* Left fade edge */}
+            <div className="absolute left-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
+              style={{ background: 'linear-gradient(to right, rgba(6,3,1,0.95), transparent)' }} />
+            {/* Right fade edge */}
+            <div className="absolute right-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
+              style={{ background: 'linear-gradient(to left, rgba(6,3,1,0.95), transparent)' }} />
+
             <div
               ref={thumbsRef}
-              className="flex gap-2 overflow-x-auto scrollbar-hide"
-              style={{ scrollSnapType: 'x mandatory' }}
+              className="flex gap-2.5 overflow-x-auto scrollbar-hide px-6 py-3"
+              style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
             >
-              {filteredItems.map((item, idx) => (
-                <button
-                  key={item.id}
-                  onClick={() => setSelectedIndex(idx)}
-                  className="flex-shrink-0 relative rounded-lg overflow-hidden transition-all duration-300"
-                  style={{
-                    width: 52, height: 52,
-                    scrollSnapAlign: 'center',
-                    opacity: idx === selectedIndex ? 1 : 0.35,
-                    transform: idx === selectedIndex ? 'scale(1.12)' : 'scale(1)',
-                    outline: idx === selectedIndex ? '1.5px solid #C4906A' : 'none',
-                    outlineOffset: 2,
-                  }}
-                >
-                  <img src={item.image} alt="" className="w-full h-full object-cover" loading="lazy" />
-                </button>
-              ))}
+              {filteredItems.map((item, idx) => {
+                const isActive = idx === selectedIndex;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedIndex(idx)}
+                    className="flex-shrink-0 relative group transition-all duration-350"
+                    style={{
+                      width: isActive ? 88 : 72,
+                      height: isActive ? 80 : 64,
+                      scrollSnapAlign: 'center',
+                      borderRadius: 10,
+                      overflow: 'hidden',
+                      transition: 'width 0.35s ease, height 0.35s ease, box-shadow 0.35s ease, opacity 0.35s ease',
+                      opacity: isActive ? 1 : 0.45,
+                      boxShadow: isActive
+                        ? '0 0 0 2px #C4906A, 0 0 18px -3px rgba(196,144,106,0.65)'
+                        : '0 0 0 1px rgba(255,255,255,0.06)',
+                    }}
+                  >
+                    <img
+                      src={item.image}
+                      alt=""
+                      className="w-full h-full object-cover"
+                      style={{
+                        transition: 'transform 0.35s ease',
+                        transform: isActive ? 'scale(1.05)' : 'scale(1)',
+                        filter: isActive ? 'none' : 'grayscale(20%)',
+                      }}
+                      loading="lazy"
+                    />
+                    {/* Active gold overlay shimmer */}
+                    {isActive && (
+                      <div className="absolute inset-0 pointer-events-none"
+                        style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.18) 0%, transparent 60%)' }} />
+                    )}
+                    {/* Active indicator dot at bottom */}
+                    {isActive && (
+                      <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full"
+                        style={{ background: 'linear-gradient(90deg, #9B6844, #D4A96A)' }} />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
