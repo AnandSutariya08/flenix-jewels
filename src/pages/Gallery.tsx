@@ -56,6 +56,24 @@ const Gallery = () => {
     return () => window.removeEventListener('keydown', handleKey);
   }, [selectedIndex, goNext, goPrev, closeLightbox]);
 
+  // Lock body scroll when lightbox is open (fixes iOS Safari scroll bleed)
+  useEffect(() => {
+    if (selectedIndex !== null) {
+      const scrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      return () => {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [selectedIndex !== null]);
+
   useEffect(() => {
     if (selectedIndex !== null && thumbsRef.current) {
       const thumb = thumbsRef.current.children[selectedIndex] as HTMLElement;
@@ -252,7 +270,7 @@ const Gallery = () => {
         <div
           ref={lightboxRef}
           className="fixed inset-0 z-[100] flex flex-col"
-          style={{ background: 'rgba(4,2,1,0.97)', backdropFilter: 'blur(24px)' }}
+          style={{ background: 'rgba(4,2,1,0.97)', backdropFilter: 'blur(24px)', overscrollBehavior: 'contain' }}
           onClick={e => { if (e.target === lightboxRef.current) closeLightbox(); }}
         >
           {/* Top bar */}
@@ -286,7 +304,7 @@ const Gallery = () => {
             {/* Image + Info */}
             <div className="flex-1 flex flex-col lg:flex-row overflow-hidden gap-0">
               {/* Image */}
-              <div className="flex-1 flex items-center justify-center p-6 min-h-0">
+              <div className="flex-1 flex items-center justify-center p-6 min-h-0" style={{ touchAction: 'none' }}>
                 <img
                   key={selectedIndex}
                   src={filteredItems[selectedIndex].image}
@@ -297,8 +315,8 @@ const Gallery = () => {
                 />
               </div>
 
-              {/* Info panel */}
-              <div className="lg:w-72 xl:w-80 flex-shrink-0 flex flex-col justify-center px-6 lg:px-8 py-6 lg:py-0"
+              {/* Info panel — desktop only */}
+              <div className="hidden lg:flex lg:w-72 xl:w-80 flex-shrink-0 flex-col justify-center px-8 py-0"
                 style={{ borderLeft: '1px solid rgba(196,144,106,0.10)' }}>
                 <div className="mb-1">
                   <div className="flex items-center gap-2 mb-5">
