@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Product } from '@/lib/storage';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import WhatsAppButton from './WhatsAppButton';
-import { X, ChevronLeft, ChevronRight, Truck, Shield, Zap, Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Truck, Shield, Zap, Pause, Volume2, VolumeX, Play } from 'lucide-react';
+
 interface ProductDialogProps {
   product: Product | null;
   open: boolean;
@@ -12,13 +13,14 @@ interface MediaItem {
   url: string;
   type: 'image' | 'video';
 }
+
 const ProductDialog = ({ product, open, onOpenChange }: ProductDialogProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [mainLoaded, setMainLoaded] = useState(false);
   const mainVideoRef = useRef<HTMLVideoElement>(null);
-  const shouldAutoplay = open;
+
   const getMediaType = (url: string): 'image' | 'video' => {
     const videoExtensions = /\.(mp4|webm|ogg|mov|avi|mkv)/i;
     return videoExtensions.test(url) ||
@@ -27,36 +29,31 @@ const ProductDialog = ({ product, open, onOpenChange }: ProductDialogProps) => {
            url.toLowerCase().includes('vid-') ||
            url.toLowerCase().includes('mov') ? 'video' : 'image';
   };
+
   const posterImage = useMemo(() => {
     const images = (product?.images || []).filter((url) => getMediaType(url) === 'image');
     return images[0] || product?.image || '';
   }, [product]);
-  const getVideoMimeType = (url: string): string | undefined => {
-    const lower = url.toLowerCase();
-    if (lower.endsWith('.webm')) return 'video/webm';
-    if (lower.endsWith('.ogg') || lower.endsWith('.ogv')) return 'video/ogg';
-    if (lower.endsWith('.mp4') || lower.endsWith('.m4v') || lower.endsWith('.mov')) return 'video/mp4';
-    return undefined;
-  };
+
   const allMediaUrls = product?.images?.length > 0 ? product.images : product?.image ? [product.image] : [];
-  const media: MediaItem[] = allMediaUrls.map(url => ({
-    url,
-    type: getMediaType(url)
-  }));
+  const media: MediaItem[] = allMediaUrls.map(url => ({ url, type: getMediaType(url) }));
   const hasMultiple = media.length > 1;
   const clampedIndex = media.length > 0 ? Math.min(selectedIndex, media.length - 1) : 0;
   const currentMedia = media.length > 0 ? media[clampedIndex] : null;
+
+  // Reset on index/open change
   useEffect(() => {
     setMainLoaded(false);
     setIsPlaying(false);
   }, [selectedIndex, open]);
-  // Reset when dialog opens
+
   useEffect(() => {
     if (!open) return;
     setSelectedIndex(0);
     setIsPlaying(false);
     setIsMuted(true);
   }, [open]);
+
   useEffect(() => {
     if (!open && mainVideoRef.current) {
       mainVideoRef.current.pause();
@@ -64,6 +61,7 @@ const ProductDialog = ({ product, open, onOpenChange }: ProductDialogProps) => {
       setIsPlaying(false);
     }
   }, [open]);
+
   useEffect(() => {
     if (mainVideoRef.current) {
       mainVideoRef.current.pause();
@@ -71,350 +69,288 @@ const ProductDialog = ({ product, open, onOpenChange }: ProductDialogProps) => {
       setIsPlaying(false);
     }
   }, [selectedIndex]);
-  const handleVideoCanPlay = useCallback(() => {
-    setMainLoaded(true);
-    if (!shouldAutoplay || !mainVideoRef.current) return;
-    mainVideoRef.current
-      .play()
-      .then(() => setIsPlaying(true))
-      .catch(() => setIsPlaying(false));
-  }, [shouldAutoplay]);
+
+  // Autoplay video whenever it becomes active
   useEffect(() => {
     if (!open) return;
     if (currentMedia?.type !== 'video') return;
     const video = mainVideoRef.current;
     if (!video) return;
-    // Kick autoplay on open or media change
     const id = window.setTimeout(() => {
-      video
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
-    }, 0);
+      video.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+    }, 80);
     return () => window.clearTimeout(id);
   }, [open, currentMedia?.type, currentMedia?.url]);
-  useEffect(() => {
-    if (!open) return;
-    if (currentMedia?.type !== 'video') return;
-    // Warm the cache for faster first frame
-    const preloader = document.createElement('video');
-    preloader.preload = 'auto';
-    preloader.muted = true;
-    preloader.src = currentMedia.url;
-    return () => {
-      preloader.src = '';
-    };
-  }, [open, currentMedia?.type, currentMedia?.url]);
+
+  const handleVideoCanPlay = useCallback(() => {
+    setMainLoaded(true);
+    if (!open || !mainVideoRef.current) return;
+    mainVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+  }, [open]);
+
   if (!product || media.length === 0) return null;
-  const next = () => {
-    setSelectedIndex((prev) => (prev + 1) % media.length);
-  };
- 
-  const prev = () => {
-    setSelectedIndex((prev) => (prev - 1 + media.length) % media.length);
-  };
+
+  const next = () => setSelectedIndex((prev) => (prev + 1) % media.length);
+  const prev = () => setSelectedIndex((prev) => (prev - 1 + media.length) % media.length);
+
   const handleVideoPlayPause = () => {
-    if (mainVideoRef.current) {
-      if (isPlaying) {
-        mainVideoRef.current.pause();
-      } else {
-        mainVideoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
+    if (!mainVideoRef.current) return;
+    if (isPlaying) { mainVideoRef.current.pause(); }
+    else { mainVideoRef.current.play(); }
+    setIsPlaying(!isPlaying);
   };
+
   const handleMuteToggle = () => {
-    if (mainVideoRef.current) {
-      mainVideoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
+    if (!mainVideoRef.current) return;
+    mainVideoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
   };
-  const renderMedia = (item: MediaItem | null, isThumbnail: boolean = false, index?: number) => {
-    if (!item) return null;
-    if (item.type === 'video') {
-      if (isThumbnail) {
-        return (
-          <div className="relative w-full h-full bg-black/40 flex items-center justify-center">
-            <Play className="h-4 w-4 text-white" fill="white" />
-          </div>
-        );
+
+  // ── Chevron button — rose-gold styled ────────────────────────────
+  const ChevronBtn = ({ direction, onClick }: { direction: 'left' | 'right'; onClick: () => void }) => (
+    <button
+      onClick={onClick}
+      aria-label={direction === 'left' ? 'Previous' : 'Next'}
+      className="absolute top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 hover:scale-110 active:scale-95"
+      style={{
+        [direction === 'left' ? 'left' : 'right']: '10px',
+        background: 'rgba(196,144,106,0.85)',
+        backdropFilter: 'blur(6px)',
+        boxShadow: '0 2px 10px rgba(155,104,68,0.35)',
+        border: '1px solid rgba(212,169,106,0.5)',
+      }}
+    >
+      {direction === 'left'
+        ? <ChevronLeft className="h-4 w-4 text-white" strokeWidth={2.5} />
+        : <ChevronRight className="h-4 w-4 text-white" strokeWidth={2.5} />
       }
+    </button>
+  );
+
+  // ── Video controls row ────────────────────────────────────────────
+  const VideoControls = ({ size = 'sm' }: { size?: 'sm' | 'md' }) => (
+    <div className={`absolute bottom-3 left-3 flex gap-1.5 z-20 ${size === 'md' ? 'bottom-4 left-4 gap-2' : ''}`}>
+      <button
+        onClick={handleVideoPlayPause}
+        className="flex items-center justify-center rounded-full transition-all hover:scale-110"
+        style={{
+          width: size === 'md' ? 34 : 30, height: size === 'md' ? 34 : 30,
+          background: 'rgba(28,13,5,0.72)', backdropFilter: 'blur(6px)',
+          border: '1px solid rgba(196,144,106,0.4)',
+        }}
+        aria-label={isPlaying ? 'Pause' : 'Play'}
+      >
+        {isPlaying
+          ? <Pause className={`text-white ${size === 'md' ? 'h-4 w-4' : 'h-3.5 w-3.5'}`} />
+          : <Play  className={`text-white ${size === 'md' ? 'h-4 w-4' : 'h-3.5 w-3.5'}`} fill="white" />
+        }
+      </button>
+      <button
+        onClick={handleMuteToggle}
+        className="flex items-center justify-center rounded-full transition-all hover:scale-110"
+        style={{
+          width: size === 'md' ? 34 : 30, height: size === 'md' ? 34 : 30,
+          background: 'rgba(28,13,5,0.72)', backdropFilter: 'blur(6px)',
+          border: '1px solid rgba(196,144,106,0.4)',
+        }}
+        aria-label={isMuted ? 'Unmute' : 'Mute'}
+      >
+        {isMuted
+          ? <VolumeX className={`text-white ${size === 'md' ? 'h-4 w-4' : 'h-3.5 w-3.5'}`} />
+          : <Volume2 className={`text-white ${size === 'md' ? 'h-4 w-4' : 'h-3.5 w-3.5'}`} />
+        }
+      </button>
+    </div>
+  );
+
+  // ── Main media renderer ───────────────────────────────────────────
+  const renderMainMedia = () => {
+    if (!currentMedia) return null;
+    if (currentMedia.type === 'video') {
       return (
-        <div className="relative w-full h-full">
-          <video
-            ref={mainVideoRef}
-            className="w-full h-full object-contain"
-            loop
-            muted={isMuted}
-            playsInline
-            preload="auto"
-            autoPlay={shouldAutoplay}
-            src={item.url}
-            poster={posterImage || undefined}
-            onLoadedMetadata={() => setMainLoaded(true)}
-            onLoadedData={() => setMainLoaded(true)}
-            onCanPlay={handleVideoCanPlay}
-          >
-            Your browser does not support the video tag.
-          </video>
-        </div>
+        <video
+          ref={mainVideoRef}
+          className="w-full h-full object-contain"
+          loop muted={isMuted} playsInline preload="auto" autoPlay={open}
+          src={currentMedia.url}
+          poster={posterImage || undefined}
+          onLoadedMetadata={() => setMainLoaded(true)}
+          onLoadedData={() => setMainLoaded(true)}
+          onCanPlay={handleVideoCanPlay}
+        >
+          Your browser does not support the video tag.
+        </video>
       );
     }
-   
     return (
       <img
-        src={item.url}
-        alt={isThumbnail ? `Thumbnail ${index}` : product.name}
-        className={`${isThumbnail ? 'w-full h-full object-cover' : 'max-w-full max-h-full object-contain'}`}
+        src={currentMedia.url}
+        alt={product.name}
+        className="max-w-full max-h-full object-contain"
         draggable={false}
-        loading={isThumbnail ? 'lazy' : 'eager'}
+        loading="eager"
         decoding="async"
-        fetchpriority={!isThumbnail ? 'high' : 'low'}
-        onLoad={() => !isThumbnail && setMainLoaded(true)}
+        fetchpriority="high"
+        onLoad={() => setMainLoaded(true)}
       />
     );
   };
+
+  // ── Thumbnail strip ───────────────────────────────────────────────
+  const ThumbnailStrip = ({ gap = 'gap-2', size = 'w-14 h-14', rounded = 'rounded-md' }: { gap?: string; size?: string; rounded?: string }) => (
+    <div className={`flex ${gap} overflow-x-auto pb-0.5`} style={{ scrollbarWidth: 'none' }}>
+      {media.map((item, i) => (
+        <button
+          key={i}
+          onClick={() => setSelectedIndex(i)}
+          className={`relative flex-shrink-0 ${size} ${rounded} overflow-hidden border-2 transition-all duration-200 ${
+            selectedIndex === i
+              ? 'scale-105 shadow-md'
+              : 'opacity-55 hover:opacity-90'
+          }`}
+          style={{
+            borderColor: selectedIndex === i ? '#C4906A' : 'rgba(196,144,106,0.25)',
+          }}
+        >
+          {item.type === 'video' ? (
+            <div className="w-full h-full bg-zinc-900 flex items-center justify-center">
+              <Play className="h-4 w-4 text-white/80" fill="white" />
+            </div>
+          ) : (
+            <img src={item.url} alt={`${i + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+          )}
+        </button>
+      ))}
+    </div>
+  );
+
+  // ── Badge cards ───────────────────────────────────────────────────
+  const BadgeCards = ({ layout = 'row' }: { layout?: 'row' | 'grid' }) => {
+    const base = 'flex items-center gap-2 p-2.5 rounded-xl border';
+    const style1 = { background: 'rgba(196,144,106,0.08)', borderColor: 'rgba(196,144,106,0.28)' };
+    const style2 = { background: 'rgba(212,169,106,0.08)', borderColor: 'rgba(212,169,106,0.28)' };
+    const style3 = { background: 'rgba(155,104,68,0.08)', borderColor: 'rgba(155,104,68,0.28)' };
+    if (layout === 'grid') {
+      return (
+        <div className="grid grid-cols-3 gap-2">
+          <div className={`${base} flex-col`} style={style1}><Truck className="h-4 w-4 text-[#9B6844]" /><span className="text-[9px] font-semibold text-center leading-tight text-zinc-700 dark:text-zinc-300">Free<br/>Shipping</span></div>
+          <div className={`${base} flex-col`} style={style2}><Shield className="h-4 w-4 text-[#C4906A]" /><span className="text-[9px] font-semibold text-center leading-tight text-zinc-700 dark:text-zinc-300">Secure<br/>Payment</span></div>
+          <div className={`${base} flex-col`} style={style3}><Zap className="h-4 w-4 text-[#9B6844]" /><span className="text-[9px] font-semibold text-center leading-tight text-zinc-700 dark:text-zinc-300">Fast<br/>Delivery</span></div>
+        </div>
+      );
+    }
+    return (
+      <div className="grid grid-cols-3 gap-2">
+        <div className={`${base}`} style={style1}><Truck className="h-4 w-4 flex-shrink-0 text-[#9B6844]" /><span className="text-[9px] font-semibold text-zinc-700 dark:text-zinc-300">Free Shipping</span></div>
+        <div className={`${base}`} style={style2}><Shield className="h-4 w-4 flex-shrink-0 text-[#C4906A]" /><span className="text-[9px] font-semibold text-zinc-700 dark:text-zinc-300">Secure Payment</span></div>
+        <div className={`${base}`} style={style3}><Zap className="h-4 w-4 flex-shrink-0 text-[#9B6844]" /><span className="text-[9px] font-semibold text-zinc-700 dark:text-zinc-300">Fast Delivery</span></div>
+      </div>
+    );
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="p-0 w-[96vw] max-w-[420px] sm:max-w-[680px] lg:max-w-5xl h-[94vh] sm:h-[82vh] lg:h-[78vh] max-h-[820px] flex flex-col bg-white dark:bg-zinc-950 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
         <DialogTitle className="sr-only">{product.name}</DialogTitle>
-        <DialogDescription className="sr-only">
-          Product details, gallery, and actions
-        </DialogDescription>
+        <DialogDescription className="sr-only">Product details, gallery, and actions</DialogDescription>
+
+        {/* Close button */}
         <button
           onClick={() => onOpenChange(false)}
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 h-9 w-9 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 flex items-center justify-center transition-colors shadow-lg"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-50 h-8 w-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+          style={{ background: 'rgba(28,13,5,0.65)', backdropFilter: 'blur(6px)', border: '1px solid rgba(196,144,106,0.35)' }}
           aria-label="Close"
         >
-          <X className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
+          <X className="h-3.5 w-3.5 text-white" />
         </button>
-        {/* MOBILE */}
+
+        {/* ── MOBILE ────────────────────────────────────────────────── */}
         <div className="lg:hidden flex-1 overflow-y-auto">
-          <div className="relative bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950 aspect-square">
-            <div className="w-full h-full flex items-center justify-center p-6">
-              {!mainLoaded && (
-                <div className="absolute inset-0 bg-muted animate-pulse" />
-              )}
-              {renderMedia(currentMedia)}
+          {/* Main media — zero padding, edge-to-edge */}
+          <div className="relative bg-zinc-100 dark:bg-zinc-900 aspect-square overflow-hidden">
+            {!mainLoaded && <div className="absolute inset-0 bg-muted animate-pulse z-0" />}
+            <div className="w-full h-full flex items-center justify-center">
+              {renderMainMedia()}
             </div>
-            {currentMedia?.type === 'video' && (
-              <div className="absolute bottom-4 left-4 flex gap-2 z-10">
-                <button
-                  onClick={handleVideoPlayPause}
-                  className="p-2 rounded-full bg-white/95 dark:bg-zinc-800/95 shadow-lg hover:scale-110 transition-transform"
-                  aria-label={isPlaying ? 'Pause' : 'Play'}
-                >
-                  {isPlaying ? (
-                    <Pause className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
-                  ) : (
-                    <Play className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
-                  )}
-                </button>
-                <button
-                  onClick={handleMuteToggle}
-                  className="p-2 rounded-full bg-white/95 dark:bg-zinc-800/95 shadow-lg hover:scale-110 transition-transform"
-                  aria-label={isMuted ? 'Unmute' : 'Mute'}
-                >
-                  {isMuted ? (
-                    <VolumeX className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
-                  ) : (
-                    <Volume2 className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
-                  )}
-                </button>
-              </div>
-            )}
+
+            {/* Video controls */}
+            {currentMedia?.type === 'video' && <VideoControls size="sm" />}
+
+            {/* Chevrons */}
+            {hasMultiple && <><ChevronBtn direction="left" onClick={prev} /><ChevronBtn direction="right" onClick={next} /></>}
+
+            {/* Counter */}
             {hasMultiple && (
-              <>
-                <button
-                  onClick={prev}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-white/95 dark:bg-zinc-800/95 shadow-lg hover:scale-110 transition-transform z-10"
-                  aria-label="Previous"
-                >
-                  <ChevronLeft className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                </button>
-                <button
-                  onClick={next}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-white/95 dark:bg-zinc-800/95 shadow-lg hover:scale-110 transition-transform z-10"
-                  aria-label="Next"
-                >
-                  <ChevronRight className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                </button>
-                <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-800/95 backdrop-blur-sm text-xs font-medium text-zinc-700 dark:text-zinc-300 shadow-md z-10">
-                  {selectedIndex + 1}/{media.length}
-                </div>
-              </>
-            )}
-            {currentMedia?.type === 'video' && (
-              <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-red-500 text-white text-xs font-bold shadow-lg flex items-center gap-1 z-10">
-                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-                VIDEO
+              <div className="absolute top-3 right-12 px-2.5 py-0.5 rounded-full text-xs font-medium text-white z-10"
+                style={{ background: 'rgba(28,13,5,0.60)', backdropFilter: 'blur(4px)' }}>
+                {clampedIndex + 1}/{media.length}
               </div>
             )}
           </div>
+
+          {/* Thumbnail strip */}
           {hasMultiple && (
-            <div className="px-4 py-3 bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {media.map((item, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedIndex(i)}
-                    className={`relative flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
-                      selectedIndex === i
-                        ? 'border-[#C4906A] scale-105 shadow-md'
-                        : 'border-zinc-200 dark:border-zinc-700 opacity-60 hover:opacity-100 hover:border-[#DEB48A]'
-                    }`}
-                  >
-                    {renderMedia(item, true, i)}
-                    {item.type === 'video' && (
-                      <div className="absolute top-0.5 right-0.5 bg-red-500 text-white text-[8px] font-bold px-1 py-0.5 rounded">
-                        VIDEO
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
+            <div className="px-4 py-2.5 border-b border-zinc-100 dark:border-zinc-800">
+              <ThumbnailStrip gap="gap-2" size="w-13 h-13" rounded="rounded-md" />
             </div>
           )}
-          <div className="px-5 py-6 pb-32 space-y-6">
-            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 leading-tight">
-              {product.name}
-            </h1>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br [rgba(196,144,106,0.08)] border-[rgba(196,144,106,0.30)]">
-                <Truck className="h-5 w-5 text-[#9B6844]" />
-                <span className="text-[10px] font-semibold text-center text-zinc-700 dark:text-zinc-300 leading-tight">Free<br/>Shipping</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br [rgba(212,169,106,0.08)] border-[rgba(212,169,106,0.30)]">
-                <Shield className="h-5 w-5 text-[#C4906A]" />
-                <span className="text-[10px] font-semibold text-center text-zinc-700 dark:text-zinc-300 leading-tight">Secure<br/>Payment</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br [rgba(155,104,68,0.08)] border-[rgba(155,104,68,0.30)]">
-                <Zap className="h-5 w-5 text-[#9B6844]" />
-                <span className="text-[10px] font-semibold text-center text-zinc-700 dark:text-zinc-300 leading-tight">Fast<br/>Delivery</span>
-              </div>
-            </div>
+
+          {/* Content */}
+          <div className="px-5 py-5 pb-32 space-y-5">
+            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 leading-snug">{product.name}</h1>
+            <BadgeCards layout="grid" />
             {product.description && (
-              <div
-                className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed prose prose-sm max-w-none dark:prose-invert"
-                dangerouslySetInnerHTML={{ __html: product.description }}
-              />
+              <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed prose prose-sm max-w-none dark:prose-invert"
+                dangerouslySetInnerHTML={{ __html: product.description }} />
             )}
           </div>
         </div>
-        {/* DESKTOP */}
+
+        {/* ── DESKTOP ───────────────────────────────────────────────── */}
         <div className="hidden lg:flex flex-1 overflow-hidden min-h-0">
-          <div className="relative bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-950 w-[54%] flex flex-col shrink-0 border-r border-zinc-200 dark:border-zinc-800">
-            <div className="flex-1 flex items-center justify-center p-6 min-h-0">
-              {!mainLoaded && (
-                <div className="absolute inset-0 bg-muted animate-pulse" />
+          {/* Left — media panel */}
+          <div className="relative bg-zinc-100 dark:bg-zinc-900 w-[54%] flex flex-col shrink-0 border-r border-zinc-200 dark:border-zinc-800">
+            {/* Main media — minimal padding */}
+            <div className="flex-1 flex items-center justify-center p-2 min-h-0 relative overflow-hidden">
+              {!mainLoaded && <div className="absolute inset-0 bg-muted animate-pulse z-0" />}
+              {renderMainMedia()}
+
+              {/* Video controls */}
+              {currentMedia?.type === 'video' && <VideoControls size="md" />}
+
+              {/* Chevrons */}
+              {hasMultiple && <><ChevronBtn direction="left" onClick={prev} /><ChevronBtn direction="right" onClick={next} /></>}
+
+              {/* Counter */}
+              {hasMultiple && (
+                <div className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium text-white z-10"
+                  style={{ background: 'rgba(28,13,5,0.60)', backdropFilter: 'blur(4px)' }}>
+                  {clampedIndex + 1} / {media.length}
+                </div>
               )}
-              {renderMedia(currentMedia)}
             </div>
-            {/* {currentMedia.type === 'video' && (
-              <div className="absolute bottom-20 left-6 flex gap-2 z-10">
-                <button
-                  onClick={handleVideoPlayPause}
-                  className="p-2.5 rounded-full bg-white/95 dark:bg-zinc-800/95 shadow-lg hover:scale-110 transition-transform"
-                  aria-label={isPlaying ? 'Pause' : 'Play'}
-                >
-                  {isPlaying ? (
-                    <Pause className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                  ) : (
-                    <Play className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                  )}
-                </button>
-                <button
-                  onClick={handleMuteToggle}
-                  className="p-2.5 rounded-full bg-white/95 dark:bg-zinc-800/95 shadow-lg hover:scale-110 transition-transform"
-                  aria-label={isMuted ? 'Unmute' : 'Mute'}
-                >
-                  {isMuted ? (
-                    <VolumeX className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                  ) : (
-                    <Volume2 className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                  )}
-                </button>
-              </div>
-            )} */}
+
+            {/* Thumbnail strip */}
             {hasMultiple && (
-              <>
-                <button
-                  onClick={prev}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-white/95 dark:bg-zinc-800/95 shadow-lg hover:scale-110 transition-transform z-10"
-                  aria-label="Previous"
-                >
-                  <ChevronLeft className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                </button>
-                <button
-                  onClick={next}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-white/95 dark:bg-zinc-800/95 shadow-lg hover:scale-110 transition-transform z-10"
-                  aria-label="Next"
-                >
-                  <ChevronRight className="h-5 w-5 text-zinc-700 dark:text-zinc-300" />
-                </button>
-                <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-white/95 dark:bg-zinc-800/95 backdrop-blur-sm text-sm font-medium text-zinc-700 dark:text-zinc-300 shadow-md z-10">
-                  {selectedIndex + 1} / {media.length}
-                </div>
-              </>
-            )}
-            {currentMedia?.type === 'video' && (
-              <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-red-500 text-white text-xs font-bold shadow-lg flex items-center gap-1.5 z-10">
-                <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                VIDEO
-              </div>
-            )}
-            {hasMultiple && (
-              <div className="bg-white/50 dark:bg-black/20 backdrop-blur-sm border-t border-zinc-200 dark:border-zinc-800">
-                <div className="flex gap-2.5 p-3 overflow-x-auto">
-                  {media.map((item, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setSelectedIndex(i)}
-                      className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                        selectedIndex === i
-                          ? 'border-[#C4906A] shadow-lg scale-105'
-                          : 'border-zinc-300 dark:border-zinc-600 opacity-60 hover:opacity-100 hover:scale-105'
-                      }`}
-                    >
-                      {renderMedia(item, true, i)}
-                      {item.type === 'video' && (
-                        <div className="absolute top-1 right-1 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                          VIDEO
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
+              <div className="bg-white/60 dark:bg-black/20 border-t border-zinc-200 dark:border-zinc-800 px-3 py-2.5">
+                <ThumbnailStrip gap="gap-2.5" size="w-16 h-16" rounded="rounded-lg" />
               </div>
             )}
           </div>
+
+          {/* Right — info panel */}
           <div className="flex-1 overflow-y-auto bg-white dark:bg-zinc-950">
-            <div className="p-6 xl:p-8 space-y-6">
-              <h1 className="text-xl xl:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 leading-tight">
+            <div className="p-6 xl:p-8 space-y-5">
+              <h1 className="text-xl xl:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 leading-snug">
                 {product.name}
               </h1>
-              <div className="pb-5 border-b border-zinc-200 dark:border-zinc-800" />
-              <div className="grid grid-cols-3 gap-3">
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-br [rgba(196,144,106,0.08)] border-[rgba(196,144,106,0.30)] hover:scale-105 transition-transform">
-                  <Truck className="h-4 w-4 text-[#9B6844]" />
-                  <span className="text-[9px] font-semibold text-center text-zinc-700 dark:text-zinc-300">Free Shipping</span>
-                </div>
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-br [rgba(212,169,106,0.08)] border-[rgba(212,169,106,0.30)] hover:scale-105 transition-transform">
-                  <Shield className="h-4 w-4 text-[#C4906A]" />
-                  <span className="text-[9px] font-semibold text-center text-zinc-700 dark:text-zinc-300">Secure Payment</span>
-                </div>
-                <div className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-br [rgba(155,104,68,0.08)] border-[rgba(155,104,68,0.30)] hover:scale-105 transition-transform">
-                  <Zap className="h-4 w-4 text-[#9B6844]" />
-                  <span className="text-[9px] font-semibold text-center text-zinc-700 dark:text-zinc-300">Fast Delivery</span>
-                </div>
-              </div>
+              <div className="h-px" style={{ background: 'linear-gradient(90deg, rgba(196,144,106,0.5), transparent)' }} />
+              <BadgeCards />
               {product.description && (
-                <div
-                  className="leading-relaxed text-zinc-600 dark:text-zinc-400 prose prose-sm max-w-none dark:prose-invert"
-                  dangerouslySetInnerHTML={{ __html: product.description }}
-                />
+                <div className="leading-relaxed text-zinc-600 dark:text-zinc-400 prose prose-sm max-w-none dark:prose-invert"
+                  dangerouslySetInnerHTML={{ __html: product.description }} />
               )}
-              <div className="pt-4">
+              <div className="pt-3">
                 <WhatsAppButton
                   product={product}
                   className="w-full h-12 text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl transition-shadow"
@@ -423,14 +359,14 @@ const ProductDialog = ({ product, open, onOpenChange }: ProductDialogProps) => {
             </div>
           </div>
         </div>
+
+        {/* Mobile sticky CTA */}
         <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800 shadow-2xl">
-          <WhatsAppButton
-            product={product}
-            className="w-full h-12 text-sm font-semibold rounded-xl shadow-lg"
-          />
+          <WhatsAppButton product={product} className="w-full h-12 text-sm font-semibold rounded-xl shadow-lg" />
         </div>
       </DialogContent>
     </Dialog>
   );
 };
+
 export default ProductDialog;
