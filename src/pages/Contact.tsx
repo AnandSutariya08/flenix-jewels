@@ -1,17 +1,31 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import Header from '@/components/Header';
 import MiniHeader from '@/components/MiniHeader';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Phone, Mail, Clock, Send, Flag, Loader2 } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, Flag, Loader2, Gem, MessageCircle, ChevronRight } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { toast } from 'sonner';
+
+const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
+
+function useReveal(threshold = 0.1) {
+  const ref = useRef<HTMLElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+}
 
 const Contact = () => {
   const { categories, promoHeader, contactInfo, offices } = useAppSelector(selectGlobalData);
@@ -20,6 +34,12 @@ const Contact = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [heroLoaded, setHeroLoaded] = useState(false);
+  const formReveal = useReveal(0.08);
+  const infoReveal = useReveal(0.08);
+  const officesReveal = useReveal(0.08);
+
+  useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
 
   const hasPromo = promoHeader?.enabled && promoHeader?.text;
   const promoHeight = hasPromo ? 40 : 0;
@@ -36,7 +56,7 @@ const Contact = () => {
       const whatsappMessage = `*New Contact Form*\n\n*Name:* ${name.trim()}\n*Email:* ${email.trim()}\n*Subject:* ${subject.trim()}\n*Message:*\n${message.trim()}`;
       window.open(`https://wa.me/${contactInfo?.whatsapp || '919967381180'}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
       setName(''); setEmail(''); setSubject(''); setMessage('');
-      toast.success('Message sent!');
+      toast.success('Message sent via WhatsApp!');
     } finally {
       setIsSubmitting(false);
     }
@@ -48,151 +68,339 @@ const Contact = () => {
   );
 
   const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'ContactPage',
+    '@context': 'https://schema.org', '@type': 'ContactPage',
     '@id': 'https://www.flenixjewels.com/contact#contactpage',
     name: 'Contact Flenix Jewels - Diamond Jewelry Store',
     description: 'Contact Flenix Jewels for premium diamond jewelry, custom designs, engagement rings, and wholesale inquiries.',
     url: 'https://www.flenixjewels.com/contact',
     mainEntityOfPage: 'https://www.flenixjewels.com/contact',
     mainEntity: {
-      '@type': 'Organization',
-      '@id': 'https://www.flenixjewels.com/#jewelry-store',
-      name: 'Flenix Jewels',
-      telephone: contactInfo?.phone,
-      email: contactInfo?.email,
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Mumbai',
-        addressCountry: 'India'
-      }
+      '@type': 'Organization', '@id': 'https://www.flenixjewels.com/#jewelry-store',
+      name: 'Flenix Jewels', telephone: contactInfo?.phone, email: contactInfo?.email,
+      address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressCountry: 'India' }
     }
   };
-
   const faqItems = [
-    {
-      question: "How can I contact Flenix Jewels?",
-      answer:
-        "You can contact us via phone or WhatsApp for product inquiries, custom orders, and wholesale requests.",
-    },
-    {
-      question: "Do you offer custom jewelry design?",
-      answer:
-        "Yes. We provide custom design and manufacturing for engagement rings, wedding bands, and fine jewelry.",
-    },
-    {
-      question: "Do you ship internationally?",
-      answer:
-        "Yes. We ship globally with secure packaging and delivery options for select regions.",
-    },
+    { question: "How can I contact Flenix Jewels?", answer: "You can contact us via phone or WhatsApp for product inquiries, custom orders, and wholesale requests." },
+    { question: "Do you offer custom jewelry design?", answer: "Yes. We provide custom design and manufacturing for engagement rings, wedding bands, and fine jewelry." },
+    { question: "Do you ship internationally?", answer: "Yes. We ship globally with secure packaging and delivery options for select regions." },
   ];
 
+  const inputBase = "w-full px-4 py-3.5 rounded-xl text-sm font-medium outline-none transition-all duration-200 bg-[#F5EDE3] dark:bg-[#1a0c06] text-[#1C0D05] dark:text-[#F5E8D8] placeholder:text-[#C4A080] dark:placeholder:text-[#5A4030] border border-transparent focus:border-[#C4906A] dark:focus:border-[#C4906A]";
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#FDF8F2] dark:bg-[#0a0603]">
       <SEOHead
         title="Contact Us - Diamond Jewelry Inquiries & Custom Orders | Flenix Jewels"
-        description="Contact Flenix Jewels for inquiries about GIA certified diamonds, custom jewelry designs, engagement rings, wholesale orders. Global offices in Mumbai, New York, Dubai. 24/7 WhatsApp support."
-        keywords="contact flenix jewels, jewelry store contact, diamond jewelry inquiries, custom jewelry design, wholesale diamond jewelry, engagement ring consultation, buy diamonds online, jewelry showroom Mumbai, diamond dealer contact"
+        description="Contact Flenix Jewels for GIA certified diamonds, custom jewelry designs, engagement rings, wholesale orders. Global offices. 24/7 WhatsApp support."
+        keywords="contact flenix jewels, jewelry store contact, diamond jewelry inquiries, custom jewelry design, wholesale diamond jewelry"
         canonicalUrl="https://www.flenixjewels.com/contact"
         structuredData={structuredData}
-        breadcrumbs={[
-          { name: "Home", url: "https://www.flenixjewels.com" },
-          { name: "Contact", url: "https://www.flenixjewels.com/contact" },
-        ]}
+        breadcrumbs={[{ name: "Home", url: "https://www.flenixjewels.com" }, { name: "Contact", url: "https://www.flenixjewels.com/contact" }]}
         faqItems={faqItems}
       />
-
       <Header promoHeader={promoHeader} />
       <MiniHeader categories={categories} promoHeight={promoHeight} />
-      
+
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
-        {sortedOffices.length > 0 && (
-          <section className="py-20 bg-muted/30">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-12">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Our Global Presence</h1>
-                <p className="text-lg text-muted-foreground">Visit us at any of our offices worldwide</p>
+
+        {/* ── Hero ── */}
+        <section className="relative overflow-hidden py-20 md:py-28 bg-[#130900] dark:bg-[#0c0703]">
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 65% 65% at 50% 50%, rgba(196,144,106,0.10) 0%, transparent 70%)' }} />
+
+          <div
+            className="relative z-10 max-w-3xl mx-auto px-6 text-center"
+            style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}
+          >
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, transparent, #C4906A)' }} />
+              <MessageCircle className="h-3.5 w-3.5" style={{ color: '#C4906A' }} />
+              <span className="text-[10px] tracking-[0.4em] uppercase font-black" style={{ color: '#C4906A' }}>Reach Out</span>
+              <MessageCircle className="h-3.5 w-3.5" style={{ color: '#C4906A' }} />
+              <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, #C4906A, transparent)' }} />
+            </div>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-white leading-[1.05] mb-5">
+              Let's <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Talk</span>
+            </h1>
+            <p className="text-base md:text-lg leading-relaxed max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              Whether you have a question, a custom design in mind, or a wholesale inquiry — our team is ready to help.
+            </p>
+          </div>
+
+          {/* Quick contact pills */}
+          <div
+            className="relative z-10 max-w-3xl mx-auto px-6 mt-12 flex flex-wrap justify-center gap-3"
+            style={{ opacity: heroLoaded ? 1 : 0, transition: 'opacity 1.1s ease 0.25s' }}
+          >
+            {contactInfo?.phone && (
+              <a
+                href={`tel:${contactInfo.phone}`}
+                className="flex items-center gap-2.5 text-sm font-bold px-5 py-3 rounded-full transition-all duration-200 hover:scale-105"
+                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(196,144,106,0.28)', color: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)' }}
+              >
+                <Phone className="h-4 w-4" style={{ color: '#C4906A' }} />
+                {contactInfo.phone}
+              </a>
+            )}
+            {contactInfo?.email && (
+              <a
+                href={`mailto:${contactInfo.email}`}
+                className="flex items-center gap-2.5 text-sm font-bold px-5 py-3 rounded-full transition-all duration-200 hover:scale-105"
+                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(196,144,106,0.28)', color: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)' }}
+              >
+                <Mail className="h-4 w-4" style={{ color: '#C4906A' }} />
+                {contactInfo.email}
+              </a>
+            )}
+            {contactInfo?.whatsapp && (
+              <a
+                href={`https://wa.me/${contactInfo.whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 text-sm font-bold px-5 py-3 rounded-full transition-all duration-200 hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, rgba(18,140,126,0.3), rgba(37,211,102,0.2))', border: '1px solid rgba(37,211,102,0.35)', color: '#7FE8A0', backdropFilter: 'blur(12px)' }}
+              >
+                <FaWhatsapp className="h-4 w-4" style={{ color: '#25D366' }} />
+                WhatsApp
+              </a>
+            )}
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.25) 50%, transparent 95%)' }} />
+        </section>
+
+        {/* ── Form + Info ── */}
+        <section className="py-16 md:py-24 bg-[#FDF8F2] dark:bg-[#0e0805]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 grid lg:grid-cols-[1fr_420px] gap-10 xl:gap-14">
+
+            {/* Form */}
+            <div
+              ref={formReveal.ref as React.RefObject<HTMLDivElement>}
+              style={{ opacity: formReveal.visible ? 1 : 0, transform: formReveal.visible ? 'translateX(0)' : 'translateX(-24px)', transition: 'opacity 0.8s ease, transform 0.8s ease' }}
+            >
+              <div
+                className="rounded-3xl p-8 md:p-10 bg-white dark:bg-[#150a04]"
+                style={{ border: '1px solid rgba(196,144,106,0.18)', boxShadow: '0 8px 48px -12px rgba(0,0,0,0.10)' }}
+              >
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="h-px w-6" style={{ background: GOLD }} />
+                  <span className="text-[10px] tracking-[0.32em] uppercase font-black" style={{ color: '#C4906A' }}>Send a Message</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-8 text-[#1C0D05] dark:text-[#F5E8D8]">
+                  How can we help you?
+                </h2>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070] dark:text-[#7A6050]">Your Name *</label>
+                      <input
+                        id="name" type="text" value={name} onChange={e => setName(e.target.value)}
+                        placeholder="John Doe" required
+                        className={inputBase}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070] dark:text-[#7A6050]">Your Email *</label>
+                      <input
+                        id="email" type="email" value={email} onChange={e => setEmail(e.target.value)}
+                        placeholder="john@example.com" required
+                        className={inputBase}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070] dark:text-[#7A6050]">Subject *</label>
+                    <input
+                      id="subject" type="text" value={subject} onChange={e => setSubject(e.target.value)}
+                      placeholder="e.g. Custom engagement ring inquiry" required
+                      className={inputBase}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070] dark:text-[#7A6050]">Message *</label>
+                    <textarea
+                      id="message" value={message} onChange={e => setMessage(e.target.value)}
+                      placeholder="Tell us more about what you're looking for..." rows={6} required
+                      className={`${inputBase} resize-none`}
+                    />
+                  </div>
+                  <button
+                    type="submit" disabled={isSubmitting}
+                    className="w-full flex items-center justify-center gap-3 font-bold text-sm tracking-[0.12em] uppercase py-4 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                    style={{ background: GOLD, color: '#fff', boxShadow: '0 8px 28px -8px rgba(155,104,68,0.55)' }}
+                  >
+                    {isSubmitting ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" />Sending…</>
+                    ) : (
+                      <><FaWhatsapp className="h-4 w-4" />Send via WhatsApp</>
+                    )}
+                  </button>
+                  <p className="text-center text-[11px] text-[#B89878] dark:text-[#6A5040]">
+                    Your message will open in WhatsApp — ready to send instantly.
+                  </p>
+                </form>
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            </div>
+
+            {/* Info panel */}
+            <div
+              ref={infoReveal.ref as React.RefObject<HTMLDivElement>}
+              className="flex flex-col gap-5"
+              style={{ opacity: infoReveal.visible ? 1 : 0, transform: infoReveal.visible ? 'translateX(0)' : 'translateX(24px)', transition: 'opacity 0.8s ease 0.15s, transform 0.8s ease 0.15s' }}
+            >
+              {/* WhatsApp CTA card */}
+              <div
+                className="relative overflow-hidden rounded-3xl p-7"
+                style={{ background: '#0e0803', border: '1px solid rgba(196,144,106,0.25)', boxShadow: '0 8px 40px -10px rgba(0,0,0,0.28)' }}
+              >
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(196,144,106,0.09), transparent 70%)' }} />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-4">
+                    <FaWhatsapp className="h-5 w-5" style={{ color: '#25D366' }} />
+                    <span className="text-[10px] tracking-[0.28em] uppercase font-black" style={{ color: '#C4906A' }}>Fastest Response</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">Chat on WhatsApp</h3>
+                  <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.45)' }}>Get a reply within minutes for product queries, pricing, or custom designs.</p>
+                  {contactInfo?.whatsapp && (
+                    <a
+                      href={`https://wa.me/${contactInfo.whatsapp}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2.5 w-full font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl transition-all duration-300 hover:scale-[1.03] active:scale-95"
+                      style={{ background: 'linear-gradient(135deg, #128C7E, #25D366)', color: '#fff', boxShadow: '0 8px 24px -6px rgba(37,211,102,0.4)' }}
+                    >
+                      <FaWhatsapp className="h-4 w-4" />
+                      Start Chat
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Contact info cards */}
+              {[
+                contactInfo?.phone && {
+                  icon: Phone, label: 'Phone', value: contactInfo.phone, href: `tel:${contactInfo.phone}`,
+                },
+                contactInfo?.email && {
+                  icon: Mail, label: 'Email', value: contactInfo.email, href: `mailto:${contactInfo.email}`,
+                },
+                {
+                  icon: Clock, label: 'Business Hours',
+                  value: 'Mon–Sat: 10:00 AM – 8:00 PM', sub: 'Sunday: Closed', href: null,
+                },
+              ].filter(Boolean).map((item: any, i) => (
+                <div
+                  key={i}
+                  className="flex gap-4 items-start p-5 rounded-2xl bg-white dark:bg-[#150a04]"
+                  style={{ border: '1px solid rgba(196,144,106,0.16)', boxShadow: '0 2px 16px -4px rgba(0,0,0,0.07)' }}
+                >
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(196,144,106,0.12)', border: '1px solid rgba(196,144,106,0.2)' }}>
+                    <item.icon className="h-4.5 w-4.5 h-[18px] w-[18px]" style={{ color: '#C4906A' }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] tracking-[0.2em] uppercase font-black mb-1 text-[#9B8070] dark:text-[#6A5040]">{item.label}</p>
+                    {item.href ? (
+                      <a href={item.href} className="text-sm font-bold text-[#1C0D05] dark:text-[#F5E8D8] hover:text-[#C4906A] dark:hover:text-[#C4906A] transition-colors truncate block">
+                        {item.value}
+                      </a>
+                    ) : (
+                      <p className="text-sm font-bold text-[#1C0D05] dark:text-[#F5E8D8]">{item.value}</p>
+                    )}
+                    {item.sub && <p className="text-xs text-[#9B8070] dark:text-[#6A5040] mt-0.5">{item.sub}</p>}
+                  </div>
+                  {item.href && <ChevronRight className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: 'rgba(196,144,106,0.4)' }} />}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Offices ── */}
+        {sortedOffices.length > 0 && (
+          <section
+            ref={officesReveal.ref as React.RefObject<HTMLElement>}
+            className="py-16 md:py-24 bg-[#F5EDE3] dark:bg-[#0a0603]"
+            style={{ opacity: officesReveal.visible ? 1 : 0, transform: officesReveal.visible ? 'translateY(0)' : 'translateY(28px)', transition: 'opacity 0.8s ease, transform 0.8s ease' }}
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+              <div className="text-center mb-12">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, transparent, #C4906A)' }} />
+                  <Gem className="h-3.5 w-3.5" style={{ color: '#C4906A' }} />
+                  <span className="text-[10px] tracking-[0.35em] uppercase font-black" style={{ color: '#C4906A' }}>Worldwide</span>
+                  <Gem className="h-3.5 w-3.5" style={{ color: '#C4906A' }} />
+                  <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, #C4906A, transparent)' }} />
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold text-[#1C0D05] dark:text-[#F5E8D8]">Our Global Presence</h2>
+                <p className="mt-3 text-base text-[#9B8070] dark:text-[#7A6050]">Visit us at any of our offices worldwide</p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {sortedOffices.map((office) => (
-                  <Card key={office.id} className="relative overflow-hidden hover:shadow-xl transition-shadow">
-                    {office.isHeadquarters && <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs px-3 py-1 rounded-full font-semibold z-10">HEADQUARTERS</div>}
-                    <CardContent className="p-6 space-y-4">
-                      <div className="flex items-start gap-3">
-                        {office.flagImage ? (
-                          <img src={office.flagImage} alt={`${office.country} flag`} className="w-12 h-8 object-cover rounded border flex-shrink-0" loading="lazy" decoding="async" fetchpriority="low" />
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"><Flag className="h-6 w-6 text-primary" /></div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <h2 className="text-xl font-bold mb-1">{office.city}</h2>
-                          <p className="text-sm text-muted-foreground font-medium">{office.country}</p>
+                  <div
+                    key={office.id}
+                    className="group relative overflow-hidden rounded-2xl p-6 bg-white dark:bg-[#150a04]"
+                    style={{ border: '1px solid rgba(196,144,106,0.16)', boxShadow: '0 4px 24px -6px rgba(0,0,0,0.09)', transition: 'border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease' }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'rgba(196,144,106,0.45)'; el.style.boxShadow = '0 12px 40px -10px rgba(196,144,106,0.2)'; el.style.transform = 'translateY(-4px)'; }}
+                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'rgba(196,144,106,0.16)'; el.style.boxShadow = '0 4px 24px -6px rgba(0,0,0,0.09)'; el.style.transform = 'translateY(0)'; }}
+                  >
+                    {/* HQ badge */}
+                    {office.isHeadquarters && (
+                      <div className="absolute top-4 right-4 text-[9px] font-black tracking-[0.2em] uppercase px-3 py-1.5 rounded-full" style={{ background: GOLD, color: '#fff' }}>
+                        HQ
+                      </div>
+                    )}
+
+                    {/* Flag + city */}
+                    <div className="flex items-start gap-3.5 mb-5">
+                      {office.flagImage ? (
+                        <img
+                          src={office.flagImage}
+                          alt={`${office.country} flag`}
+                          className="w-12 h-8 object-cover rounded-md flex-shrink-0 shadow-sm"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(196,144,106,0.1)' }}>
+                          <Flag className="h-5 w-5" style={{ color: '#C4906A' }} />
                         </div>
+                      )}
+                      <div>
+                        <h3 className="text-lg font-bold text-[#1C0D05] dark:text-[#F5E8D8] leading-tight">{office.city}</h3>
+                        <p className="text-[11px] tracking-[0.15em] uppercase font-bold text-[#9B8070] dark:text-[#6A5040]">{office.country}</p>
                       </div>
-                      <div className="space-y-3 pt-2">
-                        <div className="flex items-start gap-3"><MapPin className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" /><p className="text-sm text-muted-foreground flex-1">{office.address}</p></div>
-                        <div className="flex items-center gap-3"><Phone className="h-5 w-5 text-primary flex-shrink-0" /><a href={`tel:${office.phone}`} className="text-sm font-medium break-all hover:text-primary">{office.phone}</a></div>
-                        <div className="flex items-center gap-3"><Mail className="h-5 w-5 text-primary flex-shrink-0" /><a href={`mailto:${office.email}`} className="text-sm font-medium break-all hover:text-primary">{office.email}</a></div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-px mb-5" style={{ background: 'rgba(196,144,106,0.16)' }} />
+
+                    {/* Details */}
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3">
+                        <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#C4906A' }} />
+                        <p className="text-sm leading-relaxed text-[#5A3D2A] dark:text-[#B89880]">{office.address}</p>
                       </div>
-                    </CardContent>
-                  </Card>
+                      <div className="flex items-center gap-3">
+                        <Phone className="h-4 w-4 flex-shrink-0" style={{ color: '#C4906A' }} />
+                        <a href={`tel:${office.phone}`} className="text-sm font-bold text-[#1C0D05] dark:text-[#F5E8D8] hover:text-[#C4906A] dark:hover:text-[#C4906A] transition-colors">
+                          {office.phone}
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Mail className="h-4 w-4 flex-shrink-0" style={{ color: '#C4906A' }} />
+                        <a href={`mailto:${office.email}`} className="text-sm font-bold text-[#1C0D05] dark:text-[#F5E8D8] hover:text-[#C4906A] dark:hover:text-[#C4906A] transition-colors truncate">
+                          {office.email}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
           </section>
         )}
-
-        <section className="relative py-16 md:py-24 overflow-hidden">
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">Get In Touch</h2>
-              <p className="text-lg text-muted-foreground">We're here to help and answer any question you might have.</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="py-12 md:py-20">
-          <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-              <div className="flenix-card p-8" style={{background:'linear-gradient(160deg,#FDF5EC 0%,#FAF0E2 100%)'}}>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1 h-8 rounded-full" style={{background:'linear-gradient(180deg,#9B6844,#D4A96A)'}} />
-                  <h3 className="text-3xl font-bold">Send Us a Message</h3>
-                </div>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2"><Label htmlFor="name">Your Name *</Label><Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" required /></div>
-                  <div className="space-y-2"><Label htmlFor="email">Your Email *</Label><Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" required /></div>
-                  <div className="space-y-2"><Label htmlFor="subject">Subject *</Label><Input id="subject" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="What's this about?" required /></div>
-                  <div className="space-y-2"><Label htmlFor="message">Message *</Label><Textarea id="message" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Tell us more..." rows={6} required /></div>
-                  <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting ? <><Loader2 className="h-5 w-5 mr-2 animate-spin" />Sending...</> : <><Send className="h-5 w-5 mr-2" />Send Message</>}
-                  </Button>
-                </form>
-              </div>
-              <div className="space-y-8">
-                <h3 className="text-3xl font-bold mb-6">Quick Contact</h3>
-                <div className="space-y-4">
-                  {contactInfo?.phone && (
-                    <Card><CardContent className="p-6 flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"><Phone className="h-6 w-6 text-primary" /></div>
-                      <div><h4 className="font-semibold mb-1">Phone</h4><a href={`tel:${contactInfo.phone}`} className="text-muted-foreground hover:text-primary">{contactInfo.phone}</a></div>
-                    </CardContent></Card>
-                  )}
-                  {contactInfo?.email && (
-                    <Card><CardContent className="p-6 flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"><Mail className="h-6 w-6 text-primary" /></div>
-                      <div><h4 className="font-semibold mb-1">Email</h4><a href={`mailto:${contactInfo.email}`} className="text-muted-foreground hover:text-primary">{contactInfo.email}</a></div>
-                    </CardContent></Card>
-                  )}
-                  <Card><CardContent className="p-6 flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"><Clock className="h-6 w-6 text-primary" /></div>
-                    <div><h4 className="font-semibold mb-1">Business Hours</h4><p className="text-muted-foreground">Monday - Saturday: 10:00 AM - 8:00 PM</p><p className="text-muted-foreground">Sunday: Closed</p></div>
-                  </CardContent></Card>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
       <Footer />
