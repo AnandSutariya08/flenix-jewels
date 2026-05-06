@@ -1,4 +1,4 @@
-# Starlink Jewels (Flenix Jewels)
+# Flenix Jewels (Flenix Jewels)
 
 A professional e-commerce jewelry store web application built with React + Vite.
 

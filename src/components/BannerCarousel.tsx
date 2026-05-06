@@ -163,7 +163,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
           </button>
 
           {/* Slide indicators — stylish vertical bar on right */}
-          <div className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-30 hidden md:flex flex-col gap-3">
+          {/* <div className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-30 hidden md:flex flex-col gap-3">
             {banners.map((_, index) => (
               <button key={index} onClick={() => navigate(index)} aria-label={`Go to slide ${index + 1}`}
                 className="rounded-full transition-all duration-500"
@@ -176,7 +176,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
                   boxShadow: index === currentIndex ? '0 0 12px rgba(196,144,106,0.6)' : 'none',
                 }} />
             ))}
-          </div>
+          </div> */}
 
           {/* Mobile bottom dots */}
           <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 z-30 md:hidden">
