@@ -20,6 +20,7 @@ import { loadProducts, selectContentHydrated, selectContentStatus, selectGlobalD
 import { Product } from "@/lib/storage";
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, SlidersHorizontal } from 'lucide-react';
+import { HEADER_OFFSET_PX } from "@/lib/layout";
 import {
   Select,
   SelectContent,
@@ -42,9 +43,7 @@ const CategoryProducts = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortBy, setSortBy] = useState<string>('newest');
   const [searchParams, setSearchParams] = useSearchParams();
-  const hasPromo = promoHeader?.enabled && promoHeader?.text;
-  const promoHeight = hasPromo ? 40 : 0;
-  const paddingTop = promoHeight + 80 + 52 + 24;
+  const paddingTop = HEADER_OFFSET_PX;
   const category = useMemo(
     () => categories.find((c) => c.id === id) ?? null,
     [categories, id]
@@ -268,7 +267,7 @@ const CategoryProducts = () => {
           canonicalUrl={`https://www.flenixjewels.com/category/${id}`}
         />
         <Header promoHeader={promoHeader} />
-        <MiniHeader categories={categories} promoHeight={promoHeight} />
+        {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
         <main className="flex-1 container mx-auto px-4 py-12" style={{ paddingTop: `${paddingTop}px` }}>
           <div className="mb-8">
             <div className="h-10 w-64 bg-muted rounded-md animate-pulse mb-3" />
@@ -294,7 +293,7 @@ const CategoryProducts = () => {
           canonicalUrl={`https://www.flenixjewels.com/category/${id}`}
         />
         <Header promoHeader={promoHeader} />
-        <MiniHeader categories={categories} promoHeight={promoHeight} />
+        {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
         <main className="flex-1 container mx-auto px-4 py-12" style={{ paddingTop: `${paddingTop}px` }}>
           <div className="mb-8">
             <div className="h-10 w-64 bg-muted rounded-md animate-pulse mb-3" />
@@ -320,7 +319,7 @@ const CategoryProducts = () => {
           canonicalUrl={`https://www.flenixjewels.com/category/${id}`}
         />
         <Header promoHeader={promoHeader} />
-        <MiniHeader categories={categories} promoHeight={promoHeight} />
+        {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
         <main className="flex-1 container mx-auto px-4 py-12" style={{ paddingTop: `${paddingTop}px` }}>
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-4">Category Not Found</h1>
@@ -352,7 +351,7 @@ const CategoryProducts = () => {
         faqItems={seoFaqItems || faqItems}
       />
       <Header promoHeader={promoHeader} />
-      <MiniHeader categories={categories} promoHeight={promoHeight} />
+      {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
       <main className="flex-1 container mx-auto px-4 py-12" style={{ paddingTop: `${paddingTop}px` }}>
         <Link to="/categories">
           <Button variant="ghost" className="mb-6">

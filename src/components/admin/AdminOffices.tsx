@@ -7,10 +7,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Plus, Trash2, MapPin, Pencil, Upload, Flag, Loader2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const AdminOffices = () => {
   const [offices, setOffices] = useState<Office[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
@@ -64,10 +66,10 @@ const AdminOffices = () => {
     setEmail(office.email);
     setIsHeadquarters(office.isHeadquarters || false);
     setFlagImage(office.flagImage || '');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsFormOpen(true);
   };
 
-  const handleCancelEdit = () => {
+  const resetForm = () => {
     setEditingId(null);
     setCountry('');
     setCity('');
@@ -76,6 +78,16 @@ const AdminOffices = () => {
     setEmail('');
     setIsHeadquarters(false);
     setFlagImage('');
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+    setIsFormOpen(false);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setIsFormOpen(true);
   };
 
   const handleAdd = async () => {
@@ -107,16 +119,8 @@ const AdminOffices = () => {
       await saveOffice(officeData);
       const updated = await getOffices();
       setOffices(updated);
-      
-      // Reset form
-      setCountry('');
-      setCity('');
-      setAddress('');
-      setPhone('');
-      setEmail('');
-      setIsHeadquarters(false);
-      setFlagImage('');
-      setEditingId(null);
+      resetForm();
+      setIsFormOpen(false);
       
       toast.success(editingId ? 'Office updated successfully' : 'Office added successfully');
     } catch (error) {
@@ -142,11 +146,24 @@ const AdminOffices = () => {
 
   return (
     <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? 'Edit Office Location' : 'Add New Office Location'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Offices</h2>
+          <p className="text-sm text-muted-foreground">Add and manage office locations.</p>
+        </div>
+        <Button onClick={handleOpenCreate}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Office Location
+        </Button>
+      </div>
+
+      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingId ? 'Edit Office Location' : 'Add New Office Location'}</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="office-country">Country *</Label>
@@ -274,14 +291,13 @@ const AdminOffices = () => {
                 </>
               )}
             </Button>
-            {editingId && (
-              <Button onClick={handleCancelEdit} variant="outline" disabled={isSubmitting}>
-                Cancel
-              </Button>
-            )}
+            <Button onClick={handleCancelEdit} variant="outline" disabled={isSubmitting}>
+              Cancel
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <div>
         <h3 className="text-xl font-semibold mb-4">Office Locations ({offices.length})</h3>

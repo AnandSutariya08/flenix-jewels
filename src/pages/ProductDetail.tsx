@@ -10,6 +10,7 @@ import { loadProducts, selectContentHydrated, selectContentStatus, selectGlobalD
 import { buildFaqForProduct, buildMetaDescriptionForProduct, buildMetaTitleForProduct, buildOffer } from "@/lib/seo";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { preloadMedia } from "@/lib/preload";
+import { HEADER_OFFSET_PX } from "@/lib/layout";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,9 +23,7 @@ const ProductDetail = () => {
   const isReady = status === "succeeded" || hydrated;
   const productsReady = productsLoaded || productsStatus === "succeeded" || productsStatus === "failed";
 
-  const hasPromo = promoHeader?.enabled && promoHeader?.text;
-  const promoHeight = hasPromo ? 40 : 0;
-  const paddingTop = promoHeight + 80 + 52 + 24;
+  const paddingTop = HEADER_OFFSET_PX;
 
   const product = useMemo(() => products.find((p) => p.id === id) || null, [products, id]);
   const category = useMemo(
@@ -84,8 +83,8 @@ const ProductDetail = () => {
           canonicalUrl={`https://www.flenixjewels.com/product/${id}`}
         />
         <Header promoHeader={promoHeader} />
-        <MiniHeader categories={categories} promoHeight={promoHeight} />
-        <main className="flex-1 container mx-auto px-4 py-12" style={{ paddingTop: `${paddingTop}px` }}>
+        {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
+        <main className="flex-1 container mx-auto px-4 py-12" >
           <div className="h-10 w-72 bg-muted rounded-md animate-pulse mb-4" />
           <div className="grid lg:grid-cols-2 gap-10">
             <div className="aspect-square bg-muted rounded-2xl animate-pulse" />
@@ -110,8 +109,8 @@ const ProductDetail = () => {
           canonicalUrl={`https://www.flenixjewels.com/product/${id}`}
         />
         <Header promoHeader={promoHeader} />
-        <MiniHeader categories={categories} promoHeight={promoHeight} />
-        <main className="flex-1 container mx-auto px-4 py-12" style={{ paddingTop: `${paddingTop}px` }}>
+        {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
+        <main className="flex-1 container mx-auto px-4 py-12" >
           <div className="text-center">
             <p className="text-lg text-muted-foreground">Product not found.</p>
           </div>
@@ -138,9 +137,9 @@ const ProductDetail = () => {
       />
 
       <Header promoHeader={promoHeader} />
-      <MiniHeader categories={categories} promoHeight={promoHeight} />
+      {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
 
-      <main className="flex-1 container mx-auto px-4 py-12" style={{ paddingTop: `${paddingTop}px` }}>
+      <main className="flex-1 container mx-auto px-4 py-12" >
         <div className="grid lg:grid-cols-2 gap-10">
           <div>
             <div className="relative aspect-square rounded-2xl bg-muted overflow-hidden flex items-center justify-center">

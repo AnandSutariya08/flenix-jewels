@@ -6,15 +6,15 @@ import { dirname, resolve } from "node:path";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBse5vfsARbl8k6ub9Mir6qs-CsPdaNuGU",
-  authDomain: "starlinkjewels109.firebaseapp.com",
-  projectId: "starlinkjewels109",
-  storageBucket: "starlinkjewels109.firebasestorage.app",
+  authDomain: "flenixjewels109.firebaseapp.com",
+  projectId: "flenixjewels109",
+  storageBucket: "flenixjewels109.firebasestorage.app",
   messagingSenderId: "192385163202",
   appId: "1:192385163202:web:6499e21aa7c34cd9e7c05b",
   measurementId: "G-FFTQZDHDDM",
 };
 
-const BASE_URL = "https://www.starlinkjewels.com";
+const BASE_URL = "https://www.flenixjewels.com";
 const today = new Date().toISOString().split("T")[0];
 
 const app = initializeApp(firebaseConfig);

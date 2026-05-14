@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
+import { HEADER_OFFSET_PX } from "@/lib/layout";
 import { MapPin, Phone, Mail, Clock, Send, Flag, Loader2, Gem, MessageCircle, ChevronRight } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { toast } from 'sonner';
@@ -41,9 +42,7 @@ const Contact = () => {
 
   useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
 
-  const hasPromo = promoHeader?.enabled && promoHeader?.text;
-  const promoHeight = hasPromo ? 40 : 0;
-  const paddingTop = promoHeight + 80 + 52;
+  const paddingTop = HEADER_OFFSET_PX;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,7 +99,7 @@ const Contact = () => {
         faqItems={faqItems}
       />
       <Header promoHeader={promoHeader} />
-      <MiniHeader categories={categories} promoHeight={promoHeight} />
+      {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
 
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
 

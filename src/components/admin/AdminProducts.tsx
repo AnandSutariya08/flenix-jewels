@@ -24,6 +24,7 @@ interface MediaItem {
 const AdminProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -184,11 +185,10 @@ const AdminProducts = () => {
     }));
     
     setMediaItems(existingMediaItems);
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsFormOpen(true);
   };
 
-  const handleCancelEdit = () => {
+  const resetForm = () => {
     setEditingId(null);
     setName('');
     setDescription('');
@@ -198,6 +198,17 @@ const AdminProducts = () => {
     setMetaTitle('');
     setMetaDescription('');
     setSeoFaq([]);
+    if (mediaInputRef.current) mediaInputRef.current.value = '';
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+    setIsFormOpen(false);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setIsFormOpen(true);
   };
 
   const handleAddProduct = async () => {
@@ -240,16 +251,8 @@ const AdminProducts = () => {
       await saveProduct(productData);
       const updated = await getProducts();
       setProducts(updated);
-      
-      setName('');
-      setDescription('');
-      setPrice('');
-      setCategoryId('');
-      setMediaItems([]);
-      setMetaTitle('');
-      setMetaDescription('');
-      setSeoFaq([]);
-      setEditingId(null);
+      resetForm();
+      setIsFormOpen(false);
       
       toast.success(editingId ? 'Product updated successfully' : 'Product added successfully');
     } catch (error) {
@@ -351,17 +354,30 @@ const AdminProducts = () => {
 
  
 
-  return (
-    <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? 'Edit Product' : 'Add New Product'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="product-category">Category *</Label>
-            <Select value={categoryId} onValueChange={setCategoryId}>
-              <SelectTrigger>
+	  return (
+	    <div className="space-y-8">
+	      <div className="flex items-center justify-between gap-4">
+	        <div>
+	          <h2 className="text-2xl font-semibold">Products</h2>
+	          <p className="text-sm text-muted-foreground">Add and manage products, images/videos, and SEO.</p>
+	        </div>
+	        <Button onClick={handleOpenCreate}>
+	          <Plus className="h-4 w-4 mr-2" />
+	          Add Product
+	        </Button>
+	      </div>
+
+	      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+	        <DialogContent className="max-w-6xl h-[90vh] overflow-y-auto">
+	          <DialogHeader>
+	            <DialogTitle>{editingId ? 'Edit Product' : 'Add New Product'}</DialogTitle>
+	          </DialogHeader>
+
+	          <div className="space-y-4">
+	          <div className="space-y-2">
+	            <Label htmlFor="product-category">Category *</Label>
+	            <Select value={categoryId} onValueChange={setCategoryId}>
+	              <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
@@ -543,30 +559,31 @@ const AdminProducts = () => {
             </p>
           </div>
           
-          <div className="flex gap-2 pt-2">
-            <Button 
-              onClick={handleAddProduct} 
-              className="flex-1" 
-              disabled={isUploading}
-            >
+	          <div className="flex gap-2 pt-2">
+	            <Button 
+	              onClick={handleAddProduct} 
+	              className="flex-1" 
+	              disabled={isUploading}
+	            >
               <Plus className="h-4 w-4 mr-2" />
               {isUploading 
                 ? (editingId ? 'Updating...' : 'Uploading...') 
                 : (editingId ? 'Update Product' : 'Add Product')
               }
             </Button>
-            {editingId && (
-              <Button 
-                onClick={handleCancelEdit} 
-                variant="outline" 
-                disabled={isUploading}
-              >
-                Cancel
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+	            {editingId && (
+	              <Button 
+	                onClick={handleCancelEdit} 
+	                variant="outline" 
+	                disabled={isUploading}
+	              >
+	                Cancel
+	              </Button>
+	            )}
+	          </div>
+	          </div>
+	        </DialogContent>
+	      </Dialog>
 
       <Card>
         <CardHeader>

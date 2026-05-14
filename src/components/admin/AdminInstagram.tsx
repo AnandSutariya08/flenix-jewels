@@ -6,10 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, ExternalLink, Pencil } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const AdminInstagram = () => {
   const [posts, setPosts] = useState<InstagramPost[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [url, setUrl] = useState('');
   const [location, setLocation] = useState('');
   const [song, setSong] = useState('');
@@ -28,15 +30,25 @@ const AdminInstagram = () => {
     setLocation(post.location ?? '');
     setSong(post.song ?? '');
     setCaption(post.caption ?? '');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsFormOpen(true);
   };
 
-  const handleCancelEdit = () => {
+  const resetForm = () => {
     setEditingId(null);
     setUrl('');
     setLocation('');
     setSong('');
     setCaption('');
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+    setIsFormOpen(false);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setIsFormOpen(true);
   };
 
   const handleAddPost = async () => {
@@ -63,11 +75,8 @@ const AdminInstagram = () => {
       await saveInstagramPost(postData);
       const updated = await getInstagramPosts();
       setPosts(updated);
-      setUrl('');
-      setLocation('');
-      setSong('');
-      setCaption('');
-      setEditingId(null);
+      resetForm();
+      setIsFormOpen(false);
       toast.success(editingId ? 'Instagram post updated' : 'Instagram post added');
     } catch (error) {
       toast.error(editingId ? 'Failed to update post' : 'Failed to add post');
@@ -92,65 +101,78 @@ const AdminInstagram = () => {
 
   return (
     <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? 'Edit Instagram Post' : 'Add Instagram Post'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="instagram-url">Instagram Post URL *</Label>
-            <Input
-              id="instagram-url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://www.instagram.com/p/..."
-            />
-          </div>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Instagram</h2>
+          <p className="text-sm text-muted-foreground">Add and manage Instagram post embeds.</p>
+        </div>
+        <Button onClick={handleOpenCreate}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Instagram Post
+        </Button>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{editingId ? 'Edit Instagram Post' : 'Add Instagram Post'}</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="instagram-location">Location</Label>
+              <Label htmlFor="instagram-url">Instagram Post URL *</Label>
               <Input
-                id="instagram-location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="e.g. Mumbai, India"
+                id="instagram-url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://www.instagram.com/p/..."
               />
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="instagram-location">Location</Label>
+                <Input
+                  id="instagram-location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="e.g. Mumbai, India"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="instagram-song">Song</Label>
+                <Input
+                  id="instagram-song"
+                  value={song}
+                  onChange={(e) => setSong(e.target.value)}
+                  placeholder="e.g. Artist — Track name"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="instagram-song">Song</Label>
-              <Input
-                id="instagram-song"
-                value={song}
-                onChange={(e) => setSong(e.target.value)}
-                placeholder="e.g. Artist — Track name"
+              <Label htmlFor="instagram-caption">Caption</Label>
+              <Textarea
+                id="instagram-caption"
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Paste the Instagram caption here…"
+                className="min-h-[110px]"
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="instagram-caption">Caption</Label>
-            <Textarea
-              id="instagram-caption"
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              placeholder="Paste the Instagram caption here…"
-              className="min-h-[110px]"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={handleAddPost} className="flex-1" disabled={isAdding}>
-              <Plus className="h-4 w-4 mr-2" />
-              {isAdding ? (editingId ? 'Updating...' : 'Adding...') : (editingId ? 'Update Post' : 'Add Post')}
-            </Button>
-            {editingId && (
+            <div className="flex gap-2 justify-end">
               <Button onClick={handleCancelEdit} variant="outline" disabled={isAdding}>
                 Cancel
               </Button>
-            )}
+              <Button onClick={handleAddPost} disabled={isAdding}>
+                <Plus className="h-4 w-4 mr-2" />
+                {isAdding ? (editingId ? 'Updating...' : 'Adding...') : (editingId ? 'Update Post' : 'Add Post')}
+              </Button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {posts.map((post) => (

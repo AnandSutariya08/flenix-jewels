@@ -23,6 +23,8 @@ import {
   X,
   Gem,
   ChevronRight,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -101,6 +103,7 @@ const C = {
 const LoginPage = ({ onLogin }: { onLogin: (u: string, p: string) => void }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden"
@@ -145,10 +148,30 @@ const LoginPage = ({ onLogin }: { onLogin: (u: string, p: string) => void }) => 
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password" className="text-sm" style={{ color: C.creamDark }}>Password</Label>
-              <Input id="password" type="password" value={password}
-                onChange={e => setPassword(e.target.value)} placeholder="••••••••" required
-                className="h-12 rounded-xl border-0 text-white placeholder:text-stone-500"
-                style={{ background: 'rgba(255,255,255,0.08)' }} />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="h-12 rounded-xl border-0 text-white placeholder:text-stone-500 pr-12"
+                  style={{ background: 'rgba(255,255,255,0.08)' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg flex items-center justify-center transition-colors"
+                  style={{ background: 'rgba(0,0,0,0.18)', border: `1px solid ${C.roseGold}22` }}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword
+                    ? <EyeOff className="h-4 w-4" style={{ color: C.roseGoldLight }} />
+                    : <Eye className="h-4 w-4" style={{ color: C.roseGoldLight }} />
+                  }
+                </button>
+              </div>
             </div>
             <button type="submit"
               className="w-full h-12 rounded-xl text-white font-semibold text-base transition-all duration-200 hover:opacity-90 active:scale-[0.98] shadow-lg mt-2"
@@ -192,14 +215,21 @@ const NavItem = ({
 
 /* ───────────────────────── Main Admin ───────────────────────── */
 const Admin = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    try {
+      return localStorage.getItem('flenix_admin_authed') === '1';
+    } catch {
+      return false;
+    }
+  });
   const [activeSection, setActiveSection] = useState('banners');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = (username: string, password: string) => {
-    if (username === 'StarLala' && password === 'Panchkutir32') {
+    if (username === 'Flenix' && password === 'Flenix123') {
       setIsAuthenticated(true);
+      try { localStorage.setItem('flenix_admin_authed', '1'); } catch {}
       toast.success('Welcome back — Flenix Jewels Admin');
     } else {
       toast.error('Invalid credentials');
@@ -208,6 +238,7 @@ const Admin = () => {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    try { localStorage.removeItem('flenix_admin_authed'); } catch {}
     navigate('/');
     toast('Logged out successfully');
   };

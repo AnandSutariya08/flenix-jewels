@@ -404,7 +404,9 @@ export const deleteOffice = async (id: string) => {
 // Blog methods
 export const getBlogs = async (): Promise<BlogPost[]> => {
   try {
+    console.log('[storage/getBlogs] fetching from collection', COLLECTIONS.BLOGS);
     const snapshot = await getDocs(collection(db, COLLECTIONS.BLOGS));
+    console.log('[storage/getBlogs] docs', snapshot.size);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BlogPost));
   } catch (error) {
     console.error('Error getting blogs:', error);

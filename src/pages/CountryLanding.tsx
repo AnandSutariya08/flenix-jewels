@@ -7,6 +7,7 @@ import SEOHead from "@/components/SEOHead";
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { Button } from "@/components/ui/button";
+import { HEADER_OFFSET_PX } from "@/lib/layout";
 
 type CountryConfig = {
   name: string;
@@ -72,9 +73,7 @@ const COUNTRIES: CountryConfig[] = [
 const CountryLanding = () => {
   const { country } = useParams<{ country: string }>();
   const { categories, promoHeader } = useAppSelector(selectGlobalData);
-  const hasPromo = promoHeader?.enabled && promoHeader?.text;
-  const promoHeight = hasPromo ? 40 : 0;
-  const paddingTop = promoHeight + 80 + 52 + 12;
+  const paddingTop = HEADER_OFFSET_PX;
 
   const config = useMemo(
     () => COUNTRIES.find((c) => c.slug === country) ?? null,
@@ -90,7 +89,7 @@ const CountryLanding = () => {
           canonicalUrl={`https://www.flenixjewels.com/${country || ""}`}
         />
         <Header promoHeader={promoHeader} />
-        <MiniHeader categories={categories} promoHeight={promoHeight} />
+        {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
         <main className="flex-1 container mx-auto px-4 py-16" style={{ paddingTop: `${paddingTop}px` }}>
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-4">Page Not Found</h1>
@@ -114,7 +113,7 @@ const CountryLanding = () => {
       />
 
       <Header promoHeader={promoHeader} />
-      <MiniHeader categories={categories} promoHeight={promoHeight} />
+      {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
 
       <main className="flex-1 container mx-auto px-4 py-12" style={{ paddingTop: `${paddingTop}px` }}>
         <div className="max-w-4xl mx-auto text-center mb-12">

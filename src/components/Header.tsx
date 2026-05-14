@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Moon, Sun, MessageCircle, X } from 'lucide-react';
+import { Moon, Sun, MessageCircle, X, ChevronRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import logo from '@/assets/flenix-logo-horizontal.png';
 import { PromoHeader as PromoHeaderType } from '@/lib/storage';
@@ -28,7 +28,8 @@ export default function Header({ promoHeader }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
 
-  const hasPromo = promoHeader?.enabled && promoHeader?.text;
+  // Promo header disabled site-wide for now.
+  const hasPromo = false;
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 64);
@@ -71,13 +72,13 @@ export default function Header({ promoHeader }: HeaderProps) {
         </div>
       </div>
 
-      {/* ── Outer shell — padding animates to create floating pill ── */}
-      <div
-        className="transition-all duration-500 ease-in-out"
-        style={{ padding: isScrolled ? '10px 10px 0' : '0' }}
-      >
-        <header
-          className="relative transition-all duration-500 ease-in-out overflow-hidden"
+	      {/* ── Outer shell — padding animates to create floating pill ── */}
+	      <div
+	        className="relative transition-all duration-500 ease-in-out"
+	        style={{ padding: isScrolled ? '10px 10px 0' : '0' }}
+	      >
+	        <header
+	          className="relative transition-all duration-500 ease-in-out overflow-hidden"
           style={{
             borderRadius:         isScrolled ? 9999 : 0,
             background:           isScrolled ? 'rgba(14,8,4,0.62)' : 'rgba(253,248,243,0.94)',
@@ -122,63 +123,70 @@ export default function Header({ promoHeader }: HeaderProps) {
             </Link>
 
             {/* ── Desktop nav ── */}
-            <nav className="hidden md:flex items-center" role="navigation" aria-label="Main navigation">
-              {navLinks.map(link => {
-                const active  = isActive(link.path);
-                const hovered = hoveredLink === link.path;
-                return (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onMouseEnter={() => setHoveredLink(link.path)}
-                    onMouseLeave={() => setHoveredLink(null)}
-                    className="relative flex flex-col items-center transition-all duration-200"
-                    style={{ padding: isScrolled ? '5px 11px' : '5px 13px' }}
-                  >
-                    {/* Hover / active pill background */}
-                    <span
-                      className="absolute inset-0 rounded-full transition-all duration-200"
+            <nav
+              className="hidden md:flex items-center"
+              role="navigation"
+              aria-label="Main navigation"
+            >
+              <div className="flex items-center gap-1">
+                {navLinks.map((link) => {
+                  const active = isActive(link.path);
+                  const hovered = hoveredLink === link.path;
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      onMouseEnter={() => setHoveredLink(link.path)}
+                      onMouseLeave={() => setHoveredLink(null)}
+                      className="group relative flex items-center justify-center rounded-full transition-all duration-200"
                       style={{
+                        padding: isScrolled ? '8px 12px' : '8px 13px',
+                        transform: hovered ? 'translateY(-0.5px)' : 'translateY(0)',
                         background: active
-                          ? isScrolled ? 'rgba(196,144,106,0.18)' : 'rgba(155,104,68,0.10)'
+                          ? isScrolled ? 'rgba(196,144,106,0.14)' : 'rgba(196,144,106,0.10)'
                           : hovered
-                          ? isScrolled ? 'rgba(255,255,255,0.07)' : 'rgba(155,104,68,0.07)'
+                          ? isScrolled ? 'rgba(255,255,255,0.06)' : 'rgba(155,104,68,0.07)'
                           : 'transparent',
-                      }}
-                    />
-
-                    <span
-                      className="relative z-10 transition-all duration-200 whitespace-nowrap"
-                      style={{
-                        fontSize:      isScrolled ? 11.5 : 12.5,
-                        fontWeight:    600,
-                        letterSpacing: '0.07em',
-                        textTransform: 'uppercase',
-                        color: active
-                          ? isScrolled ? '#FFD99A' : '#C4906A'
-                          : isScrolled
-                          ? hovered ? '#F0C890' : 'rgba(255,255,255,0.88)'
-                          : hovered ? '#9B6844' : '#5a4535',
+                        border: `1px solid ${
+                          active
+                            ? 'rgba(196,144,106,0.28)'
+                            : hovered
+                            ? 'rgba(196,144,106,0.18)'
+                            : 'transparent'
+                        }`,
+                        boxShadow: active ? 'inset 0 1px 0 rgba(255,220,180,0.10)' : undefined,
                       }}
                     >
-                      {link.name}
-                    </span>
+                      <span
+                        className="relative z-10 whitespace-nowrap transition-all duration-200"
+                        style={{
+                          fontSize: isScrolled ? 11.5 : 12.5,
+                          fontWeight: active ? 700 : 600,
+                          letterSpacing: '0.12em',
+                          textTransform: 'uppercase',
+                          color: active
+                            ? isScrolled ? '#FFD99A' : '#9B6844'
+                            : isScrolled
+                            ? hovered ? '#F0C890' : 'rgba(255,255,255,0.86)'
+                            : hovered ? '#9B6844' : '#5a4535',
+                        }}
+                      >
+                        {link.name}
+                      </span>
 
-                    {/* Active dot indicator */}
-                    <span
-                      className="relative z-10 rounded-full transition-all duration-300"
-                      style={{
-                        width:      active ? 16 : 0,
-                        height:     3,
-                        marginTop:  2,
-                        background: 'linear-gradient(90deg, #9B6844, #D4A96A)',
-                        opacity:    active ? 1 : 0,
-                        borderRadius: 99,
-                      }}
-                    />
-                  </Link>
-                );
-              })}
+                      {/* Elegant underline */}
+                      <span
+                        className="absolute left-4 right-4 -bottom-0.5 h-px rounded-full transition-all duration-300"
+                        style={{
+                          opacity: active ? 1 : hovered ? 0.7 : 0,
+                          transform: active || hovered ? 'scaleX(1)' : 'scaleX(0.7)',
+                          background: 'linear-gradient(90deg, transparent, rgba(196,144,106,0.95), transparent)',
+                        }}
+                      />
+                    </Link>
+                  );
+                })}
+              </div>
             </nav>
 
             {/* ── Right controls ── */}
@@ -244,137 +252,114 @@ export default function Header({ promoHeader }: HeaderProps) {
                   style={{ background: isScrolled ? '#DEB48A' : '#9B6844' }} />
               </div>
             </button>
-          </div>
-        </header>
-      </div>
+	          </div>
+	        </header>
 
-      {/* ════════════════════════════════════════════════════════════
-          MOBILE DRAWER
-      ════════════════════════════════════════════════════════════ */}
+	        {/* ════════════════════════════════════════════════════════════
+	            MOBILE DROPDOWN
+	        ════════════════════════════════════════════════════════════ */}
 
-      {/* Backdrop */}
-      <div
-        onClick={() => setIsMenuOpen(false)}
-        className="md:hidden fixed inset-0 z-40 transition-all duration-400"
-        style={{
-          background:     'rgba(6,3,2,0.72)',
-          backdropFilter: isMenuOpen ? 'blur(6px)' : 'blur(0px)',
-          opacity:        isMenuOpen ? 1 : 0,
-          pointerEvents:  isMenuOpen ? 'auto' : 'none',
-        }}
-      />
+	        {/* Dropdown panel (slides down from header) */}
+	        <div
+	          className="md:hidden absolute left-0 right-0 z-50 transition-all duration-500"
+	          style={{
+	            top: '100%',
+	            transform: isMenuOpen ? 'translateY(0)' : 'translateY(-10px)',
+	            opacity: isMenuOpen ? 1 : 0,
+	            pointerEvents: isMenuOpen ? 'auto' : 'none',
+	          }}
+	        >
+	          <div
+	            className="mx-3 overflow-hidden rounded-3xl"
+	            style={{
+	              background: 'linear-gradient(170deg, #0d0806 0%, #1c1008 60%, #140c06 100%)',
+	              border: '1px solid rgba(196,144,106,0.18)',
+	              boxShadow: '0 22px 80px rgba(0,0,0,0.55)',
+	            }}
+	          >
+	            {/* Top shimmer */}
+	            <div
+	              className="h-px"
+	              style={{ background: 'linear-gradient(90deg, transparent, rgba(196,144,106,0.5), transparent)' }}
+	            />
 
-      {/* Drawer panel */}
-      <div
-        className="md:hidden fixed top-0 right-0 bottom-0 flex flex-col z-50 transition-all duration-500"
-        style={{
-          width:     '78vw',
-          maxWidth:  320,
-          transform: isMenuOpen ? 'translateX(0)' : 'translateX(102%)',
-          background:'linear-gradient(170deg, #0d0806 0%, #1c1008 60%, #140c06 100%)',
-          borderLeft:'1px solid rgba(196,144,106,0.18)',
-          boxShadow: '-24px 0 80px rgba(0,0,0,0.6)',
-        }}
-      >
-        {/* Top shimmer */}
-        <div className="absolute top-0 left-0 right-0 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent, rgba(196,144,106,0.5), transparent)' }} />
+	            {/* Nav links */}
+	            <nav className="px-3 py-3 flex flex-col gap-1" role="navigation" aria-label="Mobile navigation">
+	              {navLinks.map((link) => {
+	                const active = isActive(link.path);
+	                return (
+	                  <Link
+	                    key={link.path}
+	                    to={link.path}
+	                    onClick={() => setIsMenuOpen(false)}
+	                    className="flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-200"
+	                    style={{
+	                      background: active ? 'rgba(196,144,106,0.10)' : 'transparent',
+	                      border: `1px solid ${active ? 'rgba(196,144,106,0.22)' : 'rgba(196,144,106,0.08)'}`,
+	                    }}
+	                  >
+	                    <span
+	                      className="text-[12px] font-semibold tracking-[0.12em] uppercase"
+	                      style={{ color: active ? '#DEB48A' : 'rgba(255,255,255,0.62)' }}
+	                    >
+	                      {link.name}
+	                    </span>
+	                    <ChevronRight  className="h-4 w-4" style={{ color: active ? '#DEB48A' : 'rgba(196,144,106,0.55)' }} />
+	                  </Link>
+	                );
+	              })}
+	            </nav>
 
-        {/* Header row */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-5"
-          style={{ borderBottom: '1px solid rgba(196,144,106,0.10)' }}>
-          <img src={logo} alt="Flenix Jewels" className="h-9 w-auto" style={{ filter: 'brightness(1.2) saturate(0.8)' }} />
-          <button
-            onClick={() => setIsMenuOpen(false)}
-            className="flex items-center justify-center rounded-full transition-all hover:scale-110"
-            style={{ width: 34, height: 34, background: 'rgba(196,144,106,0.10)', border: '1px solid rgba(196,144,106,0.22)' }}
-          >
-            <X className="h-3.5 w-3.5" style={{ color: '#C4906A' }} />
-          </button>
-        </div>
+	            {/* Bottom actions */}
+		            <div className="px-3 pb-3 pt-4 flex flex-col gap-2.5" style={{ borderTop: '1px solid rgba(196,144,106,0.10)' }}>
+	              <a
+	                href={WHATSAPP_URL}
+	                target="_blank"
+	                rel="noopener noreferrer"
+	                className="w-full flex items-center justify-center gap-2 rounded-2xl font-bold text-[12px] tracking-[0.1em] uppercase transition-all hover:scale-[1.02] active:scale-95"
+	                style={{
+	                  padding: '13px',
+	                  background: 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)',
+	                  color: '#fff',
+	                  boxShadow: '0 6px 24px -4px rgba(155,104,68,0.55)',
+	                }}
+	              >
+	                <MessageCircle className="h-4 w-4" />
+	                Enquire Now
+	              </a>
 
-        {/* Nav links */}
-        <nav className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-0.5" role="navigation" aria-label="Mobile navigation">
-          {/* Small label */}
-          <p className="text-[9px] tracking-[0.3em] uppercase font-semibold px-3 pb-3" style={{ color: 'rgba(196,144,106,0.45)' }}>
-            Navigation
-          </p>
+	              <button
+	                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+	                className="w-full flex items-center justify-center gap-2 rounded-2xl text-[12px] font-medium tracking-wider uppercase transition-all hover:scale-[1.02]"
+	                style={{
+	                  padding: '11px',
+	                  background: 'rgba(255,255,255,0.04)',
+	                  border: '1px solid rgba(196,144,106,0.18)',
+	                  color: 'rgba(255,255,255,0.4)',
+	                }}
+	              >
+	                {theme === 'dark'
+	                  ? <Sun className="h-3.5 w-3.5" style={{ color: '#DEB48A' }} />
+	                  : <Moon className="h-3.5 w-3.5" style={{ color: '#DEB48A' }} />
+	                }
+	                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+	              </button>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
 
-          {navLinks.map((link, i) => {
-            const active = isActive(link.path);
-            return (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-3 py-3 px-3 rounded-xl transition-all duration-300"
-                style={{
-                  transform:       isMenuOpen ? 'translateX(0)' : 'translateX(28px)',
-                  opacity:         isMenuOpen ? 1 : 0,
-                  transitionDelay: isMenuOpen ? `${i * 38 + 60}ms` : '0ms',
-                  background:      active ? 'rgba(196,144,106,0.10)' : 'transparent',
-                }}
-              >
-                {/* Left accent */}
-                <span
-                  className="flex-shrink-0 rounded-full transition-all duration-300"
-                  style={{
-                    width:      active ? 3 : 3,
-                    height:     active ? 20 : 8,
-                    background: active
-                      ? 'linear-gradient(180deg, #C4906A, #9B6844)'
-                      : 'rgba(196,144,106,0.2)',
-                  }}
-                />
-                <span
-                  className="text-[13px] font-semibold tracking-[0.06em] uppercase transition-colors duration-200"
-                  style={{ color: active ? '#DEB48A' : 'rgba(255,255,255,0.5)' }}
-                >
-                  {link.name}
-                </span>
-              </Link>
-            );
-          })}
-        </nav>
+	      {/* Backdrop */}
+	      <div
+	        onClick={() => setIsMenuOpen(false)}
+	        className="md:hidden fixed inset-0 z-30 transition-all duration-400"
+	        style={{
+	          background:     'rgba(6,3,2,0.72)',
+	          opacity:        isMenuOpen ? 1 : 0,
+	          pointerEvents:  isMenuOpen ? 'auto' : 'none',
+	        }}
+	      />
 
-        {/* Bottom CTA zone */}
-        <div className="px-4 py-5 flex flex-col gap-2.5"
-          style={{ borderTop: '1px solid rgba(196,144,106,0.10)' }}>
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2 rounded-2xl font-bold text-[12px] tracking-[0.1em] uppercase transition-all hover:scale-[1.02] active:scale-95"
-            style={{
-              padding:    '13px',
-              background: 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)',
-              color:      '#fff',
-              boxShadow:  '0 6px 24px -4px rgba(155,104,68,0.55)',
-            }}
-          >
-            <MessageCircle className="h-4 w-4" />
-            Enquire Now
-          </a>
-
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="w-full flex items-center justify-center gap-2 rounded-2xl text-[12px] font-medium tracking-wider uppercase transition-all hover:scale-[1.02]"
-            style={{
-              padding:    '11px',
-              background: 'rgba(255,255,255,0.04)',
-              border:     '1px solid rgba(196,144,106,0.18)',
-              color:      'rgba(255,255,255,0.4)',
-            }}
-          >
-            {theme === 'dark'
-              ? <Sun  className="h-3.5 w-3.5" style={{ color: '#DEB48A' }} />
-              : <Moon className="h-3.5 w-3.5" style={{ color: '#DEB48A' }} />
-            }
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-          </button>
-        </div>
-      </div>
-
-    </div>
-  );
-}
+	    </div>
+	  );
+	}

@@ -7,10 +7,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, Pencil } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('');
@@ -54,10 +56,10 @@ const AdminCategories = () => {
     setPriority(category.priority || 1);
     setMetaTitle(category.metaTitle || '');
     setMetaDescription(category.metaDescription || '');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsFormOpen(true);
   };
 
-  const handleCancelEdit = () => {
+  const resetForm = () => {
     setEditingId(null);
     setName('');
     setDescription('');
@@ -66,6 +68,16 @@ const AdminCategories = () => {
     setPriority(1);
     setMetaTitle('');
     setMetaDescription('');
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+    setIsFormOpen(false);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setIsFormOpen(true);
   };
 
   const handleAddCategory = async () => {
@@ -94,14 +106,8 @@ const AdminCategories = () => {
       await saveCategory(categoryData);
       const updated = await getCategories();
       setCategories(updated);
-      setName('');
-      setDescription('');
-      setImage('');
-      setImageFile(null);
-      setPriority(1);
-      setMetaTitle('');
-      setMetaDescription('');
-      setEditingId(null);
+      resetForm();
+      setIsFormOpen(false);
       toast.success(editingId ? 'Category updated successfully' : 'Category added successfully');
     } catch (error) {
       toast.error(editingId ? 'Failed to update category' : 'Failed to add category');
@@ -131,97 +137,113 @@ const AdminCategories = () => {
 
   return (
     <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? 'Edit Category' : 'Add New Category'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="category-name">Category Name *</Label>
-              <Input
-                id="category-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., Rings, Necklaces"
-              />
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Categories</h2>
+          <p className="text-sm text-muted-foreground">Create and manage product categories.</p>
+        </div>
+        <Button onClick={handleOpenCreate}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Category
+        </Button>
+      </div>
+
+      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>{editingId ? 'Edit Category' : 'Add New Category'}</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="category-name">Category Name *</Label>
+                <Input
+                  id="category-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Rings, Necklaces"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category-priority">Display Priority *</Label>
+                <Select value={priority.toString()} onValueChange={(val) => setPriority(parseInt(val))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      <SelectItem
+                        key={num}
+                        value={num.toString()}
+                        disabled={usedPriorities.includes(num)}
+                      >
+                        {num} {usedPriorities.includes(num) ? '(Used)' : num === 1 ? '(First)' : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Lower number = displays first</p>
+              </div>
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="category-priority">Display Priority *</Label>
-              <Select value={priority.toString()} onValueChange={(val) => setPriority(parseInt(val))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                    <SelectItem 
-                      key={num} 
-                      value={num.toString()}
-                      disabled={usedPriorities.includes(num)}
-                    >
-                      {num} {usedPriorities.includes(num) ? '(Used)' : num === 1 ? '(First)' : ''}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">Lower number = displays first</p>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="category-description">Description</Label>
-            <Textarea
-              id="category-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter category description"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="category-meta-title">Meta Title (SEO)</Label>
-              <Input
-                id="category-meta-title"
-                value={metaTitle}
-                onChange={(e) => setMetaTitle(e.target.value)}
-                placeholder="SEO meta title"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="category-meta-description">Meta Description (SEO)</Label>
+              <Label htmlFor="category-description">Description</Label>
               <Textarea
-                id="category-meta-description"
-                value={metaDescription}
-                onChange={(e) => setMetaDescription(e.target.value)}
-                placeholder="SEO meta description"
-                rows={4}
+                id="category-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter category description"
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="category-image">Image *</Label>
-            <Input
-              id="category-image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-            {image && (
-              <img src={image} alt="Preview" className="h-32 w-auto rounded-lg mt-2" />
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={handleAddCategory} className="flex-1" disabled={isUploading}>
-              <Plus className="h-4 w-4 mr-2" />
-              {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Category' : 'Add Category')}
-            </Button>
-            {editingId && (
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="category-meta-title">Meta Title (SEO)</Label>
+                <Input
+                  id="category-meta-title"
+                  value={metaTitle}
+                  onChange={(e) => setMetaTitle(e.target.value)}
+                  placeholder="SEO meta title"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category-meta-description">Meta Description (SEO)</Label>
+                <Textarea
+                  id="category-meta-description"
+                  value={metaDescription}
+                  onChange={(e) => setMetaDescription(e.target.value)}
+                  placeholder="SEO meta description"
+                  rows={4}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="category-image">Image *</Label>
+              <Input
+                id="category-image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
+              {image && (
+                <img src={image} alt="Preview" className="h-32 w-auto rounded-lg mt-2" />
+              )}
+            </div>
+
+            <div className="flex gap-2 justify-end">
               <Button onClick={handleCancelEdit} variant="outline" disabled={isUploading}>
                 Cancel
               </Button>
-            )}
+              <Button onClick={handleAddCategory} disabled={isUploading}>
+                <Plus className="h-4 w-4 mr-2" />
+                {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Category' : 'Add Category')}
+              </Button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {sortedCategories.map((category) => (

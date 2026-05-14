@@ -5,10 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, Pencil } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const AdminGallery = () => {
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -36,14 +38,24 @@ const AdminGallery = () => {
     setEditingId(item.id);
     setDescription(item.description || '');
     setImage(item.image);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsFormOpen(true);
   };
 
-  const handleCancelEdit = () => {
+  const resetForm = () => {
     setEditingId(null);
     setDescription('');
     setImage('');
     setImageFile(null);
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+    setIsFormOpen(false);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setIsFormOpen(true);
   };
 
   const handleAddImage = async () => {
@@ -68,10 +80,8 @@ const AdminGallery = () => {
       await saveGalleryItem(itemData);
       const updated = await getGallery();
       setGallery(updated);
-      setDescription('');
-      setImage('');
-      setImageFile(null);
-      setEditingId(null);
+      resetForm();
+      setIsFormOpen(false);
       toast.success(editingId ? 'Image updated' : 'Image added to gallery');
     } catch (error) {
       toast.error(editingId ? 'Failed to update image' : 'Failed to add image');
@@ -96,45 +106,57 @@ const AdminGallery = () => {
 
   return (
     <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? 'Edit Gallery Image' : 'Add Gallery Image'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="gallery-description">Description (Optional)</Label>
-            <Input
-              id="gallery-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter image description"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="gallery-image">Image *</Label>
-            <Input
-              id="gallery-image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-            {image && (
-              <img src={image} alt="Preview" className="h-32 w-auto rounded-lg mt-2" />
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={handleAddImage} className="flex-1" disabled={isUploading}>
-              <Plus className="h-4 w-4 mr-2" />
-              {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Image' : 'Add to Gallery')}
-            </Button>
-            {editingId && (
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Gallery</h2>
+          <p className="text-sm text-muted-foreground">Add and manage gallery images.</p>
+        </div>
+        <Button onClick={handleOpenCreate}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Gallery Image
+        </Button>
+      </div>
+
+      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{editingId ? 'Edit Gallery Image' : 'Add Gallery Image'}</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="gallery-description">Description (Optional)</Label>
+              <Input
+                id="gallery-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter image description"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="gallery-image">Image *</Label>
+              <Input
+                id="gallery-image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
+              {image && (
+                <img src={image} alt="Preview" className="h-32 w-auto rounded-lg mt-2" />
+              )}
+            </div>
+            <div className="flex gap-2 justify-end">
               <Button onClick={handleCancelEdit} variant="outline" disabled={isUploading}>
                 Cancel
               </Button>
-            )}
+              <Button onClick={handleAddImage} disabled={isUploading}>
+                <Plus className="h-4 w-4 mr-2" />
+                {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Image' : 'Add to Gallery')}
+              </Button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {gallery.map((item) => (

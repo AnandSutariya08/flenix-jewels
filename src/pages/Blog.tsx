@@ -7,6 +7,7 @@ import SEOHead from '@/components/SEOHead';
 import BlogDialog from '@/components/BlogDialog';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadBlogs, loadGlobalData, selectBlogsLoaded, selectBlogsStatus, selectContentStatus, selectGlobalData } from "@/store/contentSlice";
+import { HEADER_OFFSET_PX } from "@/lib/layout";
 import { BlogPost } from '@/lib/storage';
 import { buildMetaDescriptionForBlog, buildMetaTitleForBlog } from '@/lib/seo';
 import { ArrowRight, Clock, CalendarDays, BookOpen, Gem, ChevronRight } from 'lucide-react';
@@ -289,9 +290,7 @@ const Blog = () => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
-  const hasPromo = promoHeader?.enabled && promoHeader?.text;
-  const promoHeight = hasPromo ? 40 : 0;
-  const paddingTop = promoHeight + 80 + 52 + 12 + 26;
+  const paddingTop = HEADER_OFFSET_PX;
 
   useEffect(() => { const t = setTimeout(() => setIsLoaded(true), 80); return () => clearTimeout(t); }, []);
 
@@ -301,6 +300,17 @@ const Blog = () => {
   );
 
   useEffect(() => {
+    console.log('[Blog] state', {
+      status,
+      blogsStatus,
+      blogsLoaded,
+      blogsCount: blogs.length,
+      routeBlogId,
+      searchId: searchParams.get('id'),
+    });
+  }, [status, blogsStatus, blogsLoaded, blogs.length, routeBlogId, searchParams]);
+
+  useEffect(() => {
     if (!requestedRefresh && blogs.length === 0 && status !== "loading") {
       dispatch(loadGlobalData({ force: true }));
       setRequestedRefresh(true);
@@ -308,8 +318,11 @@ const Blog = () => {
   }, [blogs.length, dispatch, requestedRefresh, status]);
 
   useEffect(() => {
-    if (!blogsLoaded && blogsStatus === "idle") {
-      dispatch(loadBlogs());
+    // Always attempt to load blogs if we don't have any yet (even if cache flags say loaded).
+    if (blogsStatus === "loading") return;
+    if (blogs.length === 0) {
+      console.log('[Blog] dispatch loadBlogs', { force: blogsLoaded });
+      dispatch(blogsLoaded ? loadBlogs({ force: true }) : loadBlogs());
     }
   }, [blogsLoaded, blogsStatus, dispatch]);
 
@@ -389,7 +402,7 @@ const Blog = () => {
         faqItems={faqItems}
       />
       <Header promoHeader={promoHeader} />
-      <MiniHeader categories={categories} promoHeight={promoHeight} />
+      {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
 
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
 
@@ -406,11 +419,11 @@ const Blog = () => {
             style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}
           >
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, transparent, #C4906A)' }} />
+              <div className="h-px w-14" style={{ background: 'linear-gradient(90deg, transparent, #C4906A)' }} />
               <BookOpen className="h-3.5 w-3.5" style={{ color: C.roseGold }} />
               <span className="text-[10px] tracking-[0.42em] uppercase font-black" style={{ color: C.roseGold }}>The Journal</span>
               <BookOpen className="h-3.5 w-3.5" style={{ color: C.roseGold }} />
-              <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, #C4906A, transparent)' }} />
+              <div className="h-px w-14" style={{ background: 'linear-gradient(90deg, #C4906A, transparent)' }} />
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mb-4">
               Stories &amp; <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Insights</span>
@@ -431,11 +444,19 @@ const Blog = () => {
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-10 py-12 md:py-16">
 
           {sortedBlogs.length === 0 ? (
-            <div className="text-center py-32">
-              <Gem className="h-16 w-16 mx-auto mb-6 opacity-20" style={{ color: C.roseGold }} />
-              <h3 className="text-2xl font-bold mb-2" style={{ color: C.warmText }}>Coming Soon</h3>
-              <p style={{ color: C.mutedText }}>We're writing exceptional content for you.</p>
-            </div>
+            blogsStatus === "loading" ? (
+              <div className="text-center py-32">
+                <div className="w-10 h-10 mx-auto mb-6 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: C.roseGold, borderTopColor: 'transparent' }} />
+                <h3 className="text-2xl font-bold mb-2" style={{ color: C.warmText }}>Loading Articles…</h3>
+                <p style={{ color: C.mutedText }}>Fetching the latest posts.</p>
+              </div>
+            ) : (
+              <div className="text-center py-32">
+                <Gem className="h-16 w-16 mx-auto mb-6 opacity-20" style={{ color: C.roseGold }} />
+                <h3 className="text-2xl font-bold mb-2" style={{ color: C.warmText }}>Coming Soon</h3>
+                <p style={{ color: C.mutedText }}>We're writing exceptional content for you.</p>
+              </div>
+            )
           ) : (
             <>
               {/* ── Featured + Sidebar layout ── */}

@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
+import { HEADER_OFFSET_PX } from "@/lib/layout";
 import { Link } from 'react-router-dom';
 import { Award, Shield, Heart, Globe, Gem, Crown, Sparkles, Target, Users, Clock, Zap, ArrowRight, ChevronRight } from 'lucide-react';
 import logo1 from '@/assets/2.jpg';
@@ -73,9 +74,7 @@ const About = () => {
   const { categories, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
   const [heroLoaded, setHeroLoaded] = useState(false);
 
-  const hasPromo = promoHeader?.enabled && promoHeader?.text;
-  const promoHeight = hasPromo ? 40 : 0;
-  const paddingTop = promoHeight + 80 + 52;
+  const paddingTop = HEADER_OFFSET_PX;
 
   useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
 
@@ -111,7 +110,7 @@ const About = () => {
         faqItems={faqItems}
       />
       <Header promoHeader={promoHeader} />
-      <MiniHeader categories={categories} promoHeight={promoHeight} />
+      {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
 
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
 

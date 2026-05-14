@@ -6,10 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, Quote, Pencil, Star } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const AdminTestimonials = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [name, setName] = useState('');
   const [text, setText] = useState('');
   const [rating, setRating] = useState(5);
@@ -25,14 +27,24 @@ const AdminTestimonials = () => {
     setName(testimonial.name);
     setText(testimonial.text);
     setRating(testimonial.rating);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsFormOpen(true);
   };
 
-  const handleCancelEdit = () => {
+  const resetForm = () => {
     setEditingId(null);
     setName('');
     setText('');
     setRating(5);
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+    setIsFormOpen(false);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setIsFormOpen(true);
   };
 
   const handleAdd = async () => {
@@ -52,11 +64,8 @@ const AdminTestimonials = () => {
       await saveTestimonial(testimonial);
       const updated = await getTestimonials();
       setTestimonials(updated);
-      
-      setName('');
-      setText('');
-      setRating(5);
-      setEditingId(null);
+      resetForm();
+      setIsFormOpen(false);
       
       toast.success(editingId ? 'Testimonial updated successfully' : 'Testimonial added successfully');
     } catch (error) {
@@ -80,62 +89,74 @@ const AdminTestimonials = () => {
 
   return (
     <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? 'Edit Testimonial' : 'Add New Customer Testimonial'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="testimonial-name">Customer Name *</Label>
-            <Input
-              id="testimonial-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Sarah Johnson"
-              maxLength={100}
-            />
-          </div>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Testimonials</h2>
+          <p className="text-sm text-muted-foreground">Add and manage customer testimonials.</p>
+        </div>
+        <Button onClick={handleOpenCreate}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Testimonial
+        </Button>
+      </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="testimonial-text">Testimonial Text *</Label>
-            <Textarea
-              id="testimonial-text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Enter customer testimonial..."
-              rows={4}
-              maxLength={500}
-            />
-          </div>
+      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{editingId ? 'Edit Testimonial' : 'Add New Customer Testimonial'}</DialogTitle>
+          </DialogHeader>
 
-          <div className="space-y-2">
-            <Label htmlFor="testimonial-rating">Rating (1-5 stars)</Label>
-            <div className="flex items-center gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className={`h-6 w-6 cursor-pointer transition-colors ${
-                    star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'
-                  }`}
-                  onClick={() => setRating(star)}
-                />
-              ))}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="testimonial-name">Customer Name *</Label>
+              <Input
+                id="testimonial-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Sarah Johnson"
+                maxLength={100}
+              />
             </div>
-          </div>
 
-          <div className="flex gap-2">
-            <Button onClick={handleAdd} className="flex-1">
-              <Plus className="h-4 w-4 mr-2" />
-              {editingId ? 'Update Testimonial' : 'Add Testimonial'}
-            </Button>
-            {editingId && (
+            <div className="space-y-2">
+              <Label htmlFor="testimonial-text">Testimonial Text *</Label>
+              <Textarea
+                id="testimonial-text"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Enter customer testimonial..."
+                rows={4}
+                maxLength={500}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="testimonial-rating">Rating (1-5 stars)</Label>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`h-6 w-6 cursor-pointer transition-colors ${
+                      star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'
+                    }`}
+                    onClick={() => setRating(star)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-2 justify-end">
               <Button onClick={handleCancelEdit} variant="outline">
                 Cancel
               </Button>
-            )}
+              <Button onClick={handleAdd}>
+                <Plus className="h-4 w-4 mr-2" />
+                {editingId ? 'Update Testimonial' : 'Add Testimonial'}
+              </Button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
 
       <div>
         <h3 className="text-xl font-semibold mb-4">Customer Testimonials ({testimonials.length})</h3>

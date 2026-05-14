@@ -1,5 +1,5 @@
 # Flenix Jewels - Premium Diamond & Gold Jewelry
-# https://www.starlinkjewels.com
+# https://www.flenixjewels.com
 # robots.txt - Search Engine Crawler Directives
 # Last updated: 2026-04-08
 
@@ -106,10 +106,10 @@ Allow: /*.woff2$
 Allow: /*.avif$
 
 # Sitemap location - Very Important for SEO
-Sitemap: https://www.starlinkjewels.com/sitemap.xml
+Sitemap: https://www.flenixjewels.com/sitemap.xml
 
 # Host directive for search engines
-Host: https://www.starlinkjewels.com
+Host: https://www.flenixjewels.com
 
 # Clean URLs preferred
 Clean-param: utm_source&utm_medium&utm_campaign&ref&fbclid

@@ -1,8 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Basic&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  html {
+    font-family: 'Basic', sans-serif;
+  }
+
   :root {
     --background: 35 30% 97%;
     --foreground: 20 25% 12%;
@@ -119,15 +125,28 @@
   }
 
   body {
-    @apply bg-background text-foreground font-montserrat;
+    @apply bg-background text-foreground font-sans;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-montserrat;
+    @apply font-sans;
   }
 }
 
 @layer utilities {
+  .rose-gold-font {
+    font-family: 'Basic', sans-serif;
+  }
+
+  /* Tailwind arbitrary color classes using #C4906A */
+  .text-\[\#C4906A\],
+  .dark\:text-\[\#C4906A\],
+  .hover\:text-\[\#C4906A\],
+  .dark\:hover\:text-\[\#C4906A\],
+  .group-hover\:text-\[\#C4906A\] {
+    font-family: 'Basic', sans-serif;
+  }
+
   .luxury-gradient {
     background: linear-gradient(135deg, hsl(22 42% 52%), hsl(38 60% 62%));
   }
@@ -185,6 +204,7 @@
 
   .prose { font-family: inherit; }
   .prose :where(h1, h2, h3, h4, h5, h6) { font-family: inherit; }
+  .prose :where(h2, h3, h4) { scroll-margin-top: 120px; }
 
   @keyframes shimmer {
     0% { transform: translateX(-100%); }

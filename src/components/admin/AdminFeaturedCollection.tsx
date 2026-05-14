@@ -6,10 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, Pencil } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const AdminFeaturedCollection = () => {
   const [items, setItems] = useState<FeaturedCollection[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('');
@@ -39,15 +41,25 @@ const AdminFeaturedCollection = () => {
     setTitle(item.title);
     setDescription(item.description || '');
     setImage(item.image);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsFormOpen(true);
   };
 
-  const handleCancelEdit = () => {
+  const resetForm = () => {
     setEditingId(null);
     setTitle('');
     setDescription('');
     setImage('');
     setImageFile(null);
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+    setIsFormOpen(false);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setIsFormOpen(true);
   };
 
   const handleAdd = async () => {
@@ -73,11 +85,8 @@ const AdminFeaturedCollection = () => {
       await saveFeaturedItem(itemData);
       const updated = await getFeaturedCollection();
       setItems(updated);
-      setTitle('');
-      setDescription('');
-      setImage('');
-      setImageFile(null);
-      setEditingId(null);
+      resetForm();
+      setIsFormOpen(false);
       toast.success(editingId ? 'Featured item updated successfully' : 'Featured item added successfully');
     } catch (error) {
       toast.error(editingId ? 'Failed to update featured item' : 'Failed to add featured item');
@@ -102,54 +111,66 @@ const AdminFeaturedCollection = () => {
 
   return (
     <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? 'Edit Featured Collection Item' : 'Add Featured Collection Item'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="featured-title">Title *</Label>
-            <Input
-              id="featured-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., Diamond Necklace Collection"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="featured-description">Description</Label>
-            <Textarea
-              id="featured-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter item description"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="featured-image">Image *</Label>
-            <Input
-              id="featured-image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-            {image && (
-              <img src={image} alt="Preview" className="h-32 w-auto rounded-lg mt-2" />
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={handleAdd} className="flex-1" disabled={isUploading}>
-              <Plus className="h-4 w-4 mr-2" />
-              {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Featured Item' : 'Add to Featured Collection')}
-            </Button>
-            {editingId && (
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Featured Collection</h2>
+          <p className="text-sm text-muted-foreground">Manage items shown in the featured collection section.</p>
+        </div>
+        <Button onClick={handleOpenCreate}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Featured Item
+        </Button>
+      </div>
+
+      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{editingId ? 'Edit Featured Collection Item' : 'Add Featured Collection Item'}</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="featured-title">Title *</Label>
+              <Input
+                id="featured-title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g., Diamond Necklace Collection"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="featured-description">Description</Label>
+              <Textarea
+                id="featured-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter item description"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="featured-image">Image *</Label>
+              <Input
+                id="featured-image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
+              {image && (
+                <img src={image} alt="Preview" className="h-32 w-auto rounded-lg mt-2" />
+              )}
+            </div>
+            <div className="flex gap-2 justify-end">
               <Button onClick={handleCancelEdit} variant="outline" disabled={isUploading}>
                 Cancel
               </Button>
-            )}
+              <Button onClick={handleAdd} disabled={isUploading}>
+                <Plus className="h-4 w-4 mr-2" />
+                {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Featured Item' : 'Add to Featured Collection')}
+              </Button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {items.map((item) => (

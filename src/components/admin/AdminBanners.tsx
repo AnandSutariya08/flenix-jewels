@@ -7,10 +7,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, Pencil } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 const AdminBanners = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('');
@@ -62,10 +64,10 @@ const AdminBanners = () => {
     setImage(banner.image);
     setMediaType(banner.mediaType || 'image');
     setPriority(banner.priority || 1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsFormOpen(true);
   };
 
-  const handleCancelEdit = () => {
+  const resetForm = () => {
     setEditingId(null);
     setTitle('');
     setDescription('');
@@ -73,6 +75,16 @@ const AdminBanners = () => {
     setImageFile(null);
     setMediaType('image');
     setPriority(1);
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+    setIsFormOpen(false);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setIsFormOpen(true);
   };
 
   const handleAddBanner = async () => {
@@ -100,13 +112,8 @@ const AdminBanners = () => {
       await saveBanner(bannerData);
       const updated = await getBanners();
       setBanners(updated);
-      setTitle('');
-      setDescription('');
-      setImage('');
-      setImageFile(null);
-      setMediaType('image');
-      setPriority(1);
-      setEditingId(null);
+      resetForm();
+      setIsFormOpen(false);
       toast.success(editingId ? 'Banner updated successfully' : 'Banner added successfully');
     } catch (error) {
       toast.error(editingId ? 'Failed to update banner' : 'Failed to add banner');
@@ -134,83 +141,98 @@ const AdminBanners = () => {
 
   return (
     <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? 'Edit Banner' : 'Add New Banner'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Banners</h2>
+          <p className="text-sm text-muted-foreground">Create and manage homepage hero banners.</p>
+        </div>
+        <Button onClick={handleOpenCreate}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Banner
+        </Button>
+      </div>
+
+      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>{editingId ? 'Edit Banner' : 'Add New Banner'}</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="banner-title">Title *</Label>
+                <Input
+                  id="banner-title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter banner title"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="banner-priority">Display Priority *</Label>
+                <Select value={priority.toString()} onValueChange={(val) => setPriority(parseInt(val))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      <SelectItem
+                        key={num}
+                        value={num.toString()}
+                        disabled={usedPriorities.includes(num)}
+                      >
+                        {num} {usedPriorities.includes(num) ? '(Used)' : num === 1 ? '(First)' : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Lower number = displays first</p>
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="banner-title">Title *</Label>
-              <Input
-                id="banner-title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter banner title"
+              <Label htmlFor="banner-description">Description</Label>
+              <Textarea
+                id="banner-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter banner description"
               />
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="banner-priority">Display Priority *</Label>
-              <Select value={priority.toString()} onValueChange={(val) => setPriority(parseInt(val))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                    <SelectItem 
-                      key={num} 
-                      value={num.toString()}
-                      disabled={usedPriorities.includes(num)}
-                    >
-                      {num} {usedPriorities.includes(num) ? '(Used)' : num === 1 ? '(First)' : ''}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">Lower number = displays first</p>
+              <Label htmlFor="banner-media">Media (Image, GIF, or Video) *</Label>
+              <Input
+                id="banner-media"
+                type="file"
+                accept="image/*,video/*"
+                onChange={handleImageUpload}
+              />
+              {image && (
+                <div className="mt-2">
+                  {mediaType === 'video' ? (
+                    <video src={image} className="h-32 w-auto rounded-lg" controls />
+                  ) : (
+                    <img src={image} alt="Preview" className="h-32 w-auto rounded-lg" />
+                  )}
+                  <p className="text-sm text-muted-foreground mt-1">Type: {mediaType}</p>
+                </div>
+              )}
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="banner-description">Description</Label>
-            <Textarea
-              id="banner-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter banner description"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="banner-media">Media (Image, GIF, or Video) *</Label>
-            <Input
-              id="banner-media"
-              type="file"
-              accept="image/*,video/*"
-              onChange={handleImageUpload}
-            />
-            {image && (
-              <div className="mt-2">
-                {mediaType === 'video' ? (
-                  <video src={image} className="h-32 w-auto rounded-lg" controls />
-                ) : (
-                  <img src={image} alt="Preview" className="h-32 w-auto rounded-lg" />
-                )}
-                <p className="text-sm text-muted-foreground mt-1">Type: {mediaType}</p>
-              </div>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={handleAddBanner} className="flex-1" disabled={isUploading}>
-              <Plus className="h-4 w-4 mr-2" />
-              {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Banner' : 'Add Banner')}
-            </Button>
-            {editingId && (
-              <Button onClick={handleCancelEdit} variant="outline" disabled={isUploading}>
+
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={handleCancelEdit} disabled={isUploading}>
                 Cancel
               </Button>
-            )}
+              <Button onClick={handleAddBanner} disabled={isUploading}>
+                <Plus className="h-4 w-4 mr-2" />
+                {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Banner' : 'Add Banner')}
+              </Button>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sortedBanners.map((banner) => (

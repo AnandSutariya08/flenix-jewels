@@ -10,10 +10,12 @@ import RichTextEditor from '@/components/admin/RichTextEditor';
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/store/hooks';
 import { loadBlogs, loadGlobalData } from '@/store/contentSlice';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const AdminBlogs = () => {
   const dispatch = useAppDispatch();
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [image, setImage] = useState('');
@@ -30,6 +32,23 @@ const AdminBlogs = () => {
   useEffect(() => {
     getBlogs().then(setBlogs);
   }, []);
+
+  const resetForm = () => {
+    setEditingId(null);
+    setTitle('');
+    setContent('');
+    setImage('');
+    setThumbnail('');
+    setMetaTitle('');
+    setMetaDescription('');
+    setImageFile(null);
+    setThumbnailFile(null);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setIsFormOpen(true);
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,19 +82,12 @@ const AdminBlogs = () => {
     setThumbnail(blog.thumbnail || '');
     setMetaTitle(blog.metaTitle || '');
     setMetaDescription(blog.metaDescription || '');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsFormOpen(true);
   };
 
   const handleCancelEdit = () => {
-    setEditingId(null);
-    setTitle('');
-    setContent('');
-    setImage('');
-    setThumbnail('');
-    setMetaTitle('');
-    setMetaDescription('');
-    setImageFile(null);
-    setThumbnailFile(null);
+    resetForm();
+    setIsFormOpen(false);
   };
 
   const buildSeoTitle = (seed: string) => {
@@ -160,15 +172,8 @@ const AdminBlogs = () => {
       setBlogs(updated);
       dispatch(loadGlobalData({ force: true }));
       dispatch(loadBlogs({ force: true }));
-      setTitle('');
-      setContent('');
-      setImage('');
-      setThumbnail('');
-      setMetaTitle('');
-      setMetaDescription('');
-      setImageFile(null);
-      setThumbnailFile(null);
-      setEditingId(null);
+      resetForm();
+      setIsFormOpen(false);
       toast.success(editingId ? 'Blog post updated successfully' : 'Blog post added successfully');
     } catch (error) {
       toast.error(editingId ? 'Failed to update blog post' : 'Failed to add blog post');
@@ -202,11 +207,24 @@ const AdminBlogs = () => {
 
   return (
     <div className="space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>{editingId ? 'Edit Blog Post' : 'Add New Blog Post'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-semibold">Blogs</h2>
+          <p className="text-sm text-muted-foreground">Create and manage blog posts shown on the public site.</p>
+        </div>
+        <Button onClick={handleOpenCreate}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Blog Post
+        </Button>
+      </div>
+
+      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+        <DialogContent className="max-w-6xl h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingId ? 'Edit Blog Post' : 'Add New Blog Post'}</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="blog-title">Title *</Label>
             <Input
@@ -309,14 +327,13 @@ const AdminBlogs = () => {
               <Plus className="h-4 w-4 mr-2" />
               {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Blog Post' : 'Add Blog Post')}
             </Button>
-            {editingId && (
-              <Button onClick={handleCancelEdit} variant="outline" disabled={isUploading}>
-                Cancel
-              </Button>
-            )}
+            <Button onClick={handleCancelEdit} variant="outline" disabled={isUploading}>
+              Cancel
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+          </div>
+        </DialogContent>
+      </Dialog>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {blogs.map((blog) => (
           <Card key={blog.id} className="overflow-hidden">

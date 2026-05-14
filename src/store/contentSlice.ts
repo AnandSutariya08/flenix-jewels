@@ -215,6 +215,9 @@ export const loadGlobalData = createAsyncThunk<
     if (!args?.force) {
       const session = readSessionCache() ?? readPersistentCache();
       if (session?.data) {
+        const promoHeaderDisabled = session.data.promoHeader
+          ? { ...session.data.promoHeader, enabled: false }
+          : null;
         return {
           ...emptyData,
           ...session.data,
@@ -225,6 +228,7 @@ export const loadGlobalData = createAsyncThunk<
           contactInfo: null,
           offices: [],
           buyingGuides: [],
+          promoHeader: promoHeaderDisabled,
           blogs: session.blogsLoaded ? session.data.blogs : [],
           products: session.productsLoaded ? session.data.products : [],
         };
@@ -252,7 +256,7 @@ export const loadGlobalData = createAsyncThunk<
       blogs: [],
       instagramPosts: [],
       testimonials: [],
-      promoHeader,
+      promoHeader: promoHeader ? { ...promoHeader, enabled: false } : promoHeader,
       contactInfo: null,
       offices: [],
       buyingGuides: [],
@@ -324,7 +328,19 @@ export const loadDeferredData = createAsyncThunk<
       const { content } = getState();
       if (args?.force) return true;
       if (content.deferredStatus === "loading") return false;
-      if (content.deferredLoaded) return false;
+      if (content.deferredLoaded) {
+        // Allow a re-fetch if any deferred section is still empty.
+        // This prevents stale caches from showing "Coming Soon" even when Firestore has data.
+        const hasAnyDeferredContent =
+          content.data.galleryItems.length > 0 ||
+          content.data.featuredCollection.length > 0 ||
+          content.data.instagramPosts.length > 0 ||
+          content.data.testimonials.length > 0 ||
+          Boolean(content.data.contactInfo) ||
+          content.data.offices.length > 0 ||
+          content.data.buyingGuides.length > 0;
+        if (hasAnyDeferredContent) return false;
+      }
       return true;
     },
   }
@@ -364,7 +380,9 @@ export const loadBlogs = createAsyncThunk<
 >(
   "content/loadBlogs",
   async (args) => {
+    console.log("[content/loadBlogs] start", { force: Boolean(args?.force) });
     const blogs = await getBlogs();
+    console.log("[content/loadBlogs] fetched", { count: blogs.length });
     return normalizeBlogDates(blogs);
   },
   {
@@ -372,7 +390,7 @@ export const loadBlogs = createAsyncThunk<
       const { content } = getState();
       if (args?.force) return true;
       if (content.blogsStatus === "loading") return false;
-      if (content.blogsLoaded) return false;
+      if (content.blogsLoaded && content.data.blogs.length > 0) return false;
       return true;
     },
   }

@@ -11,6 +11,7 @@ import BlogDialog from '@/components/BlogDialog';
 import InstagramJourneyCarousel from '@/components/InstagramJourneyCarousel';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData } from '@/store/contentSlice';
+import { HEADER_OFFSET_PX } from '@/lib/layout';
 import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BlogPost } from '@/lib/storage';
 
@@ -75,9 +76,7 @@ export default function Index() {
     }
   }, [blogsLoaded, blogsStatus, dispatch]);
 
-  const hasPromo   = promoHeader?.enabled && promoHeader?.text;
-  const promoHeight = hasPromo ? 40 : 0;
-  const paddingTop  = promoHeight + 80 + 52 + 12;
+  const paddingTop = HEADER_OFFSET_PX;
 
   const openBlog = (blog: BlogPost) => { setSelectedBlog(blog); setIsBlogDialogOpen(true); };
 
@@ -92,7 +91,7 @@ export default function Index() {
       />
 
       <Header promoHeader={promoHeader} />
-      <MiniHeader categories={categories} promoHeight={promoHeight} />
+      {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
 
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
 
