@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getProducts, saveProduct, deleteProduct, getCategories, Product, Category, uploadImageToStorage } from '@/lib/storage';
+import { getProducts, saveProduct, deleteProduct, getCategories, getPriceSettings, savePriceSettings, Product, Category, uploadImageToStorage } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,6 +12,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Checkbox } from '@/components/ui/checkbox';
 import { formatPriceRounded } from '@/lib/utils';
 import { stripHtml } from '@/lib/seo';
+import { Switch } from '@/components/ui/switch';
+import { useAppDispatch } from '@/store/hooks';
+import { loadGlobalData } from '@/store/contentSlice';
 
 interface MediaItem {
   id: string;
@@ -22,6 +25,7 @@ interface MediaItem {
 }
 
 const AdminProducts = () => {
+  const dispatch = useAppDispatch();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -45,15 +49,34 @@ const AdminProducts = () => {
   const [bulkPreview, setBulkPreview] = useState<Product[]>([]);
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [bulkSelectedIds, setBulkSelectedIds] = useState<string[]>([]);
-  const [metaTitle, setMetaTitle] = useState('');
-  const [metaDescription, setMetaDescription] = useState('');
   const [seoFaq, setSeoFaq] = useState<{ question: string; answer: string }[]>([]);
+  const [showPrices, setShowPrices] = useState(false);
+  const [isSavingPriceSettings, setIsSavingPriceSettings] = useState(false);
   const mediaInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     getProducts().then(setProducts);
     getCategories().then(setCategories);
   }, []);
+
+  useEffect(() => {
+    getPriceSettings().then((s) => setShowPrices(Boolean(s.showPrices)));
+  }, []);
+
+  const togglePriceVisibility = async (next: boolean) => {
+    setShowPrices(next);
+    setIsSavingPriceSettings(true);
+    try {
+      await savePriceSettings({ showPrices: next });
+      dispatch(loadGlobalData({ force: true }));
+      toast.success(next ? "Prices are now visible" : "Prices are now hidden");
+    } catch {
+      toast.error("Failed to update price visibility");
+      setShowPrices((prev) => !prev);
+    } finally {
+      setIsSavingPriceSettings(false);
+    }
+  };
 
   const getMediaType = (file: File): 'image' | 'video' => {
     return file.type.startsWith('video/') ? 'video' : 'image';
@@ -172,8 +195,6 @@ const AdminProducts = () => {
     setDescription(product.description || '');
     setPrice(product.price.replace(/[^0-9.]/g, ''));
     setCategoryId(product.categoryId);
-    setMetaTitle(product.metaTitle || '');
-    setMetaDescription(product.metaDescription || '');
     setSeoFaq(product.seoFaq || []);
     
     const existingUrls = product.images || [product.image];
@@ -195,8 +216,6 @@ const AdminProducts = () => {
     setPrice('');
     setCategoryId('');
     setMediaItems([]);
-    setMetaTitle('');
-    setMetaDescription('');
     setSeoFaq([]);
     if (mediaInputRef.current) mediaInputRef.current.value = '';
   };
@@ -243,8 +262,6 @@ const AdminProducts = () => {
         image: allMediaUrls[0],
         images: allMediaUrls,
         createdAt: existing?.createdAt ?? Date.now(),
-        metaTitle: metaTitle || undefined,
-        metaDescription: metaDescription || undefined,
         seoFaq: seoFaq.length > 0 ? seoFaq : undefined,
       };
 
@@ -359,12 +376,25 @@ const AdminProducts = () => {
 	      <div className="flex items-center justify-between gap-4">
 	        <div>
 	          <h2 className="text-2xl font-semibold">Products</h2>
-	          <p className="text-sm text-muted-foreground">Add and manage products, images/videos, and SEO.</p>
+	          <p className="text-sm text-muted-foreground">Add and manage products, images/videos, and pricing visibility.</p>
 	        </div>
-	        <Button onClick={handleOpenCreate}>
-	          <Plus className="h-4 w-4 mr-2" />
-	          Add Product
-	        </Button>
+	        <div className="flex items-center gap-4">
+	          <div className="flex items-center gap-2">
+	            <Switch
+	              id="admin-show-prices"
+	              checked={showPrices}
+	              onCheckedChange={togglePriceVisibility}
+	              disabled={isSavingPriceSettings}
+	            />
+	            <Label htmlFor="admin-show-prices" className="cursor-pointer text-sm">
+	              Show Prices
+	            </Label>
+	          </div>
+	          <Button onClick={handleOpenCreate}>
+	            <Plus className="h-4 w-4 mr-2" />
+	            Add Product
+	          </Button>
+	        </div>
 	      </div>
 
 	      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
@@ -409,27 +439,6 @@ const AdminProducts = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="product-meta-title">Meta Title (SEO)</Label>
-              <Input
-                id="product-meta-title"
-                value={metaTitle}
-                onChange={(e) => setMetaTitle(e.target.value)}
-                placeholder="SEO meta title"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="product-meta-description">Meta Description (SEO)</Label>
-              <Input
-                id="product-meta-description"
-                value={metaDescription}
-                onChange={(e) => setMetaDescription(e.target.value)}
-                placeholder="SEO meta description"
-              />
-            </div>
-          </div>
-          
           <div className="space-y-2">
             <Label htmlFor="product-price">Price (in $) *</Label>
             <Input
@@ -590,8 +599,8 @@ const AdminProducts = () => {
           <CardTitle>Bulk Price Update</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
-            <div className="space-y-2 w-full sm:w-64">
+          <div className="grid grid-cols-1 sm:grid-cols-[16rem_12rem_auto] gap-3 items-start">
+            <div className="space-y-2 w-full">
               <Label htmlFor="bulk-delta">Increase/Decrease Value</Label>
               <Input
                 id="bulk-delta"
@@ -605,7 +614,7 @@ const AdminProducts = () => {
                 Use negative value to decrease prices.
               </p>
             </div>
-            <div className="space-y-2 w-full sm:w-48">
+            <div className="space-y-2 w-full">
               <Label>Mode</Label>
               <Select value={bulkMode} onValueChange={(v) => setBulkMode(v as 'amount' | 'percent')}>
                 <SelectTrigger>
@@ -617,9 +626,11 @@ const AdminProducts = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={handleOpenBulkPreview} disabled={isUploading || isBulkUpdating}>
-              Preview Changes
-            </Button>
+            <div className="sm:pt-7">
+              <Button onClick={handleOpenBulkPreview} disabled={isUploading || isBulkUpdating} className="w-full sm:w-auto">
+                Preview Changes
+              </Button>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <Checkbox

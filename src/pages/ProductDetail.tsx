@@ -11,11 +11,12 @@ import { buildFaqForProduct, buildMetaDescriptionForProduct, buildMetaTitleForPr
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { preloadMedia } from "@/lib/preload";
 import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { formatPriceRounded } from "@/lib/utils";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
-  const { categories, promoHeader, products } = useAppSelector(selectGlobalData);
+  const { categories, promoHeader, products, priceSettings } = useAppSelector(selectGlobalData);
   const status = useAppSelector(selectContentStatus);
   const hydrated = useAppSelector(selectContentHydrated);
   const productsLoaded = useAppSelector(selectProductsLoaded);
@@ -204,7 +205,13 @@ const ProductDetail = () => {
 
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4">{product.name}</h1>
-            <div className="mb-6" />
+            {priceSettings.showPrices ? (
+              <div className="mb-6 text-lg font-semibold text-foreground/90">
+                ${formatPriceRounded(product.price)}
+              </div>
+            ) : (
+              <div className="mb-6" />
+            )}
             {category && (
               <Link to={`/category/${category.id}`} className="text-sm text-primary underline">
                 Shop more {category.name} jewelry

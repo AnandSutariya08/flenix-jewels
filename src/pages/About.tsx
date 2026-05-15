@@ -13,6 +13,8 @@ import logo2 from '@/assets/3.jpg';
 import logo3 from '@/assets/04.jpg';
 import logo4 from '@/assets/05.jpg';
 import { FaWhatsapp } from 'react-icons/fa';
+import PageHero from "@/components/PageHero";
+import hero1 from "@/assets/hero1.png";
 
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 
@@ -72,11 +74,8 @@ const expertise = [
 
 const About = () => {
   const { categories, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
-  const [heroLoaded, setHeroLoaded] = useState(false);
 
   const paddingTop = HEADER_OFFSET_PX;
-
-  useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
 
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'AboutPage',
@@ -115,44 +114,42 @@ const About = () => {
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
 
         {/* ── Hero ── */}
-        <section className="relative overflow-hidden py-24 md:py-36 bg-[#130900] dark:bg-[#0c0703]">
-          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 65% 70% at 50% 50%, rgba(196,144,106,0.11) 0%, transparent 70%)' }} />
-          {/* Decorative circles */}
-          <div className="absolute top-[-8%] left-[-5%] w-80 h-80 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(196,144,106,0.08), transparent 70%)' }} />
-          <div className="absolute bottom-[-10%] right-[-5%] w-96 h-96 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,169,106,0.07), transparent 70%)' }} />
+        <PageHero
+          backgroundImage={hero1}
+          eyebrow={
+            <span className="inline-flex items-center justify-center gap-2">
+              <Crown className="h-3 w-3" />
+              <span>Est. 2011 · Fine Jewelry</span>
+            </span>
+          }
+          title={
+            <>
+              Crafting Dreams{" "}
+              <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Into Reality
+              </span>
+            </>
+          }
+          subtitle="For over 11 years, Flenix Jewels has been transforming precious metals and gems into timeless masterpieces that celebrate life's most precious moments."
+        />
 
-          <div
-            className="relative z-10 max-w-4xl mx-auto px-6 text-center"
-            style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? 'translateY(0)' : 'translateY(20px)', transition: 'opacity 1s ease, transform 1s ease' }}
-          >
-            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full mb-8" style={{ background: 'rgba(196,144,106,0.12)', border: '1px solid rgba(196,144,106,0.3)' }}>
-              <Crown className="h-3.5 w-3.5" style={{ color: '#C4906A' }} />
-              <span className="text-[10px] tracking-[0.35em] uppercase font-black" style={{ color: '#C4906A' }}>Est. 2011 · Fine Jewelry</span>
-            </div>
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-white leading-[1.04] mb-6">
-              Crafting Dreams<br />
-              <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Into Reality</span>
-            </h1>
-            <p className="text-lg md:text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.48)' }}>
-              For over 11 years, Flenix Jewels has been transforming precious metals and gems into timeless masterpieces that celebrate life's most precious moments.
-            </p>
-          </div>
-
-          {/* Stats bar inside hero */}
-          <div
-            className="relative z-10 max-w-4xl mx-auto px-6 mt-16 grid grid-cols-2 md:grid-cols-4 gap-6"
-            style={{ opacity: heroLoaded ? 1 : 0, transition: 'opacity 1.2s ease 0.3s' }}
-          >
+        {/* Stats strip (kept separate so hero height stays consistent) */}
+        <section className="bg-[#130900] dark:bg-[#0c0703] border-b" style={{ borderColor: 'rgba(196,144,106,0.18)' }}>
+          <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((s, i) => (
               <div key={i} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold mb-1" style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{s.value}</div>
-                <div className="text-[11px] tracking-[0.2em] uppercase font-bold" style={{ color: 'rgba(255,255,255,0.38)' }}>{s.label}</div>
+                <div
+                  className="text-3xl md:text-4xl font-bold mb-1"
+                  style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
+                >
+                  {s.value}
+                </div>
+                <div className="text-[11px] tracking-[0.2em] uppercase font-bold" style={{ color: 'rgba(255,255,255,0.38)' }}>
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
-
-          <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.3) 50%, transparent 95%)' }} />
         </section>
 
         {/* ── Our Story ── */}

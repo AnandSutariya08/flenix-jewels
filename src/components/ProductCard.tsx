@@ -5,6 +5,9 @@ import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
 import { preloadMedia } from '@/lib/preload';
 import { stripHtml } from '@/lib/seo';
+import { useAppSelector } from "@/store/hooks";
+import { selectGlobalData } from "@/store/contentSlice";
+import { formatPriceRounded } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +15,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onClick }: ProductCardProps) => {
+  const { priceSettings } = useAppSelector(selectGlobalData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const touchStartX = useRef<number | null>(null);
@@ -162,6 +166,12 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
         <h3 className="font-semibold text-base sm:text-lg lg:text-xl mb-2 line-clamp-2 min-h-[3rem] text-foreground group-hover:text-primary transition-colors">
           {product.name}
         </h3>
+
+        {priceSettings.showPrices ? (
+          <div className="mb-3 text-sm font-semibold tracking-wide text-foreground/90">
+            ${formatPriceRounded(product.price)}
+          </div>
+        ) : null}
         
         {/* Description */}
         <p className="text-xs sm:text-sm text-muted-foreground mb-4 line-clamp-3 flex-1 leading-6">

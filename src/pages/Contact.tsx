@@ -3,12 +3,14 @@ import Header from '@/components/Header';
 import MiniHeader from '@/components/MiniHeader';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import PageHero from "@/components/PageHero";
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { HEADER_OFFSET_PX } from "@/lib/layout";
 import { MapPin, Phone, Mail, Clock, Send, Flag, Loader2, Gem, MessageCircle, ChevronRight } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { toast } from 'sonner';
+import hero5 from "@/assets/hero5.png";
 
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 
@@ -35,12 +37,9 @@ const Contact = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [heroLoaded, setHeroLoaded] = useState(false);
   const formReveal = useReveal(0.08);
   const infoReveal = useReveal(0.08);
   const officesReveal = useReveal(0.08);
-
-  useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
 
   const paddingTop = HEADER_OFFSET_PX;
 
@@ -104,70 +103,27 @@ const Contact = () => {
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
 
         {/* ── Hero ── */}
-        <section className="relative overflow-hidden py-20 md:py-28 bg-[#130900] dark:bg-[#0c0703]">
-          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 65% 65% at 50% 50%, rgba(196,144,106,0.10) 0%, transparent 70%)' }} />
+        <PageHero
+          backgroundImage={hero5}
+          eyebrow={
+            <span className="inline-flex items-center justify-center gap-2">
+              <MessageCircle className="h-3 w-3" />
+              <span>Reach Out</span>
+            </span>
+          }
+          title={
+            <>
+              Let's{" "}
+              <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Talk
+              </span>
+            </>
+          }
+          subtitle="Whether you have a question, a custom design in mind, or a wholesale inquiry — our team is ready to help."
+        />
 
-          <div
-            className="relative z-10 max-w-3xl mx-auto px-6 text-center"
-            style={{ opacity: heroLoaded ? 1 : 0, transform: heroLoaded ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}
-          >
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, transparent, #C4906A)' }} />
-              <MessageCircle className="h-3.5 w-3.5" style={{ color: '#C4906A' }} />
-              <span className="text-[10px] tracking-[0.4em] uppercase font-black" style={{ color: '#C4906A' }}>Reach Out</span>
-              <MessageCircle className="h-3.5 w-3.5" style={{ color: '#C4906A' }} />
-              <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, #C4906A, transparent)' }} />
-            </div>
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-white leading-[1.05] mb-5">
-              Let's <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Talk</span>
-            </h1>
-            <p className="text-base md:text-lg leading-relaxed max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.45)' }}>
-              Whether you have a question, a custom design in mind, or a wholesale inquiry — our team is ready to help.
-            </p>
-          </div>
-
-          {/* Quick contact pills */}
-          <div
-            className="relative z-10 max-w-3xl mx-auto px-6 mt-12 flex flex-wrap justify-center gap-3"
-            style={{ opacity: heroLoaded ? 1 : 0, transition: 'opacity 1.1s ease 0.25s' }}
-          >
-            {contactInfo?.phone && (
-              <a
-                href={`tel:${contactInfo.phone}`}
-                className="flex items-center gap-2.5 text-sm font-bold px-5 py-3 rounded-full transition-all duration-200 hover:scale-105"
-                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(196,144,106,0.28)', color: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)' }}
-              >
-                <Phone className="h-4 w-4" style={{ color: '#C4906A' }} />
-                {contactInfo.phone}
-              </a>
-            )}
-            {contactInfo?.email && (
-              <a
-                href={`mailto:${contactInfo.email}`}
-                className="flex items-center gap-2.5 text-sm font-bold px-5 py-3 rounded-full transition-all duration-200 hover:scale-105"
-                style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(196,144,106,0.28)', color: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(12px)' }}
-              >
-                <Mail className="h-4 w-4" style={{ color: '#C4906A' }} />
-                {contactInfo.email}
-              </a>
-            )}
-            {contactInfo?.whatsapp && (
-              <a
-                href={`https://wa.me/${contactInfo.whatsapp}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2.5 text-sm font-bold px-5 py-3 rounded-full transition-all duration-200 hover:scale-105"
-                style={{ background: 'linear-gradient(135deg, rgba(18,140,126,0.3), rgba(37,211,102,0.2))', border: '1px solid rgba(37,211,102,0.35)', color: '#7FE8A0', backdropFilter: 'blur(12px)' }}
-              >
-                <FaWhatsapp className="h-4 w-4" style={{ color: '#25D366' }} />
-                WhatsApp
-              </a>
-            )}
-          </div>
-
-          <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.25) 50%, transparent 95%)' }} />
-        </section>
+        {/* Quick contact pills (kept separate so hero height stays consistent) */}
+    
 
         {/* ── Form + Info ── */}
         <section className="py-16 md:py-24 bg-[#FDF8F2] dark:bg-[#0e0805]">

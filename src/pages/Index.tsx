@@ -9,10 +9,11 @@ import SEOHead from '@/components/SEOHead';
 import ServicesSection from '@/components/ServicesSection';
 import BlogDialog from '@/components/BlogDialog';
 import InstagramJourneyCarousel from '@/components/InstagramJourneyCarousel';
+import EmptyState from '@/components/EmptyState';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData } from '@/store/contentSlice';
 import { HEADER_OFFSET_PX } from '@/lib/layout';
-import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight, BookOpen, Gem } from 'lucide-react';
 import { BlogPost } from '@/lib/storage';
 
 const WHATSAPP = 'https://wa.me/919967381180?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.';
@@ -106,30 +107,35 @@ export default function Index() {
         {/* ═══════════════════════════════════════════════════════
             3. COLLECTIONS — asymmetric editorial grid
         ═══════════════════════════════════════════════════════ */}
-        {categories.length > 0 && (
-          <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1600px] mx-auto">
-            {/* Section header */}
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
-              <div>
-                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3 text-primary">✦ Collections</p>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight">
-                  Crafted for<br />Every Occasion
-                </h2>
-              </div>
-              <div className="lg:pb-2 max-w-sm">
-                <p className="text-muted-foreground leading-relaxed mb-5">
-                  Each piece is a testament to exceptional artisanship and timeless elegance, designed to be cherished forever.
-                </p>
-                <Link to="/categories" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase transition-all group text-primary">
-                  View All Collections
-                  <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
-                </Link>
-              </div>
+        <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1600px] mx-auto">
+          {/* Section header */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+            <div>
+              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3 text-primary">✦ Collections</p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight">
+                Crafted for<br />Every Occasion
+              </h2>
             </div>
+            <div className="lg:pb-2 max-w-sm">
+              <p className="text-muted-foreground leading-relaxed mb-5">
+                Each piece is a testament to exceptional artisanship and timeless elegance, designed to be cherished forever.
+              </p>
+              <Link to="/categories" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase transition-all group text-primary">
+                View All Collections
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
+              </Link>
+            </div>
+          </div>
 
-            {/* Grid — large + small cards */}
+          {categories.length === 0 ? (
+            <EmptyState
+              icon={<Gem className="h-7 w-7" />}
+              title="Collections Coming Soon"
+              description="We’re curating a refined set of collections. Please check back shortly."
+              className="py-10"
+            />
+          ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" style={{ gridAutoRows: '220px' }}>
-
               {/* Hero card — spans 2×2 */}
               {categories[0] && (
                 <Link to={`/category/${categories[0].id}`}
@@ -172,8 +178,8 @@ export default function Index() {
                 </Link>
               ))}
             </div>
-          </section>
-        )}
+          )}
+        </section>
 
         {/* ═══════════════════════════════════════════════════════
             4. FEATURED COLLECTION — editorial lookbook
@@ -438,8 +444,7 @@ export default function Index() {
         {/* ═══════════════════════════════════════════════════════
             7. GALLERY — Immersive showcase
         ═══════════════════════════════════════════════════════ */}
-        {galleryItems.length > 0 && (
-          <section className="py-20 md:py-28 relative overflow-hidden" style={{ background: isDark ? '#080400' : '#0e0804' }}>
+        <section className="py-20 md:py-28 relative overflow-hidden" style={{ background: isDark ? '#080400' : '#0e0804' }}>
             {/* Ambient glow */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"
               style={{ background: 'radial-gradient(ellipse at top right, rgba(196,144,106,0.10) 0%, transparent 65%)', transform: 'translate(20%,-20%)' }} />
@@ -470,7 +475,14 @@ export default function Index() {
               </div>
 
               {/* Main showcase grid */}
-              {galleryItems.length >= 5 ? (
+              {galleryItems.length === 0 ? (
+                <EmptyState
+                  icon={<Gem className="h-7 w-7" />}
+                  title="Gallery Coming Soon"
+                  description="We’re curating an exceptional collection for you."
+                  className="py-10"
+                />
+              ) : galleryItems.length >= 5 ? (
                 <div className="grid grid-cols-12 gap-3 md:gap-4" style={{ gridAutoRows: '180px' }}>
 
                   {/* Hero tall image — 5 cols × 3 rows */}
@@ -541,18 +553,20 @@ export default function Index() {
               )}
 
               {/* Count pill */}
-              <div className="flex items-center justify-center mt-10">
-                <Link to="/gallery"
-                  className="inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.2em] uppercase px-7 py-3.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                  style={{ background: GOLD, color: '#fff', boxShadow: '0 8px 30px -6px rgba(155,104,68,0.5)' }}>
-                  View All {galleryItems.length} Pieces
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
+              {galleryItems.length > 0 && (
+                <div className="flex items-center justify-center mt-10">
+                  <Link to="/gallery"
+                    className="inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.2em] uppercase px-7 py-3.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                    style={{ background: GOLD, color: '#fff', boxShadow: '0 8px 30px -6px rgba(155,104,68,0.5)' }}>
+                    View All {galleryItems.length} Pieces
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              )}
             </div>
             <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.25) 50%, transparent 95%)' }} />
           </section>
-        )}
+        
 
         {/* ═══════════════════════════════════════════════════════
             8. TESTIMONIALS — Scroll marquee
@@ -598,8 +612,7 @@ export default function Index() {
         {/* ═══════════════════════════════════════════════════════
             9. BLOG — Editorial magazine layout
         ═══════════════════════════════════════════════════════ */}
-        {sortedBlogs.length > 0 && (
-          <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
+        <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
             <div className="flex items-end justify-between mb-14">
               <div>
                 <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ The Journal</p>
@@ -610,7 +623,15 @@ export default function Index() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
+            {sortedBlogs.length === 0 ? (
+              <EmptyState
+                icon={<BookOpen className="h-7 w-7" />}
+                title="Stories Coming Soon"
+                description="We’re writing expert guides, diamond education, and timeless jewelry stories."
+                className="py-10"
+              />
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
               {/* Featured — 3 cols */}
               {sortedBlogs[0] && (
                 <article className="lg:col-span-3 group cursor-pointer" onClick={() => openBlog(sortedBlogs[0])}>
@@ -658,8 +679,8 @@ export default function Index() {
                 ))}
               </div>
             </div>
+            )}
           </section>
-        )}
 
         {/* ═══════════════════════════════════════════════════════
             10. WHATSAPP CTA — Dark full-bleed

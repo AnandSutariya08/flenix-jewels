@@ -21,8 +21,6 @@ const AdminCategories = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [metaTitle, setMetaTitle] = useState('');
-  const [metaDescription, setMetaDescription] = useState('');
 
   useEffect(() => {
     getCategories().then(setCategories);
@@ -54,8 +52,6 @@ const AdminCategories = () => {
     setDescription(category.description || '');
     setImage(category.image);
     setPriority(category.priority || 1);
-    setMetaTitle(category.metaTitle || '');
-    setMetaDescription(category.metaDescription || '');
     setIsFormOpen(true);
   };
 
@@ -66,8 +62,6 @@ const AdminCategories = () => {
     setImage('');
     setImageFile(null);
     setPriority(1);
-    setMetaTitle('');
-    setMetaDescription('');
   };
 
   const handleCancelEdit = () => {
@@ -99,8 +93,6 @@ const AdminCategories = () => {
         description,
         image: imageUrl,
         priority,
-        metaTitle: metaTitle || undefined,
-        metaDescription: metaDescription || undefined,
       };
 
       await saveCategory(categoryData);
@@ -195,28 +187,6 @@ const AdminCategories = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter category description"
               />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="category-meta-title">Meta Title (SEO)</Label>
-                <Input
-                  id="category-meta-title"
-                  value={metaTitle}
-                  onChange={(e) => setMetaTitle(e.target.value)}
-                  placeholder="SEO meta title"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="category-meta-description">Meta Description (SEO)</Label>
-                <Textarea
-                  id="category-meta-description"
-                  value={metaDescription}
-                  onChange={(e) => setMetaDescription(e.target.value)}
-                  placeholder="SEO meta description"
-                  rows={4}
-                />
-              </div>
             </div>
 
             <div className="space-y-2">

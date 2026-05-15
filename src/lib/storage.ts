@@ -109,6 +109,10 @@ export interface PromoHeader {
   enabled: boolean;
 }
 
+export interface PriceSettings {
+  showPrices: boolean;
+}
+
 export interface Testimonial {
   id: string;
   name: string;
@@ -141,6 +145,7 @@ const COLLECTIONS = {
   VISITORS: 'visitors',
   PROMO_HEADER: 'promo-header',
   TESTIMONIALS: 'testimonials',
+  SETTINGS: 'settings',
 };
 
 const sanitizeForFirestore = <T>(value: T): T => {
@@ -175,8 +180,35 @@ export const initializeDefaultData = async () => {
       };
       await setDoc(doc(db, COLLECTIONS.CONTACT, 'main'), defaultContact);
     }
+
+    const priceSettingsDoc = await getDoc(doc(db, COLLECTIONS.SETTINGS, 'pricing'));
+    if (!priceSettingsDoc.exists()) {
+      const defaults: PriceSettings = { showPrices: false };
+      await setDoc(doc(db, COLLECTIONS.SETTINGS, 'pricing'), defaults);
+    }
   } catch (error) {
     console.error('Error initializing default data:', error);
+  }
+};
+
+export const getPriceSettings = async (): Promise<PriceSettings> => {
+  try {
+    const docSnap = await getDoc(doc(db, COLLECTIONS.SETTINGS, 'pricing'));
+    if (docSnap.exists()) {
+      const data = docSnap.data() as Partial<PriceSettings>;
+      return { showPrices: Boolean(data.showPrices) };
+    }
+  } catch (error) {
+    console.error('Error getting price settings:', error);
+  }
+  return { showPrices: false };
+};
+
+export const savePriceSettings = async (settings: PriceSettings) => {
+  try {
+    await setDoc(doc(db, COLLECTIONS.SETTINGS, 'pricing'), settings);
+  } catch (error) {
+    console.error('Error saving price settings:', error);
   }
 };
 

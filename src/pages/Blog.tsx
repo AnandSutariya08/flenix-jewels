@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import MiniHeader from '@/components/MiniHeader';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import PageHero from "@/components/PageHero";
 import BlogDialog from '@/components/BlogDialog';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadBlogs, loadGlobalData, selectBlogsLoaded, selectBlogsStatus, selectContentStatus, selectGlobalData } from "@/store/contentSlice";
@@ -12,6 +13,7 @@ import { BlogPost } from '@/lib/storage';
 import { buildMetaDescriptionForBlog, buildMetaTitleForBlog } from '@/lib/seo';
 import { ArrowRight, Clock, CalendarDays, BookOpen, Gem, ChevronRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import hero4 from "@/assets/hero4.png";
 
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 const C = {
@@ -284,7 +286,6 @@ const Blog = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [requestedRefresh, setRequestedRefresh] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
   const navigate = useNavigate();
   const { id: routeBlogId } = useParams<{ id: string }>();
   const { resolvedTheme } = useTheme();
@@ -292,39 +293,24 @@ const Blog = () => {
 
   const paddingTop = HEADER_OFFSET_PX;
 
-  useEffect(() => { const t = setTimeout(() => setIsLoaded(true), 80); return () => clearTimeout(t); }, []);
-
   const sortedBlogs = useMemo(
     () => [...blogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
     [blogs]
   );
 
   useEffect(() => {
-    console.log('[Blog] state', {
-      status,
-      blogsStatus,
-      blogsLoaded,
-      blogsCount: blogs.length,
-      routeBlogId,
-      searchId: searchParams.get('id'),
-    });
-  }, [status, blogsStatus, blogsLoaded, blogs.length, routeBlogId, searchParams]);
-
-  useEffect(() => {
-    if (!requestedRefresh && blogs.length === 0 && status !== "loading") {
-      dispatch(loadGlobalData({ force: true }));
+    // Avoid repeated forced refresh when the blog collection is genuinely empty.
+    if (!requestedRefresh && blogs.length === 0 && status === "idle") {
+      dispatch(loadGlobalData());
       setRequestedRefresh(true);
     }
   }, [blogs.length, dispatch, requestedRefresh, status]);
 
   useEffect(() => {
-    // Always attempt to load blogs if we don't have any yet (even if cache flags say loaded).
+    // Load once; an empty list is a valid state (show "Coming Soon").
     if (blogsStatus === "loading") return;
-    if (blogs.length === 0) {
-      console.log('[Blog] dispatch loadBlogs', { force: blogsLoaded });
-      dispatch(blogsLoaded ? loadBlogs({ force: true }) : loadBlogs());
-    }
-  }, [blogsLoaded, blogsStatus, dispatch]);
+    if (!blogsLoaded && blogs.length === 0 && blogsStatus === "idle") dispatch(loadBlogs());
+  }, [blogs.length, blogsLoaded, blogsStatus, dispatch]);
 
   useEffect(() => {
     const blogId = routeBlogId || searchParams.get('id');
@@ -406,39 +392,25 @@ const Blog = () => {
 
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
 
-        {/* ── Hero banner ── */}
-        <section
-          className="relative overflow-hidden py-16 md:py-24"
-          style={{ background: isDark ? '#0c0703' : C.espresso }}
-        >
-          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(196,144,106,0.10) 0%, transparent 70%)' }} />
-
-          <div
-            className="relative z-10 max-w-3xl mx-auto px-6 text-center"
-            style={{ opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(18px)', transition: 'opacity 0.9s ease, transform 0.9s ease' }}
-          >
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="h-px w-14" style={{ background: 'linear-gradient(90deg, transparent, #C4906A)' }} />
-              <BookOpen className="h-3.5 w-3.5" style={{ color: C.roseGold }} />
-              <span className="text-[10px] tracking-[0.42em] uppercase font-black" style={{ color: C.roseGold }}>The Journal</span>
-              <BookOpen className="h-3.5 w-3.5" style={{ color: C.roseGold }} />
-              <div className="h-px w-14" style={{ background: 'linear-gradient(90deg, #C4906A, transparent)' }} />
-            </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.05] mb-4">
-              Stories &amp; <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Insights</span>
-            </h1>
-            <p className="text-base md:text-lg leading-relaxed max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,0.45)' }}>
-              Expert guides, diamond education, and timeless jewelry stories — crafted for those who appreciate true luxury.
-            </p>
-            {sortedBlogs.length > 0 && (
-              <p className="mt-5 text-[11px] tracking-[0.28em] uppercase font-black" style={{ color: 'rgba(196,144,106,0.55)' }}>
-                {sortedBlogs.length} Articles Published
-              </p>
-            )}
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.25) 50%, transparent 95%)' }} />
-        </section>
+        {/* ── Hero ── */}
+        <PageHero
+          backgroundImage={hero4}
+          eyebrow={
+            <span className="inline-flex items-center justify-center gap-2">
+              <BookOpen className="h-3 w-3" />
+              <span>The Journal</span>
+            </span>
+          }
+          title={
+            <>
+              Stories &amp;{" "}
+              <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Insights
+              </span>
+            </>
+          }
+          subtitle="Expert guides, diamond education, and timeless jewelry stories — crafted for those who appreciate true luxury."
+        />
 
         {/* ── Content ── */}
         <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-10 py-12 md:py-16">

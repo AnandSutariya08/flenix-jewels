@@ -9,8 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Trash2, Pencil } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { useAppDispatch } from '@/store/hooks';
+import { loadGlobalData } from '@/store/contentSlice';
 
 const AdminBanners = () => {
+  const dispatch = useAppDispatch();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState('');
@@ -112,6 +115,7 @@ const AdminBanners = () => {
       await saveBanner(bannerData);
       const updated = await getBanners();
       setBanners(updated);
+      dispatch(loadGlobalData({ force: true }));
       resetForm();
       setIsFormOpen(false);
       toast.success(editingId ? 'Banner updated successfully' : 'Banner added successfully');
@@ -128,6 +132,7 @@ const AdminBanners = () => {
       await deleteBanner(id);
       const updated = await getBanners();
       setBanners(updated);
+      dispatch(loadGlobalData({ force: true }));
       toast.success('Banner deleted');
     } catch (error) {
       toast.error('Failed to delete banner');

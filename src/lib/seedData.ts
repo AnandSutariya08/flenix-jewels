@@ -1,5 +1,5 @@
 import { saveBanner, saveCategory, saveProduct, Banner, Category, Product, getBanners, getCategories, getProducts } from './storage';
-import heroImage1 from '@/assets/hero-banner-1.jpg';
+import heroImage1 from '@/assets/hero banner1.png';
 import heroImage2 from '@/assets/hero-banner-2.jpg';
 import necklaceImage from '@/assets/category-necklaces.jpg';
 import ringImage from '@/assets/category-rings.jpg';

@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState, memo, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useState, memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Banner } from '@/lib/storage';
 import { ChevronLeft, ChevronRight, ArrowRight, Gem } from 'lucide-react';
 import { preloadMedia } from '@/lib/preload';
-import heroFallback from '@/assets/hero-banner-1.jpg';
+import heroFallback from '@/assets/hero banner1.png';
 
 interface BannerCarouselProps {
   banners?: Banner[];
@@ -14,8 +14,9 @@ const TRUST_ITEMS = ['GIA Certified', 'IGI Graded', 'Free Worldwide Shipping', '
 const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadedIndexes, setLoadedIndexes] = useState<Set<number>>(new Set());
-  const [fallbackImage, setFallbackImage] = useState<string | null>(heroFallback);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [hasAnyLoaded, setHasAnyLoaded] = useState(false);
+  const isMountedRef = useRef(true);
   const hasMultiple = banners.length > 1;
   const currentBanner = banners[currentIndex];
   const safeTitle = currentBanner?.title?.trim() || 'Flenix Jewels';
@@ -30,42 +31,50 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
       next.add(index);
       return next;
     });
+    setHasAnyLoaded(true);
   }, []);
 
   useEffect(() => { setLoadedIndexes(new Set()); }, [banners.length]);
-
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const cached = window.localStorage.getItem('flenix_hero_fallback');
-      if (cached) setFallbackImage(cached);
-    } catch { /* ignore */ }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const first = banners[0];
-    if (!first || first.mediaType === 'video') return;
-    try {
-      window.localStorage.setItem('flenix_hero_fallback', first.image);
-      setFallbackImage(first.image);
-    } catch { /* ignore */ }
+    setHasAnyLoaded(false);
+    setCurrentIndex(0);
   }, [banners]);
 
   useEffect(() => {
-    if (banners.length === 0) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % banners.length);
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const ensureLoaded = useCallback(async (index: number) => {
+    if (loadedIndexes.has(index)) return;
+    const banner = banners[index];
+    if (!banner) return;
+    if (banner.mediaType === 'video') return;
+    await new Promise<void>((resolve) => {
+      const img = new Image();
+      img.src = banner.image;
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+    });
+    if (isMountedRef.current) markLoaded(index);
+  }, [banners, loadedIndexes, markLoaded]);
+
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const interval = window.setInterval(async () => {
+      const next = (currentIndex + 1) % banners.length;
+      await ensureLoaded(next);
+      setCurrentIndex(next);
     }, 7000);
-    return () => clearInterval(interval);
-  }, [banners.length]);
+    return () => window.clearInterval(interval);
+  }, [banners.length, currentIndex, ensureLoaded]);
 
   useEffect(() => {
     if (!banners[0] || banners[0].mediaType === 'video') return;
-    const img = new Image();
-    img.src = banners[0].image;
-    img.onload = () => markLoaded(0);
-  }, [banners, markLoaded]);
+    ensureLoaded(0);
+  }, [banners, ensureLoaded]);
 
   useEffect(() => {
     if (banners.length === 0) return;
@@ -77,9 +86,11 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const navigate = useCallback((newIndex: number) => {
     if (isAnimating) return;
     setIsAnimating(true);
-    setCurrentIndex(newIndex);
-    setTimeout(() => setIsAnimating(false), 800);
-  }, [isAnimating]);
+    void ensureLoaded(newIndex).finally(() => {
+      setCurrentIndex(newIndex);
+      setTimeout(() => setIsAnimating(false), 800);
+    });
+  }, [ensureLoaded, isAnimating]);
 
   const goToNext = useCallback(() => navigate((currentIndex + 1) % banners.length), [navigate, currentIndex, banners.length]);
   const goToPrev = useCallback(() => navigate((currentIndex - 1 + banners.length) % banners.length), [navigate, currentIndex, banners.length]);
@@ -87,9 +98,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   if (banners.length === 0) {
     return (
       <div className="relative h-[88vh] md:h-[92vh] min-h-[600px] max-h-[1000px] overflow-hidden w-full bg-[#0c0703]">
-        {fallbackImage && (
-          <img src={fallbackImage} alt="Hero background" className="absolute inset-0 w-full h-full object-cover opacity-60" loading="eager" decoding="async" />
-        )}
+        <img src={heroFallback} alt="Hero background" className="absolute inset-0 w-full h-full object-cover opacity-60" loading="eager" decoding="async" />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, rgba(6,3,1,0.72) 0%, rgba(6,3,1,0.45) 45%, rgba(6,3,1,0.80) 100%)' }} />
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 70% at 20% 50%, rgba(196,144,106,0.18) 0%, transparent 60%)' }} />
         <HeroContent title={safeTitle} description={safeDesc} isActive />
@@ -105,11 +114,16 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   return (
     <div className="relative h-[88vh] md:h-[92vh] min-h-[600px] max-h-[1000px] overflow-hidden w-full bg-[#0c0703]">
       {/* Fallback image while loading */}
-      {fallbackImage && (
-        <div className={`absolute inset-0 transition-opacity duration-700 ${loadedIndexes.has(currentIndex) ? 'opacity-0' : 'opacity-100'}`}>
-          <img src={fallbackImage} alt="Hero" className="w-full h-full object-cover" loading="eager" decoding="async" />
-        </div>
-      )}
+      <div className={`absolute inset-0 transition-opacity duration-1000 ease-out ${hasAnyLoaded ? 'opacity-0' : 'opacity-100'}`}>
+        <img
+          src={heroFallback}
+          alt="Hero"
+          className="w-full h-full object-cover"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          loading="eager"
+          decoding="async"
+        />
+      </div>
 
       {/* Slides */}
       {banners.map((banner, index) => {
@@ -118,11 +132,24 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
         return (
           <div key={banner.id} className={`absolute inset-0 transition-all duration-1000 ease-out ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
             {banner.mediaType === 'video' ? (
-              <video src={banner.image} className="w-full h-full object-cover" autoPlay={isActive} muted loop playsInline preload="metadata"
-                poster={fallbackImage || undefined} onLoadedData={() => markLoaded(index)} />
+              <video
+                src={banner.image}
+                className="w-full h-full object-cover"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                autoPlay={isActive}
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster={heroFallback} onLoadedData={() => markLoaded(index)} />
             ) : (
-              <img src={banner.image} alt={banner.title} className={`w-full h-full object-cover transition-transform duration-[8000ms] ease-out ${isActive ? 'scale-110' : 'scale-100'}`}
-                loading={isActive ? 'eager' : 'lazy'} decoding="async"
+              <img
+                src={banner.image}
+                alt={banner.title}
+                className={`w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out ${isActive ? 'scale-110' : 'scale-100'}`}
+                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
+                loading={isActive ? 'eager' : 'lazy'}
+                decoding="async"
                 fetchpriority={isActive ? 'high' : 'auto'} sizes="100vw" onLoad={() => markLoaded(index)} />
             )}
 

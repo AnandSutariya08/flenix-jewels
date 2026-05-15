@@ -354,17 +354,32 @@ const CategoryProducts = () => {
       {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
       <main className="flex-1 container mx-auto px-4 py-12" style={{ paddingTop: `${paddingTop}px` }}>
         <Link to="/categories">
-          <Button variant="ghost" className="mb-6">
+          <Button variant="ghost" className="mt-3 mb-8 rounded-full px-4 border border-border/60 bg-card/60 backdrop-blur-sm hover:bg-card">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Categories
           </Button>
         </Link>
-        <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{category.name}</h1>
-          <p className="text-lg text-muted-foreground">{category.description}</p>
-        </div>
+        <section className="relative overflow-hidden rounded-3xl border bg-card/60 backdrop-blur-sm p-8 md:p-10 mb-10">
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 70% 60% at 20% 30%, rgba(196,144,106,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 70%, rgba(212,169,106,0.10) 0%, transparent 55%)",
+            }}
+            aria-hidden="true"
+          />
+          <div className="relative">
+            <p className="text-[10px] tracking-[0.35em] uppercase font-black text-muted-foreground mb-3">
+              ✦ Collection
+            </p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-3 tracking-tight">{category.name}</h1>
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-3xl">
+              {category.description}
+            </p>
+          </div>
+        </section>
         {/* Filter Bar */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 p-4 bg-muted/30 rounded-lg border">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 p-4 sm:p-5 bg-card/60 backdrop-blur-sm rounded-2xl border shadow-sm">
           {/* <div className="flex items-center gap-2 text-muted-foreground">
             <span className="text-2xl font-bold text-foreground">{filteredProducts.length}</span>
             <span className="text-sm">Product{filteredProducts.length !== 1 ? 's' : ''} Found</span>

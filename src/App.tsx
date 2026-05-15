@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -47,11 +47,25 @@ const AppContent = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const isAdminRoute = location.pathname.startsWith('/aEgZjaHJvbWUyBggAEEUYOdIBCDUzMTRqMGo3');
+  const didRevalidateRef = useRef(false);
 
   useEffect(() => {
     if (!isAdminRoute && status === "idle" && !hydrated) {
       dispatch(loadGlobalData());
     }
+  }, [dispatch, hydrated, isAdminRoute, status]);
+
+  // Stale-while-revalidate: even if we hydrate from cache, re-fetch once per app load
+  // so Firestore updates show up on refresh without waiting for cache TTL.
+  useEffect(() => {
+    if (isAdminRoute) return;
+    if (!hydrated || status !== "succeeded") return;
+    if (didRevalidateRef.current) return;
+    didRevalidateRef.current = true;
+    const t = window.setTimeout(() => {
+      dispatch(loadGlobalData({ force: true }));
+    }, 250);
+    return () => window.clearTimeout(t);
   }, [dispatch, hydrated, isAdminRoute, status]);
 
   useEffect(() => {

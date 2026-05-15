@@ -9,10 +9,13 @@ import Header from '@/components/Header';
 import MiniHeader from '@/components/MiniHeader';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import PageHero from "@/components/PageHero";
+import EmptyState from "@/components/EmptyState";
 import { useAppSelector } from "@/store/hooks";
 import { selectContentHydrated, selectContentStatus, selectGlobalData } from "@/store/contentSlice";
 import { buildMetaDescriptionFromHtml } from "@/lib/seo";
 import { HEADER_OFFSET_PX } from "@/lib/layout";
+import hero3 from "@/assets/hero3.png";
 
 type GuideSection = {
   id: string;
@@ -234,6 +237,7 @@ const BuyingGuidePage = () => {
   const [selected, setSelected] = useState<BuyingGuide | null>(null);
   const [query, setQuery] = useState("");
   const { slug } = useParams<{ slug?: string }>();
+const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
 
   const promoHeight = 0;
   const paddingTop = HEADER_OFFSET_PX;
@@ -417,10 +421,12 @@ const BuyingGuidePage = () => {
         <Header promoHeader={promoHeader} />
         {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
         <main className="flex-1 flex items-center justify-center py-20" style={{ paddingTop: `${paddingTop}px` }}>
-          <div className="text-center">
-            <BookOpen className="h-16 w-16 mx-auto text-muted-foreground mb-6" />
-            <p className="text-xl text-muted-foreground">No buying guides available yet.</p>
-          </div>
+          <EmptyState
+            icon={<BookOpen className="h-7 w-7" />}
+            title="Buying Guides Coming Soon"
+            description="We’re preparing clear, practical guides to help you choose with confidence."
+            className="w-full"
+          />
         </main>
         <Footer />
       </div>
@@ -450,22 +456,26 @@ const BuyingGuidePage = () => {
 
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
         {/* Hero */}
-        <section className="border-b bg-gradient-to-b from-muted/40 to-background">
-          <div className="container mx-auto px-4 py-12 md:py-14">
-            <div className="max-w-3xl">
-              <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.22em] uppercase text-muted-foreground">
-                <BookOpen className="h-4 w-4" />
-                Buying Guide
-              </p>
-              <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">
-                Jewelry Buying Guide
-              </h1>
-              <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed">
-                Clear, structured guides to help you choose diamonds, gemstones, and fine jewelry with confidence.
-              </p>
-            </div>
-          </div>
-        </section>
+        <PageHero
+          backgroundImage={hero3}
+          eyebrow={
+            <span className="inline-flex items-center justify-center gap-2">
+              <BookOpen className="h-3 w-3" />
+              <span>Buying Guide</span>
+            </span>
+          }
+          // title="Jewelry Buying Guide"
+          title={
+            <>
+              Jewelry{" "}
+              <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+               Buying 
+              </span>
+               {" "}Guide
+            </>
+          }
+          subtitle="Clear, structured guides to help you choose diamonds, gemstones, and fine jewelry with confidence."
+        />
 
         {!slug && (
           <section className="container mx-auto px-4 py-12">

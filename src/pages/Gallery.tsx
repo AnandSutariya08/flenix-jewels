@@ -3,12 +3,14 @@ import Header from '@/components/Header';
 import MiniHeader from '@/components/MiniHeader';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import PageHero from "@/components/PageHero";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadDeferredData, selectDeferredLoaded, selectDeferredStatus, selectGlobalData } from "@/store/contentSlice";
 import { HEADER_OFFSET_PX } from "@/lib/layout";
 import { ChevronLeft, ChevronRight, X, ZoomIn, Gem } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useTheme } from 'next-themes';
+import hero6 from "@/assets/hero6.png";
 
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 
@@ -125,26 +127,21 @@ const Gallery = () => {
   const deferredStatus = useAppSelector(selectDeferredStatus);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [filter, setFilter] = useState('all');
-  const [isLoaded, setIsLoaded] = useState(false);
   const thumbsRef = useRef<HTMLDivElement>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
- const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = HEADER_OFFSET_PX;
 
   const whatsappNumber = useMemo(() => contactInfo?.whatsapp || "919967381180", [contactInfo?.whatsapp]);
 
-  useEffect(() => { const t = setTimeout(() => setIsLoaded(true), 80); return () => clearTimeout(t); }, []);
-
   useEffect(() => {
-    // Gallery data loads in the deferred bundle. If cache says deferredLoaded but gallery is empty,
-    // force a refresh so the page doesn't get stuck on "Coming Soon".
+    // Gallery data loads in the deferred bundle. An empty list is a valid state (show the empty message).
     if (galleryItems.length > 0) return;
-    if (deferredStatus === "loading") return;
-    if (deferredLoaded) dispatch(loadDeferredData({ force: true }));
-    else dispatch(loadDeferredData());
+    if (deferredStatus !== "idle") return;
+    if (!deferredLoaded) dispatch(loadDeferredData());
   }, [deferredLoaded, deferredStatus, dispatch, galleryItems.length]);
 
   const filteredItems = useMemo(() => {
@@ -261,36 +258,34 @@ const Gallery = () => {
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
 
         {/* ── Hero ── */}
-        <section className="relative overflow-hidden py-20 md:py-28" style={{ background: isDark ? '#0c0703' : '#1a0f06' }}>
-          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(196,144,106,0.12) 0%, transparent 70%)' }} />
-
-          <div
-            className="relative z-10 max-w-4xl mx-auto px-6 text-center"
-            style={{ transition: 'opacity 1s ease, transform 1s ease', opacity: isLoaded ? 1 : 0, transform: isLoaded ? 'translateY(0)' : 'translateY(20px)' }}
-          >
-            <div className="flex items-center justify-center gap-3 mb-7">
-              <div className="h-px w-12" style={{ background: 'linear-gradient(90deg, transparent, #C4906A)' }} />
-              <Gem className="h-4 w-4" style={{ color: '#C4906A' }} />
-              <p className="text-[10px] tracking-[0.4em] uppercase font-black" style={{ color: '#C4906A' }}>The Collection</p>
-              <Gem className="h-4 w-4" style={{ color: '#C4906A' }} />
-              <div className="h-px w-12" style={{ background: 'linear-gradient(90deg, #C4906A, transparent)' }} />
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.02] text-white mb-5">
-              Moments<br />
-              <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>in Gold</span>
-            </h1>
-            <p className="text-lg leading-relaxed max-w-lg mx-auto" style={{ color: 'rgba(255,255,255,0.50)' }}>
+        <PageHero
+          backgroundImage={hero6}
+          eyebrow={
+            <span className="inline-flex items-center justify-center gap-2">
+              <Gem className="h-3 w-3" />
+              <span>The Collection</span>
+              <Gem className="h-3 w-3" />
+            </span>
+          }
+          title={
+            <>
+              Moments{" "}
+              <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                in Gold
+              </span>
+            </>
+          }
+          subtitle={
+            <span className="block">
               Every piece tells a story of craftsmanship, elegance, and timeless beauty.
-            </p>
-            {galleryItems.length > 0 && (
-              <p className="mt-4 text-[11px] tracking-[0.25em] uppercase font-bold" style={{ color: 'rgba(196,144,106,0.60)' }}>
-                {galleryItems.length} Curated Pieces
-              </p>
-            )}
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.3) 50%, transparent 95%)' }} />
-        </section>
+              {galleryItems.length > 0 ? (
+                <span className="block mt-3 text-[11px] tracking-[0.25em] uppercase font-bold text-white/55">
+                  {galleryItems.length} Curated Pieces
+                </span>
+              ) : null}
+            </span>
+          }
+        />
 
         {/* ── Filter strip ── */}
         {uniqueCategories.length > 0 && (

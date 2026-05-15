@@ -138,10 +138,14 @@ import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { HEADER_OFFSET_PX } from "@/lib/layout";
 import { Gem, ArrowRight } from 'lucide-react';
+import PageHero from "@/components/PageHero";
+import EmptyState from "@/components/EmptyState";
+import hero2 from "@/assets/hero2.png";
 
 const Categories = () => {
   const { categories, promoHeader } = useAppSelector(selectGlobalData);
   const paddingTop = HEADER_OFFSET_PX;
+const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -257,29 +261,33 @@ const Categories = () => {
       <main className="cat-page flex-1" style={{ paddingTop: `${paddingTop}px` }}>
 
         {/* Hero */}
-        <section className="relative bg-[#130900] dark:bg-[#0c0703] py-14 md:py-16 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 55% 70% at 50% 100%, rgba(196,144,106,0.10) 0%, transparent 70%)' }} />
-          <div className="relative text-center px-4">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <div className="h-px w-7" style={{ background: 'linear-gradient(90deg, transparent, #C4906A)' }} />
-              <Gem className="h-2.5 w-2.5" style={{ color: '#C4906A' }} />
-              <span className="text-[9px] tracking-[0.38em] uppercase font-semibold" style={{ color: '#C4906A' }}>Collections</span>
-              <Gem className="h-2.5 w-2.5" style={{ color: '#C4906A' }} />
-              <div className="h-px w-7" style={{ background: 'linear-gradient(90deg, #C4906A, transparent)' }} />
-            </div>
-            <h1 className="cat-serif text-4xl sm:text-5xl font-normal text-white tracking-tight">Our Collections</h1>
-            <p className="mt-2 text-sm" style={{ color: 'rgba(255,255,255,0.38)', fontWeight: 300 }}>
-              Crafted for every occasion, curated for you.
-            </p>
-          </div>
-        </section>
+        <PageHero
+          backgroundImage={hero2}
+          eyebrow={
+            <span className="inline-flex items-center justify-center gap-2">
+              <Gem className="h-3 w-3" />
+              <span>Collections</span>
+              <Gem className="h-3 w-3" />
+            </span>
+          }
+          title={
+            <>
+              Our &amp;{" "}
+              <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Collections
+              </span>
+            </>
+          } subtitle="Crafted for every occasion, curated for you."
+        />
 
         {/* Grid — full width, small padding only */}
         <section className="px-3 sm:px-5 py-6 sm:py-8">
           {categories.length === 0 ? (
-            <div className="text-center py-24">
-              <p className="text-muted-foreground">No categories available yet.</p>
-            </div>
+            <EmptyState
+              icon={<Gem className="h-7 w-7" />}
+              title="Collections Coming Soon"
+              description="We’re curating a refined set of collections. Please check back shortly."
+            />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               {categories.map((category, i) => (

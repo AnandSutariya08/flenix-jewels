@@ -11,6 +11,7 @@ import {
   getPromoHeader,
   getContact,
   getOffices,
+  getPriceSettings,
   initializeDefaultData,
   type Banner,
   type Category,
@@ -23,6 +24,7 @@ import {
   type PromoHeader,
   type ContactInfo,
   type Office,
+  type PriceSettings,
 } from "@/lib/storage";
 import { getBuyingGuides, type BuyingGuide } from "@/lib/buyingGuides";
 import type { RootState } from "./store";
@@ -40,6 +42,7 @@ export interface GlobalData {
   contactInfo: ContactInfo | null;
   offices: Office[];
   buyingGuides: BuyingGuide[];
+  priceSettings: PriceSettings;
 }
 
 interface ContentState {
@@ -56,8 +59,9 @@ interface ContentState {
   blogsLoaded: boolean;
 }
 
-const SESSION_KEY = "flenix_global_data_v3";
-const LOCAL_KEY = "flenix_global_data_v3_persisted";
+// Bump cache version to avoid stale data (especially after Firebase project changes).
+const SESSION_KEY = "flenix_global_data_v4";
+const LOCAL_KEY = "flenix_global_data_v4_persisted";
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const emptyData: GlobalData = {
@@ -73,6 +77,7 @@ const emptyData: GlobalData = {
   contactInfo: null,
   offices: [],
   buyingGuides: [],
+  priceSettings: { showPrices: false },
 };
 
 const normalizeBuyingGuides = (guides: BuyingGuide[]): BuyingGuide[] => {
@@ -241,10 +246,12 @@ export const loadGlobalData = createAsyncThunk<
       banners,
       categories,
       promoHeader,
+      priceSettings,
     ] = await Promise.all([
       getBanners(),
       getCategories(),
       getPromoHeader(),
+      getPriceSettings(),
     ]);
 
     return {
@@ -260,6 +267,7 @@ export const loadGlobalData = createAsyncThunk<
       contactInfo: null,
       offices: [],
       buyingGuides: [],
+      priceSettings,
     };
   },
   {
@@ -380,9 +388,7 @@ export const loadBlogs = createAsyncThunk<
 >(
   "content/loadBlogs",
   async (args) => {
-    console.log("[content/loadBlogs] start", { force: Boolean(args?.force) });
     const blogs = await getBlogs();
-    console.log("[content/loadBlogs] fetched", { count: blogs.length });
     return normalizeBlogDates(blogs);
   },
   {
@@ -390,7 +396,7 @@ export const loadBlogs = createAsyncThunk<
       const { content } = getState();
       if (args?.force) return true;
       if (content.blogsStatus === "loading") return false;
-      if (content.blogsLoaded && content.data.blogs.length > 0) return false;
+      if (content.blogsLoaded) return false;
       return true;
     },
   }

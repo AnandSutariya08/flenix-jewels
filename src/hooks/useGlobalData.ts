@@ -18,6 +18,7 @@ import type {
   PromoHeader,
   ContactInfo,
   Office,
+  PriceSettings,
 } from "@/lib/storage";
 import type { BuyingGuide } from "@/lib/buyingGuides";
 
@@ -34,6 +35,7 @@ interface GlobalData {
   contactInfo: ContactInfo | null;
   offices: Office[];
   buyingGuides: BuyingGuide[];
+  priceSettings: PriceSettings;
 }
 
 interface UseGlobalDataReturn extends GlobalData {
