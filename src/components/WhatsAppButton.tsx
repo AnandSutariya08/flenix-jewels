@@ -23,7 +23,7 @@ const WhatsAppButton = ({ product, className }: WhatsAppButtonProps) => {
       product.name
     }*\n\n${cleanDescription}`;
 
-    const whatsappNumber = '+919967381180'; // Fixed number
+    const whatsappNumber = '+85251254000 '; // Fixed number
 
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 

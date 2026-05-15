@@ -2,8 +2,8 @@ export const SITE = {
   name: "Flenix Jewels",
   url: "https://www.flenixjewels.com",
   ogImage: "https://www.flenixjewels.com/icon.png",
-  phonePrimary: "+91 9967381180",
-  phoneWhatsApp: "+91 9967381180",
+  phonePrimary: "+852 51254000 ",
+  phoneWhatsApp: "+852 51254000 ",
   email: "info@flenixjewels.com",
   areaServed: ["US", "CA", "AU", "DE", "GB", "IN"],
   addressIndia: {

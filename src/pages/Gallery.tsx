@@ -135,7 +135,7 @@ const Gallery = () => {
 
   const paddingTop = HEADER_OFFSET_PX;
 
-  const whatsappNumber = useMemo(() => contactInfo?.whatsapp || "919967381180", [contactInfo?.whatsapp]);
+  const whatsappNumber = useMemo(() => contactInfo?.whatsapp || "85251254000 ", [contactInfo?.whatsapp]);
 
   useEffect(() => {
     // Gallery data loads in the deferred bundle. An empty list is a valid state (show the empty message).

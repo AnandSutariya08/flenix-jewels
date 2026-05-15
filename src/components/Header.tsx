@@ -19,7 +19,7 @@ const navLinks = [
   { name: 'Contact',      path: '/contact' },
 ];
 
-const WHATSAPP_URL = 'https://wa.me/919967381180?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.';
+const WHATSAPP_URL = 'https://wa.me/85251254000 ?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.';
 
 export default function Header({ promoHeader }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen]   = useState(false);

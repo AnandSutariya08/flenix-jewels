@@ -4,6 +4,7 @@ import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, MessageCircle, Chevr
 import logo from "@/assets/flenix-logo-full.png";
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
+import { useTheme } from "next-themes";
 import Zelle from "@/assets/paylogo/Zelle_(payment_service)-Logo.wine.png";
 import Venmo from "@/assets/paylogo/Venmo-Logo.wine.png";
 import Google from "@/assets/paylogo/Google_Pay-Logo.wine.png";
@@ -18,6 +19,38 @@ const GOLD = "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
 
 export default function Footer() {
   const { contactInfo } = useAppSelector(selectGlobalData);
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
+  const C = useMemo(
+    () =>
+      isDark
+        ? {
+            footerBg: "linear-gradient(180deg, #0b0603 0%, #070402 100%)",
+            border: "rgba(196,144,106,0.18)",
+            borderSoft: "rgba(196,144,106,0.14)",
+            panelBg: "rgba(255,255,255,0.03)",
+            chipBg: "rgba(255,255,255,0.04)",
+            chipBorder: "rgba(196,144,106,0.14)",
+            gold: "rgba(196,144,106,0.85)",
+            text: "rgba(245,232,216,0.70)",
+            muted: "rgba(245,232,216,0.55)",
+            hover: "#ffffff",
+          }
+        : {
+            footerBg: "linear-gradient(180deg, rgba(255,252,248,1) 0%, rgba(250,244,236,1) 100%)",
+            border: "rgba(196,144,106,0.22)",
+            borderSoft: "rgba(155,104,68,0.14)",
+            panelBg: "rgba(155,104,68,0.05)",
+            chipBg: "rgba(255,255,255,0.70)",
+            chipBorder: "rgba(196,144,106,0.18)",
+            gold: "rgba(155,104,68,0.85)",
+            text: "rgba(20,12,6,0.78)",
+            muted: "rgba(20,12,6,0.55)",
+            hover: "#130900",
+          },
+    [isDark],
+  );
 
   const paymentMethods = useMemo(
     () => [
@@ -58,21 +91,28 @@ export default function Footer() {
     <footer
       className="mt-20 border-t"
       style={{
-        borderColor: "rgba(196,144,106,0.18)",
-        background: "linear-gradient(180deg, #0b0603 0%, #070402 100%)",
+        borderColor: C.border,
+        background: C.footerBg,
       }}
     >
-      <div className="h-px w-full" style={{ background: "linear-gradient(90deg, transparent 8%, rgba(196,144,106,0.55) 50%, transparent 92%)" }} />
+      <div
+        className="h-px w-full"
+        style={{
+          background: isDark
+            ? "linear-gradient(90deg, transparent 8%, rgba(196,144,106,0.55) 50%, transparent 92%)"
+            : "linear-gradient(90deg, transparent 8%, rgba(155,104,68,0.35) 50%, transparent 92%)",
+        }}
+      />
 
       <div className="w-full px-4 sm:px-6 lg:px-10 py-12">
         {/* Trust + payments */}
         <div
           className="rounded-2xl border px-5 py-5 mb-10"
-          style={{ borderColor: "rgba(196,144,106,0.16)", background: "rgba(255,255,255,0.03)" }}
+          style={{ borderColor: C.borderSoft, background: C.panelBg }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
             <div className="space-y-2">
-              <p className="text-[10px] tracking-[0.32em] uppercase font-black" style={{ color: "rgba(196,144,106,0.85)" }}>
+              <p className="text-[10px] tracking-[0.32em] uppercase font-black" style={{ color: C.gold }}>
                 Certified &amp; Trusted
               </p>
               <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1">
@@ -80,7 +120,7 @@ export default function Footer() {
                   <div
                     key={b.name}
                     className="flex-shrink-0 rounded-xl p-2"
-                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(196,144,106,0.14)" }}
+                    style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}` }}
                   >
                     <img src={b.logo} alt={b.name} title={b.name} className="h-10 w-10 object-contain" loading="lazy" decoding="async" fetchpriority="low" />
                   </div>
@@ -89,11 +129,19 @@ export default function Footer() {
             </div>
 
             <div className="flex justify-center">
-              <img src={logo} alt="Flenix Jewels" className="h-20 w-auto object-contain opacity-95" loading="lazy" decoding="async" fetchpriority="low" />
+              <img
+                src={logo}
+                alt="Flenix Jewels"
+                className="h-20 w-auto object-contain opacity-95"
+                style={{ filter: isDark ? undefined : "brightness(0.9) contrast(1.1)" }}
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+              />
             </div>
 
             <div className="space-y-2">
-              <p className="text-[10px] tracking-[0.32em] uppercase font-black lg:text-right" style={{ color: "rgba(196,144,106,0.85)" }}>
+              <p className="text-[10px] tracking-[0.32em] uppercase font-black lg:text-right" style={{ color: C.gold }}>
                 Payment Methods
               </p>
               <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 lg:justify-end">
@@ -101,7 +149,7 @@ export default function Footer() {
                   <div
                     key={m.name}
                     className="flex-shrink-0 rounded-xl p-2"
-                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(196,144,106,0.14)" }}
+                    style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}` }}
                   >
                     <img src={m.logo} alt={m.name} title={m.name} className="h-10 w-10 object-contain" loading="lazy" decoding="async" fetchpriority="low" />
                   </div>
@@ -114,10 +162,10 @@ export default function Footer() {
         {/* Main */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
           <div className="space-y-4">
-            <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: "rgba(196,144,106,0.85)" }}>
+            <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Flenix Jewels
             </p>
-            <p className="text-sm leading-relaxed" style={{ color: "rgba(245,232,216,0.70)" }}>
+            <p className="text-sm leading-relaxed" style={{ color: C.text }}>
               Premium lab-grown &amp; natural diamond jewelry — crafted with timeless elegance and trusted certification.
             </p>
             {contactInfo?.whatsapp && (
@@ -139,15 +187,17 @@ export default function Footer() {
           </div>
 
           <div className="space-y-4">
-            <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: "rgba(196,144,106,0.85)" }}>
+            <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Explore
             </p>
             <ul className="space-y-2.5">
               {links.map((l) => (
                 <li key={l.path}>
-                  <Link to={l.path} className="group inline-flex items-center gap-2 text-sm transition-colors" style={{ color: "rgba(245,232,216,0.70)" }}>
-                    <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" style={{ color: "rgba(196,144,106,0.7)" }} />
-                    <span className="group-hover:text-white">{l.label}</span>
+                  <Link to={l.path} className="group inline-flex items-center gap-2 text-sm transition-colors" style={{ color: C.text }}>
+                    <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" style={{ color: isDark ? "rgba(196,144,106,0.7)" : "rgba(155,104,68,0.55)" }} />
+                    <span className="transition-colors" style={{ color: "inherit" }}>
+                      {l.label}
+                    </span>
                   </Link>
                 </li>
               ))}
@@ -155,28 +205,28 @@ export default function Footer() {
           </div>
 
           <div className="space-y-4">
-            <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: "rgba(196,144,106,0.85)" }}>
+            <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Contact
             </p>
-            <ul className="space-y-3 text-sm" style={{ color: "rgba(245,232,216,0.70)" }}>
+            <ul className="space-y-3 text-sm" style={{ color: C.text }}>
               {contactInfo?.address && (
                 <li className="flex items-start gap-3">
-                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: "rgba(196,144,106,0.85)" }} />
+                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: C.gold }} />
                   <span className="leading-relaxed">{contactInfo.address}</span>
                 </li>
               )}
               {contactInfo?.phone && (
                 <li className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 flex-shrink-0" style={{ color: "rgba(196,144,106,0.85)" }} />
-                  <a href={`tel:${contactInfo.phone}`} className="hover:text-white transition-colors">
+                  <Phone className="h-4 w-4 flex-shrink-0" style={{ color: C.gold }} />
+                  <a href={`tel:${contactInfo.phone}`} className="transition-colors" style={{ color: "inherit" }}>
                     {contactInfo.phone}
                   </a>
                 </li>
               )}
               {contactInfo?.email && (
                 <li className="flex items-center gap-3">
-                  <Mail className="h-4 w-4 flex-shrink-0" style={{ color: "rgba(196,144,106,0.85)" }} />
-                  <a href={`mailto:${contactInfo.email}`} className="hover:text-white transition-colors break-all">
+                  <Mail className="h-4 w-4 flex-shrink-0" style={{ color: C.gold }} />
+                  <a href={`mailto:${contactInfo.email}`} className="transition-colors break-all" style={{ color: "inherit" }}>
                     {contactInfo.email}
                   </a>
                 </li>
@@ -185,7 +235,7 @@ export default function Footer() {
           </div>
 
           <div className="space-y-4">
-            <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: "rgba(196,144,106,0.85)" }}>
+            <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Follow
             </p>
             <div className="flex flex-wrap gap-3">
@@ -195,7 +245,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(196,144,106,0.14)", color: "rgba(196,144,106,0.9)" }}
+                  style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="Facebook"
                 >
                   <Facebook className="h-5 w-5" />
@@ -207,7 +257,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(196,144,106,0.14)", color: "rgba(196,144,106,0.9)" }}
+                  style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="Instagram"
                 >
                   <Instagram className="h-5 w-5" />
@@ -219,7 +269,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(196,144,106,0.14)", color: "rgba(196,144,106,0.9)" }}
+                  style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="Twitter"
                 >
                   <Twitter className="h-5 w-5" />
@@ -231,7 +281,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(196,144,106,0.14)", color: "rgba(196,144,106,0.9)" }}
+                  style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="Pinterest"
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
@@ -240,23 +290,23 @@ export default function Footer() {
                 </a>
               )}
             </div>
-            <p className="text-xs leading-relaxed" style={{ color: "rgba(245,232,216,0.55)" }}>
+            <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
               New arrivals, behind-the-scenes, and diamond education — follow along.
             </p>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="mt-12 pt-6 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-3" style={{ borderColor: "rgba(196,144,106,0.14)" }}>
-          <p className="text-xs" style={{ color: "rgba(245,232,216,0.55)" }}>
+        <div className="mt-12 pt-6 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-3" style={{ borderColor: C.borderSoft }}>
+          <p className="text-xs" style={{ color: C.muted }}>
             © {new Date().getFullYear()} Flenix Jewels Ltd. All rights reserved.
           </p>
-          <div className="flex items-center gap-4 text-xs" style={{ color: "rgba(245,232,216,0.55)" }}>
-            <Link to="/contact" className="hover:text-white transition-colors">
+          <div className="flex items-center gap-4 text-xs" style={{ color: C.muted }}>
+            <Link to="/contact" className="transition-colors" style={{ color: "inherit" }}>
               Support
             </Link>
             <span style={{ opacity: 0.35 }}>•</span>
-            <Link to="/buying-guide" className="hover:text-white transition-colors">
+            <Link to="/buying-guide" className="transition-colors" style={{ color: "inherit" }}>
               Buying Guide
             </Link>
           </div>
@@ -265,4 +315,3 @@ export default function Footer() {
     </footer>
   );
 }
-

@@ -247,11 +247,13 @@ export const loadGlobalData = createAsyncThunk<
       categories,
       promoHeader,
       priceSettings,
+      contactInfo,
     ] = await Promise.all([
       getBanners(),
       getCategories(),
       getPromoHeader(),
       getPriceSettings(),
+      getContact(),
     ]);
 
     return {
@@ -264,7 +266,7 @@ export const loadGlobalData = createAsyncThunk<
       instagramPosts: [],
       testimonials: [],
       promoHeader: promoHeader ? { ...promoHeader, enabled: false } : promoHeader,
-      contactInfo: null,
+      contactInfo,
       offices: [],
       buyingGuides: [],
       priceSettings,
