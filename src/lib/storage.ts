@@ -6,6 +6,7 @@ import {
   getDoc,
   setDoc, 
   deleteDoc, 
+  onSnapshot,
   query,
   where
 } from 'firebase/firestore';
@@ -211,6 +212,84 @@ export const savePriceSettings = async (settings: PriceSettings) => {
     console.error('Error saving price settings:', error);
   }
 };
+
+// ───────────────────────────────────────────────────────────────
+// Realtime subscriptions (client sync)
+// ───────────────────────────────────────────────────────────────
+
+export const subscribeBanners = (onChange: (banners: Banner[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.BANNERS), (snapshot) => {
+    const banners = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Banner));
+    onChange(banners.sort((a, b) => (a.priority || 99) - (b.priority || 99)));
+  });
+
+export const subscribeCategories = (onChange: (categories: Category[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.CATEGORIES), (snapshot) => {
+    const categories = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Category));
+    onChange(categories.sort((a, b) => (a.priority || 99) - (b.priority || 99)));
+  });
+
+export const subscribeProducts = (onChange: (products: Product[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.PRODUCTS), (snapshot) => {
+    const products = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Product));
+    onChange(products.sort((a, b) => (a.priority || 99) - (b.priority || 99)));
+  });
+
+export const subscribeBlogs = (onChange: (blogs: BlogPost[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.BLOGS), (snapshot) => {
+    const blogs = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as BlogPost));
+    onChange(blogs);
+  });
+
+export const subscribeGallery = (onChange: (items: GalleryItem[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.GALLERY), (snapshot) => {
+    const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as GalleryItem));
+    onChange(items);
+  });
+
+export const subscribeFeaturedCollection = (onChange: (items: FeaturedCollection[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.FEATURED), (snapshot) => {
+    const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as FeaturedCollection));
+    onChange(items.sort((a, b) => (a.priority || 99) - (b.priority || 99)));
+  });
+
+export const subscribeInstagramPosts = (onChange: (items: InstagramPost[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.INSTAGRAM), (snapshot) => {
+    const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as InstagramPost));
+    onChange(items);
+  });
+
+export const subscribeTestimonials = (onChange: (items: Testimonial[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.TESTIMONIALS), (snapshot) => {
+    const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Testimonial));
+    onChange(items);
+  });
+
+export const subscribeOffices = (onChange: (items: Office[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.OFFICES), (snapshot) => {
+    const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Office));
+    onChange(items);
+  });
+
+export const subscribePromoHeader = (onChange: (promo: PromoHeader | null) => void) =>
+  onSnapshot(doc(db, COLLECTIONS.PROMO_HEADER, 'main'), (docSnap) => {
+    onChange(docSnap.exists() ? (docSnap.data() as PromoHeader) : null);
+  });
+
+export const subscribeContact = (onChange: (contact: ContactInfo | null) => void) =>
+  onSnapshot(doc(db, COLLECTIONS.CONTACT, 'main'), (docSnap) => {
+    onChange(docSnap.exists() ? (docSnap.data() as ContactInfo) : null);
+  });
+
+export const subscribePriceSettings = (onChange: (settings: PriceSettings) => void) =>
+  onSnapshot(doc(db, COLLECTIONS.SETTINGS, 'pricing'), (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data() as Partial<PriceSettings>;
+      onChange({ showPrices: Boolean(data.showPrices) });
+    } else {
+      onChange({ showPrices: false });
+    }
+  });
 
 // Banner methods
 export const getBanners = async (): Promise<Banner[]> => {

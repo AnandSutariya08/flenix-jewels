@@ -59,6 +59,15 @@ interface ContentState {
   blogsLoaded: boolean;
 }
 
+const computeDeferredLoaded = (data: GlobalData) =>
+  data.galleryItems.length > 0 ||
+  data.featuredCollection.length > 0 ||
+  data.instagramPosts.length > 0 ||
+  data.testimonials.length > 0 ||
+  Boolean(data.contactInfo) ||
+  data.offices.length > 0 ||
+  data.buyingGuides.length > 0;
+
 // Bump cache version to avoid stale data (especially after Firebase project changes).
 const SESSION_KEY = "flenix_global_data_v4";
 const LOCAL_KEY = "flenix_global_data_v4_persisted";
@@ -425,6 +434,34 @@ const contentSlice = createSlice({
       state.deferredStatus = state.deferredLoaded ? "succeeded" : state.deferredStatus;
       saveCache(action.payload, state.deferredLoaded, state.productsLoaded, state.blogsLoaded);
     },
+    patchGlobalData(state, action: PayloadAction<Partial<GlobalData>>) {
+      state.data = { ...state.data, ...action.payload };
+      state.status = "succeeded";
+      state.error = null;
+      state.hydrated = true;
+      state.lastUpdated = Date.now();
+      if (action.payload.products) state.productsLoaded = true;
+      if (action.payload.blogs) state.blogsLoaded = true;
+      state.deferredLoaded = computeDeferredLoaded(state.data);
+      if (state.deferredLoaded && state.deferredStatus === "idle") state.deferredStatus = "succeeded";
+      saveCache(state.data, state.deferredLoaded, state.productsLoaded, state.blogsLoaded);
+    },
+    patchDeferredData(
+      state,
+      action: PayloadAction<
+        Pick<
+          GlobalData,
+          "galleryItems" | "featuredCollection" | "instagramPosts" | "testimonials" | "contactInfo" | "offices" | "buyingGuides"
+        >
+      >
+    ) {
+      state.data = { ...state.data, ...action.payload };
+      state.deferredLoaded = computeDeferredLoaded(state.data);
+      state.deferredStatus = "succeeded";
+      state.hydrated = true;
+      state.lastUpdated = Date.now();
+      saveCache(state.data, state.deferredLoaded, state.productsLoaded, state.blogsLoaded);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -494,7 +531,7 @@ const contentSlice = createSlice({
   },
 });
 
-export const { setGlobalData } = contentSlice.actions;
+export const { setGlobalData, patchGlobalData, patchDeferredData } = contentSlice.actions;
 
 export const selectGlobalData = (state: RootState) => state.content.data;
 export const selectContentStatus = (state: RootState) => state.content.status;

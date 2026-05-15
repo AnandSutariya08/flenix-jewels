@@ -7,8 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, Pencil } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { useAppDispatch } from '@/store/hooks';
+import { loadDeferredData } from '@/store/contentSlice';
 
 const AdminGallery = () => {
+  const dispatch = useAppDispatch();
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [description, setDescription] = useState('');
@@ -80,6 +83,7 @@ const AdminGallery = () => {
       await saveGalleryItem(itemData);
       const updated = await getGallery();
       setGallery(updated);
+      dispatch(loadDeferredData({ force: true }));
       resetForm();
       setIsFormOpen(false);
       toast.success(editingId ? 'Image updated' : 'Image added to gallery');
@@ -96,6 +100,7 @@ const AdminGallery = () => {
       await deleteGalleryItem(id);
       const updated = await getGallery();
       setGallery(updated);
+      dispatch(loadDeferredData({ force: true }));
       toast.success('Image deleted');
     } catch (error) {
       toast.error('Failed to delete image');

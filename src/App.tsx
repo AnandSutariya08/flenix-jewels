@@ -10,12 +10,29 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   loadDeferredData,
   loadGlobalData,
+  patchDeferredData,
+  patchGlobalData,
   selectContentHydrated,
   selectContentStatus,
   selectDeferredLoaded,
   selectDeferredStatus,
   selectGlobalData,
 } from "@/store/contentSlice";
+import {
+  subscribeBanners,
+  subscribeCategories,
+  subscribeProducts,
+  subscribeBlogs,
+  subscribeGallery,
+  subscribeFeaturedCollection,
+  subscribeInstagramPosts,
+  subscribeTestimonials,
+  subscribePromoHeader,
+  subscribeContact,
+  subscribeOffices,
+  subscribePriceSettings,
+} from "@/lib/storage";
+import { subscribeBuyingGuides } from "@/lib/buyingGuides";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Categories from "./pages/Categories";
@@ -48,12 +65,91 @@ const AppContent = () => {
   const isHomePage = location.pathname === '/';
   const isAdminRoute = location.pathname.startsWith('/aEgZjaHJvbWUyBggAEEUYOdIBCDUzMTRqMGo3');
   const didRevalidateRef = useRef(false);
+  const didRevalidateDeferredRef = useRef(false);
 
   useEffect(() => {
     if (!isAdminRoute && status === "idle" && !hydrated) {
       dispatch(loadGlobalData());
     }
   }, [dispatch, hydrated, isAdminRoute, status]);
+
+  // Realtime: keep client in sync with admin changes (Firestore onSnapshot).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (isAdminRoute) return;
+
+    const unsubs: Array<() => void> = [];
+
+    unsubs.push(subscribeBanners((banners) => dispatch(patchGlobalData({ banners }))));
+    unsubs.push(subscribeCategories((categories) => dispatch(patchGlobalData({ categories }))));
+    unsubs.push(subscribePromoHeader((promoHeader) => dispatch(patchGlobalData({ promoHeader }))));
+    unsubs.push(subscribeContact((contactInfo) => dispatch(patchGlobalData({ contactInfo }))));
+    unsubs.push(subscribePriceSettings((priceSettings) => dispatch(patchGlobalData({ priceSettings }))));
+
+    // Products + blogs are used across pages; keep them synced too.
+    unsubs.push(subscribeProducts((products) => dispatch(patchGlobalData({ products }))));
+    unsubs.push(subscribeBlogs((blogs) => dispatch(patchGlobalData({ blogs }))));
+
+    // Deferred sections
+    let latestDeferred = {
+      galleryItems: [],
+      featuredCollection: [],
+      instagramPosts: [],
+      testimonials: [],
+      contactInfo: null,
+      offices: [],
+      buyingGuides: [],
+    };
+    const emitDeferred = () => dispatch(patchDeferredData(latestDeferred));
+
+    unsubs.push(
+      subscribeGallery((galleryItems) => {
+        latestDeferred = { ...latestDeferred, galleryItems };
+        emitDeferred();
+      }),
+    );
+    unsubs.push(
+      subscribeFeaturedCollection((featuredCollection) => {
+        latestDeferred = { ...latestDeferred, featuredCollection };
+        emitDeferred();
+      }),
+    );
+    unsubs.push(
+      subscribeInstagramPosts((instagramPosts) => {
+        latestDeferred = { ...latestDeferred, instagramPosts };
+        emitDeferred();
+      }),
+    );
+    unsubs.push(
+      subscribeTestimonials((testimonials) => {
+        latestDeferred = { ...latestDeferred, testimonials };
+        emitDeferred();
+      }),
+    );
+    unsubs.push(
+      subscribeOffices((offices) => {
+        latestDeferred = { ...latestDeferred, offices };
+        emitDeferred();
+      }),
+    );
+    unsubs.push(
+      subscribeBuyingGuides((buyingGuides) => {
+        latestDeferred = { ...latestDeferred, buyingGuides };
+        emitDeferred();
+      }),
+    );
+
+    return () => {
+      unsubs.forEach((u) => {
+        try {
+          u();
+        } catch {
+          // ignore
+        }
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, isAdminRoute]);
 
   // Stale-while-revalidate: even if we hydrate from cache, re-fetch once per app load
   // so Firestore updates show up on refresh without waiting for cache TTL.
@@ -65,6 +161,18 @@ const AppContent = () => {
     const t = window.setTimeout(() => {
       dispatch(loadGlobalData({ force: true }));
     }, 250);
+    return () => window.clearTimeout(t);
+  }, [dispatch, hydrated, isAdminRoute, status]);
+
+  // Revalidate deferred bundle once per app load (gallery/featured/instagram/testimonials/offices/buyingGuides).
+  useEffect(() => {
+    if (isAdminRoute) return;
+    if (!hydrated || status !== "succeeded") return;
+    if (didRevalidateDeferredRef.current) return;
+    didRevalidateDeferredRef.current = true;
+    const t = window.setTimeout(() => {
+      dispatch(loadDeferredData({ force: true }));
+    }, 900);
     return () => window.clearTimeout(t);
   }, [dispatch, hydrated, isAdminRoute, status]);
 

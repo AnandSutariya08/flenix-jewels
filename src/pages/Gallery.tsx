@@ -125,6 +125,7 @@ const Gallery = () => {
   const { categories, galleryItems, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
   const deferredLoaded = useAppSelector(selectDeferredLoaded);
   const deferredStatus = useAppSelector(selectDeferredStatus);
+  const didRequestDeferredRef = useRef(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [filter, setFilter] = useState('all');
   const thumbsRef = useRef<HTMLDivElement>(null);
@@ -138,10 +139,14 @@ const Gallery = () => {
   const whatsappNumber = useMemo(() => contactInfo?.whatsapp || "85251254000 ", [contactInfo?.whatsapp]);
 
   useEffect(() => {
-    // Gallery data loads in the deferred bundle. An empty list is a valid state (show the empty message).
+    // Gallery data loads in the deferred bundle. Ensure we fetch at least once on page load.
+    // (An empty gallery is valid, so only try once to avoid constant fetching.)
     if (galleryItems.length > 0) return;
-    if (deferredStatus !== "idle") return;
-    if (!deferredLoaded) dispatch(loadDeferredData());
+    // If cached state marks deferred as "succeeded" but data is empty, we still need a refresh.
+    if (deferredStatus === "loading") return;
+    if (didRequestDeferredRef.current) return;
+    didRequestDeferredRef.current = true;
+    dispatch(loadDeferredData({ force: true }));
   }, [deferredLoaded, deferredStatus, dispatch, galleryItems.length]);
 
   const filteredItems = useMemo(() => {

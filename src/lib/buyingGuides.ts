@@ -1,5 +1,5 @@
 // lib/buyingGuides.ts
-import { collection, getDocs, getDoc, setDoc, deleteDoc, doc, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, getDoc, setDoc, deleteDoc, doc, orderBy, query, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase';
 import { uploadImageToStorage } from './storage';
 
@@ -24,6 +24,13 @@ export const getBuyingGuides = async (): Promise<BuyingGuide[]> => {
   const q = query(collection(db, COLLECTION), orderBy('order'));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BuyingGuide));
+};
+
+export const subscribeBuyingGuides = (onChange: (guides: BuyingGuide[]) => void) => {
+  const q = query(collection(db, COLLECTION), orderBy('order'));
+  return onSnapshot(q, (snapshot) => {
+    onChange(snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as BuyingGuide)));
+  });
 };
 
 // Save / Update guide
