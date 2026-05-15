@@ -287,7 +287,7 @@ const HeroContent = ({ title, description, isActive }: { title: string; descript
         </div>
 
         {/* Trust badges */}
-        <div className="flex flex-wrap gap-2.5 mt-8 md:mt-10">
+        {/* <div className="flex flex-wrap gap-2.5 mt-8 md:mt-10">
           {['GIA / IGI Certified', 'Free Worldwide Shipping', 'Custom Designs'].map(item => (
             <span key={item}
               className="text-[10px] md:text-[11px] font-semibold tracking-wider px-3.5 py-1.5 rounded-full"
@@ -295,7 +295,7 @@ const HeroContent = ({ title, description, isActive }: { title: string; descript
               {item}
             </span>
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   </div>
