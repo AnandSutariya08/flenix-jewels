@@ -191,9 +191,11 @@ export default function Header({ promoHeader }: HeaderProps) {
                           letterSpacing: '0.16em',
                           textTransform: 'uppercase',
                           color: active
-                            ? isScrolled ? '#FFD99A' : '#9B6844'
+                            ? isScrolled
+                              ? (isDark ? '#FFD99A' : '#9B6844')
+                              : '#9B6844'
                             : isScrolled
-                            ? hovered ? '#F0C890' : 'rgba(255,255,255,0.86)'
+                            ? (isDark ? (hovered ? '#F0C890' : 'rgba(255,255,255,0.86)') : (hovered ? '#9B6844' : '#3b2a1e'))
                             : hovered ? '#9B6844' : (isDark ? 'rgba(255,255,255,0.82)' : '#5a4535'),
                         }}
                       >
