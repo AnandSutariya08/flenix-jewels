@@ -1,12 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * Module-level cache — survives component unmount/remount for the entire browser session.
- * When a URL has been fully loaded once, we skip the fade-in on subsequent mounts so
- * navigating back to a page never shows a flash or skeleton again.
+ * Module-level session cache — images loaded once never fade in again on re-navigation.
  */
 const sessionLoadedCache = new Set<string>();
+
+/**
+ * Shared IntersectionObserver with a large rootMargin so images begin downloading
+ * 600px before they enter the viewport. This eliminates the "pop-in" effect users
+ * see when native lazy-loading only triggers at the very edge of the viewport.
+ */
+let _observer: IntersectionObserver | null = null;
+const _callbacks = new Map<Element, () => void>();
+
+function getPreloadObserver(): IntersectionObserver | null {
+  if (typeof IntersectionObserver === 'undefined') return null;
+  if (!_observer) {
+    _observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            _callbacks.get(entry.target)?.();
+            _observer!.unobserve(entry.target);
+            _callbacks.delete(entry.target);
+          }
+        }
+      },
+      { rootMargin: '600px 0px', threshold: 0 }
+    );
+  }
+  return _observer;
+}
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -27,16 +52,48 @@ export function OptimizedImage({
   onLoad,
   ...props
 }: OptimizedImageProps) {
-  const [loaded, setLoaded] = useState(() => Boolean(src && sessionLoadedCache.has(src)));
+  const alreadyCached = Boolean(src && sessionLoadedCache.has(src));
+
+  // `revealed` — true once the element is within 600px of the viewport (starts download)
+  // `loaded`   — true once the img fires onLoad (triggers fade-in)
+  const [revealed, setRevealed] = useState(alreadyCached);
+  const [loaded, setLoaded] = useState(alreadyCached);
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!src) return;
     if (sessionLoadedCache.has(src)) {
+      setRevealed(true);
       setLoaded(true);
-    } else {
-      setLoaded(false);
+      return;
     }
-  }, [src]);
+    setRevealed(false);
+    setLoaded(false);
+
+    // For wrapper mode: observe the wrapper div.
+    // For noWrapper mode: observe the absolutely-positioned sentinel div.
+    const el = (noWrapper ? sentinelRef.current : wrapperRef.current);
+    if (!el) {
+      setRevealed(true); // fallback: no element to watch, load immediately
+      return;
+    }
+
+    const observer = getPreloadObserver();
+    if (!observer) {
+      setRevealed(true); // fallback: no IntersectionObserver support
+      return;
+    }
+
+    _callbacks.set(el, () => setRevealed(true));
+    observer.observe(el);
+
+    return () => {
+      observer.unobserve(el);
+      _callbacks.delete(el);
+    };
+  }, [src, noWrapper]);
 
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     if (src) sessionLoadedCache.add(src);
@@ -53,16 +110,18 @@ export function OptimizedImage({
     />
   ) : null;
 
+  // The img src is withheld until revealed — no download until the observer fires.
+  // No loading="lazy" here: once we set src, the browser downloads immediately (no
+  // second throttle delay on top of our custom 600px pre-load margin).
   const img = (
     <img
-      src={src}
+      src={revealed ? src : undefined}
       alt={alt}
       className={cn(
         'transition-opacity duration-500',
         loaded ? 'opacity-100' : 'opacity-0',
         className
       )}
-      loading="lazy"
       decoding="async"
       onLoad={handleLoad}
       {...props}
@@ -72,6 +131,16 @@ export function OptimizedImage({
   if (noWrapper) {
     return (
       <>
+        {/*
+          Sentinel: fills the parent container (parent must be positioned).
+          The IntersectionObserver watches this to fire 600px before the parent
+          comes into view, so the real image download starts early.
+        */}
+        <div
+          ref={sentinelRef}
+          aria-hidden="true"
+          style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: -1 }}
+        />
         {skeleton}
         {img}
       </>
@@ -79,7 +148,7 @@ export function OptimizedImage({
   }
 
   return (
-    <div className={cn('relative overflow-hidden', wrapperClassName)}>
+    <div ref={wrapperRef} className={cn('relative overflow-hidden', wrapperClassName)}>
       {skeleton}
       {img}
     </div>

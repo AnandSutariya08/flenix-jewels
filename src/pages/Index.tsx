@@ -12,7 +12,7 @@ import InstagramJourneyCarousel from '@/components/InstagramJourneyCarousel';
 import EmptyState from '@/components/EmptyState';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData, selectDeferredStatus } from '@/store/contentSlice';
+import { loadBlogs, loadDeferredData, selectBlogsLoaded, selectBlogsStatus, selectGlobalData, selectDeferredStatus, selectDeferredLoaded } from '@/store/contentSlice';
 import { HEADER_OFFSET_PX } from '@/lib/layout';
 import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight, BookOpen, Gem } from 'lucide-react';
 import { BlogPost } from '@/lib/storage';
@@ -37,12 +37,24 @@ const features = [
 
 export default function Index() {
   const { banners, categories, featuredCollection, galleryItems, blogs, instagramPosts, testimonials, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
-  const dispatch   = useAppDispatch();
+  const dispatch        = useAppDispatch();
   const blogsLoaded     = useAppSelector(selectBlogsLoaded);
   const blogsStatus     = useAppSelector(selectBlogsStatus);
   const deferredStatus  = useAppSelector(selectDeferredStatus);
+  const deferredLoaded  = useAppSelector(selectDeferredLoaded);
   const [selectedBlog, setSelectedBlog]     = useState<BlogPost | null>(null);
   const [isBlogDialogOpen, setIsBlogDialogOpen] = useState(false);
+
+  // Mirror Gallery.tsx: force-fetch deferred data when home page detects gallery is empty.
+  // This prevents a stale "succeeded" cache from showing "Coming Soon" while real images exist.
+  const didRequestGalleryRef = useRef(false);
+  useEffect(() => {
+    if (galleryItems.length > 0) return;
+    if (deferredStatus === 'loading') return;
+    if (didRequestGalleryRef.current) return;
+    didRequestGalleryRef.current = true;
+    dispatch(loadDeferredData({ force: true }));
+  }, [deferredLoaded, deferredStatus, dispatch, galleryItems.length]);
 
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
