@@ -273,7 +273,7 @@ const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
           }
           title={
             <>
-              Our &amp;{" "}
+              Our 
               <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 Collections
               </span>
