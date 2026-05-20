@@ -1,0 +1,38 @@
+Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.Understand this error
+checkbox-Ce6FSecr.js:1 Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "text/html". Strict MIME type checking is enforced for module scripts per HTML spec.Understand this error
+RichTextEditor-D4vCZ_nU.js:1 Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "text/html". Strict MIME type checking is enforced for module scripts per HTML spec.Understand this error
+AdminProducts-Dp8Ql3p0.js:1 Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "text/html". Strict MIME type checking is enforced for module scripts per HTML spec.Understand this error
+index-CP2ScYJR.js:18 Uncaught TypeError: Failed to fetch dynamically imported module: https://flenixjewels.vercel.app/assets/AdminProducts-Dp8Ql3p0.jsUnderstand this error
+switch-BR9RffdM.js:1 Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "text/html". Strict MIME type checking is enforced for module scripts per HTML spec.Understand this error
+index-CP2ScYJR.js:18 Uncaught TypeError: Failed to fetch dynamically imported module: https://flenixjewels.vercel.app/assets/AdminProducts-Dp8Ql3p0.jsUnderstand this error
+index-CP2ScYJR.js:160 The above error occurred in one of your React components:
+
+    at Lazy
+    at Suspense
+    at div
+    at main
+    at div
+    at div
+    at ule (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:3118:35693)
+    at kY (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:602:3243)
+    at zY (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:602:8336)
+    at Cle (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:3118:85607)
+    at $Y (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:602:7442)
+    at iK (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:611:3079)
+    at p (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:236:719)
+    at Yk (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:582:41258)
+    at oG (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:581:25177)
+    at iG (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:581:25087)
+    at JW (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:582:76828)
+    at mu (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:611:18817)
+    at Sle
+    at T$ (https://flenixjewels.vercel.app/assets/index-CP2ScYJR.js:213:2661)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+XN @ index-CP2ScYJR.js:160Understand this error
+index-CP2ScYJR.js:175 Uncaught TypeError: Failed to fetch dynamically imported module: https://flenixjewels.vercel.app/assets/AdminProducts-Dp8Ql3p0.jsUnderstand this error
+18aEgZjaHJvbWUyBggAEEUYOdIBCDUzMTRqMGo3:1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.Understand this error
+index-CP2ScYJR.js:3118 Location permission granted ✅
+index-CP2ScYJR.js:3118 Visitor already logged today - skipping duplicate
+61aEgZjaHJvbWUyBggAEEUYOdIBCDUzMTRqMGo3:1 Uncaught (in promise) Error: Could not establish connection. Receiving end does not exist.
