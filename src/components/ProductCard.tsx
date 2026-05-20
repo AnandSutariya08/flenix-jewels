@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { MouseEvent, TouchEvent } from 'react';
+import type { TouchEvent } from 'react';
 import { Product } from '@/lib/storage';
 import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
-import { preloadMedia } from '@/lib/preload';
+import { keepImageAlive } from '@/lib/preload';
 import { stripHtml } from '@/lib/seo';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { formatPriceRounded } from "@/lib/utils";
+
+const productImgCache = new Set<string>();
 
 interface ProductCardProps {
   product: Product;
@@ -18,13 +20,12 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const { priceSettings } = useAppSelector(selectGlobalData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [imgLoaded, setImgLoaded] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
   const mediaRaw = product.images && product.images.length > 0 ? product.images : [product.image];
   const media = mediaRaw.filter((item) => Boolean(item));
   const hasMultiple = media.length > 1;
-  
+
   const isCoarsePointer = useMemo(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return false;
     return window.matchMedia('(pointer: coarse)').matches;
@@ -33,13 +34,13 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const primaryMedia = media[0];
   const secondaryMedia = media[1] || null;
   const displayMedia = media[currentIndex] || primaryMedia;
+
   const descriptionPreview = useMemo(() => {
     const text = stripHtml(product.description || '');
     if (!text) return '';
     return text.length > 180 ? `${text.slice(0, 177).trimEnd()}...` : text;
   }, [product.description]);
 
-  // Detect if media is video
   const getMediaType = (url: string): 'image' | 'video' => {
     const videoExtensions = /\.(mp4|webm|ogg|mov|avi|mkv)$/i;
     return videoExtensions.test(url) || url.includes('video') ? 'video' : 'image';
@@ -49,10 +50,22 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const hasVideo = media.some(url => getMediaType(url) === 'video');
   const isSecondaryImage = secondaryMedia ? getMediaType(secondaryMedia) === 'image' : false;
 
+  const [imgLoaded, setImgLoaded] = useState(() => Boolean(primaryMedia && productImgCache.has(primaryMedia)));
+
   useEffect(() => {
     setCurrentIndex(0);
     setIsHovered(false);
   }, [product.id]);
+
+  useEffect(() => {
+    if (!primaryMedia) return;
+    if (productImgCache.has(primaryMedia)) {
+      setImgLoaded(true);
+    } else {
+      setImgLoaded(false);
+      keepImageAlive(primaryMedia);
+    }
+  }, [primaryMedia]);
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     if (!isCoarsePointer) return;
@@ -76,10 +89,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    if (primaryMedia) {
-      const urls = [primaryMedia, secondaryMedia].filter(Boolean) as string[];
-      preloadMedia(urls);
-    }
+    [primaryMedia, secondaryMedia].filter(Boolean).forEach(url => keepImageAlive(url as string));
     if (hasMultiple) {
       setCurrentIndex(1);
     }
@@ -90,7 +100,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   };
 
   return (
-    <div 
+    <div
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -130,9 +140,12 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
               className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
               loading="lazy"
               decoding="async"
-              fetchpriority="low"
               style={{ opacity: !imgLoaded ? 0 : isHovered && isSecondaryImage ? 0 : 1 }}
-              onLoad={() => setImgLoaded(true)}
+              onLoad={() => {
+                if (primaryMedia) productImgCache.add(primaryMedia);
+                keepImageAlive(primaryMedia);
+                setImgLoaded(true);
+              }}
             />
             {secondaryMedia && isSecondaryImage && (
               <img
@@ -141,13 +154,12 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
                 className="absolute inset-0 w-full h-full object-cover transition-opacity duration-150"
                 loading="lazy"
                 decoding="async"
-                fetchpriority="low"
                 style={{ opacity: isHovered ? 1 : 0 }}
               />
             )}
           </div>
         )}
-        
+
         {/* Media Count Badge */}
         {hasMultiple && (
           <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-background/95 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-medium shadow-lg border border-border/50">
@@ -155,19 +167,10 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
             <span className="font-semibold">{media.length}</span>
           </div>
         )}
-
-        {/* Video Badge */}
-        {/* {hasVideo && (
-          <div className="absolute top-3 left-3 flex items-center gap-1 bg-red-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-lg">
-            <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-            VIDEO
-          </div>
-        )} */}
       </div>
 
       {/* Content Container */}
       <div className="flex flex-col flex-1 p-4 sm:p-5 lg:p-6">
-        {/* Product Name */}
         <h3 className="font-semibold text-base sm:text-lg lg:text-xl mb-2 line-clamp-2 min-h-[3rem] text-foreground group-hover:text-primary transition-colors">
           {product.name}
         </h3>
@@ -177,19 +180,15 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
             ${formatPriceRounded(product.price)}
           </div>
         ) : null}
-        
-        {/* Description */}
+
         <p className="text-xs sm:text-sm text-muted-foreground mb-4 line-clamp-3 flex-1 leading-6">
           {descriptionPreview}
         </p>
-        
-        {/* Button Container */}
+
         <div className="space-y-4 mt-auto">
-          {/* WhatsApp Button */}
           <div onClick={(e) => e.stopPropagation()}>
             <WhatsAppButton product={product} className="w-full" />
           </div>
-
         </div>
       </div>
     </div>

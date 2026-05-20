@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { keepImageAlive } from '@/lib/preload';
 
 /**
- * Session-level cache: once a URL is fully loaded this browser session,
- * skip skeleton and fade-in on any subsequent render of the same URL.
+ * Session-level UI cache: once a URL has finished loading this browser session,
+ * skip the skeleton and fade-in on every subsequent render of that same URL.
+ * Module-level so it survives React unmount/remount across SPA navigation.
  */
 const sessionLoadedCache = new Set<string>();
 
@@ -39,25 +41,23 @@ export function OptimizedImage({
       return;
     }
     setLoaded(false);
+    // Start warming the memory cache immediately so the browser fetches
+    // the image in the background. By the time the <img> tag's onLoad
+    // fires, the data is already in memory — no re-download on remount.
+    keepImageAlive(src);
   }, [src]);
 
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    if (src) sessionLoadedCache.add(src);
+    if (src) {
+      sessionLoadedCache.add(src);
+      // Keep a live HTMLImageElement reference so the browser never evicts
+      // this image from its memory cache across SPA navigation.
+      keepImageAlive(src);
+    }
     setLoaded(true);
     onLoad?.(e);
   };
 
-  /**
-   * Key design decision: src is ALWAYS set immediately on mount.
-   * The browser starts downloading every image as soon as the component renders —
-   * no IntersectionObserver gate on the download. Below-fold images download in
-   * the background; by the time the user scrolls there, the image is ready.
-   *
-   * The skeleton + opacity-0 just hide the <img> until the download finishes.
-   * The fade-in (transition-opacity) runs off-screen for below-fold images —
-   * invisible to the user, but means the image is already fully visible by the
-   * time they scroll to it.
-   */
   const skeleton = !loaded ? (
     <div
       className={cn(

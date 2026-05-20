@@ -223,16 +223,15 @@ const AppContent = () => {
   // instagram) are added here so the browser starts caching them as soon as
   // that data arrives — before the user ever scrolls to those sections.
   const assetUrls = useMemo(() => {
-    const take = (arr: string[], n: number) => arr.filter(Boolean).slice(0, n);
     if (isAdminRoute) return [];
     return [
-      ...take(data.banners.map((b) => b.image), 1),
-      ...take(data.categories.map((c) => c.image), 6),
-      ...take(data.products.map((p) => p.image), 8),
-      ...take(data.featuredCollection.map((f) => f.image), 6),
-      ...take(data.galleryItems.map((g) => g.image), 8),
-      ...take(data.instagramPosts.map((i) => i.image), 6),
-      ...take((data.testimonials ?? []).map((t: any) => t.image).filter(Boolean), 6),
+      ...data.banners.map((b) => b.image).filter(Boolean),
+      ...data.categories.map((c) => c.image).filter(Boolean),
+      ...data.products.flatMap((p) => [p.image, ...(p.images || [])]).filter(Boolean),
+      ...data.featuredCollection.map((f) => f.image).filter(Boolean),
+      ...data.galleryItems.map((g) => g.image).filter(Boolean),
+      ...data.instagramPosts.map((i) => i.image).filter(Boolean),
+      ...(data.testimonials ?? []).map((t: any) => t.image).filter(Boolean),
     ];
   }, [
     data.banners,
