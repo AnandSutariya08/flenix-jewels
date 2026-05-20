@@ -113,7 +113,7 @@ function JourneyCard({ post }: { post: InstagramPost }) {
   return (
     <article
       className="w-[84vw] max-w-[420px] shrink-0 overflow-hidden rounded-3xl bg-card"
-      style={{ border: '1px solid rgba(196,144,106,0.16)', boxShadow: '0 18px 60px -25px rgba(155,104,68,0.45)' }}
+      style={{ border: '1px solid rgba(196,144,106,0.16)' }}
     >
       {/* Top dynamic info area (song/location/caption) */}
       <div className="p-5 md:p-6">
