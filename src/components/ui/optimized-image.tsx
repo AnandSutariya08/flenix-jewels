@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { keepImageAlive } from '@/lib/preload';
+import { keepImageAlive, isImageCached } from '@/lib/preload';
 
 /**
  * Session-level UI cache: once a URL has finished loading this browser session,
@@ -32,18 +32,19 @@ export function OptimizedImage({
   onLoad,
   ...props
 }: OptimizedImageProps) {
-  const [loaded, setLoaded] = useState(() => Boolean(src && sessionLoadedCache.has(src)));
+  const alreadyReady = (url: string) => Boolean(url && (sessionLoadedCache.has(url) || isImageCached(url)));
+
+  const [loaded, setLoaded] = useState(() => alreadyReady(src));
 
   useEffect(() => {
     if (!src) return;
-    if (sessionLoadedCache.has(src)) {
+    if (alreadyReady(src)) {
+      // Mark in session cache so future remounts skip even the isImageCached lookup
+      sessionLoadedCache.add(src);
       setLoaded(true);
       return;
     }
     setLoaded(false);
-    // Start warming the memory cache immediately so the browser fetches
-    // the image in the background. By the time the <img> tag's onLoad
-    // fires, the data is already in memory — no re-download on remount.
     keepImageAlive(src);
   }, [src]);
 

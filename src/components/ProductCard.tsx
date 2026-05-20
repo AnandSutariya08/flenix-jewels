@@ -3,7 +3,7 @@ import type { TouchEvent } from 'react';
 import { Product } from '@/lib/storage';
 import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
-import { keepImageAlive } from '@/lib/preload';
+import { keepImageAlive, isImageCached } from '@/lib/preload';
 import { stripHtml } from '@/lib/seo';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
@@ -50,7 +50,9 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const hasVideo = media.some(url => getMediaType(url) === 'video');
   const isSecondaryImage = secondaryMedia ? getMediaType(secondaryMedia) === 'image' : false;
 
-  const [imgLoaded, setImgLoaded] = useState(() => Boolean(primaryMedia && productImgCache.has(primaryMedia)));
+  const imgReady = (url: string) => Boolean(url && (productImgCache.has(url) || isImageCached(url)));
+
+  const [imgLoaded, setImgLoaded] = useState(() => imgReady(primaryMedia));
 
   useEffect(() => {
     setCurrentIndex(0);
@@ -59,7 +61,8 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
 
   useEffect(() => {
     if (!primaryMedia) return;
-    if (productImgCache.has(primaryMedia)) {
+    if (imgReady(primaryMedia)) {
+      productImgCache.add(primaryMedia);
       setImgLoaded(true);
     } else {
       setImgLoaded(false);
