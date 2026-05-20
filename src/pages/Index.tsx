@@ -549,19 +549,21 @@ export default function Index() {
                     )}
                   </Link>
 
-                  {/* Bottom-right 3 small tiles */}
-                  {galleryItems.slice(2, 5).map((item, i) => (
-                    <Link key={item.id} to="/gallery"
-                      className="col-span-4 md:col-span-3 row-span-1 relative overflow-hidden group block"
-                      style={{ borderRadius: 16 }}>
-                      <OptimizedImage noWrapper src={item.image} alt={item.description || 'Gallery'}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.80) 0%, transparent 65%)' }} />
-                      <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                        style={{ boxShadow: 'inset 0 0 0 1.5px rgba(196,144,106,0.55)' }} />
-                    </Link>
-                  ))}
+                  {/* Bottom-right 3 small tiles — contained in col-span-7 wrapper */}
+                  <div className="col-span-12 md:col-span-7 grid grid-cols-3 gap-3 md:gap-4">
+                    {galleryItems.slice(2, 5).map((item) => (
+                      <Link key={item.id} to="/gallery"
+                        className="relative overflow-hidden group block h-full min-h-[140px] md:min-h-0"
+                        style={{ borderRadius: 16 }}>
+                        <OptimizedImage noWrapper src={item.image} alt={item.description || 'Gallery'}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.80) 0%, transparent 65%)' }} />
+                        <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                          style={{ boxShadow: 'inset 0 0 0 1.5px rgba(196,144,106,0.55)' }} />
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 /* Fallback — editorial scroll */
