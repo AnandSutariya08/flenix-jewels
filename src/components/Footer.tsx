@@ -110,50 +110,56 @@ export default function Footer() {
           className="rounded-2xl border px-5 py-5 mb-10"
           style={{ borderColor: C.borderSoft, background: C.panelBg }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            <div className="space-y-2">
-              <p className="text-[10px] tracking-[0.32em] uppercase font-black" style={{ color: C.gold }}>
-                Certified &amp; Trusted
-              </p>
-              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1">
-                {trustedBadges.map((b) => (
-                  <div
-                    key={b.name}
-                    className="flex-shrink-0 rounded-xl p-2"
-                    style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}` }}
-                  >
-                    <img src={b.logo} alt={b.name} title={b.name} className="h-10 w-10 object-contain" loading="lazy" decoding="async" fetchpriority="low" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-center">
+          {/* Mobile: logo on top, badges in 2-col row. Desktop: 3-col left/center/right */}
+          <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3 lg:gap-6 lg:items-center lg:flex-none">
+            {/* Logo — first on mobile, center col on desktop */}
+            <div className="flex justify-center lg:order-2">
               <img
                 src={logo}
                 alt="Flenix Jewels"
-                className="h-20 w-auto object-contain opacity-95"
+                className="h-16 sm:h-20 w-auto object-contain opacity-95"
                 style={{ filter: isDark ? undefined : "brightness(0.9) contrast(1.1)" }}
                 loading="lazy"
                 decoding="async"
-                fetchpriority="low"
               />
             </div>
 
-            <div className="space-y-2">
-              <p className="text-[10px] tracking-[0.32em] uppercase font-black lg:text-right" style={{ color: C.gold }}>
-                Payment Methods
-              </p>
-              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1 lg:justify-end">
-                {paymentMethods.map((m) => (
-                  <div
-                    key={m.name}
-                    className="flex-shrink-0 rounded-xl p-2"
-                    style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}` }}
-                  >
-                    <img src={m.logo} alt={m.name} title={m.name} className="h-10 w-10 object-contain" loading="lazy" decoding="async" fetchpriority="low" />
-                  </div>
-                ))}
+            {/* Badges row on mobile (2-col), individual cols on desktop */}
+            <div className="grid grid-cols-2 gap-3 lg:contents">
+              {/* Certified & Trusted — left col on desktop */}
+              <div className="space-y-2 lg:order-1">
+                <p className="text-[10px] tracking-[0.32em] uppercase font-black" style={{ color: C.gold }}>
+                  Certified &amp; Trusted
+                </p>
+                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1">
+                  {trustedBadges.map((b) => (
+                    <div
+                      key={b.name}
+                      className="flex-shrink-0 rounded-xl p-1.5"
+                      style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}` }}
+                    >
+                      <img src={b.logo} alt={b.name} title={b.name} className="h-8 w-8 object-contain" loading="lazy" decoding="async" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Payment Methods — right col on desktop */}
+              <div className="space-y-2 lg:order-3">
+                <p className="text-[10px] tracking-[0.32em] uppercase font-black lg:text-right" style={{ color: C.gold }}>
+                  Payment Methods
+                </p>
+                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1 lg:justify-end">
+                  {paymentMethods.map((m) => (
+                    <div
+                      key={m.name}
+                      className="flex-shrink-0 rounded-xl p-1.5"
+                      style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}` }}
+                    >
+                      <img src={m.logo} alt={m.name} title={m.name} className="h-8 w-8 object-contain" loading="lazy" decoding="async" />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -173,11 +179,11 @@ export default function Footer() {
                 href={`https://wa.me/${contactInfo.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all"
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all hover:opacity-80"
                 style={{
-                  background: "linear-gradient(135deg, rgba(18,140,126,0.25), rgba(37,211,102,0.18))",
-                  border: "1px solid rgba(37,211,102,0.25)",
-                  color: "#7FE8A0",
+                  background: isDark ? "rgba(196,144,106,0.12)" : "rgba(155,104,68,0.08)",
+                  border: `1px solid ${C.chipBorder}`,
+                  color: C.gold,
                 }}
               >
                 <MessageCircle className="h-4 w-4" />

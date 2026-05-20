@@ -18,6 +18,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const { priceSettings } = useAppSelector(selectGlobalData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
   const mediaRaw = product.images && product.images.length > 0 ? product.images : [product.image];
@@ -120,14 +121,18 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
           </div>
         ) : (
           <div className="relative w-full h-full">
+            {!imgLoaded && (
+              <div className="absolute inset-0 bg-gradient-to-br from-stone-100 via-stone-50 to-amber-50/40 dark:from-stone-800 dark:via-stone-700 dark:to-stone-800 animate-pulse" />
+            )}
             <img
               src={primaryMedia}
               alt={product.name}
-              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-150"
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
               loading="lazy"
               decoding="async"
               fetchpriority="low"
-              style={{ opacity: isHovered && isSecondaryImage ? 0 : 1 }}
+              style={{ opacity: !imgLoaded ? 0 : isHovered && isSecondaryImage ? 0 : 1 }}
+              onLoad={() => setImgLoaded(true)}
             />
             {secondaryMedia && isSecondaryImage && (
               <img

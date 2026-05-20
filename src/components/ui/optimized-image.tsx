@@ -25,7 +25,7 @@ export function OptimizedImage({
   const skeleton = !loaded ? (
     <div
       className={cn(
-        'absolute inset-0 bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 animate-pulse',
+        'absolute inset-0 animate-pulse bg-gradient-to-br from-stone-100 via-amber-50/30 to-stone-100 dark:from-stone-800 dark:via-stone-700/60 dark:to-stone-800',
         skeletonClassName
       )}
     />

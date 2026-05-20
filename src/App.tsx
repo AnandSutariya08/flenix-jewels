@@ -52,7 +52,7 @@ import GlobalLoader from "@/components/GlobalLoader";
 import CountryLanding from "./pages/CountryLanding";
 
 const queryClient = new QueryClient();
-const DEFERRED_LOAD_DELAY_MS = 1200;
+const DEFERRED_LOAD_DELAY_MS = 0;
 
 const AppContent = () => {
   const dispatch = useAppDispatch();
@@ -225,9 +225,13 @@ const AppContent = () => {
     if (isAdminRoute) return [];
     return [
       ...take(data.banners.map((b) => b.image), 1),
+      ...take(data.categories.map((c) => c.image), 6),
+      ...take(data.products.map((p) => p.image), 8),
     ];
   }, [
     data.banners,
+    data.categories,
+    data.products,
     isAdminRoute,
   ]);
 
