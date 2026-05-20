@@ -18,13 +18,13 @@ import {
   Users,
   Megaphone,
   MessageSquareQuote,
-  BookOpen,
   Menu,
   X,
   Gem,
   ChevronRight,
   Eye,
   EyeOff,
+  RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -40,7 +40,6 @@ const AdminInstagram = lazy(() => import('@/components/admin/AdminInstagram'));
 const AdminVisitors = lazy(() => import('@/components/admin/AdminVisitors'));
 const AdminPromoHeader = lazy(() => import('@/components/admin/AdminPromoHeader'));
 const AdminTestimonials = lazy(() => import('@/components/admin/AdminTestimonials'));
-const AdminBuyingGuides = lazy(() => import('@/components/admin/AdminBuyingGuides'));
 
 const SectionFallback = () => (
   <div className="flex items-center justify-center min-h-[360px]">
@@ -52,35 +51,33 @@ const SectionFallback = () => (
 );
 
 const NAV_ITEMS = [
-  { key: 'promo',         label: 'Promo Header',   icon: Megaphone },
-  { key: 'banners',       label: 'Banners',         icon: Image },
-  { key: 'categories',    label: 'Categories',      icon: Tag },
-  { key: 'products',      label: 'Products',        icon: Package },
-  { key: 'gallery',       label: 'Gallery',         icon: Image },
-  { key: 'featured',      label: 'Featured',        icon: Sparkles },
-  { key: 'testimonials',  label: 'Testimonials',    icon: MessageSquareQuote },
-  { key: 'blogs',         label: 'Blogs',           icon: Newspaper },
-  { key: 'instagram',     label: 'Instagram',       icon: Instagram },
-  { key: 'contact',       label: 'Contact',         icon: Phone },
-  { key: 'offices',       label: 'Offices',         icon: Building2 },
-  { key: 'visitors',      label: 'Visitors',        icon: Users },
-  { key: 'buying-guides', label: 'Buying Guides',   icon: BookOpen },
+  { key: 'promo',        label: 'Promo Header',  icon: Megaphone },
+  { key: 'banners',      label: 'Banners',        icon: Image },
+  { key: 'categories',   label: 'Categories',     icon: Tag },
+  { key: 'products',     label: 'Products',       icon: Package },
+  { key: 'gallery',      label: 'Gallery',        icon: Image },
+  { key: 'featured',     label: 'Featured',       icon: Sparkles },
+  { key: 'testimonials', label: 'Testimonials',   icon: MessageSquareQuote },
+  { key: 'blogs',        label: 'Blogs',          icon: Newspaper },
+  { key: 'instagram',    label: 'Instagram',      icon: Instagram },
+  { key: 'contact',      label: 'Contact',        icon: Phone },
+  { key: 'offices',      label: 'Offices',        icon: Building2 },
+  { key: 'visitors',     label: 'Visitors',       icon: Users },
 ];
 
 const SECTION_MAP: Record<string, ReactNode> = {
-  promo:           <AdminPromoHeader />,
-  banners:         <AdminBanners />,
-  categories:      <AdminCategories />,
-  products:        <AdminProducts />,
-  gallery:         <AdminGallery />,
-  featured:        <AdminFeaturedCollection />,
-  testimonials:    <AdminTestimonials />,
-  blogs:           <AdminBlogs />,
-  instagram:       <AdminInstagram />,
-  contact:         <AdminContact />,
-  offices:         <AdminOffices />,
-  visitors:        <AdminVisitors />,
-  'buying-guides': <AdminBuyingGuides />,
+  promo:        <AdminPromoHeader />,
+  banners:      <AdminBanners />,
+  categories:   <AdminCategories />,
+  products:     <AdminProducts />,
+  gallery:      <AdminGallery />,
+  featured:     <AdminFeaturedCollection />,
+  testimonials: <AdminTestimonials />,
+  blogs:        <AdminBlogs />,
+  instagram:    <AdminInstagram />,
+  contact:      <AdminContact />,
+  offices:      <AdminOffices />,
+  visitors:     <AdminVisitors />,
 };
 
 /* ── colour tokens (rose gold / espresso palette) ── */
@@ -224,7 +221,15 @@ const Admin = () => {
   });
   const [activeSection, setActiveSection] = useState('banners');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const navigate = useNavigate();
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setRefreshKey(k => k + 1);
+    setTimeout(() => setIsRefreshing(false), 800);
+  };
 
   const handleLogin = (username: string, password: string) => {
     if (username === 'Flenix' && password === 'Flenix123') {
@@ -253,7 +258,7 @@ const Admin = () => {
     <div className="min-h-screen flex" style={{ background: C.cream }}>
 
       {/* ── Sidebar ── */}
-      <aside className="flex flex-col flex-shrink-0 h-screen sticky top-0 overflow-y-auto transition-all duration-300 shadow-2xl"
+      <aside className="flex flex-col flex-shrink-0 h-screen sticky top-0 overflow-y-auto transition-all duration-300 shadow-2xl admin-sidebar-scroll"
         style={{ width: sidebarCollapsed ? '72px' : '240px',
           background: `linear-gradient(180deg, ${C.espressoDark} 0%, ${C.espressoMid} 50%, ${C.espressoDark} 100%)` }}>
 
@@ -317,6 +322,16 @@ const Admin = () => {
           </div>
 
           <div className="ml-auto flex items-center gap-3">
+            <button
+              onClick={handleRefresh}
+              title="Refresh section"
+              className="p-2 rounded-lg transition-all"
+              style={{ color: C.roseGoldDark }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = `${C.roseGold}18`; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </button>
             <span className="text-xs hidden sm:block" style={{ color: C.mutedText }}>Flenix Jewels Ltd.</span>
             <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow"
               style={{ background: `linear-gradient(135deg, ${C.roseGoldDark}, ${C.gold})` }}>
@@ -326,7 +341,7 @@ const Admin = () => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-6 overflow-auto admin-main-scroll">
           {/* Decorative background pattern */}
           <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
             <div className="absolute top-[10%] right-[5%] w-80 h-80 rounded-full"
@@ -338,7 +353,7 @@ const Admin = () => {
           <div className="relative z-10 rounded-2xl shadow-sm min-h-[600px] p-6 sm:p-8"
             style={{ background: 'rgba(255,252,248,0.92)', backdropFilter: 'blur(8px)',
               border: `1px solid ${C.roseGold}28` }}>
-            <Suspense fallback={<SectionFallback />}>
+            <Suspense fallback={<SectionFallback />} key={`${activeSection}-${refreshKey}`}>
               {SECTION_MAP[activeSection]}
             </Suspense>
           </div>

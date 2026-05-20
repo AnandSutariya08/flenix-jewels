@@ -556,9 +556,10 @@ export const getInstagramPosts = async (): Promise<InstagramPost[]> => {
 
 export const saveInstagramPost = async (post: InstagramPost) => {
   try {
-    await setDoc(doc(db, COLLECTIONS.INSTAGRAM, post.id), { ...post, id: post.id });
+    await setDoc(doc(db, COLLECTIONS.INSTAGRAM, post.id), sanitizeForFirestore({ ...post, id: post.id }));
   } catch (error) {
     console.error('Error saving Instagram post:', error);
+    throw error;
   }
 };
 
