@@ -602,7 +602,7 @@ export default function Index() {
         {testimonials.length > 0 && (
           <section className="py-20 overflow-hidden bg-secondary/60 dark:bg-secondary/20">
             <div className="text-center mb-14 px-4">
-              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3.5 text-primary">✦ Client Love</p>
+              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3.5 text-primary">✦ Client Love ✦</p>
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Testimonial</h2>
             </div>
             <div className="flex gap-5 animate-[scroll_28s_linear_infinite] hover:pause pl-6 md:pl-16">
