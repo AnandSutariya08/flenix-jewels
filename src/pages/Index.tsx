@@ -45,16 +45,18 @@ export default function Index() {
   const [selectedBlog, setSelectedBlog]     = useState<BlogPost | null>(null);
   const [isBlogDialogOpen, setIsBlogDialogOpen] = useState(false);
 
-  // Mirror Gallery.tsx: force-fetch deferred data when home page detects gallery is empty.
-  // This prevents a stale "succeeded" cache from showing "Coming Soon" while real images exist.
-  const didRequestGalleryRef = useRef(false);
+  // Force-fetch deferred data when home page detects gallery is empty.
+  // Using useState (not useRef) so the FIRST render can read galleryFetched = false
+  // and show skeleton instead of "Coming Soon" — useRef doesn't affect rendering so
+  // with a ref the condition would flash "Coming Soon" for one frame before the effect fires.
+  const [galleryFetched, setGalleryFetched] = useState(false);
   useEffect(() => {
     if (galleryItems.length > 0) return;
     if (deferredStatus === 'loading') return;
-    if (didRequestGalleryRef.current) return;
-    didRequestGalleryRef.current = true;
+    if (galleryFetched) return;
+    setGalleryFetched(true);
     dispatch(loadDeferredData({ force: true }));
-  }, [deferredLoaded, deferredStatus, dispatch, galleryItems.length]);
+  }, [deferredLoaded, deferredStatus, dispatch, galleryItems.length, galleryFetched]);
 
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
@@ -488,7 +490,7 @@ export default function Index() {
               </div>
 
               {/* Main showcase grid */}
-              {galleryItems.length === 0 && (deferredStatus === 'loading' || deferredStatus === 'idle') ? (
+              {galleryItems.length === 0 && (deferredStatus === 'loading' || deferredStatus === 'idle' || !galleryFetched) ? (
                 <div className="grid grid-cols-12 gap-3 md:gap-4" style={{ gridAutoRows: '180px' }}>
                   <div className="col-span-12 md:col-span-5 row-span-3 rounded-3xl animate-pulse" style={{ background: 'rgba(196,144,106,0.12)' }} />
                   <div className="col-span-12 md:col-span-7 row-span-2 rounded-2xl animate-pulse" style={{ background: 'rgba(196,144,106,0.10)', animationDelay: '0.1s' }} />
