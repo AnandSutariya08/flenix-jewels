@@ -1,5 +1,5 @@
 // src/pages/Admin.tsx
-import { Suspense, lazy, useState, type ReactNode } from 'react';
+import { Suspense, lazy, useState, Component, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -50,6 +50,50 @@ const SectionFallback = () => (
   </div>
 );
 
+class SectionErrorBoundary extends Component<
+  { children: ReactNode; sectionKey: string },
+  { hasError: boolean; error: string }
+> {
+  constructor(props: { children: ReactNode; sectionKey: string }) {
+    super(props);
+    this.state = { hasError: false, error: '' };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error: error?.message || 'Unknown error' };
+  }
+
+  componentDidUpdate(prevProps: { sectionKey: string }) {
+    if (prevProps.sectionKey !== this.props.sectionKey && this.state.hasError) {
+      this.setState({ hasError: false, error: '' });
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[360px] gap-4 text-center px-6">
+          <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: '#fee2e2' }}>
+            <span className="text-xl">⚠️</span>
+          </div>
+          <div>
+            <p className="font-semibold text-base" style={{ color: '#991b1b' }}>Failed to load this section</p>
+            <p className="text-sm text-muted-foreground mt-1 max-w-sm">{this.state.error}</p>
+          </div>
+          <button
+            onClick={() => this.setState({ hasError: false, error: '' })}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-white"
+            style={{ background: '#C4906A' }}
+          >
+            Try again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const NAV_ITEMS = [
   { key: 'promo',        label: 'Promo Header',  icon: Megaphone },
   { key: 'banners',      label: 'Banners',        icon: Image },
@@ -65,19 +109,19 @@ const NAV_ITEMS = [
   { key: 'visitors',     label: 'Visitors',       icon: Users },
 ];
 
-const SECTION_MAP: Record<string, ReactNode> = {
-  promo:        <AdminPromoHeader />,
-  banners:      <AdminBanners />,
-  categories:   <AdminCategories />,
-  products:     <AdminProducts />,
-  gallery:      <AdminGallery />,
-  featured:     <AdminFeaturedCollection />,
-  testimonials: <AdminTestimonials />,
-  blogs:        <AdminBlogs />,
-  instagram:    <AdminInstagram />,
-  contact:      <AdminContact />,
-  offices:      <AdminOffices />,
-  visitors:     <AdminVisitors />,
+const SECTION_MAP: Record<string, () => ReactNode> = {
+  promo:        () => <AdminPromoHeader />,
+  banners:      () => <AdminBanners />,
+  categories:   () => <AdminCategories />,
+  products:     () => <AdminProducts />,
+  gallery:      () => <AdminGallery />,
+  featured:     () => <AdminFeaturedCollection />,
+  testimonials: () => <AdminTestimonials />,
+  blogs:        () => <AdminBlogs />,
+  instagram:    () => <AdminInstagram />,
+  contact:      () => <AdminContact />,
+  offices:      () => <AdminOffices />,
+  visitors:     () => <AdminVisitors />,
 };
 
 /* ── colour tokens (rose gold / espresso palette) ── */
@@ -353,9 +397,11 @@ const Admin = () => {
           <div className="relative z-10 rounded-2xl shadow-sm min-h-[600px] p-6 sm:p-8"
             style={{ background: 'rgba(255,252,248,0.92)', backdropFilter: 'blur(8px)',
               border: `1px solid ${C.roseGold}28` }}>
-            <Suspense fallback={<SectionFallback />} key={`${activeSection}-${refreshKey}`}>
-              {SECTION_MAP[activeSection]}
-            </Suspense>
+            <SectionErrorBoundary sectionKey={`${activeSection}-${refreshKey}`}>
+              <Suspense fallback={<SectionFallback />} key={`${activeSection}-${refreshKey}`}>
+                {SECTION_MAP[activeSection]?.()}
+              </Suspense>
+            </SectionErrorBoundary>
           </div>
         </main>
       </div>
