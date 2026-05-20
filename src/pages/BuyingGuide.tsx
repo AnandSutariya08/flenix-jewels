@@ -16,6 +16,9 @@ import { selectContentHydrated, selectContentStatus, selectGlobalData } from "@/
 import { buildMetaDescriptionFromHtml } from "@/lib/seo";
 import { HEADER_OFFSET_PX } from "@/lib/layout";
 import hero3 from "@/assets/hero3.png";
+import guide4cs from "@/assets/guide_4cs.png";
+import guideLabGrown from "@/assets/guide_labgrown.png";
+import guideSizing from "@/assets/guide_sizing.png";
 
 type GuideSection = {
   id: string;
@@ -51,6 +54,7 @@ const STATIC_BUYING_GUIDES: StaticBuyingGuide[] = [
     metaTitle: "Diamond 4Cs Made Simple - Buying Guide",
     metaDescription:
       "A clear, practical guide to Cut, Color, Clarity, and Carat—what to prioritize and how to balance quality with budget.",
+    image: guide4cs,
     published: true,
     order: 1,
     sections: [
@@ -147,6 +151,7 @@ const STATIC_BUYING_GUIDES: StaticBuyingGuide[] = [
     metaTitle: "Lab‑Grown vs Natural Diamonds - Buying Guide",
     metaDescription:
       "Understand the real differences: origin, pricing, resale expectations, certification, and how to choose confidently.",
+    image: guideLabGrown,
     published: true,
     order: 2,
     sections: [
@@ -193,6 +198,7 @@ const STATIC_BUYING_GUIDES: StaticBuyingGuide[] = [
     metaTitle: "Ring Sizing & Fit Guide - Buying Guide",
     metaDescription:
       "How to get the right size, avoid common fit issues, and plan for resizing—simple steps that prevent expensive mistakes.",
+    image: guideSizing,
     published: true,
     order: 3,
     sections: [

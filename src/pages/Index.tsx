@@ -10,6 +10,7 @@ import ServicesSection from '@/components/ServicesSection';
 import BlogDialog from '@/components/BlogDialog';
 import InstagramJourneyCarousel from '@/components/InstagramJourneyCarousel';
 import EmptyState from '@/components/EmptyState';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData } from '@/store/contentSlice';
 import { HEADER_OFFSET_PX } from '@/lib/layout';
@@ -255,10 +256,9 @@ export default function Index() {
                   )}
 
                   <div className="relative overflow-hidden mx-2" style={{ height: 'clamp(380px, 52vw, 520px)', borderRadius: 20 }}>
-                    <img
+                    <OptimizedImage noWrapper
                       src={item.image} alt={item.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      loading="lazy"
                     />
                     {/* Always-on bottom fade */}
                     <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(4,2,1,0.92) 0%, rgba(4,2,1,0.4) 35%, transparent 65%)' }} />
@@ -489,8 +489,8 @@ export default function Index() {
                   <Link to="/gallery"
                     className="col-span-12 md:col-span-5 row-span-3 relative overflow-hidden rounded-3xl group block"
                     style={{ gridRow: 'span 3' }}>
-                    <img src={galleryItems[0].image} alt={galleryItems[0].description || 'Gallery'}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                    <OptimizedImage noWrapper src={galleryItems[0].image} alt={galleryItems[0].description || 'Gallery'}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                       style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.85) 0%, rgba(6,3,1,0.25) 50%, transparent 80%)' }} />
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -511,8 +511,8 @@ export default function Index() {
                   {/* Top-right wide — 7 cols × 2 rows */}
                   <Link to="/gallery"
                     className="col-span-12 md:col-span-7 row-span-2 relative overflow-hidden rounded-2xl group block">
-                    <img src={galleryItems[1].image} alt={galleryItems[1].description || 'Gallery'}
-                      className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-105" loading="lazy" />
+                    <OptimizedImage noWrapper src={galleryItems[1].image} alt={galleryItems[1].description || 'Gallery'}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
                       style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)' }} />
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
@@ -529,8 +529,8 @@ export default function Index() {
                     <Link key={item.id} to="/gallery"
                       className="col-span-4 md:col-span-3 row-span-1 relative overflow-hidden group block"
                       style={{ borderRadius: 16 }}>
-                      <img src={item.image} alt={item.description || 'Gallery'}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                      <OptimizedImage noWrapper src={item.image} alt={item.description || 'Gallery'}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.80) 0%, transparent 65%)' }} />
                       <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
@@ -543,8 +543,8 @@ export default function Index() {
                 <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
                   {galleryItems.map(item => (
                     <Link key={item.id} to="/gallery" className="flex-shrink-0 w-64 h-80 rounded-2xl overflow-hidden group relative block">
-                      <img src={item.image} alt={item.description || 'Gallery'}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                      <OptimizedImage noWrapper src={item.image} alt={item.description || 'Gallery'}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)' }} />
                     </Link>

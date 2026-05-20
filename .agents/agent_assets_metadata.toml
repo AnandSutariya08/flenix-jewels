@@ -1,0 +1,62 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "d2GDuGIR1FRDgNPI313lP"
+uri = "file://src/assets/about_1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ju0jI0PCBkMDLpB1tFa2Z"
+uri = "file://src/assets/about_2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "tlYuFeAvhxUOSr93erCxF"
+uri = "file://src/assets/about_3.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "n3a8UVI-gvYhK3c-MkHQA"
+uri = "file://src/assets/about_4.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "d-gAyppF93ZBfuxQ3acT2"
+uri = "file://src/assets/guide_4cs.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "aX8P--lWJ3cmeT5t4vvCg"
+uri = "file://src/assets/guide_labgrown.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "pIufY7MPQZc_msKLHVcre"
+uri = "file://src/assets/guide_sizing.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "gV5yLcwkcm5iWMYSvdRdy"
+uri = "file://src/assets/guide_care.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "UFNRWjd394p8PFfc1D2Es"
+uri = "file://src/assets/guide_certification.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "CS64Qivd5PcsOeZh3MUj3"
+uri = "file://src/assets/guide_metals.png"
+type = "image"
+title = "generated_image"

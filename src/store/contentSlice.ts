@@ -69,8 +69,8 @@ const computeDeferredLoaded = (data: GlobalData) =>
   data.buyingGuides.length > 0;
 
 // Bump cache version to avoid stale data (especially after Firebase project changes).
-const SESSION_KEY = "flenix_global_data_v4";
-const LOCAL_KEY = "flenix_global_data_v4_persisted";
+const SESSION_KEY = "flenix_global_data_v5";
+const LOCAL_KEY = "flenix_global_data_v5_persisted";
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const emptyData: GlobalData = {
@@ -302,15 +302,22 @@ export const loadDeferredData = createAsyncThunk<
     if (!args?.force) {
       const session = readSessionCache() ?? readPersistentCache();
       if (session?.deferredLoaded) {
-        return {
-          galleryItems: session.data.galleryItems,
-          featuredCollection: session.data.featuredCollection,
-          instagramPosts: session.data.instagramPosts,
-          testimonials: session.data.testimonials,
-          contactInfo: session.data.contactInfo,
-          offices: session.data.offices,
-          buyingGuides: session.data.buyingGuides,
-        };
+        const hasSomething =
+          (session.data.galleryItems?.length ?? 0) > 0 ||
+          (session.data.featuredCollection?.length ?? 0) > 0 ||
+          (session.data.testimonials?.length ?? 0) > 0 ||
+          (session.data.offices?.length ?? 0) > 0;
+        if (hasSomething) {
+          return {
+            galleryItems: session.data.galleryItems,
+            featuredCollection: session.data.featuredCollection,
+            instagramPosts: session.data.instagramPosts,
+            testimonials: session.data.testimonials,
+            contactInfo: session.data.contactInfo,
+            offices: session.data.offices,
+            buyingGuides: session.data.buyingGuides,
+          };
+        }
       }
     }
 
