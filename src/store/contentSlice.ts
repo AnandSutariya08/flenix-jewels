@@ -483,6 +483,12 @@ const contentSlice = createSlice({
           ...action.payload,
           products: state.productsLoaded ? state.data.products : action.payload.products,
           blogs: state.blogsLoaded ? state.data.blogs : action.payload.blogs,
+          galleryItems: state.data.galleryItems.length > 0 ? state.data.galleryItems : action.payload.galleryItems,
+          featuredCollection: state.data.featuredCollection.length > 0 ? state.data.featuredCollection : action.payload.featuredCollection,
+          instagramPosts: state.data.instagramPosts.length > 0 ? state.data.instagramPosts : action.payload.instagramPosts,
+          testimonials: state.data.testimonials.length > 0 ? state.data.testimonials : action.payload.testimonials,
+          offices: state.data.offices.length > 0 ? state.data.offices : action.payload.offices,
+          buyingGuides: state.data.buyingGuides.length > 0 ? state.data.buyingGuides : action.payload.buyingGuides,
         };
         state.hydrated = true;
         state.lastUpdated = Date.now();
