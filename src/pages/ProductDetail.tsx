@@ -154,7 +154,7 @@ const ProductDetail = () => {
                     className="w-full h-full object-cover"
                     loading="eager"
                     decoding="async"
-                    fetchpriority="high"
+                    fetchPriority="high"
                   />
                 )
               )}
@@ -194,7 +194,7 @@ const ProductDetail = () => {
                         className="w-full h-full object-cover"
                         loading="lazy"
                         decoding="async"
-                        fetchpriority="low"
+                        fetchPriority="low"
                       />
                     )}
                   </button>

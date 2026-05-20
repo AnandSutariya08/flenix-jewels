@@ -88,7 +88,7 @@ const GlobalLoader = ({ isLoading, imagesToPreload = [] }: GlobalLoaderProps) =>
             className="h-16 sm:h-20 w-auto relative z-10 animate-[pulse_2s_ease-in-out_infinite]"
             loading="eager"
             decoding="async"
-            fetchpriority="high"
+            fetchPriority="high"
           />
         </div>
 

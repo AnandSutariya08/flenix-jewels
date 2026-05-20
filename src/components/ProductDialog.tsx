@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { isImageCached, keepImageAlive } from '@/lib/preload';
 import { Product } from '@/lib/storage';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import WhatsAppButton from './WhatsAppButton';
@@ -40,10 +41,18 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
 
   useEffect(() => {
     if (!open) return;
-    setIdx(0); setPlaying(false); setMuted(true); setLoaded(false); setTransitioning(false);
-  }, [open]);
+    const firstUrl = media[0]?.url;
+    setIdx(0); setPlaying(false); setMuted(true);
+    setLoaded(Boolean(firstUrl && media[0]?.type === 'image' && isImageCached(firstUrl)));
+    setTransitioning(false);
+  }, [open, media]);
 
-  useEffect(() => { setLoaded(false); setPlaying(false); setTransitioning(false); }, [safeIdx]);
+  useEffect(() => {
+    const url = media[safeIdx]?.url;
+    setLoaded(Boolean(url && media[safeIdx]?.type === 'image' && isImageCached(url)));
+    setPlaying(false);
+    setTransitioning(false);
+  }, [safeIdx, media]);
 
   useEffect(() => {
     if (!open) { videoRef.current?.pause(); }
@@ -170,7 +179,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                   draggable={false}
                   loading="eager"
                   className="absolute inset-0 w-full h-full object-contain"
-                  onLoad={() => setLoaded(true)}
+                  onLoad={() => { setLoaded(true); keepImageAlive(current.url); }}
                 />
               ) : null}
             </div>
@@ -377,7 +386,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                     draggable={false}
                     loading="eager"
                     className="absolute inset-0 w-full h-full object-contain"
-                    onLoad={() => setLoaded(true)}
+                    onLoad={() => { setLoaded(true); keepImageAlive(current.url); }}
                   />
                 ) : null}
               </div>

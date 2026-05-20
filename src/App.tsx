@@ -232,6 +232,8 @@ const AppContent = () => {
       ...data.galleryItems.map((g) => g.image).filter(Boolean),
       ...data.instagramPosts.map((i) => i.image).filter(Boolean),
       ...(data.testimonials ?? []).map((t: any) => t.image).filter(Boolean),
+      ...(data.blogs ?? []).flatMap((b: any) => [b.thumbnail, b.image].filter(Boolean)),
+      ...(data.buyingGuides ?? []).map((g: any) => g.image).filter(Boolean),
     ];
   }, [
     data.banners,
@@ -241,6 +243,8 @@ const AppContent = () => {
     data.galleryItems,
     data.instagramPosts,
     data.testimonials,
+    data.blogs,
+    data.buyingGuides,
     isAdminRoute,
   ]);
 

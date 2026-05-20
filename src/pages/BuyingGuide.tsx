@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { BuyingGuide } from "@/lib/buyingGuides";
 import { ArrowLeft, BookOpen, Search } from 'lucide-react';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -511,8 +512,9 @@ const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
                     className="group rounded-2xl border bg-card overflow-hidden hover:shadow-md transition-shadow"
                   >
                     {guide.image ? (
-                      <div className="aspect-[16/9] overflow-hidden bg-muted">
-                        <img
+                      <div className="relative aspect-[16/9] overflow-hidden bg-muted">
+                        <OptimizedImage
+                          noWrapper
                           src={guide.image}
                           alt={guide.title}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
@@ -600,14 +602,15 @@ const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
                   selectedStaticGuide ? (
                     <div className="rounded-2xl border bg-card overflow-hidden">
                       {selectedStaticGuide.image && (
-                        <div className="aspect-[21/9] bg-muted overflow-hidden">
-                          <img
+                        <div className="relative aspect-[21/9] bg-muted overflow-hidden">
+                          <OptimizedImage
+                            noWrapper
                             src={selectedStaticGuide.image}
                             alt={selectedStaticGuide.title}
                             className="h-full w-full object-cover"
                             loading="eager"
                             decoding="async"
-                            fetchpriority="high"
+                            fetchPriority="high"
                           />
                         </div>
                       )}
@@ -702,14 +705,15 @@ const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
                 ) : selected ? (
                   <div className="rounded-2xl border bg-card overflow-hidden">
                     {selected.image && (
-                      <div className="aspect-[21/9] bg-muted overflow-hidden">
-                        <img
+                      <div className="relative aspect-[21/9] bg-muted overflow-hidden">
+                        <OptimizedImage
+                          noWrapper
                           src={selected.image}
                           alt={selected.title}
                           className="h-full w-full object-cover"
                           loading="eager"
                           decoding="async"
-                          fetchpriority="high"
+                          fetchPriority="high"
                         />
                       </div>
                     )}

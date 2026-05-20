@@ -88,7 +88,7 @@ const BlogDialog = ({ blog, isOpen, onClose, whatsappNumber = '85251254000' }: B
               className="w-full h-auto max-h-[50vh] object-contain"
               loading="eager"
               decoding="async"
-              fetchpriority="high"
+              fetchPriority="high"
             />
           </div>
           {/* Content Section */}

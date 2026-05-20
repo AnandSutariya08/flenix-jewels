@@ -150,7 +150,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
                 style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
                 loading={isActive ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchpriority={isActive ? 'high' : 'auto'} sizes="100vw" onLoad={() => markLoaded(index)} />
+                fetchPriority={isActive ? 'high' : 'auto'} sizes="100vw" onLoad={() => markLoaded(index)} />
             )}
 
             {/* Multi-layer overlays for depth */}

@@ -12,6 +12,7 @@ import { HEADER_OFFSET_PX } from "@/lib/layout";
 import { BlogPost } from '@/lib/storage';
 import { buildMetaDescriptionForBlog, buildMetaTitleForBlog } from '@/lib/seo';
 import { ArrowRight, Clock, CalendarDays, BookOpen, Gem, ChevronRight } from 'lucide-react';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useTheme } from 'next-themes';
 import hero4 from "@/assets/hero4.png";
 
@@ -84,8 +85,9 @@ const FeaturedCard = ({ blog, onClick }: { blog: BlogPost; onClick: () => void }
       onClick={onClick}
     >
       {/* Image */}
-      <div className="overflow-hidden" style={{ aspectRatio: '16/9' }}>
-        <img
+      <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
+        <OptimizedImage
+          noWrapper
           src={blog.thumbnail || blog.image}
           alt={blog.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
@@ -177,7 +179,8 @@ const BlogCard = ({ blog, index, onClick }: { blog: BlogPost; index: number; onC
         className="relative overflow-hidden rounded-2xl mb-4"
         style={{ aspectRatio: '4/3', boxShadow: '0 8px 32px -8px rgba(0,0,0,0.18)' }}
       >
-        <img
+        <OptimizedImage
+          noWrapper
           src={blog.thumbnail || blog.image}
           alt={blog.title}
           className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-[1.08]"
@@ -253,7 +256,8 @@ const SidebarCard = ({ blog, index, onClick }: { blog: BlogPost; index: number; 
         className="relative overflow-hidden rounded-xl flex-shrink-0"
         style={{ width: 80, height: 80, boxShadow: '0 4px 16px -4px rgba(0,0,0,0.18)' }}
       >
-        <img
+        <OptimizedImage
+          noWrapper
           src={blog.thumbnail || blog.image}
           alt={blog.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.12]"
@@ -526,7 +530,8 @@ const Blog = () => {
                       className="w-full aspect-square rounded-2xl overflow-hidden mb-2.5 relative"
                       style={{ boxShadow: '0 6px 24px -6px rgba(0,0,0,0.14)', transition: 'box-shadow 0.3s ease' }}
                     >
-                      <img
+                      <OptimizedImage
+                        noWrapper
                         src={category.image}
                         alt={category.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.1]"

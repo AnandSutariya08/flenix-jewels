@@ -354,13 +354,14 @@ const Gallery = () => {
                           style={{ boxShadow: "0 28px 90px -40px rgba(0,0,0,0.65)" }}
                         >
                           <div className="relative aspect-[16/10] md:aspect-[21/9] bg-muted overflow-hidden">
-                            <img
+                            <OptimizedImage
+                              noWrapper
                               src={filteredItems[0].image}
                               alt={filteredItems[0].description || "Flenix Jewels"}
                               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                               loading="eager"
                               decoding="async"
-                              fetchpriority="high"
+                              fetchPriority="high"
                               draggable={false}
                             />
                             <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to right, rgba(4,2,0,0.72) 0%, rgba(4,2,0,0.20) 55%, rgba(4,2,0,0.05) 100%)" }} />
@@ -477,8 +478,9 @@ const Gallery = () => {
             {/* Image + Info */}
             <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
               {/* Image */}
-              <div className="flex-1 flex items-center justify-center p-4 sm:p-6 min-h-0" style={{ touchAction: 'none' }}>
-                <img
+              <div className="relative flex-1 flex items-center justify-center p-4 sm:p-6 min-h-0" style={{ touchAction: 'none' }}>
+                <OptimizedImage
+                  noWrapper
                   key={selectedIndex}
                   src={filteredItems[selectedIndex].image}
                   alt={filteredItems[selectedIndex].description || 'Flenix Jewels'}
@@ -640,7 +642,8 @@ const Gallery = () => {
                       boxShadow: isActive ? '0 0 0 2px #C4906A, 0 0 18px -3px rgba(196,144,106,0.65)' : '0 0 0 1px rgba(255,255,255,0.06)',
                     }}
                   >
-                    <img
+                    <OptimizedImage
+                      noWrapper
                       src={item.image}
                       alt=""
                       className="w-full h-full object-cover"
