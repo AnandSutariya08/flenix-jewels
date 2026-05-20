@@ -1,9 +1,9 @@
 # Flenix Jewels - Premium Diamond & Gold Jewelry
 # https://www.flenixjewels.com
-# robots.txt - Search Engine Crawler Directives
-# Last updated: 2026-04-08
+# robots.txt - Search Engine & AI Crawler Directives
+# Last updated: 2026-05-20
 
-# Allow all major search engines
+# ─── Google ───────────────────────────────────────────────────────────────────
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
@@ -17,10 +17,22 @@ Allow: /
 User-agent: Googlebot-Video
 Allow: /
 
+# Google AI Overviews / SGE - allow for brand visibility in AI answers
+User-agent: Google-Extended
+Allow: /
+
+# ─── Bing / Microsoft ─────────────────────────────────────────────────────────
 User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
 
+User-agent: msnbot
+Allow: /
+
+User-agent: msnbot-media
+Allow: /
+
+# ─── Other major search engines ───────────────────────────────────────────────
 User-agent: Slurp
 Allow: /
 Crawl-delay: 1
@@ -39,20 +51,70 @@ Crawl-delay: 1
 User-agent: Sogou
 Allow: /
 
-# Other global crawlers
 User-agent: Applebot
 Allow: /
 
-User-agent: CCBot
-Allow: /
-
+# ─── AI & LLM Crawlers (allow for brand visibility) ──────────────────────────
+# OpenAI
 User-agent: GPTBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
-# Social Media Crawlers
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic Claude
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Google Gemini / Bard
+User-agent: Gemini-Web
+Allow: /
+
+# Meta AI
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# Amazon Alexa / Bedrock
+User-agent: Amazonbot
+Allow: /
+
+# Bytedance / Doubao
+User-agent: Bytespider
+Allow: /
+
+# DuckAssist
+User-agent: DuckAssistBot
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Common Crawl (used by many AI training datasets)
+User-agent: CCBot
+Allow: /
+
+# ─── Social Media Crawlers ────────────────────────────────────────────────────
 User-agent: Twitterbot
 Allow: /
 
@@ -64,6 +126,7 @@ Allow: /
 
 User-agent: Pinterest
 Allow: /
+
 User-agent: Pinterestbot
 Allow: /
 
@@ -73,11 +136,14 @@ Allow: /
 User-agent: TelegramBot
 Allow: /
 
-# Allow all other bots
+User-agent: Slackbot
+Allow: /
+
+# ─── Default: allow all ───────────────────────────────────────────────────────
 User-agent: *
 Allow: /
 
-# Disallow admin and private areas
+# ─── Disallow private / admin areas ──────────────────────────────────────────
 Disallow: /admin
 Disallow: /admin/
 Disallow: /aEgZjaHJvbWUyBggAEEUYOdIBCDUzMTRqMGo3
@@ -88,7 +154,7 @@ Disallow: /private/
 Disallow: /tmp/
 Disallow: /node_modules/
 
-# Allow important static resources
+# ─── Allow key static assets ─────────────────────────────────────────────────
 Allow: /assets/
 Allow: /images/
 Allow: /icons/
@@ -104,12 +170,20 @@ Allow: /*.ico$
 Allow: /*.woff$
 Allow: /*.woff2$
 Allow: /*.avif$
+Allow: /feed.xml
+Allow: /sitemap.xml
+Allow: /sitemap-images.xml
+Allow: /llms.txt
 
-# Sitemap location - Very Important for SEO
+# ─── Sitemaps ─────────────────────────────────────────────────────────────────
 Sitemap: https://www.flenixjewels.com/sitemap.xml
+Sitemap: https://www.flenixjewels.com/sitemap-images.xml
 
-# Host directive for search engines
+# ─── RSS Feed ─────────────────────────────────────────────────────────────────
+# Feed: https://www.flenixjewels.com/feed.xml
+
+# ─── Host preference ──────────────────────────────────────────────────────────
 Host: https://www.flenixjewels.com
 
-# Clean URLs preferred
-Clean-param: utm_source&utm_medium&utm_campaign&ref&fbclid
+# Clean tracking parameters
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&ref&fbclid&gclid&msclkid

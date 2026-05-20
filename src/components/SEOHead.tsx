@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { SITE, buildKeywords } from "@/lib/seo";
+import { SITE, buildKeywords, buildOrganizationSchema, buildLocalBusinessSchema } from "@/lib/seo";
 
 interface SEOHeadProps {
   title: string;
@@ -11,6 +11,14 @@ interface SEOHeadProps {
   structuredData?: object | object[];
   faqItems?: Array<{ question: string; answer: string }>;
   breadcrumbs?: Array<{ name: string; url: string }>;
+  articleMeta?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    section?: string;
+    tags?: string[];
+  };
+  noIndex?: boolean;
 }
 
 const SEOHead = ({
@@ -23,111 +31,69 @@ const SEOHead = ({
   structuredData,
   faqItems,
   breadcrumbs,
+  articleMeta,
+  noIndex = false,
 }: SEOHeadProps) => {
   const siteName = SITE.name;
-  const fullTitle = `${title} | ${siteName}`;
+  const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
   const baseUrl = SITE.url;
   const pageUrl = canonicalUrl || baseUrl;
   const metaKeywords = keywords || buildKeywords();
+  const resolvedImage = ogImage.startsWith("http") ? ogImage : `${baseUrl}${ogImage}`;
 
-  const defaultStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "JewelryStore",
-    "@id": `${baseUrl}/#jewelry-store`,
-    name: siteName,
-    description:
-      "Premium diamond and gold jewelry store offering certified lab-grown and natural diamonds, engagement rings, wedding bands, and custom jewelry designs.",
-    url: baseUrl,
-    logo: SITE.ogImage,
-    image: SITE.ogImage,
-    priceRange: "$$$",
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: SITE.addressIndia.country,
-      addressRegion: SITE.addressIndia.region,
-      addressLocality: SITE.addressIndia.locality,
-    },
-    location: {
-      "@type": "Place",
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: SITE.addressUsa.street,
-        addressLocality: SITE.addressUsa.locality,
-        addressRegion: SITE.addressUsa.region,
-        postalCode: SITE.addressUsa.postalCode,
-        addressCountry: SITE.addressUsa.country,
-      },
-    },
-    contactPoint: [
-      {
-        "@type": "ContactPoint",
-        telephone: SITE.phonePrimary,
-        contactType: "sales",
-        areaServed: SITE.areaServed,
-        availableLanguage: ["English"],
-      },
-      {
-        "@type": "ContactPoint",
-        telephone: SITE.phoneWhatsApp,
-        contactType: "customer support",
-        areaServed: SITE.areaServed,
-        availableLanguage: ["English"],
-      },
-    ],
-    areaServed: SITE.areaServed,
-    sameAs: [...SITE.sameAs],
-  };
+  // ── Core schemas always present ───────────────────────────────────────────────
+  const organizationSchema = buildOrganizationSchema();
+  const localBusinessSchema = buildLocalBusinessSchema();
 
-  const webSiteStructuredData = {
+  const webSiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${baseUrl}/#website`,
     name: siteName,
     url: baseUrl,
-    publisher: {
-      "@id": `${baseUrl}/#jewelry-store`,
-    },
+    description: "Premium diamond and gold jewelry — certified lab-grown and natural diamonds with worldwide delivery.",
+    inLanguage: "en-US",
+    publisher: { "@id": `${baseUrl}/#organization` },
     potentialAction: {
       "@type": "SearchAction",
-      target: `${baseUrl}/categories?search={search_term_string}`,
+      target: { "@type": "EntryPoint", urlTemplate: `${baseUrl}/categories?search={search_term_string}` },
       "query-input": "required name=search_term_string",
     },
   };
 
-  const webPageStructuredData = {
+  const webPageSchema = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
+    "@type": ogType === "article" ? "Article" : "WebPage",
     "@id": `${pageUrl}#webpage`,
     name: fullTitle,
     description,
     url: pageUrl,
-    inLanguage: "en",
-    isPartOf: {
-      "@type": "WebSite",
-      name: siteName,
-      url: baseUrl,
-    },
-    publisher: {
-      "@id": `${baseUrl}/#jewelry-store`,
-    },
+    inLanguage: "en-US",
+    isPartOf: { "@id": `${baseUrl}/#website` },
+    publisher: { "@id": `${baseUrl}/#organization` },
+    breadcrumb: breadcrumbs?.length ? { "@id": `${pageUrl}#breadcrumb` } : undefined,
+    dateModified: new Date().toISOString(),
   };
 
-  const breadcrumbStructuredData =
+  const breadcrumbSchema =
     breadcrumbs && breadcrumbs.length > 0
       ? {
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           "@id": `${pageUrl}#breadcrumb`,
-          itemListElement: breadcrumbs.map((b, idx) => ({
-            "@type": "ListItem",
-            position: idx + 1,
-            name: b.name,
-            item: b.url,
-          })),
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: baseUrl },
+            ...breadcrumbs.map((b, idx) => ({
+              "@type": "ListItem",
+              position: idx + 2,
+              name: b.name,
+              item: b.url,
+            })),
+          ],
         }
       : null;
 
-  const faqStructuredData =
+  const faqSchema =
     faqItems && faqItems.length > 0
       ? {
           "@context": "https://schema.org",
@@ -136,102 +102,154 @@ const SEOHead = ({
           mainEntity: faqItems.map((f) => ({
             "@type": "Question",
             name: f.question,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: f.answer,
-            },
+            acceptedAnswer: { "@type": "Answer", text: f.answer },
           })),
         }
       : null;
 
-  const structuredList: object[] = [
-    defaultStructuredData,
-    webSiteStructuredData,
-    webPageStructuredData,
+  // ── Assemble all schemas ──────────────────────────────────────────────────────
+  const schemaList: object[] = [
+    organizationSchema,
+    localBusinessSchema,
+    webSiteSchema,
+    webPageSchema,
   ];
 
-  if (breadcrumbStructuredData) structuredList.push(breadcrumbStructuredData);
-  if (faqStructuredData) structuredList.push(faqStructuredData);
+  if (breadcrumbSchema) schemaList.push(breadcrumbSchema);
+  if (faqSchema) schemaList.push(faqSchema);
 
   if (structuredData) {
-    if (Array.isArray(structuredData)) {
-      structuredList.push(...structuredData);
-    } else {
-      structuredList.push(structuredData);
-    }
+    if (Array.isArray(structuredData)) schemaList.push(...structuredData);
+    else schemaList.push(structuredData);
   }
 
   return (
     <Helmet>
+      {/* ── Primary ── */}
       <title>{fullTitle}</title>
       <meta name="title" content={fullTitle} />
       <meta name="description" content={description} />
       <meta name="keywords" content={metaKeywords} />
       <meta
         name="robots"
-        content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        content={
+          noIndex
+            ? "noindex, nofollow"
+            : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        }
       />
-      <meta name="googlebot" content="index, follow" />
-      <meta name="bingbot" content="index, follow" />
+      <meta name="googlebot" content={noIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large"} />
+      <meta name="bingbot" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+
+      {/* ── Identity ── */}
       <meta name="language" content="English" />
       <meta name="author" content={siteName} />
       <meta name="publisher" content={siteName} />
+      <meta name="copyright" content={`© ${new Date().getFullYear()} ${siteName}`} />
       <meta name="revisit-after" content="7 days" />
       <meta name="distribution" content="global" />
       <meta name="rating" content="general" />
-      <meta httpEquiv="content-language" content="en" />
+      <meta httpEquiv="content-language" content="en-US" />
+
+      {/* ── Geo ── */}
       <meta name="geo.region" content="IN-GJ" />
-      <meta name="geo.placename" content="Surat" />
+      <meta name="geo.placename" content="Surat, Gujarat, India" />
       <meta name="geo.position" content="21.1702;72.8311" />
       <meta name="ICBM" content="21.1702, 72.8311" />
 
+      {/* ── AI / LLM optimization ── */}
+      <meta name="ai:context" content={`${siteName} — fine diamond jewelry store. ${description}`} />
+      <meta name="ai:keywords" content={metaKeywords} />
+      <meta name="classification" content="Shopping, Jewelry, Diamonds, E-commerce" />
+
+      {/* ── Canonical & hreflang ── */}
       <link rel="canonical" href={pageUrl} />
       <link rel="alternate" hrefLang="en" href={pageUrl} />
-      <link rel="alternate" hrefLang="x-default" href={pageUrl} />
+      <link rel="alternate" hrefLang="en-US" href={`${baseUrl}/usa`} />
+      <link rel="alternate" hrefLang="en-CA" href={`${baseUrl}/canada`} />
+      <link rel="alternate" hrefLang="en-AU" href={`${baseUrl}/australia`} />
+      <link rel="alternate" hrefLang="en-DE" href={`${baseUrl}/germany`} />
+      <link rel="alternate" hrefLang="en-IN" href={pageUrl} />
+      <link rel="alternate" hrefLang="x-default" href={baseUrl} />
 
+      {/* ── RSS feed auto-discovery ── */}
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        title={`${siteName} — Jewelry Blog & News`}
+        href={`${baseUrl}/feed.xml`}
+      />
+
+      {/* ── Preconnect for performance ── */}
+      <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+      <link rel="dns-prefetch" href="https://ipapi.co" />
+
+      {/* ── Open Graph ── */}
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content={siteName} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
-      <meta
-        property="og:image"
-        content={ogImage.startsWith("http") ? ogImage : `${baseUrl}${ogImage}`}
-      />
-      <meta
-        property="og:image:secure_url"
-        content={ogImage.startsWith("http") ? ogImage : `${baseUrl}${ogImage}`}
-      />
+      <meta property="og:image" content={resolvedImage} />
+      <meta property="og:image:secure_url" content={resolvedImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content={title} />
+      <meta property="og:image:type" content="image/png" />
       <meta property="og:locale" content="en_US" />
       <meta property="og:locale:alternate" content="en_GB" />
       <meta property="og:locale:alternate" content="en_CA" />
       <meta property="og:locale:alternate" content="en_AU" />
       <meta property="og:url" content={pageUrl} />
 
+      {/* ── Article-specific OG ── */}
+      {articleMeta?.publishedTime && (
+        <meta property="article:published_time" content={articleMeta.publishedTime} />
+      )}
+      {articleMeta?.modifiedTime && (
+        <meta property="article:modified_time" content={articleMeta.modifiedTime} />
+      )}
+      {articleMeta?.author && (
+        <meta property="article:author" content={articleMeta.author} />
+      )}
+      {articleMeta?.section && (
+        <meta property="article:section" content={articleMeta.section} />
+      )}
+      {articleMeta?.tags?.map((tag) => (
+        <meta key={tag} property="article:tag" content={tag} />
+      ))}
+
+      {/* ── Twitter / X Card ── */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@flenixjewels" />
       <meta name="twitter:creator" content="@flenixjewels" />
       <meta name="twitter:domain" content="www.flenixjewels.com" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
-      <meta
-        name="twitter:image"
-        content={ogImage.startsWith("http") ? ogImage : `${baseUrl}${ogImage}`}
-      />
+      <meta name="twitter:image" content={resolvedImage} />
       <meta name="twitter:image:alt" content={title} />
 
+      {/* ── Pinterest ── */}
       <meta name="pinterest-rich-pin" content="true" />
 
+      {/* ── PWA / Mobile ── */}
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       <meta name="apple-mobile-web-app-title" content={siteName} />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="application-name" content={siteName} />
+      <meta name="msapplication-TileColor" content="#C4906A" />
+      <meta name="msapplication-TileImage" content={`${baseUrl}/flenix-logo.png`} />
+      <meta name="theme-color" content="#C4906A" />
 
-      <meta name="msapplication-TileColor" content="#1a1a1a" />
-      <meta name="theme-color" content="#1a1a1a" />
+      {/* ── Verification placeholders (fill in Google/Bing/Pinterest) ── */}
+      {/* <meta name="google-site-verification" content="YOUR_CODE" /> */}
+      {/* <meta name="msvalidate.01" content="YOUR_CODE" /> */}
+      {/* <meta name="p:domain_verify" content="YOUR_CODE" /> */}
 
-      {structuredList.map((schema, idx) => (
+      {/* ── JSON-LD structured data ── */}
+      {schemaList.map((schema, idx) => (
         <script key={idx} type="application/ld+json">
           {JSON.stringify(schema)}
         </script>

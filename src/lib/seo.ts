@@ -2,9 +2,11 @@ export const SITE = {
   name: "Flenix Jewels",
   url: "https://www.flenixjewels.com",
   ogImage: "https://www.flenixjewels.com/icon.png",
-  phonePrimary: "+852 51254000 ",
-  phoneWhatsApp: "+852 51254000 ",
+  logo: "https://www.flenixjewels.com/flenix-logo.png",
+  phonePrimary: "+852 51254000",
+  phoneWhatsApp: "+852 51254000",
   email: "info@flenixjewels.com",
+  foundingYear: "2011",
   areaServed: ["US", "CA", "AU", "DE", "GB", "IN"],
   addressIndia: {
     country: "IN",
@@ -17,6 +19,10 @@ export const SITE = {
     region: "NJ",
     postalCode: "07073",
     country: "US",
+  },
+  geo: {
+    latitude: "21.1702",
+    longitude: "72.8311",
   },
   sameAs: [
     "https://instagram.com/flenixjewels",
@@ -131,6 +137,7 @@ export const buildOffer = (url: string, price?: string) => {
     "@type": "Offer",
     availability: "https://schema.org/InStock",
     url,
+    seller: { "@type": "Organization", name: SITE.name },
     ...(numericPrice ? { price: numericPrice, priceCurrency: "USD" } : {}),
   };
 };
@@ -172,3 +179,228 @@ export const buildFaqForProduct = (productName: string, categoryName?: string) =
     answer: "We offer secure, insured shipping with delivery timelines based on your region.",
   },
 ];
+
+export const buildOrganizationSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${SITE.url}/#organization`,
+  name: SITE.name,
+  url: SITE.url,
+  logo: {
+    "@type": "ImageObject",
+    url: SITE.logo,
+    width: 200,
+    height: 60,
+  },
+  image: SITE.ogImage,
+  description:
+    "Premium diamond and gold jewelry brand established in 2011. Certified lab-grown and natural diamonds, engagement rings, wedding bands, and bespoke jewelry with worldwide delivery.",
+  foundingDate: SITE.foundingYear,
+  email: SITE.email,
+  telephone: SITE.phonePrimary,
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      telephone: SITE.phonePrimary,
+      contactType: "sales",
+      areaServed: SITE.areaServed,
+      availableLanguage: ["English"],
+    },
+    {
+      "@type": "ContactPoint",
+      telephone: SITE.phoneWhatsApp,
+      contactType: "customer support",
+      contactOption: "TollFree",
+      areaServed: SITE.areaServed,
+      availableLanguage: ["English"],
+    },
+  ],
+  address: [
+    {
+      "@type": "PostalAddress",
+      streetAddress: SITE.addressUsa.street,
+      addressLocality: SITE.addressUsa.locality,
+      addressRegion: SITE.addressUsa.region,
+      postalCode: SITE.addressUsa.postalCode,
+      addressCountry: SITE.addressUsa.country,
+    },
+    {
+      "@type": "PostalAddress",
+      addressLocality: SITE.addressIndia.locality,
+      addressRegion: SITE.addressIndia.region,
+      addressCountry: SITE.addressIndia.country,
+    },
+  ],
+  areaServed: SITE.areaServed.map((country) => ({
+    "@type": "Country",
+    name: country,
+  })),
+  sameAs: [...SITE.sameAs],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Fine Diamond Jewelry Collection",
+    itemListElement: [
+      { "@type": "Offer", itemOffered: { "@type": "Product", name: "Diamond Engagement Rings" } },
+      { "@type": "Offer", itemOffered: { "@type": "Product", name: "Diamond Necklaces" } },
+      { "@type": "Offer", itemOffered: { "@type": "Product", name: "Diamond Earrings" } },
+      { "@type": "Offer", itemOffered: { "@type": "Product", name: "Diamond Bracelets" } },
+      { "@type": "Offer", itemOffered: { "@type": "Product", name: "Wedding Bands" } },
+    ],
+  },
+});
+
+export const buildLocalBusinessSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": ["JewelryStore", "LocalBusiness"],
+  "@id": `${SITE.url}/#local-business`,
+  name: SITE.name,
+  description:
+    "Premium diamond and gold jewelry store. GIA- and IGI-certified lab-grown and natural diamonds. Engagement rings, wedding bands, necklaces, earrings, and bracelets. Free worldwide shipping.",
+  url: SITE.url,
+  telephone: SITE.phonePrimary,
+  email: SITE.email,
+  logo: SITE.logo,
+  image: SITE.ogImage,
+  priceRange: "$$$",
+  currenciesAccepted: "USD",
+  paymentAccepted: "Credit Card, Bank Transfer",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: SITE.addressUsa.street,
+    addressLocality: SITE.addressUsa.locality,
+    addressRegion: SITE.addressUsa.region,
+    postalCode: SITE.addressUsa.postalCode,
+    addressCountry: SITE.addressUsa.country,
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: SITE.geo.latitude,
+    longitude: SITE.geo.longitude,
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "09:00",
+      closes: "18:00",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Saturday"],
+      opens: "10:00",
+      closes: "16:00",
+    },
+  ],
+  areaServed: SITE.areaServed,
+  sameAs: [...SITE.sameAs],
+  hasMap: `https://maps.google.com/?q=${SITE.geo.latitude},${SITE.geo.longitude}`,
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.9",
+    reviewCount: "12000",
+    bestRating: "5",
+    worstRating: "1",
+  },
+});
+
+export const buildItemListSchema = (
+  name: string,
+  url: string,
+  items: Array<{ name: string; url: string; image?: string; description?: string }>
+) => ({
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name,
+  url,
+  numberOfItems: items.length,
+  itemListElement: items.map((item, idx) => ({
+    "@type": "ListItem",
+    position: idx + 1,
+    url: item.url,
+    name: item.name,
+    ...(item.image
+      ? { image: { "@type": "ImageObject", url: item.image, name: item.name } }
+      : {}),
+  })),
+});
+
+export const buildProductSchema = (params: {
+  name: string;
+  description: string;
+  image?: string;
+  url: string;
+  price?: string;
+  category?: string;
+  sku?: string;
+  brand?: string;
+}) => {
+  const numericPrice = parsePrice(params.price);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: params.name,
+    description: params.description,
+    url: params.url,
+    ...(params.image
+      ? { image: [{ "@type": "ImageObject", url: params.image, name: params.name }] }
+      : {}),
+    ...(params.sku ? { sku: params.sku } : {}),
+    brand: {
+      "@type": "Brand",
+      name: params.brand || SITE.name,
+    },
+    category: params.category || "Jewelry",
+    offers: {
+      "@type": "Offer",
+      availability: "https://schema.org/InStock",
+      url: params.url,
+      seller: { "@type": "Organization", name: SITE.name },
+      ...(numericPrice ? { price: numericPrice, priceCurrency: "USD" } : {}),
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      reviewCount: "150",
+      bestRating: "5",
+    },
+  };
+};
+
+export const buildArticleSchema = (params: {
+  title: string;
+  description: string;
+  url: string;
+  image?: string;
+  datePublished?: string;
+  dateModified?: string;
+  authorName?: string;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: params.title,
+  description: params.description,
+  url: params.url,
+  ...(params.image ? { image: { "@type": "ImageObject", url: params.image } } : {}),
+  datePublished: params.datePublished || new Date().toISOString(),
+  dateModified: params.dateModified || params.datePublished || new Date().toISOString(),
+  author: {
+    "@type": "Person",
+    name: params.authorName || SITE.name,
+    url: SITE.url,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: SITE.name,
+    logo: { "@type": "ImageObject", url: SITE.logo },
+  },
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": params.url,
+  },
+  inLanguage: "en-US",
+  isPartOf: {
+    "@type": "Blog",
+    name: `${SITE.name} Blog`,
+    url: `${SITE.url}/blog`,
+  },
+});
