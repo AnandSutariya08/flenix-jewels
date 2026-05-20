@@ -97,7 +97,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
 
   if (banners.length === 0) {
     return (
-      <div className="relative h-[88vh] md:h-[92vh] min-h-[600px] max-h-[1000px] overflow-hidden w-full bg-[#0c0703]">
+      <div className="relative h-[85svh] md:h-[90svh] min-h-[580px] max-h-[1000px] overflow-hidden w-full bg-[#0c0703]">
         <img src={heroFallback} alt="Hero background" className="absolute inset-0 w-full h-full object-cover opacity-60" loading="eager" decoding="async" />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, rgba(6,3,1,0.72) 0%, rgba(6,3,1,0.45) 45%, rgba(6,3,1,0.80) 100%)' }} />
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 70% at 20% 50%, rgba(196,144,106,0.18) 0%, transparent 60%)' }} />
@@ -112,7 +112,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const visibleIndexes = new Set([currentIndex, nextIndex, prevIndex]);
 
   return (
-    <div className="relative h-[88vh] md:h-[92vh] min-h-[600px] max-h-[1000px] overflow-hidden w-full bg-[#0c0703]">
+    <div className="relative h-[85svh] md:h-[90svh] min-h-[580px] max-h-[1000px] overflow-hidden w-full bg-[#0c0703]">
       {/* Fallback image while loading */}
       <div className={`absolute inset-0 transition-opacity duration-1000 ease-out ${hasAnyLoaded ? 'opacity-0' : 'opacity-100'}`}>
         <img

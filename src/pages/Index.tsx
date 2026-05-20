@@ -624,7 +624,7 @@ export default function Index() {
             9. BLOG — Editorial magazine layout
         ═══════════════════════════════════════════════════════ */}
         <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
-            <div className="flex items-end justify-between mb-14">
+            <div className="flex flex-wrap items-end justify-between gap-4 mb-10 md:mb-14">
               <div>
                 <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ The Journal</p>
                 <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Latest Stories</h2>
