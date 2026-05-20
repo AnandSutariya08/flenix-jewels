@@ -1,6 +1,7 @@
 import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/storage';
+import { cleanWhatsApp } from '@/lib/utils';
 
 interface WhatsAppButtonProps {
   product: Product;
@@ -9,24 +10,17 @@ interface WhatsAppButtonProps {
 
 const WhatsAppButton = ({ product, className }: WhatsAppButtonProps) => {
   const handleWhatsAppClick = () => {
-    // Strip HTML tags and decode common HTML entities for cleaner text
     let cleanDescription = product.description
-      .replace(/<\/?[^>]+(>|$)/g, '') // Remove HTML tags
-      .replace(/&nbsp;/g, ' ')       // Replace &nbsp; with space
-      .replace(/&amp;/g, '&')        // Replace &amp; with &
+      .replace(/<\/?[^>]+(>|$)/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
       .trim();
 
-    // Optional: Replace multiple spaces or bullet-like characters with proper WhatsApp bullets
     cleanDescription = cleanDescription.replace(/●/g, '•');
 
-    const message = `Hi! I'm interested in:\n\n*${
-      product.name
-    }*\n\n${cleanDescription}`;
-
-    const whatsappNumber = '+85251254000 '; // Fixed number
-
-    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-
+    const message = `Hi! I'm interested in:\n\n*${product.name}*\n\n${cleanDescription}`;
+    const number = cleanWhatsApp('85251254000');
+    const url = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
 

@@ -173,11 +173,11 @@ export const initializeDefaultData = async () => {
     if (!contactDoc.exists()) {
       const defaultContact: ContactInfo = {
         address: '123 Diamond Street, Mumbai, India',
-        phone: '+852 51254000 ',
+        phone: '+85251254000',
         email: 'info@flenixjewels.com',
         instagram: 'https://instagram.com/flenixjewels',
         facebook: 'https://facebook.com/flenixjewels',
-        whatsapp: '+852 51254000 ',
+        whatsapp: '85251254000',
       };
       await setDoc(doc(db, COLLECTIONS.CONTACT, 'main'), defaultContact);
     }
@@ -473,7 +473,7 @@ export const getContact = async (): Promise<ContactInfo> => {
     address: '',
     phone: '',
     email: '',
-    whatsapp: '+852 51254000 ',
+    whatsapp: '85251254000',
   };
 };
 

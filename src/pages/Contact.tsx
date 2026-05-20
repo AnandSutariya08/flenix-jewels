@@ -52,7 +52,8 @@ const Contact = () => {
     setIsSubmitting(true);
     try {
       const whatsappMessage = `*New Contact Form*\n\n*Name:* ${name.trim()}\n*Email:* ${email.trim()}\n*Subject:* ${subject.trim()}\n*Message:*\n${message.trim()}`;
-      window.open(`https://wa.me/${contactInfo?.whatsapp || '85251254000 '}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+      const waNum = (contactInfo?.whatsapp || '85251254000').replace(/\D/g, '');
+      window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
       setName(''); setEmail(''); setSubject(''); setMessage('');
       toast.success('Message sent via WhatsApp!');
     } finally {

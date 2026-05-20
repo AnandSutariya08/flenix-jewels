@@ -136,7 +136,7 @@ const Gallery = () => {
 
   const paddingTop = HEADER_OFFSET_PX;
 
-  const whatsappNumber = useMemo(() => contactInfo?.whatsapp || "85251254000 ", [contactInfo?.whatsapp]);
+  const whatsappNumber = useMemo(() => (contactInfo?.whatsapp || "85251254000").replace(/\D/g, ''), [contactInfo?.whatsapp]);
 
   useEffect(() => {
     // Gallery data loads in the deferred bundle. Ensure we fetch at least once on page load.

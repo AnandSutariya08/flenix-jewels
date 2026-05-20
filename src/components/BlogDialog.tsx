@@ -12,7 +12,7 @@ interface BlogDialogProps {
   whatsappNumber?: string;
 }
 
-const BlogDialog = ({ blog, isOpen, onClose, whatsappNumber = '+852 51254000 ' }: BlogDialogProps) => {
+const BlogDialog = ({ blog, isOpen, onClose, whatsappNumber = '85251254000' }: BlogDialogProps) => {
   const [copied, setCopied] = useState(false);
   
   if (!blog) return null;
@@ -21,7 +21,8 @@ const BlogDialog = ({ blog, isOpen, onClose, whatsappNumber = '+852 51254000 ' }
 
   const handleWhatsAppShare = () => {
     const message = encodeURIComponent(`Hi! I read your blog: "${blog.title}" and I'd like to learn more.`);
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    const clean = (whatsappNumber || '').replace(/\D/g, '');
+    window.open(`https://wa.me/${clean}?text=${message}`, '_blank');
   };
 
   const handleCopyUrl = async () => {
