@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { isImageCached, keepImageAlive } from '@/lib/preload';
-import { Product } from '@/lib/storage';
+import { CatalogItem } from '@/lib/storage';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import WhatsAppButton from './WhatsAppButton';
 import { X, ChevronLeft, ChevronRight, Truck, Shield, Star, Pause, Volume2, VolumeX, Play, Sparkles } from 'lucide-react';
 
 interface ProductDialogProps {
-  product: Product | null;
+  product: CatalogItem | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

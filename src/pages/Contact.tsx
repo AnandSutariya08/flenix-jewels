@@ -7,12 +7,14 @@ import PageHero from "@/components/PageHero";
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { cleanWhatsApp } from "@/lib/utils";
 import { MapPin, Phone, Mail, Clock, Send, Flag, Loader2, Gem, MessageCircle, ChevronRight } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { toast } from 'sonner';
 import hero5 from "@/assets/hero5.png";
 
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
+const CONTACT_WHATSAPP_NUMBER = '+852 51254000';
 
 function useReveal(threshold = 0.1) {
   const ref = useRef<HTMLElement>(null);
@@ -52,7 +54,7 @@ const Contact = () => {
     setIsSubmitting(true);
     try {
       const whatsappMessage = `*New Contact Form*\n\n*Name:* ${name.trim()}\n*Email:* ${email.trim()}\n*Subject:* ${subject.trim()}\n*Message:*\n${message.trim()}`;
-      const waNum = (contactInfo?.whatsapp || '85251254000').replace(/\D/g, '');
+      const waNum = cleanWhatsApp(CONTACT_WHATSAPP_NUMBER);
       window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
       setName(''); setEmail(''); setSubject(''); setMessage('');
       toast.success('Message sent via WhatsApp!');
@@ -209,33 +211,35 @@ const Contact = () => {
               {/* WhatsApp CTA card */}
               <div
                 className="relative overflow-hidden rounded-3xl p-7"
-                style={{ background: '#0e0803', border: '1px solid rgba(196,144,106,0.25)', boxShadow: '0 8px 40px -10px rgba(0,0,0,0.28)' }}
+                style={{ background: 'linear-gradient(160deg, #0d2d23 0%, #114b3b 55%, #16614b 100%)', border: '1px solid rgba(37,211,102,0.24)', boxShadow: '0 12px 42px -10px rgba(18,140,126,0.34)' }}
               >
-                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(196,144,106,0.09), transparent 70%)' }} />
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(37,211,102,0.16), transparent 70%)' }} />
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-4">
                     <FaWhatsapp className="h-5 w-5" style={{ color: '#25D366' }} />
-                    <span className="text-[10px] tracking-[0.28em] uppercase font-black" style={{ color: '#C4906A' }}>Fastest Response</span>
+                    <span className="text-[10px] tracking-[0.28em] uppercase font-black" style={{ color: '#9BF0C0' }}>Fastest Response</span>
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">Chat on WhatsApp</h3>
-                  <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.45)' }}>Get a reply within minutes for product queries, pricing, or custom designs.</p>
-                  {contactInfo?.whatsapp && (
-                    <a
-                      href={`https://wa.me/${contactInfo.whatsapp}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2.5 w-full font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl transition-all duration-300 hover:scale-[1.03] active:scale-95"
-                      style={{ background: 'linear-gradient(135deg, #128C7E, #25D366)', color: '#fff', boxShadow: '0 8px 24px -6px rgba(37,211,102,0.4)' }}
-                    >
-                      <FaWhatsapp className="h-4 w-4" />
-                      Start Chat
-                    </a>
-                  )}
+                  <p className="text-sm mb-5" style={{ color: 'rgba(236,255,244,0.72)' }}>Get a reply within minutes for product queries, pricing, or custom designs.</p>
+                  <a
+                    href={`https://wa.me/${cleanWhatsApp(CONTACT_WHATSAPP_NUMBER)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2.5 w-full font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl transition-all duration-300 hover:scale-[1.03] active:scale-95"
+                    style={{ background: 'linear-gradient(135deg, #1ea672, #25D366)', color: '#fff', boxShadow: '0 10px 26px -8px rgba(37,211,102,0.52)' }}
+                  >
+                    <FaWhatsapp className="h-4 w-4" />
+                    Start Chat
+                  </a>
                 </div>
               </div>
 
               {/* Contact info cards */}
               {[
+                {
+                  icon: FaWhatsapp, label: 'WhatsApp', value: CONTACT_WHATSAPP_NUMBER, href: `https://wa.me/${cleanWhatsApp(CONTACT_WHATSAPP_NUMBER)}`,
+                  iconColor: '#25D366', iconBackground: 'rgba(37,211,102,0.12)', iconBorder: '1px solid rgba(37,211,102,0.22)',
+                },
                 contactInfo?.phone && {
                   icon: Phone, label: 'Phone', value: contactInfo.phone, href: `tel:${contactInfo.phone}`,
                 },
@@ -252,13 +256,21 @@ const Contact = () => {
                   className="flex gap-4 items-start p-5 rounded-2xl bg-white dark:bg-[#150a04]"
                   style={{ border: '1px solid rgba(196,144,106,0.16)', boxShadow: '0 2px 16px -4px rgba(0,0,0,0.07)' }}
                 >
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(196,144,106,0.12)', border: '1px solid rgba(196,144,106,0.2)' }}>
-                    <item.icon className="h-4.5 w-4.5 h-[18px] w-[18px]" style={{ color: '#C4906A' }} />
+                  <div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ background: item.iconBackground || 'rgba(196,144,106,0.12)', border: item.iconBorder || '1px solid rgba(196,144,106,0.2)' }}
+                  >
+                    <item.icon className="h-4.5 w-4.5 h-[18px] w-[18px]" style={{ color: item.iconColor || '#C4906A' }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] tracking-[0.2em] uppercase font-black mb-1 text-[#9B8070] dark:text-[#6A5040]">{item.label}</p>
                     {item.href ? (
-                      <a href={item.href} className="text-sm font-bold text-[#1C0D05] dark:text-[#F5E8D8] hover:text-[#C4906A] dark:hover:text-[#C4906A] transition-colors truncate block">
+                      <a
+                        href={item.href}
+                        target={item.label === 'WhatsApp' ? '_blank' : undefined}
+                        rel={item.label === 'WhatsApp' ? 'noopener noreferrer' : undefined}
+                        className="text-sm font-bold text-[#1C0D05] dark:text-[#F5E8D8] hover:text-[#C4906A] dark:hover:text-[#C4906A] transition-colors truncate block"
+                      >
                         {item.value}
                       </a>
                     ) : (

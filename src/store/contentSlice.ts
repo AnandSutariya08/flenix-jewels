@@ -1,7 +1,10 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
+  getAds,
   getBanners,
   getCategories,
+  getDiamondCategories,
+  getDiamonds,
   getProducts,
   getGallery,
   getFeaturedCollection,
@@ -13,8 +16,11 @@ import {
   getOffices,
   getPriceSettings,
   initializeDefaultData,
+  type AdCampaign,
   type Banner,
   type Category,
+  type DiamondCategory,
+  type Diamond,
   type Product,
   type GalleryItem,
   type FeaturedCollection,
@@ -30,8 +36,11 @@ import { getBuyingGuides, type BuyingGuide } from "@/lib/buyingGuides";
 import type { RootState } from "./store";
 
 export interface GlobalData {
+  ads: AdCampaign[];
   banners: Banner[];
   categories: Category[];
+  diamondCategories: DiamondCategory[];
+  diamonds: Diamond[];
   products: Product[];
   galleryItems: GalleryItem[];
   featuredCollection: FeaturedCollection[];
@@ -69,13 +78,16 @@ const computeDeferredLoaded = (data: GlobalData) =>
   data.buyingGuides.length > 0;
 
 // Bump cache version to avoid stale data (especially after Firebase project changes).
-const SESSION_KEY = "flenix_global_data_v5";
-const LOCAL_KEY = "flenix_global_data_v5_persisted";
+const SESSION_KEY = "flenix_global_data_v7";
+const LOCAL_KEY = "flenix_global_data_v7_persisted";
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const emptyData: GlobalData = {
+  ads: [],
   banners: [],
   categories: [],
+  diamondCategories: [],
+  diamonds: [],
   products: [],
   galleryItems: [],
   featuredCollection: [],
@@ -161,6 +173,7 @@ const normalizeCachePayload = (raw: unknown): CacheSnapshot | null => {
   return {
     data: {
       ...snapshot.data,
+      ads: Array.isArray(snapshot.data.ads) ? snapshot.data.ads : [],
       blogs: Array.isArray(snapshot.data.blogs) ? snapshot.data.blogs : [],
     },
     savedAt: snapshot.savedAt || Date.now(),
@@ -235,6 +248,9 @@ export const loadGlobalData = createAsyncThunk<
         return {
           ...emptyData,
           ...session.data,
+          ads: session.data.ads ?? [],
+          diamondCategories: session.data.diamondCategories ?? [],
+          diamonds: session.data.diamonds ?? [],
           featuredCollection: [],
           galleryItems: [],
           instagramPosts: [],
@@ -252,22 +268,31 @@ export const loadGlobalData = createAsyncThunk<
     await initializeDefaultData();
 
     const [
+      ads,
       banners,
       categories,
+      diamondCategories,
+      diamonds,
       promoHeader,
       priceSettings,
       contactInfo,
     ] = await Promise.all([
+      getAds(),
       getBanners(),
       getCategories(),
+      getDiamondCategories(),
+      getDiamonds(),
       getPromoHeader(),
       getPriceSettings(),
       getContact(),
     ]);
 
     return {
+      ads,
       banners,
       categories,
+      diamondCategories,
+      diamonds,
       products: [],
       galleryItems: [],
       featuredCollection: [],
@@ -481,6 +506,9 @@ const contentSlice = createSlice({
         state.data = {
           ...state.data,
           ...action.payload,
+          ads: action.payload.ads,
+          diamondCategories: action.payload.diamondCategories,
+          diamonds: action.payload.diamonds,
           products: state.productsLoaded ? state.data.products : action.payload.products,
           blogs: state.blogsLoaded ? state.data.blogs : action.payload.blogs,
           galleryItems: state.data.galleryItems.length > 0 ? state.data.galleryItems : action.payload.galleryItems,

@@ -15,6 +15,8 @@ const AdminContact = () => {
     email: '',
     facebook: '',
     instagram: '',
+    youtube: '',
+    linkedin: '',
     twitter: '',
     pinterest: '',
     whatsapp: '+852 51254000 ',
@@ -117,6 +119,24 @@ const AdminContact = () => {
               value={contact.pinterest}
               onChange={(e) => setContact({ ...contact, pinterest: e.target.value })}
               placeholder="https://pinterest.com/..."
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="contact-youtube">YouTube URL</Label>
+            <Input
+              id="contact-youtube"
+              value={contact.youtube}
+              onChange={(e) => setContact({ ...contact, youtube: e.target.value })}
+              placeholder="https://youtube.com/..."
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="contact-linkedin">LinkedIn URL</Label>
+            <Input
+              id="contact-linkedin"
+              value={contact.linkedin}
+              onChange={(e) => setContact({ ...contact, linkedin: e.target.value })}
+              placeholder="https://linkedin.com/..."
             />
           </div>
         </div>

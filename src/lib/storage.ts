@@ -8,7 +8,8 @@ import {
   deleteDoc, 
   onSnapshot,
   query,
-  where
+  where,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -19,6 +20,16 @@ export interface Banner {
   description: string;
   mediaType?: 'image' | 'video' | 'gif';
   priority?: number;
+}
+
+export interface AdCampaign {
+  id: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  active: boolean;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 export interface VisitorLog {
@@ -47,6 +58,19 @@ export interface Category {
   seoFaq?: { question: string; answer: string }[];
 }
 
+export type DiamondType = 'real' | 'cvd';
+
+export interface DiamondCategory {
+  id: string;
+  name: string;
+  image: string;
+  description: string;
+  priority?: number;
+  metaTitle?: string;
+  metaDescription?: string;
+  seoFaq?: { question: string; answer: string }[];
+}
+
 export interface Product {
   id: string;
   categoryId: string;
@@ -55,6 +79,23 @@ export interface Product {
   images?: string[]; // Multiple product images
   description: string;
   price: string;
+  priority?: number;
+  createdAt?: number | string | { seconds: number; nanoseconds?: number };
+  metaTitle?: string;
+  metaDescription?: string;
+  seoFaq?: { question: string; answer: string }[];
+}
+
+export interface Diamond {
+  id: string;
+  diamondCategoryId: string;
+  diamondType: DiamondType;
+  name: string;
+  image: string;
+  images?: string[];
+  description: string;
+  price: string;
+  priority?: number;
   createdAt?: number | string | { seconds: number; nanoseconds?: number };
   metaTitle?: string;
   metaDescription?: string;
@@ -65,6 +106,7 @@ export interface GalleryItem {
   id: string;
   image: string;
   description: string;
+  category?: string;
 }
 
 export interface FeaturedCollection {
@@ -72,6 +114,7 @@ export interface FeaturedCollection {
   image: string;
   title: string;
   description: string;
+  priority?: number;
 }
 
 export interface BlogPost {
@@ -81,6 +124,9 @@ export interface BlogPost {
   image: string;
   thumbnail?: string;
   date: string;
+  author?: string;
+  category?: string;
+  tags?: string[];
   metaTitle?: string;
   metaDescription?: string;
   seoFaq?: { question: string; answer: string }[];
@@ -89,10 +135,13 @@ export interface BlogPost {
 export interface InstagramPost {
   id: string;
   url: string;
+  image?: string;
   caption?: string;
   location?: string;
   song?: string;
 }
+
+export type CatalogItem = Product | Diamond;
 
 export interface ContactInfo {
   address: string;
@@ -100,6 +149,8 @@ export interface ContactInfo {
   email: string;
   facebook?: string;
   instagram?: string;
+  youtube?: string;
+  linkedin?: string;
   twitter?: string;
   pinterest?: string;
   whatsapp: string;
@@ -136,7 +187,9 @@ export interface Office {
 const COLLECTIONS = {
   BANNERS: 'banners',
   CATEGORIES: 'categories',
+  DIAMOND_CATEGORIES: 'diamond-categories',
   PRODUCTS: 'products',
+  DIAMONDS: 'diamonds',
   GALLERY: 'gallery',
   FEATURED: 'featured-collection',
   CONTACT: 'contact',
@@ -147,6 +200,7 @@ const COLLECTIONS = {
   PROMO_HEADER: 'promo-header',
   TESTIMONIALS: 'testimonials',
   SETTINGS: 'settings',
+  ADS: 'ads',
 };
 
 const sanitizeForFirestore = <T>(value: T): T => {
@@ -177,6 +231,10 @@ export const initializeDefaultData = async () => {
         email: 'info@flenixjewels.com',
         instagram: 'https://instagram.com/flenixjewels',
         facebook: 'https://facebook.com/flenixjewels',
+        youtube: '',
+        linkedin: '',
+        twitter: '',
+        pinterest: '',
         whatsapp: '85251254000',
       };
       await setDoc(doc(db, COLLECTIONS.CONTACT, 'main'), defaultContact);
@@ -223,9 +281,27 @@ export const subscribeBanners = (onChange: (banners: Banner[]) => void) =>
     onChange(banners.sort((a, b) => (a.priority || 99) - (b.priority || 99)));
   });
 
+const sortAds = (ads: AdCampaign[]) =>
+  [...ads].sort((a, b) => {
+    if (a.active !== b.active) return Number(b.active) - Number(a.active);
+    return (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0);
+  });
+
+export const subscribeAds = (onChange: (ads: AdCampaign[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.ADS), (snapshot) => {
+    const ads = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as AdCampaign));
+    onChange(sortAds(ads));
+  });
+
 export const subscribeCategories = (onChange: (categories: Category[]) => void) =>
   onSnapshot(collection(db, COLLECTIONS.CATEGORIES), (snapshot) => {
     const categories = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Category));
+    onChange(categories.sort((a, b) => (a.priority || 99) - (b.priority || 99)));
+  });
+
+export const subscribeDiamondCategories = (onChange: (categories: DiamondCategory[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.DIAMOND_CATEGORIES), (snapshot) => {
+    const categories = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as DiamondCategory));
     onChange(categories.sort((a, b) => (a.priority || 99) - (b.priority || 99)));
   });
 
@@ -233,6 +309,12 @@ export const subscribeProducts = (onChange: (products: Product[]) => void) =>
   onSnapshot(collection(db, COLLECTIONS.PRODUCTS), (snapshot) => {
     const products = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Product));
     onChange(products.sort((a, b) => (a.priority || 99) - (b.priority || 99)));
+  });
+
+export const subscribeDiamonds = (onChange: (diamonds: Diamond[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.DIAMONDS), (snapshot) => {
+    const diamonds = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Diamond));
+    onChange(diamonds.sort((a, b) => (a.priority || 99) - (b.priority || 99)));
   });
 
 export const subscribeBlogs = (onChange: (blogs: BlogPost[]) => void) =>
@@ -320,6 +402,66 @@ export const deleteBanner = async (id: string) => {
   }
 };
 
+// Ads methods
+export const getAds = async (): Promise<AdCampaign[]> => {
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTIONS.ADS));
+    const ads = snapshot.docs.map((adDoc) => ({ id: adDoc.id, ...adDoc.data() } as AdCampaign));
+    return sortAds(ads);
+  } catch (error) {
+    console.error('Error getting ads:', error);
+    return [];
+  }
+};
+
+export const saveAdCampaign = async (ad: AdCampaign) => {
+  try {
+    const adRef = doc(db, COLLECTIONS.ADS, ad.id);
+    const payload = sanitizeForFirestore({
+      ...ad,
+      id: ad.id,
+      title: ad.title?.trim() || '',
+      description: ad.description?.trim() || '',
+      image: ad.image || '',
+      updatedAt: ad.updatedAt || Date.now(),
+    });
+
+    if (!ad.active) {
+      await setDoc(adRef, payload);
+      return;
+    }
+
+    const activeSnapshot = await getDocs(
+      query(collection(db, COLLECTIONS.ADS), where('active', '==', true))
+    );
+    const batch = writeBatch(db);
+
+    activeSnapshot.forEach((activeDoc) => {
+      if (activeDoc.id !== ad.id) {
+        batch.update(doc(db, COLLECTIONS.ADS, activeDoc.id), {
+          active: false,
+          updatedAt: Date.now(),
+        });
+      }
+    });
+
+    batch.set(adRef, payload);
+    await batch.commit();
+  } catch (error) {
+    console.error('Error saving ad campaign:', error);
+    throw error;
+  }
+};
+
+export const deleteAdCampaign = async (id: string) => {
+  try {
+    await deleteDoc(doc(db, COLLECTIONS.ADS, id));
+  } catch (error) {
+    console.error('Error deleting ad campaign:', error);
+    throw error;
+  }
+};
+
 // Category methods
 export const getCategories = async (): Promise<Category[]> => {
   try {
@@ -333,11 +475,30 @@ export const getCategories = async (): Promise<Category[]> => {
   }
 };
 
+export const getDiamondCategories = async (): Promise<DiamondCategory[]> => {
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTIONS.DIAMOND_CATEGORIES));
+    const categories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as DiamondCategory));
+    return categories.sort((a, b) => (a.priority || 99) - (b.priority || 99));
+  } catch (error) {
+    console.error('Error getting diamond categories:', error);
+    return [];
+  }
+};
+
 export const saveCategory = async (category: Category) => {
   try {
     await setDoc(doc(db, COLLECTIONS.CATEGORIES, category.id), { ...category, id: category.id });
   } catch (error) {
     console.error('Error saving category:', error);
+  }
+};
+
+export const saveDiamondCategory = async (category: DiamondCategory) => {
+  try {
+    await setDoc(doc(db, COLLECTIONS.DIAMOND_CATEGORIES, category.id), { ...category, id: category.id });
+  } catch (error) {
+    console.error('Error saving diamond category:', error);
   }
 };
 
@@ -361,6 +522,14 @@ export const deleteCategory = async (id: string) => {
   }
 };
 
+export const deleteDiamondCategory = async (id: string) => {
+  try {
+    await deleteDoc(doc(db, COLLECTIONS.DIAMOND_CATEGORIES, id));
+  } catch (error) {
+    console.error('Error deleting diamond category:', error);
+  }
+};
+
 // Product methods
 export const getProducts = async (): Promise<Product[]> => {
   try {
@@ -368,6 +537,17 @@ export const getProducts = async (): Promise<Product[]> => {
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
   } catch (error) {
     console.error('Error getting products:', error);
+    return [];
+  }
+};
+
+export const getDiamonds = async (): Promise<Diamond[]> => {
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTIONS.DIAMONDS));
+    const diamonds = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Diamond));
+    return diamonds.sort((a, b) => (a.priority || 99) - (b.priority || 99));
+  } catch (error) {
+    console.error('Error getting diamonds:', error);
     return [];
   }
 };
@@ -386,6 +566,21 @@ export const getProductsByCategory = async (categoryId: string): Promise<Product
   }
 };
 
+export const getDiamondsByCategory = async (diamondCategoryId: string): Promise<Diamond[]> => {
+  try {
+    const q = query(
+      collection(db, COLLECTIONS.DIAMONDS),
+      where('diamondCategoryId', '==', diamondCategoryId)
+    );
+    const snapshot = await getDocs(q);
+    const diamonds = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Diamond));
+    return diamonds.sort((a, b) => (a.priority || 99) - (b.priority || 99));
+  } catch (error) {
+    console.error('Error getting diamonds by category:', error);
+    return [];
+  }
+};
+
 export const saveProduct = async (product: Product) => {
   try {
     await setDoc(
@@ -397,11 +592,30 @@ export const saveProduct = async (product: Product) => {
   }
 };
 
+export const saveDiamond = async (diamond: Diamond) => {
+  try {
+    await setDoc(
+      doc(db, COLLECTIONS.DIAMONDS, diamond.id),
+      sanitizeForFirestore({ ...diamond, id: diamond.id })
+    );
+  } catch (error) {
+    console.error('Error saving diamond:', error);
+  }
+};
+
 export const deleteProduct = async (id: string) => {
   try {
     await deleteDoc(doc(db, COLLECTIONS.PRODUCTS, id));
   } catch (error) {
     console.error('Error deleting product:', error);
+  }
+};
+
+export const deleteDiamond = async (id: string) => {
+  try {
+    await deleteDoc(doc(db, COLLECTIONS.DIAMONDS, id));
+  } catch (error) {
+    console.error('Error deleting diamond:', error);
   }
 };
 
@@ -473,6 +687,12 @@ export const getContact = async (): Promise<ContactInfo> => {
     address: '',
     phone: '',
     email: '',
+    facebook: '',
+    instagram: '',
+    youtube: '',
+    linkedin: '',
+    twitter: '',
+    pinterest: '',
     whatsapp: '85251254000',
   };
 };
@@ -625,9 +845,12 @@ import { storage } from './firebase';
 
 const getImageResizeConfig = (path: string) => {
   const lower = path.toLowerCase();
+  if (lower.includes('ads')) return { max: 1600, quality: 0.82 };
   if (lower.includes('banners')) return { max: 1600, quality: 0.8 };
   if (lower.includes('products')) return { max: 1400, quality: 0.8 };
+  if (lower.includes('diamonds')) return { max: 1400, quality: 0.8 };
   if (lower.includes('categories')) return { max: 1400, quality: 0.82 };
+  if (lower.includes('diamond-categories')) return { max: 1400, quality: 0.82 };
   if (lower.includes('gallery')) return { max: 1400, quality: 0.82 };
   if (lower.includes('blogs')) return { max: 1600, quality: 0.82 };
   if (lower.includes('featured')) return { max: 1600, quality: 0.82 };

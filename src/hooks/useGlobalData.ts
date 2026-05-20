@@ -9,6 +9,8 @@ import {
 import type {
   Banner,
   Category,
+  DiamondCategory,
+  Diamond,
   Product,
   GalleryItem,
   FeaturedCollection,
@@ -25,6 +27,8 @@ import type { BuyingGuide } from "@/lib/buyingGuides";
 interface GlobalData {
   banners: Banner[];
   categories: Category[];
+  diamondCategories: DiamondCategory[];
+  diamonds: Diamond[];
   products: Product[];
   galleryItems: GalleryItem[];
   featuredCollection: FeaturedCollection[];

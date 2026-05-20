@@ -145,53 +145,53 @@ const STATIC_BUYING_GUIDES: StaticBuyingGuide[] = [
       },
     ],
   },
-  {
-    id: "static-lab-vs-natural",
-    slug: "lab-grown-vs-natural-diamonds",
-    title: "Lab‑Grown vs Natural Diamonds",
-    metaTitle: "Lab‑Grown vs Natural Diamonds - Buying Guide",
-    metaDescription:
-      "Understand the real differences: origin, pricing, resale expectations, certification, and how to choose confidently.",
-    image: guideLabGrown,
-    published: true,
-    order: 2,
-    sections: [
-      {
-        id: "differences",
-        title: "What’s the difference?",
-        intro:
-          "Chemically and optically, lab-grown and natural diamonds are the same material. The key differences are origin and market pricing.",
-        bullets: [
-          "Natural: formed in the earth over time.",
-          "Lab-grown: created in controlled conditions (HPHT/CVD).",
-          "Both should be certified (GIA/IGI) and graded similarly.",
-        ],
-      },
-      {
-        id: "pricing",
-        title: "Pricing & value",
-        bullets: [
-          "Lab-grown typically costs less for the same specs.",
-          "Natural pricing is influenced by rarity and supply.",
-          "Resale expectations differ—buy for enjoyment first.",
-        ],
-        callout: {
-          title: "Best way to decide",
-          body: "Set a budget, then compare: do you want maximum size/specs (lab) or natural origin (natural)?",
-        },
-      },
-      {
-        id: "what-to-check",
-        title: "What to check before purchase",
-        bullets: [
-          "Certification number + report details.",
-          "Growth method disclosure (HPHT/CVD for lab-grown).",
-          "Any treatments / post-growth processing noted on report.",
-          "Video + light performance (cut quality still matters most).",
-        ],
-      },
-    ],
-  },
+  // {
+  //   id: "static-lab-vs-natural",
+  //   slug: "lab-grown-vs-natural-diamonds",
+  //   title: "Lab‑Grown vs Natural Diamonds",
+  //   metaTitle: "Lab‑Grown vs Natural Diamonds - Buying Guide",
+  //   metaDescription:
+  //     "Understand the real differences: origin, pricing, resale expectations, certification, and how to choose confidently.",
+  //   image: guideLabGrown,
+  //   published: true,
+  //   order: 2,
+  //   sections: [
+  //     {
+  //       id: "differences",
+  //       title: "What’s the difference?",
+  //       intro:
+  //         "Chemically and optically, lab-grown and natural diamonds are the same material. The key differences are origin and market pricing.",
+  //       bullets: [
+  //         "Natural: formed in the earth over time.",
+  //         "Lab-grown: created in controlled conditions (HPHT/CVD).",
+  //         "Both should be certified (GIA/IGI) and graded similarly.",
+  //       ],
+  //     },
+  //     {
+  //       id: "pricing",
+  //       title: "Pricing & value",
+  //       bullets: [
+  //         "Lab-grown typically costs less for the same specs.",
+  //         "Natural pricing is influenced by rarity and supply.",
+  //         "Resale expectations differ—buy for enjoyment first.",
+  //       ],
+  //       callout: {
+  //         title: "Best way to decide",
+  //         body: "Set a budget, then compare: do you want maximum size/specs (lab) or natural origin (natural)?",
+  //       },
+  //     },
+  //     {
+  //       id: "what-to-check",
+  //       title: "What to check before purchase",
+  //       bullets: [
+  //         "Certification number + report details.",
+  //         "Growth method disclosure (HPHT/CVD for lab-grown).",
+  //         "Any treatments / post-growth processing noted on report.",
+  //         "Video + light performance (cut quality still matters most).",
+  //       ],
+  //     },
+  //   ],
+  // },
   {
     id: "static-ring-sizing",
     slug: "ring-sizing-fit-guide",
@@ -244,7 +244,7 @@ const BuyingGuidePage = () => {
   const [selected, setSelected] = useState<BuyingGuide | null>(null);
   const [query, setQuery] = useState("");
   const { slug } = useParams<{ slug?: string }>();
-const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
+  const GOLD = "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
 
   const promoHeight = 0;
   const paddingTop = HEADER_OFFSET_PX;
@@ -476,9 +476,9 @@ const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
             <>
               Jewelry{" "}
               <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-               Buying 
+                Buying
               </span>
-               {" "}Guide
+              {" "}Guide
             </>
           }
           subtitle="Clear, structured guides to help you choose diamonds, gemstones, and fine jewelry with confidence."
@@ -806,47 +806,47 @@ const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
                     </div>
                   ) : null
                 ) : (
-                toc.length > 0 && (
-                  <div className="sticky top-24 rounded-2xl border bg-card p-5">
-                    <h3 className="text-sm font-bold tracking-[0.18em] uppercase text-muted-foreground mb-3">
-                      On this page
-                    </h3>
-                    <nav aria-label="Table of contents">
-                      <ul className="space-y-1">
-                        {toc.map((item) => (
-                          <li
-                            key={item.id}
-                            className={[
-                              "flex items-start gap-2",
-                              item.level === 3 ? "pl-3" : "",
-                            ].join(" ")}
-                          >
-                            {item.level === 3 ? (
-                              <span
-                                className="mt-2 h-1.5 w-1.5 rounded-full border border-muted-foreground/60 flex-shrink-0"
-                                aria-hidden="true"
-                              />
-                            ) : (
-                              <span
-                                className="mt-2 h-1.5 w-1.5 rounded-full bg-muted-foreground/60 flex-shrink-0"
-                                aria-hidden="true"
-                              />
-                            )}
-                            <a
-                              href={`#${item.id}`}
+                  toc.length > 0 && (
+                    <div className="sticky top-24 rounded-2xl border bg-card p-5">
+                      <h3 className="text-sm font-bold tracking-[0.18em] uppercase text-muted-foreground mb-3">
+                        On this page
+                      </h3>
+                      <nav aria-label="Table of contents">
+                        <ul className="space-y-1">
+                          {toc.map((item) => (
+                            <li
+                              key={item.id}
                               className={[
-                                "block text-sm text-foreground/80 hover:text-foreground transition-colors leading-snug",
-                                item.level === 3 ? "text-[13px]" : "",
+                                "flex items-start gap-2",
+                                item.level === 3 ? "pl-3" : "",
                               ].join(" ")}
                             >
-                              {item.text}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </nav>
-                  </div>
-                ))}
+                              {item.level === 3 ? (
+                                <span
+                                  className="mt-2 h-1.5 w-1.5 rounded-full border border-muted-foreground/60 flex-shrink-0"
+                                  aria-hidden="true"
+                                />
+                              ) : (
+                                <span
+                                  className="mt-2 h-1.5 w-1.5 rounded-full bg-muted-foreground/60 flex-shrink-0"
+                                  aria-hidden="true"
+                                />
+                              )}
+                              <a
+                                href={`#${item.id}`}
+                                className={[
+                                  "block text-sm text-foreground/80 hover:text-foreground transition-colors leading-snug",
+                                  item.level === 3 ? "text-[13px]" : "",
+                                ].join(" ")}
+                              >
+                                {item.text}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </nav>
+                    </div>
+                  ))}
               </aside>
             </div>
           </section>

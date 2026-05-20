@@ -1,10 +1,10 @@
 import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Product } from '@/lib/storage';
+import { CatalogItem } from '@/lib/storage';
 import { cleanWhatsApp } from '@/lib/utils';
 
 interface WhatsAppButtonProps {
-  product: Product;
+  product: CatalogItem;
   className?: string;
 }
 

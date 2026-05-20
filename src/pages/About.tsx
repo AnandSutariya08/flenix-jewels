@@ -15,6 +15,7 @@ import logo4 from '@/assets/about_4.png';
 import { FaWhatsapp } from 'react-icons/fa';
 import PageHero from "@/components/PageHero";
 import hero1 from "@/assets/hero1.png";
+import { SITE, YEARS_OF_EXCELLENCE, YEARS_OF_EXCELLENCE_LABEL } from '@/lib/seo';
 
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 
@@ -52,10 +53,10 @@ const RevealSection = ({ children, className = '', delay = 0 }: { children: Reac
 };
 
 const stats = [
-  { value: '11+', label: 'Years of Excellence' },
-  { value: '50K+', label: 'Happy Clients' },
-  { value: '30+', label: 'Countries Served' },
-  { value: '10K+', label: 'Unique Designs' },
+  { value: YEARS_OF_EXCELLENCE_LABEL, label: 'Years of Excellence' },
+  { value: '1K+', label: 'Happy Clients' },
+  { value: '7+', label: 'Countries Served' },
+  { value: '500+', label: 'Unique Designs' },
 ];
 
 const coreValues = [
@@ -80,19 +81,19 @@ const About = () => {
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'AboutPage',
     '@id': 'https://www.flenixjewels.com/about#aboutpage',
-    name: 'About Flenix Jewels - Premium Diamond Jewelry Since 2011',
-    description: 'Learn about Flenix Jewels - a premier luxury jewelry brand with over 11 years of excellence.',
+    name: `About Flenix Jewels - Premium Diamond Jewelry Since ${SITE.foundingYear}`,
+    description: `Learn about Flenix Jewels - a premier luxury jewelry brand with over ${YEARS_OF_EXCELLENCE} years of excellence.`,
     url: 'https://www.flenixjewels.com/about',
     mainEntityOfPage: 'https://www.flenixjewels.com/about',
     mainEntity: {
       '@type': 'Organization', '@id': 'https://www.flenixjewels.com/#jewelry-store',
-      name: 'Flenix Jewels', foundingDate: '2011', numberOfEmployees: '50+',
+      name: 'Flenix Jewels', foundingDate: SITE.foundingYear, numberOfEmployees: '50+',
       areaServed: 'Worldwide', award: 'GIA Certified Partner',
       knowsAbout: ['Diamond Jewelry', 'Gold Jewelry', 'Custom Jewelry Design', 'Lab Grown Diamonds']
     }
   };
   const faqItems = [
-    { question: "How long has Flenix Jewels been in business?", answer: "We have 11+ years of experience in diamond and gold jewelry design, manufacturing, and exports." },
+    { question: "How long has Flenix Jewels been in business?", answer: `We have ${YEARS_OF_EXCELLENCE_LABEL} years of experience in diamond and gold jewelry design, manufacturing, and exports.` },
     { question: "Do you offer certified diamonds?", answer: "Yes. We offer certified lab-grown and natural diamonds with trusted grading standards." },
     { question: "Do you serve international clients?", answer: "Yes. We serve clients globally with secure delivery and customer support." },
   ];
@@ -100,8 +101,8 @@ const About = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#FDF8F2] dark:bg-[#0a0603]">
       <SEOHead
-        title="About Us - 11+ Years of Diamond Jewelry Excellence | Flenix Jewels"
-        description="Discover Flenix Jewels - 11+ years of crafting exceptional GIA certified diamond and gold jewelry. Master craftsmanship, ethical sourcing, 50K+ happy clients worldwide."
+        title={`About Us - ${YEARS_OF_EXCELLENCE_LABEL} Years of Diamond Jewelry Excellence | Flenix Jewels`}
+        description={`Discover Flenix Jewels - ${YEARS_OF_EXCELLENCE_LABEL} years of crafting exceptional GIA certified diamond and gold jewelry. Master craftsmanship, ethical sourcing, 50K+ happy clients worldwide.`}
         keywords="about flenix jewels, jewelry brand story, luxury jewelry heritage, diamond jewelry craftsmanship, GIA certified jeweler"
         canonicalUrl="https://www.flenixjewels.com/about"
         structuredData={structuredData}
@@ -119,7 +120,7 @@ const About = () => {
           eyebrow={
             <span className="inline-flex items-center justify-center gap-2">
               <Crown className="h-3 w-3" />
-              <span>Est. 2011 · Fine Jewelry</span>
+              <span>{`Est. ${SITE.foundingYear} · Fine Jewelry`}</span>
             </span>
           }
           title={
@@ -130,7 +131,7 @@ const About = () => {
               </span>
             </>
           }
-          subtitle="For over 11 years, Flenix Jewels has been transforming precious metals and gems into timeless masterpieces that celebrate life's most precious moments."
+          subtitle={`For over ${YEARS_OF_EXCELLENCE} years, Flenix Jewels has been transforming precious metals and gems into timeless masterpieces that celebrate life's most precious moments.`}
         />
 
         {/* Stats strip (kept separate so hero height stays consistent) */}

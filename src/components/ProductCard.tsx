@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { TouchEvent } from 'react';
-import { Product } from '@/lib/storage';
+import { CatalogItem } from '@/lib/storage';
 import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
 import { keepImageAlive, isImageCached } from '@/lib/preload';
@@ -12,7 +12,7 @@ import { formatPriceRounded } from "@/lib/utils";
 const productImgCache = new Set<string>();
 
 interface ProductCardProps {
-  product: Product;
+  product: CatalogItem;
   onClick?: () => void;
 }
 

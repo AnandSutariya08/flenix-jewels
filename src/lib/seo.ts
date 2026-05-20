@@ -1,3 +1,7 @@
+export const FOUNDING_YEAR = 2015;
+export const YEARS_OF_EXCELLENCE = Math.max(new Date().getFullYear() - FOUNDING_YEAR, 0);
+export const YEARS_OF_EXCELLENCE_LABEL = `${YEARS_OF_EXCELLENCE}+`;
+
 export const SITE = {
   name: "Flenix Jewels",
   url: "https://www.flenixjewels.com",
@@ -6,7 +10,7 @@ export const SITE = {
   phonePrimary: "+852 51254000",
   phoneWhatsApp: "+852 51254000",
   email: "info@flenixjewels.com",
-  foundingYear: "2011",
+  foundingYear: String(FOUNDING_YEAR),
   areaServed: ["US", "CA", "AU", "DE", "GB", "IN"],
   addressIndia: {
     country: "IN",
@@ -75,7 +79,7 @@ export const pingSitemapOncePerDay = () => {
   ];
 
   targets.forEach((url) => {
-    fetch(url, { method: "GET", mode: "no-cors", keepalive: true }).catch(() => {});
+    fetch(url, { method: "GET", mode: "no-cors", keepalive: true }).catch(() => { });
   });
 
   window.localStorage.setItem(key, today);
@@ -194,7 +198,7 @@ export const buildOrganizationSchema = () => ({
   },
   image: SITE.ogImage,
   description:
-    "Premium diamond and gold jewelry brand established in 2011. Certified lab-grown and natural diamonds, engagement rings, wedding bands, and bespoke jewelry with worldwide delivery.",
+    `Premium diamond and gold jewelry brand established in ${FOUNDING_YEAR}. Certified lab-grown and natural diamonds, engagement rings, wedding bands, and bespoke jewelry with worldwide delivery.`,
   foundingDate: SITE.foundingYear,
   email: SITE.email,
   telephone: SITE.phonePrimary,
@@ -255,7 +259,7 @@ export const buildLocalBusinessSchema = () => ({
   "@id": `${SITE.url}/#local-business`,
   name: SITE.name,
   description:
-    "Premium diamond and gold jewelry store. GIA- and IGI-certified lab-grown and natural diamonds. Engagement rings, wedding bands, necklaces, earrings, and bracelets. Free worldwide shipping.",
+    "Premium diamond and gold jewelry store. GIA- and IGI-certified lab-grown and natural diamonds. Engagement rings, wedding bands, necklaces, earrings, and bracelets. worldwide shipping.",
   url: SITE.url,
   telephone: SITE.phonePrimary,
   email: SITE.email,

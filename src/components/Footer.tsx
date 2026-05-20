@@ -1,10 +1,12 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, MessageCircle, ChevronRight } from "lucide-react";
+import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, MessageCircle, ChevronRight, Linkedin, Youtube } from "lucide-react";
 import logo from "@/assets/flenix-logo-full.png";
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { useTheme } from "next-themes";
+import { cleanWhatsApp } from "@/lib/utils";
+import { FaWhatsapp } from "react-icons/fa";
 import Zelle from "@/assets/paylogo/Zelle_(payment_service)-Logo.wine.png";
 import Venmo from "@/assets/paylogo/Venmo-Logo.wine.png";
 import Google from "@/assets/paylogo/Google_Pay-Logo.wine.png";
@@ -16,39 +18,41 @@ import SDA from "@/assets/paylogo/sda.png";
 import Bourse from "@/assets/paylogo/SDB LOGO.png";
 
 const GOLD = "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
+const FOOTER_WHATSAPP_NUMBER = "+852 51254000";
 
 export default function Footer() {
   const { contactInfo } = useAppSelector(selectGlobalData);
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
+  const whatsappUrl = `https://wa.me/${cleanWhatsApp(FOOTER_WHATSAPP_NUMBER)}`;
 
   const C = useMemo(
     () =>
       isDark
         ? {
-            footerBg: "linear-gradient(180deg, #0b0603 0%, #070402 100%)",
-            border: "rgba(196,144,106,0.18)",
-            borderSoft: "rgba(196,144,106,0.14)",
-            panelBg: "rgba(255,255,255,0.03)",
-            chipBg: "rgba(255,255,255,0.04)",
-            chipBorder: "rgba(196,144,106,0.14)",
-            gold: "rgba(196,144,106,0.85)",
-            text: "rgba(245,232,216,0.70)",
-            muted: "rgba(245,232,216,0.55)",
-            hover: "#ffffff",
-          }
+          footerBg: "linear-gradient(180deg, #0b0603 0%, #070402 100%)",
+          border: "rgba(196,144,106,0.18)",
+          borderSoft: "rgba(196,144,106,0.14)",
+          panelBg: "rgba(255,255,255,0.03)",
+          chipBg: "rgba(255,255,255,0.04)",
+          chipBorder: "rgba(196,144,106,0.14)",
+          gold: "rgba(196,144,106,0.85)",
+          text: "rgba(245,232,216,0.70)",
+          muted: "rgba(245,232,216,0.55)",
+          hover: "#ffffff",
+        }
         : {
-            footerBg: "linear-gradient(180deg, rgba(255,252,248,1) 0%, rgba(250,244,236,1) 100%)",
-            border: "rgba(196,144,106,0.22)",
-            borderSoft: "rgba(155,104,68,0.14)",
-            panelBg: "rgba(155,104,68,0.05)",
-            chipBg: "rgba(255,255,255,0.70)",
-            chipBorder: "rgba(196,144,106,0.18)",
-            gold: "rgba(155,104,68,0.85)",
-            text: "rgba(20,12,6,0.78)",
-            muted: "rgba(20,12,6,0.55)",
-            hover: "#130900",
-          },
+          footerBg: "linear-gradient(180deg, rgba(255,252,248,1) 0%, rgba(250,244,236,1) 100%)",
+          border: "rgba(196,144,106,0.22)",
+          borderSoft: "rgba(155,104,68,0.14)",
+          panelBg: "rgba(155,104,68,0.05)",
+          chipBg: "rgba(255,255,255,0.70)",
+          chipBorder: "rgba(196,144,106,0.18)",
+          gold: "rgba(155,104,68,0.85)",
+          text: "rgba(20,12,6,0.78)",
+          muted: "rgba(20,12,6,0.55)",
+          hover: "#130900",
+        },
     [isDark],
   );
 
@@ -78,6 +82,7 @@ export default function Footer() {
     () => [
       { label: "Home", path: "/" },
       { label: "Categories", path: "/categories" },
+      { label: "Diamond", path: "/diamond" },
       { label: "Gallery", path: "/gallery" },
       { label: "Blog", path: "/blog" },
       { label: "Buying Guide", path: "/buying-guide" },
@@ -106,64 +111,7 @@ export default function Footer() {
 
       <div className="w-full px-4 sm:px-6 lg:px-10 py-12">
         {/* Trust + payments */}
-        <div
-          className="rounded-2xl border px-5 py-5 mb-10"
-          style={{ borderColor: C.borderSoft, background: C.panelBg }}
-        >
-          {/* Mobile: logo on top, badges in 2-col row. Desktop: 3-col left/center/right */}
-          <div className="flex flex-col gap-4 lg:grid lg:grid-cols-3 lg:gap-6 lg:items-center lg:flex-none">
-            {/* Logo — first on mobile, center col on desktop */}
-            <div className="flex justify-center lg:order-2">
-              <img
-                src={logo}
-                alt="Flenix Jewels"
-                className="h-16 sm:h-20 w-auto object-contain opacity-95"
-                style={{ filter: isDark ? undefined : "brightness(0.9) contrast(1.1)" }}
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
 
-            {/* Badges row on mobile (2-col), individual cols on desktop */}
-            <div className="grid grid-cols-2 gap-3 lg:contents">
-              {/* Certified & Trusted — left col on desktop */}
-              <div className="space-y-2 lg:order-1">
-                <p className="text-[10px] tracking-[0.32em] uppercase font-black" style={{ color: C.gold }}>
-                  Certified &amp; Trusted
-                </p>
-                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1">
-                  {trustedBadges.map((b) => (
-                    <div
-                      key={b.name}
-                      className="flex-shrink-0 rounded-xl p-1.5"
-                      style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}` }}
-                    >
-                      <img src={b.logo} alt={b.name} title={b.name} className="h-8 w-8 object-contain" loading="lazy" decoding="async" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Payment Methods — right col on desktop */}
-              <div className="space-y-2 lg:order-3">
-                <p className="text-[10px] tracking-[0.32em] uppercase font-black lg:text-right" style={{ color: C.gold }}>
-                  Payment Methods
-                </p>
-                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1 lg:justify-end">
-                  {paymentMethods.map((m) => (
-                    <div
-                      key={m.name}
-                      className="flex-shrink-0 rounded-xl p-1.5"
-                      style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}` }}
-                    >
-                      <img src={m.logo} alt={m.name} title={m.name} className="h-8 w-8 object-contain" loading="lazy" decoding="async" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Main */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
@@ -174,9 +122,8 @@ export default function Footer() {
             <p className="text-sm leading-relaxed" style={{ color: C.text }}>
               Premium lab-grown &amp; natural diamond jewelry — crafted with timeless elegance and trusted certification.
             </p>
-            {contactInfo?.whatsapp && (
-              <a
-                href={`https://wa.me/${contactInfo.whatsapp}`}
+            <a
+              href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all hover:opacity-80"
@@ -189,7 +136,6 @@ export default function Footer() {
                 <MessageCircle className="h-4 w-4" />
                 WhatsApp Support
               </a>
-            )}
           </div>
 
           <div className="space-y-4">
@@ -221,14 +167,20 @@ export default function Footer() {
                   <span className="leading-relaxed">{contactInfo.address}</span>
                 </li>
               )}
-              {contactInfo?.phone && (
+              <li className="flex items-center gap-3">
+                <FaWhatsapp className="h-4 w-4 flex-shrink-0" style={{ color: C.gold }} />
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="transition-colors" style={{ color: "inherit" }}>
+                  {FOOTER_WHATSAPP_NUMBER}
+                </a>
+              </li>
+              {contactInfo?.phone ? (
                 <li className="flex items-center gap-3">
                   <Phone className="h-4 w-4 flex-shrink-0" style={{ color: C.gold }} />
                   <a href={`tel:${contactInfo.phone}`} className="transition-colors" style={{ color: "inherit" }}>
                     {contactInfo.phone}
                   </a>
                 </li>
-              )}
+              ) : null}
               {contactInfo?.email && (
                 <li className="flex items-center gap-3">
                   <Mail className="h-4 w-4 flex-shrink-0" style={{ color: C.gold }} />
@@ -245,6 +197,16 @@ export default function Footer() {
               Follow
             </p>
             <div className="flex flex-wrap gap-3">
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
+                aria-label="WhatsApp"
+              >
+                <MessageCircle className="h-5 w-5" />
+              </a>
               {contactInfo?.facebook && (
                 <a
                   href={contactInfo.facebook}
@@ -293,6 +255,30 @@ export default function Footer() {
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 19c-.721 0-1.418-.109-2.073-.312.286-.465.713-1.227.87-1.835l.437-1.664c.229.436.895.804 1.604.804 2.111 0 3.633-1.941 3.633-4.354 0-2.312-1.888-4.042-4.383-4.042-3.104 0-4.688 2.029-4.688 4.191 0 1.025.388 1.938 1.221 2.279.137.056.21.031.243-.084l.23-.944c.019-.081.01-.15-.056-.23-.213-.263-.384-.746-.384-1.194 0-1.16.876-2.278 2.364-2.278 1.289 0 2.211.878 2.211 2.132 0 1.428-.708 2.413-1.622 2.413-.504 0-.883-.417-.762-.928.144-.609.424-1.267.424-1.707 0-.394-.211-.723-.649-.723-.515 0-.928.533-.928 1.249 0 .456.154.764.154.764l-.624 2.642c-.148.621-.082 1.584-.021 2.144C5.757 17.998 3.5 15.238 3.5 12c0-4.687 3.813-8.5 8.5-8.5s8.5 3.813 8.5 8.5-3.813 8.5-8.5 8.5z" />
                   </svg>
+                </a>
+              )}
+              {contactInfo?.youtube && (
+                <a
+                  href={contactInfo.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                  style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
+                  aria-label="YouTube"
+                >
+                  <Youtube className="h-5 w-5" />
+                </a>
+              )}
+              {contactInfo?.linkedin && (
+                <a
+                  href={contactInfo.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                  style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="h-5 w-5" />
                 </a>
               )}
             </div>

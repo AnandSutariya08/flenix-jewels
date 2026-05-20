@@ -12,6 +12,7 @@ interface HeaderProps {
 const navLinks = [
   { name: 'Home',         path: '/' },
   { name: 'Categories',   path: '/categories' },
+  { name: 'Diamond',      path: '/diamond' },
   { name: 'Gallery',      path: '/gallery' },
   { name: 'Blog',         path: '/blog' },
   { name: 'Buying Guide', path: '/buying-guide' },

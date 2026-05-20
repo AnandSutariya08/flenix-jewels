@@ -14,8 +14,9 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadBlogs, loadDeferredData, selectBlogsLoaded, selectBlogsStatus, selectGlobalData, selectDeferredStatus, selectDeferredLoaded } from '@/store/contentSlice';
 import { HEADER_OFFSET_PX } from '@/lib/layout';
-import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight, BookOpen, Gem } from 'lucide-react';
+import { Truck, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight, BookOpen, Gem } from 'lucide-react';
 import { BlogPost } from '@/lib/storage';
+import { SITE, YEARS_OF_EXCELLENCE_LABEL } from '@/lib/seo';
 
 const WHATSAPP = 'https://wa.me/85251254000?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.';
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
@@ -29,20 +30,20 @@ const faqItems = [
 const trustItems = ['GIA Certified', 'IGI Graded', 'Free Shipping', 'Lifetime Guarantee', '12K+ Happy Clients', '30+ Countries Served', 'Ethically Sourced', 'Custom Design'];
 
 const features = [
-  { icon: Truck,       label: 'Free Worldwide Shipping',  sub: '30+ Countries',    detail: 'Fully insured express delivery to your door.' },
-  { icon: Gift,        label: 'Luxury Packaging',         sub: 'Orders $500+',     detail: 'Complimentary gift box with every purchase.' },
-  { icon: ShieldCheck, label: 'Secure Payments',          sub: '100% Encrypted',   detail: 'Bank-level security on every transaction.' },
-  { icon: Award,       label: 'Certified Authentic',      sub: 'GIA / IGI',        detail: 'Lifetime guarantee on all certified pieces.' },
+  { icon: Truck, label: 'Worldwide Shipping', sub: '7+ Countries', detail: 'Fully insured express delivery to your door.' },
+  { icon: MessageCircle, label: 'WhatsApp Support', sub: 'Fast Replies', detail: 'Get quick help for orders, custom designs, and diamond inquiries.' },
+  { icon: ShieldCheck, label: 'Secure Payments', sub: '100% Encrypted', detail: 'Bank-level security on every transaction.' },
+  { icon: Award, label: 'Certified Authentic', sub: 'GIA / IGI', detail: 'Lifetime guarantee on all certified pieces.' },
 ];
 
 export default function Index() {
   const { banners, categories, featuredCollection, galleryItems, blogs, instagramPosts, testimonials, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
-  const dispatch        = useAppDispatch();
-  const blogsLoaded     = useAppSelector(selectBlogsLoaded);
-  const blogsStatus     = useAppSelector(selectBlogsStatus);
-  const deferredStatus  = useAppSelector(selectDeferredStatus);
-  const deferredLoaded  = useAppSelector(selectDeferredLoaded);
-  const [selectedBlog, setSelectedBlog]     = useState<BlogPost | null>(null);
+  const dispatch = useAppDispatch();
+  const blogsLoaded = useAppSelector(selectBlogsLoaded);
+  const blogsStatus = useAppSelector(selectBlogsStatus);
+  const deferredStatus = useAppSelector(selectDeferredStatus);
+  const deferredLoaded = useAppSelector(selectDeferredLoaded);
+  const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
   const [isBlogDialogOpen, setIsBlogDialogOpen] = useState(false);
 
   // Force-fetch deferred data when home page detects gallery is empty.
@@ -101,7 +102,7 @@ export default function Index() {
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
         title="Premium Diamond & Gold Jewelry | Lab Grown & Natural Diamonds | Flenix Jewels"
-        description="Shop certified lab-grown and natural diamond jewelry at Flenix Jewels. Explore GIA certified engagement rings, wedding bands, necklaces, earrings & bracelets. Free worldwide shipping."
+        description="Shop certified lab-grown and natural diamond jewelry at Flenix Jewels. Explore GIA certified engagement rings, wedding bands, necklaces, earrings & bracelets. worldwide shipping."
         keywords="diamond jewelry, gold rings, engagement rings, wedding bands, lab grown diamonds, natural diamonds, certified jewelry, luxury jewelry store"
         canonicalUrl="https://www.flenixjewels.com"
         faqItems={faqItems}
@@ -376,13 +377,13 @@ export default function Index() {
               <div>
                 <p className="text-[10px] tracking-[0.35em] uppercase font-black mb-7" style={{ color: '#C4906A' }}>✦ Our Story</p>
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight mb-8" style={{ color: '#fff' }}>
-                  Crafting<br />Excellence<br />Since 2011
+                  Crafting<br />Excellence<br />Since {SITE.foundingYear}
                 </h2>
                 <p className="text-lg leading-[1.8] mb-10 max-w-md" style={{ color: 'rgba(255,255,255,0.50)' }}>
                   Flenix Jewels is a premier destination for luxury jewelry — combining traditional artisanship with contemporary design. From ethically sourced diamonds to handcrafted settings, every piece tells a unique story.
                 </p>
                 <div className="flex flex-wrap gap-2.5 mb-12">
-                  {['GIA Certified', 'Ethically Sourced', 'Lifetime Guarantee', 'Custom Design'].map(tag => (
+                  {['GIA Certified', 'IGI Certified', 'Ethically Sourced', 'Custom Design'].map(tag => (
                     <span key={tag} className="text-[10.5px] font-bold tracking-wider uppercase px-4 py-2 rounded-full"
                       style={{ border: '1px solid rgba(196,144,106,0.30)', color: 'rgba(196,144,106,0.85)' }}>
                       {tag}
@@ -399,10 +400,10 @@ export default function Index() {
               {/* Right — stats grid */}
               <div className="grid grid-cols-2 gap-4 md:gap-5">
                 {[
-                  { num: '10+',  label: 'Years of Excellence', icon: Award },
-                  { num: '12K+', label: 'Happy Customers',     icon: Star },
-                  { num: '30+',  label: 'Countries Served',    icon: Truck },
-                  { num: '100%', label: 'Satisfaction Rate',   icon: CheckCircle },
+                  { num: YEARS_OF_EXCELLENCE_LABEL, label: 'Years of Excellence', icon: Award },
+                  { num: '12K+', label: 'Happy Customers', icon: Star },
+                  { num: '30+', label: 'Countries Served', icon: Truck },
+                  { num: '100%', label: 'Satisfaction Rate', icon: CheckCircle },
                 ].map(({ num, label, icon: Icon }) => (
                   <div key={label} className="relative p-7 md:p-8 rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-1"
                     style={{ background: 'rgba(196,144,106,0.07)', border: '1px solid rgba(196,144,106,0.16)' }}>
@@ -460,140 +461,140 @@ export default function Index() {
             7. GALLERY — Immersive showcase
         ═══════════════════════════════════════════════════════ */}
         <section className="py-20 md:py-28 relative overflow-hidden" style={{ background: isDark ? '#080400' : '#0e0804' }}>
-            {/* Ambient glow */}
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"
-              style={{ background: 'radial-gradient(ellipse at top right, rgba(196,144,106,0.10) 0%, transparent 65%)', transform: 'translate(20%,-20%)' }} />
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] pointer-events-none"
-              style={{ background: 'radial-gradient(ellipse at bottom left, rgba(212,169,106,0.08) 0%, transparent 65%)', transform: 'translate(-20%,20%)' }} />
-            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
+          {/* Ambient glow */}
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at top right, rgba(196,144,106,0.10) 0%, transparent 65%)', transform: 'translate(20%,-20%)' }} />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at bottom left, rgba(212,169,106,0.08) 0%, transparent 65%)', transform: 'translate(-20%,20%)' }} />
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #C4906A 35%, #D4A96A 50%, #C4906A 65%, transparent 95%)' }} />
 
-            <div className="relative z-10 max-w-[1600px] mx-auto px-4 md:px-10 lg:px-16">
-              {/* Header */}
-              <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
-                <div>
-                  <p className="text-[10px] tracking-[0.35em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Gallery</p>
-                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.06] text-white">
-                    Moments<br className="hidden md:block" /> in Gold
-                  </h2>
-                </div>
-                <div className="lg:pb-2">
-                  <p className="text-sm leading-relaxed mb-5 max-w-xs" style={{ color: 'rgba(255,255,255,0.38)' }}>
-                    Each piece is a testament to exceptional artisanship — photographed to reveal every facet.
-                  </p>
-                  <Link to="/gallery"
-                    className="inline-flex items-center gap-2.5 text-[11px] font-bold tracking-[0.22em] uppercase transition-all duration-200 group"
-                    style={{ color: '#C4906A' }}>
-                    Explore Full Gallery
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1.5" />
-                  </Link>
+          <div className="relative z-10 max-w-[1600px] mx-auto px-4 md:px-10 lg:px-16">
+            {/* Header */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+              <div>
+                <p className="text-[10px] tracking-[0.35em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Gallery</p>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.06] text-white">
+                  Moments<br className="hidden md:block" /> in Gold
+                </h2>
+              </div>
+              <div className="lg:pb-2">
+                <p className="text-sm leading-relaxed mb-5 max-w-xs" style={{ color: 'rgba(255,255,255,0.38)' }}>
+                  Each piece is a testament to exceptional artisanship — photographed to reveal every facet.
+                </p>
+                <Link to="/gallery"
+                  className="inline-flex items-center gap-2.5 text-[11px] font-bold tracking-[0.22em] uppercase transition-all duration-200 group"
+                  style={{ color: '#C4906A' }}>
+                  Explore Full Gallery
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Main showcase grid */}
+            {galleryItems.length === 0 && (deferredStatus === 'loading' || deferredStatus === 'idle' || !galleryFetched) ? (
+              <div className="grid grid-cols-12 gap-3 md:gap-4" style={{ gridAutoRows: '180px' }}>
+                <div className="col-span-12 md:col-span-5 row-span-3 rounded-3xl animate-pulse" style={{ background: 'rgba(196,144,106,0.12)' }} />
+                <div className="col-span-12 md:col-span-7 row-span-2 rounded-2xl animate-pulse" style={{ background: 'rgba(196,144,106,0.10)', animationDelay: '0.1s' }} />
+                <div className="col-span-12 md:col-span-7 row-span-1 grid grid-cols-3 gap-3 md:gap-4">
+                  {[0.2, 0.3, 0.4].map((d) => (
+                    <div key={d} className="rounded-xl animate-pulse" style={{ background: 'rgba(196,144,106,0.10)', animationDelay: `${d}s` }} />
+                  ))}
                 </div>
               </div>
+            ) : galleryItems.length === 0 ? (
+              <EmptyState
+                icon={<Gem className="h-7 w-7" />}
+                title="Gallery Coming Soon"
+                description="We’re curating an exceptional collection for you."
+                className="py-10"
+              />
+            ) : galleryItems.length >= 5 ? (
+              <div className="grid grid-cols-12 gap-3 md:gap-4" style={{ gridAutoRows: '180px' }}>
 
-              {/* Main showcase grid */}
-              {galleryItems.length === 0 && (deferredStatus === 'loading' || deferredStatus === 'idle' || !galleryFetched) ? (
-                <div className="grid grid-cols-12 gap-3 md:gap-4" style={{ gridAutoRows: '180px' }}>
-                  <div className="col-span-12 md:col-span-5 row-span-3 rounded-3xl animate-pulse" style={{ background: 'rgba(196,144,106,0.12)' }} />
-                  <div className="col-span-12 md:col-span-7 row-span-2 rounded-2xl animate-pulse" style={{ background: 'rgba(196,144,106,0.10)', animationDelay: '0.1s' }} />
-                  <div className="col-span-12 md:col-span-7 row-span-1 grid grid-cols-3 gap-3 md:gap-4">
-                    {[0.2, 0.3, 0.4].map((d) => (
-                      <div key={d} className="rounded-xl animate-pulse" style={{ background: 'rgba(196,144,106,0.10)', animationDelay: `${d}s` }} />
-                    ))}
-                  </div>
-                </div>
-              ) : galleryItems.length === 0 ? (
-                <EmptyState
-                  icon={<Gem className="h-7 w-7" />}
-                  title="Gallery Coming Soon"
-                  description="We’re curating an exceptional collection for you."
-                  className="py-10"
-                />
-              ) : galleryItems.length >= 5 ? (
-                <div className="grid grid-cols-12 gap-3 md:gap-4" style={{ gridAutoRows: '180px' }}>
-
-                  {/* Hero tall image — 5 cols × 3 rows */}
-                  <Link to="/gallery"
-                    className="col-span-12 md:col-span-5 row-span-3 relative overflow-hidden rounded-3xl group block"
-                    style={{ gridRow: 'span 3' }}>
-                    <OptimizedImage noWrapper src={galleryItems[0].image} alt={galleryItems[0].description || 'Gallery'}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.85) 0%, rgba(6,3,1,0.25) 50%, transparent 80%)' }} />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                      style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.12), transparent)' }} />
-                    {/* Gold corner frames */}
-                    <div className="absolute top-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                      style={{ borderTop: '2px solid rgba(196,144,106,0.7)', borderLeft: '2px solid rgba(196,144,106,0.7)', borderRadius: '20px 0 0 0' }} />
-                    <div className="absolute bottom-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                      style={{ borderBottom: '2px solid rgba(196,144,106,0.7)', borderRight: '2px solid rgba(196,144,106,0.7)', borderRadius: '0 0 20px 0' }} />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
-                      <p className="text-[9px] tracking-[0.28em] uppercase font-black mb-1.5" style={{ color: '#C4906A' }}>✦ Featured</p>
-                      {galleryItems[0].description && (
-                        <p className="text-white text-sm leading-relaxed line-clamp-2">{galleryItems[0].description}</p>
-                      )}
-                    </div>
-                  </Link>
-
-                  {/* Top-right wide — 7 cols × 2 rows */}
-                  <Link to="/gallery"
-                    className="col-span-12 md:col-span-7 row-span-2 relative overflow-hidden rounded-2xl group block">
-                    <OptimizedImage noWrapper src={galleryItems[1].image} alt={galleryItems[1].description || 'Gallery'}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-                      style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)' }} />
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-                      style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.10), transparent)' }} />
-                    {galleryItems[1].description && (
-                      <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
-                        <p className="text-white text-sm leading-relaxed line-clamp-1">{galleryItems[1].description}</p>
-                      </div>
+                {/* Hero tall image — 5 cols × 3 rows */}
+                <Link to="/gallery"
+                  className="col-span-12 md:col-span-5 row-span-3 relative overflow-hidden rounded-3xl group block"
+                  style={{ gridRow: 'span 3' }}>
+                  <OptimizedImage noWrapper src={galleryItems[0].image} alt={galleryItems[0].description || 'Gallery'}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.85) 0%, rgba(6,3,1,0.25) 50%, transparent 80%)' }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.12), transparent)' }} />
+                  {/* Gold corner frames */}
+                  <div className="absolute top-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{ borderTop: '2px solid rgba(196,144,106,0.7)', borderLeft: '2px solid rgba(196,144,106,0.7)', borderRadius: '20px 0 0 0' }} />
+                  <div className="absolute bottom-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{ borderBottom: '2px solid rgba(196,144,106,0.7)', borderRight: '2px solid rgba(196,144,106,0.7)', borderRadius: '0 0 20px 0' }} />
+                  <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
+                    <p className="text-[9px] tracking-[0.28em] uppercase font-black mb-1.5" style={{ color: '#C4906A' }}>✦ Featured</p>
+                    {galleryItems[0].description && (
+                      <p className="text-white text-sm leading-relaxed line-clamp-2">{galleryItems[0].description}</p>
                     )}
-                  </Link>
-
-                  {/* Bottom-right 3 small tiles — contained in col-span-7 wrapper */}
-                  <div className="col-span-12 md:col-span-7 grid grid-cols-3 gap-3 md:gap-4">
-                    {galleryItems.slice(2, 5).map((item) => (
-                      <Link key={item.id} to="/gallery"
-                        className="relative overflow-hidden group block h-full min-h-[140px] md:min-h-0"
-                        style={{ borderRadius: 16 }}>
-                        <OptimizedImage noWrapper src={item.image} alt={item.description || 'Gallery'}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                          style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.80) 0%, transparent 65%)' }} />
-                        <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                          style={{ boxShadow: 'inset 0 0 0 1.5px rgba(196,144,106,0.55)' }} />
-                      </Link>
-                    ))}
                   </div>
-                </div>
-              ) : (
-                /* Fallback — editorial scroll */
-                <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-                  {galleryItems.map(item => (
-                    <Link key={item.id} to="/gallery" className="flex-shrink-0 w-64 h-80 rounded-2xl overflow-hidden group relative block">
+                </Link>
+
+                {/* Top-right wide — 7 cols × 2 rows */}
+                <Link to="/gallery"
+                  className="col-span-12 md:col-span-7 row-span-2 relative overflow-hidden rounded-2xl group block">
+                  <OptimizedImage noWrapper src={galleryItems[1].image} alt={galleryItems[1].description || 'Gallery'}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                    style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)' }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                    style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.10), transparent)' }} />
+                  {galleryItems[1].description && (
+                    <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
+                      <p className="text-white text-sm leading-relaxed line-clamp-1">{galleryItems[1].description}</p>
+                    </div>
+                  )}
+                </Link>
+
+                {/* Bottom-right 3 small tiles — contained in col-span-7 wrapper */}
+                <div className="col-span-12 md:col-span-7 grid grid-cols-3 gap-3 md:gap-4">
+                  {galleryItems.slice(2, 5).map((item) => (
+                    <Link key={item.id} to="/gallery"
+                      className="relative overflow-hidden group block h-full min-h-[140px] md:min-h-0"
+                      style={{ borderRadius: 16 }}>
                       <OptimizedImage noWrapper src={item.image} alt={item.description || 'Gallery'}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)' }} />
+                        style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.80) 0%, transparent 65%)' }} />
+                      <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                        style={{ boxShadow: 'inset 0 0 0 1.5px rgba(196,144,106,0.55)' }} />
                     </Link>
                   ))}
                 </div>
-              )}
-
-              {/* Count pill */}
-              {galleryItems.length > 0 && (
-                <div className="flex items-center justify-center mt-10">
-                  <Link to="/gallery"
-                    className="inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.2em] uppercase px-7 py-3.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                    style={{ background: GOLD, color: '#fff', boxShadow: '0 8px 30px -6px rgba(155,104,68,0.5)' }}>
-                    View All {galleryItems.length} Pieces
-                    <ArrowRight className="h-4 w-4" />
+              </div>
+            ) : (
+              /* Fallback — editorial scroll */
+              <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                {galleryItems.map(item => (
+                  <Link key={item.id} to="/gallery" className="flex-shrink-0 w-64 h-80 rounded-2xl overflow-hidden group relative block">
+                    <OptimizedImage noWrapper src={item.image} alt={item.description || 'Gallery'}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)' }} />
                   </Link>
-                </div>
-              )}
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.25) 50%, transparent 95%)' }} />
-          </section>
-        
+                ))}
+              </div>
+            )}
+
+            {/* Count pill */}
+            {galleryItems.length > 0 && (
+              <div className="flex items-center justify-center mt-10">
+                <Link to="/gallery"
+                  className="inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.2em] uppercase px-7 py-3.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                  style={{ background: GOLD, color: '#fff', boxShadow: '0 8px 30px -6px rgba(155,104,68,0.5)' }}>
+                  View All {galleryItems.length} Pieces
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            )}
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.25) 50%, transparent 95%)' }} />
+        </section>
+
 
         {/* ═══════════════════════════════════════════════════════
             8. TESTIMONIALS — Scroll marquee
@@ -602,7 +603,7 @@ export default function Index() {
           <section className="py-20 overflow-hidden bg-secondary/60 dark:bg-secondary/20">
             <div className="text-center mb-14 px-4">
               <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3.5 text-primary">✦ Client Love</p>
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">What Our Clients Say</h2>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Testimonial</h2>
             </div>
             <div className="flex gap-5 animate-[scroll_28s_linear_infinite] hover:pause pl-6 md:pl-16">
               {[...testimonials, ...testimonials].map((t, i) => (
@@ -640,25 +641,25 @@ export default function Index() {
             9. BLOG — Editorial magazine layout
         ═══════════════════════════════════════════════════════ */}
         <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
-            <div className="flex flex-wrap items-end justify-between gap-4 mb-10 md:mb-14">
-              <div>
-                <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ The Journal</p>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Latest Stories</h2>
-              </div>
-              <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase group" style={{ color: '#C4906A' }}>
-                All Articles <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
-              </Link>
+          <div className="flex flex-wrap items-end justify-between gap-4 mb-10 md:mb-14">
+            <div>
+              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ The Journal</p>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Latest Stories</h2>
             </div>
+            <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase group" style={{ color: '#C4906A' }}>
+              All Articles <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1.5" />
+            </Link>
+          </div>
 
-            {sortedBlogs.length === 0 ? (
-              <EmptyState
-                icon={<BookOpen className="h-7 w-7" />}
-                title="Stories Coming Soon"
-                description="We’re writing expert guides, diamond education, and timeless jewelry stories."
-                className="py-10"
-              />
-            ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
+          {sortedBlogs.length === 0 ? (
+            <EmptyState
+              icon={<BookOpen className="h-7 w-7" />}
+              title="Stories Coming Soon"
+              description="We’re writing expert guides, diamond education, and timeless jewelry stories."
+              className="py-10"
+            />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
               {/* Featured — 3 cols */}
               {sortedBlogs[0] && (
                 <article className="lg:col-span-3 group cursor-pointer" onClick={() => openBlog(sortedBlogs[0])}>
@@ -706,8 +707,8 @@ export default function Index() {
                 ))}
               </div>
             </div>
-            )}
-          </section>
+          )}
+        </section>
 
         {/* ═══════════════════════════════════════════════════════
             10. WHATSAPP CTA — Dark full-bleed

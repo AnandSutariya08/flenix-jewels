@@ -4,12 +4,13 @@ import { Banner } from '@/lib/storage';
 import { ChevronLeft, ChevronRight, ArrowRight, Gem } from 'lucide-react';
 import { preloadMedia } from '@/lib/preload';
 import heroFallback from '@/assets/hero banner1.png';
+import { SITE } from '@/lib/seo';
 
 interface BannerCarouselProps {
   banners?: Banner[];
 }
 
-const TRUST_ITEMS = ['GIA Certified', 'IGI Graded', 'Free Worldwide Shipping', 'Lifetime Guarantee', '12K+ Happy Clients', '30+ Countries', 'Ethically Sourced', 'Custom Design'];
+const TRUST_ITEMS = ['GIA Certified', 'IGI Graded', 'Worldwide Shipping', 'Lifetime Guarantee', '12K+ Happy Clients', '30+ Countries', 'Ethically Sourced', 'Custom Design'];
 
 const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -150,7 +151,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
                 style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
                 loading={isActive ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchpriority={isActive ? 'high' : 'auto'} sizes="100vw" onLoad={() => markLoaded(index)} />
+                fetchPriority={isActive ? 'high' : 'auto'} sizes="100vw" onLoad={() => markLoaded(index)} />
             )}
 
             {/* Multi-layer overlays for depth */}
@@ -240,7 +241,7 @@ const HeroContent = ({ title, description, isActive }: { title: string; descript
         {/* Eyebrow */}
         <div className="flex items-center gap-3 mb-6 md:mb-8">
           <div className="h-px w-10" style={{ background: 'linear-gradient(90deg, #9B6844, #C4906A)' }} />
-          <p className="text-[10px] md:text-[11px] tracking-[0.4em] uppercase font-black" style={{ color: '#C4906A' }}>Fine Jewelry · Est. 2011</p>
+          <p className="text-[10px] md:text-[11px] tracking-[0.4em] uppercase font-black" style={{ color: '#C4906A' }}>{`Fine Jewelry · Est. ${SITE.foundingYear}`}</p>
         </div>
 
         {/* Main headline */}

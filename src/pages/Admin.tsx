@@ -30,7 +30,9 @@ import { toast } from 'sonner';
 
 const AdminBanners = lazy(() => import('@/components/admin/AdminBanners'));
 const AdminCategories = lazy(() => import('@/components/admin/AdminCategories'));
+const AdminDiamondCategories = lazy(() => import('@/components/admin/AdminDiamondCategories'));
 const AdminProducts = lazy(() => import('@/components/admin/AdminProducts'));
+const AdminDiamonds = lazy(() => import('@/components/admin/AdminDiamonds'));
 const AdminGallery = lazy(() => import('@/components/admin/AdminGallery'));
 const AdminFeaturedCollection = lazy(() => import('@/components/admin/AdminFeaturedCollection'));
 const AdminContact = lazy(() => import('@/components/admin/AdminContact'));
@@ -39,6 +41,7 @@ const AdminBlogs = lazy(() => import('@/components/admin/AdminBlogs'));
 const AdminInstagram = lazy(() => import('@/components/admin/AdminInstagram'));
 const AdminVisitors = lazy(() => import('@/components/admin/AdminVisitors'));
 const AdminPromoHeader = lazy(() => import('@/components/admin/AdminPromoHeader'));
+const AdminAds = lazy(() => import('@/components/admin/AdminAds'));
 const AdminTestimonials = lazy(() => import('@/components/admin/AdminTestimonials'));
 
 const SectionFallback = () => (
@@ -96,9 +99,12 @@ class SectionErrorBoundary extends Component<
 
 const NAV_ITEMS = [
   { key: 'promo',        label: 'Promo Header',  icon: Megaphone },
+  { key: 'ads',          label: 'Website Ads',   icon: Megaphone },
   { key: 'banners',      label: 'Banners',        icon: Image },
   { key: 'categories',   label: 'Categories',     icon: Tag },
+  { key: 'diamondCategories', label: 'Diamond Categories', icon: Gem },
   { key: 'products',     label: 'Products',       icon: Package },
+  { key: 'diamonds',     label: 'Diamonds',       icon: Gem },
   { key: 'gallery',      label: 'Gallery',        icon: Image },
   { key: 'featured',     label: 'Featured',       icon: Sparkles },
   { key: 'testimonials', label: 'Testimonials',   icon: MessageSquareQuote },
@@ -111,9 +117,12 @@ const NAV_ITEMS = [
 
 const SECTION_MAP: Record<string, () => ReactNode> = {
   promo:        () => <AdminPromoHeader />,
+  ads:          () => <AdminAds />,
   banners:      () => <AdminBanners />,
   categories:   () => <AdminCategories />,
+  diamondCategories: () => <AdminDiamondCategories />,
   products:     () => <AdminProducts />,
+  diamonds:     () => <AdminDiamonds />,
   gallery:      () => <AdminGallery />,
   featured:     () => <AdminFeaturedCollection />,
   testimonials: () => <AdminTestimonials />,

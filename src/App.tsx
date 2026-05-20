@@ -12,6 +12,7 @@ import {
   loadGlobalData,
   patchDeferredData,
   patchGlobalData,
+  type GlobalData,
   selectContentHydrated,
   selectContentStatus,
   selectDeferredLoaded,
@@ -19,8 +20,11 @@ import {
   selectGlobalData,
 } from "@/store/contentSlice";
 import {
+  subscribeAds,
   subscribeBanners,
   subscribeCategories,
+  subscribeDiamondCategories,
+  subscribeDiamonds,
   subscribeProducts,
   subscribeBlogs,
   subscribeGallery,
@@ -36,6 +40,7 @@ import { subscribeBuyingGuides } from "@/lib/buyingGuides";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Categories from "./pages/Categories";
+import Diamond from "./pages/Diamond";
 import CategoryProducts from "./pages/CategoryProducts";
 import ProductDetail from "./pages/ProductDetail";
 import Gallery from "./pages/Gallery";
@@ -49,6 +54,7 @@ import { requestLocationAndLog } from '@/lib/locationPermission';
 import { preloadMedia } from "@/lib/preload";
 import { pingSitemapOncePerDay } from "@/lib/seo";
 import GlobalLoader from "@/components/GlobalLoader";
+import WebsiteAdModal from "@/components/WebsiteAdModal";
 import CountryLanding from "./pages/CountryLanding";
 
 const queryClient = new QueryClient();
@@ -80,18 +86,24 @@ const AppContent = () => {
 
     const unsubs: Array<() => void> = [];
 
+    unsubs.push(subscribeAds((ads) => dispatch(patchGlobalData({ ads }))));
     unsubs.push(subscribeBanners((banners) => dispatch(patchGlobalData({ banners }))));
     unsubs.push(subscribeCategories((categories) => dispatch(patchGlobalData({ categories }))));
+    unsubs.push(subscribeDiamondCategories((diamondCategories) => dispatch(patchGlobalData({ diamondCategories }))));
     unsubs.push(subscribePromoHeader((promoHeader) => dispatch(patchGlobalData({ promoHeader }))));
     unsubs.push(subscribeContact((contactInfo) => dispatch(patchGlobalData({ contactInfo }))));
     unsubs.push(subscribePriceSettings((priceSettings) => dispatch(patchGlobalData({ priceSettings }))));
 
     // Products + blogs are used across pages; keep them synced too.
+    unsubs.push(subscribeDiamonds((diamonds) => dispatch(patchGlobalData({ diamonds }))));
     unsubs.push(subscribeProducts((products) => dispatch(patchGlobalData({ products }))));
     unsubs.push(subscribeBlogs((blogs) => dispatch(patchGlobalData({ blogs }))));
 
     // Deferred sections
-    let latestDeferred = {
+    let latestDeferred: Pick<
+      GlobalData,
+      "galleryItems" | "featuredCollection" | "instagramPosts" | "testimonials" | "contactInfo" | "offices" | "buyingGuides"
+    > = {
       galleryItems: [],
       featuredCollection: [],
       instagramPosts: [],
@@ -188,8 +200,13 @@ const AppContent = () => {
       dispatch(loadDeferredData());
     };
 
-    if ("requestIdleCallback" in window) {
-      idleId = window.requestIdleCallback(
+    const idleWindow = window as Window & typeof globalThis & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+    if (typeof idleWindow.requestIdleCallback === "function") {
+      idleId = idleWindow.requestIdleCallback(
         () => {
           timeoutId = window.setTimeout(startDeferredLoad, DEFERRED_LOAD_DELAY_MS);
         },
@@ -200,8 +217,8 @@ const AppContent = () => {
     }
 
     return () => {
-      if (idleId !== null && "cancelIdleCallback" in window) {
-        window.cancelIdleCallback(idleId);
+      if (idleId !== null && typeof idleWindow.cancelIdleCallback === "function") {
+        idleWindow.cancelIdleCallback(idleId);
       }
       if (timeoutId !== null) {
         window.clearTimeout(timeoutId);
@@ -225,8 +242,11 @@ const AppContent = () => {
   const assetUrls = useMemo(() => {
     if (isAdminRoute) return [];
     return [
+      ...data.ads.map((ad) => ad.image).filter(Boolean),
       ...data.banners.map((b) => b.image).filter(Boolean),
       ...data.categories.map((c) => c.image).filter(Boolean),
+      ...data.diamondCategories.map((c) => c.image).filter(Boolean),
+      ...data.diamonds.flatMap((d) => [d.image, ...(d.images || [])]).filter(Boolean),
       ...data.products.flatMap((p) => [p.image, ...(p.images || [])]).filter(Boolean),
       ...data.featuredCollection.map((f) => f.image).filter(Boolean),
       ...data.galleryItems.map((g) => g.image).filter(Boolean),
@@ -236,8 +256,11 @@ const AppContent = () => {
       ...(data.buyingGuides ?? []).map((g: any) => g.image).filter(Boolean),
     ];
   }, [
+    data.ads,
     data.banners,
     data.categories,
+    data.diamondCategories,
+    data.diamonds,
     data.products,
     data.featuredCollection,
     data.galleryItems,
@@ -264,10 +287,12 @@ const AppContent = () => {
     <>
       <GlobalLoader isLoading={showLoader} imagesToPreload={[]} />
       <ScrollToTop />
+      <WebsiteAdModal disabled={isAdminRoute} />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />
         <Route path="/categories" element={<Categories />} />
+        <Route path="/diamond" element={<Diamond />} />
         <Route path="/category/:id" element={<CategoryProducts />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/gallery" element={<Gallery />} />
