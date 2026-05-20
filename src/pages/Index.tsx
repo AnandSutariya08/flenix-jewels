@@ -12,7 +12,7 @@ import InstagramJourneyCarousel from '@/components/InstagramJourneyCarousel';
 import EmptyState from '@/components/EmptyState';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData } from '@/store/contentSlice';
+import { loadBlogs, selectBlogsLoaded, selectBlogsStatus, selectGlobalData, selectDeferredStatus } from '@/store/contentSlice';
 import { HEADER_OFFSET_PX } from '@/lib/layout';
 import { Truck, Gift, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight, BookOpen, Gem } from 'lucide-react';
 import { BlogPost } from '@/lib/storage';
@@ -38,8 +38,9 @@ const features = [
 export default function Index() {
   const { banners, categories, featuredCollection, galleryItems, blogs, instagramPosts, testimonials, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
   const dispatch   = useAppDispatch();
-  const blogsLoaded  = useAppSelector(selectBlogsLoaded);
-  const blogsStatus  = useAppSelector(selectBlogsStatus);
+  const blogsLoaded     = useAppSelector(selectBlogsLoaded);
+  const blogsStatus     = useAppSelector(selectBlogsStatus);
+  const deferredStatus  = useAppSelector(selectDeferredStatus);
   const [selectedBlog, setSelectedBlog]     = useState<BlogPost | null>(null);
   const [isBlogDialogOpen, setIsBlogDialogOpen] = useState(false);
 
@@ -475,7 +476,17 @@ export default function Index() {
               </div>
 
               {/* Main showcase grid */}
-              {galleryItems.length === 0 ? (
+              {galleryItems.length === 0 && (deferredStatus === 'loading' || deferredStatus === 'idle') ? (
+                <div className="grid grid-cols-12 gap-3 md:gap-4" style={{ gridAutoRows: '180px' }}>
+                  <div className="col-span-12 md:col-span-5 row-span-3 rounded-3xl animate-pulse" style={{ background: 'rgba(196,144,106,0.12)' }} />
+                  <div className="col-span-12 md:col-span-7 row-span-2 rounded-2xl animate-pulse" style={{ background: 'rgba(196,144,106,0.10)', animationDelay: '0.1s' }} />
+                  <div className="col-span-12 md:col-span-7 row-span-1 grid grid-cols-3 gap-3 md:gap-4">
+                    {[0.2, 0.3, 0.4].map((d) => (
+                      <div key={d} className="rounded-xl animate-pulse" style={{ background: 'rgba(196,144,106,0.10)', animationDelay: `${d}s` }} />
+                    ))}
+                  </div>
+                </div>
+              ) : galleryItems.length === 0 ? (
                 <EmptyState
                   icon={<Gem className="h-7 w-7" />}
                   title="Gallery Coming Soon"
