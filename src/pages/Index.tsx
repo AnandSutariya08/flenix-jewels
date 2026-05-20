@@ -143,8 +143,8 @@ export default function Index() {
                 <Link to={`/category/${categories[0].id}`}
                   className="relative col-span-2 row-span-2 overflow-hidden rounded-3xl group block"
                   style={{ gridRow: 'span 2' }}>
-                  <img src={categories[0].image} alt={categories[0].name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                  <OptimizedImage noWrapper src={categories[0].image} alt={categories[0].name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 transition-opacity duration-500"
                     style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.88) 0%, rgba(6,3,1,0.28) 45%, transparent 100%)' }} />
                   {/* Hover gold overlay */}
@@ -167,8 +167,8 @@ export default function Index() {
                 <Link key={cat.id} to={`/category/${cat.id}`}
                   className="relative overflow-hidden group block"
                   style={{ borderRadius: i === 0 || i === 2 ? '20px 20px 20px 20px' : '20px' }}>
-                  <img src={cat.image} alt={cat.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                  <OptimizedImage noWrapper src={cat.image} alt={cat.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   <div className="absolute inset-0 transition-opacity duration-300"
                     style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.78) 0%, transparent 60%)' }} />
                   {/* Gold border on hover */}

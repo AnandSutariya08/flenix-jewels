@@ -1,5 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+
+/**
+ * Module-level cache — survives component unmount/remount for the entire browser session.
+ * When a URL has been fully loaded once, we skip the fade-in on subsequent mounts so
+ * navigating back to a page never shows a flash or skeleton again.
+ */
+const sessionLoadedCache = new Set<string>();
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -20,7 +27,22 @@ export function OptimizedImage({
   onLoad,
   ...props
 }: OptimizedImageProps) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(() => Boolean(src && sessionLoadedCache.has(src)));
+
+  useEffect(() => {
+    if (!src) return;
+    if (sessionLoadedCache.has(src)) {
+      setLoaded(true);
+    } else {
+      setLoaded(false);
+    }
+  }, [src]);
+
+  const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (src) sessionLoadedCache.add(src);
+    setLoaded(true);
+    onLoad?.(e);
+  };
 
   const skeleton = !loaded ? (
     <div
@@ -36,16 +58,13 @@ export function OptimizedImage({
       src={src}
       alt={alt}
       className={cn(
-        'transition-opacity duration-700',
+        'transition-opacity duration-500',
         loaded ? 'opacity-100' : 'opacity-0',
         className
       )}
       loading="lazy"
       decoding="async"
-      onLoad={(e) => {
-        setLoaded(true);
-        onLoad?.(e);
-      }}
+      onLoad={handleLoad}
       {...props}
     />
   );

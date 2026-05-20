@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadDeferredData, selectDeferredLoaded, selectDeferredStatus, selectGlobalData } from "@/store/contentSlice";
 import { HEADER_OFFSET_PX } from "@/lib/layout";
 import { ChevronLeft, ChevronRight, X, ZoomIn, Gem } from 'lucide-react';
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { FaWhatsapp } from 'react-icons/fa';
 import { useTheme } from 'next-themes';
 import hero6 from "@/assets/hero6.png";
@@ -51,12 +52,11 @@ const GalleryCard = ({
       }}
     >
       <div className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] bg-muted overflow-hidden">
-        <img
+        <OptimizedImage
+          noWrapper
           src={item.image}
           alt={item.description || "Flenix Jewels"}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-          loading="lazy"
-          decoding="async"
           draggable={false}
         />
 
@@ -323,86 +323,86 @@ const Gallery = () => {
         )}
 
         {/* ── Gallery ── */}
-	        {filteredItems.length === 0 ? (
-	          <div className="text-center py-32 px-6">
-	            <Gem className="h-16 w-16 mx-auto mb-6 opacity-20" style={{ color: '#C4906A' }} />
-	            <h3 className="text-2xl font-bold mb-2">Gallery Coming Soon</h3>
-	            <p className="text-muted-foreground">We're curating an exceptional collection for you.</p>
-	          </div>
-	        ) : (
-	          <div style={{ background: isDark ? '#0a0603' : '#f2ece5' }}>
-	            <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #9B6844 30%, #D4A96A 50%, #9B6844 70%, transparent 95%)' }} />
+                {filteredItems.length === 0 ? (
+                  <div className="text-center py-32 px-6">
+                    <Gem className="h-16 w-16 mx-auto mb-6 opacity-20" style={{ color: '#C4906A' }} />
+                    <h3 className="text-2xl font-bold mb-2">Gallery Coming Soon</h3>
+                    <p className="text-muted-foreground">We're curating an exceptional collection for you.</p>
+                  </div>
+                ) : (
+                  <div style={{ background: isDark ? '#0a0603' : '#f2ece5' }}>
+                    <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, #9B6844 30%, #D4A96A 50%, #9B6844 70%, transparent 95%)' }} />
 
-	            {/* Label row */}
-	            <div className="flex items-center justify-between px-5 sm:px-8 md:px-12 py-5">
-	              <div className="flex items-center gap-3">
-	                <div className="w-5 h-px" style={{ background: '#C4906A' }} />
-	                <span className="text-[9px] tracking-[0.35em] uppercase font-black" style={{ color: 'rgba(196,144,106,0.6)' }}>The Collection</span>
-	              </div>
-	              <span className="text-[9px] tracking-[0.25em] uppercase font-black" style={{ color: 'rgba(196,144,106,0.35)' }}>
-	                {filteredItems.length} Pieces
-	              </span>
-	            </div>
+                    {/* Label row */}
+                    <div className="flex items-center justify-between px-5 sm:px-8 md:px-12 py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-5 h-px" style={{ background: '#C4906A' }} />
+                        <span className="text-[9px] tracking-[0.35em] uppercase font-black" style={{ color: 'rgba(196,144,106,0.6)' }}>The Collection</span>
+                      </div>
+                      <span className="text-[9px] tracking-[0.25em] uppercase font-black" style={{ color: 'rgba(196,144,106,0.35)' }}>
+                        {filteredItems.length} Pieces
+                      </span>
+                    </div>
 
-	            {/* Editorial featured + grid */}
-	            <div className="px-4 sm:px-6 md:px-10 lg:px-12 pb-16">
-	              {filteredItems[0] && (
-	                <button
-	                  type="button"
-	                  onClick={() => openLightbox(0)}
-	                  className="group relative w-full overflow-hidden rounded-3xl mb-6 md:mb-8"
-	                  style={{ boxShadow: "0 28px 90px -40px rgba(0,0,0,0.65)" }}
-	                >
-	                  <div className="relative aspect-[16/10] md:aspect-[21/9] bg-muted overflow-hidden">
-	                    <img
-	                      src={filteredItems[0].image}
-	                      alt={filteredItems[0].description || "Flenix Jewels"}
-	                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-	                      loading="eager"
-	                      decoding="async"
-	                      fetchpriority="high"
-	                      draggable={false}
-	                    />
-	                    <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to right, rgba(4,2,0,0.72) 0%, rgba(4,2,0,0.20) 55%, rgba(4,2,0,0.05) 100%)" }} />
-	                    <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: "inset 0 0 0 1.5px rgba(196,144,106,0.55)" }} />
+                    {/* Editorial featured + grid */}
+                    <div className="px-4 sm:px-6 md:px-10 lg:px-12 pb-16">
+                      {filteredItems[0] && (
+                        <button
+                          type="button"
+                          onClick={() => openLightbox(0)}
+                          className="group relative w-full overflow-hidden rounded-3xl mb-6 md:mb-8"
+                          style={{ boxShadow: "0 28px 90px -40px rgba(0,0,0,0.65)" }}
+                        >
+                          <div className="relative aspect-[16/10] md:aspect-[21/9] bg-muted overflow-hidden">
+                            <img
+                              src={filteredItems[0].image}
+                              alt={filteredItems[0].description || "Flenix Jewels"}
+                              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                              loading="eager"
+                              decoding="async"
+                              fetchpriority="high"
+                              draggable={false}
+                            />
+                            <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to right, rgba(4,2,0,0.72) 0%, rgba(4,2,0,0.20) 55%, rgba(4,2,0,0.05) 100%)" }} />
+                            <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: "inset 0 0 0 1.5px rgba(196,144,106,0.55)" }} />
 
-	                    <div className="absolute left-5 right-5 bottom-5 md:left-10 md:bottom-8 z-10 max-w-xl">
-	                      <p className="text-[10px] tracking-[0.38em] uppercase font-black mb-3" style={{ color: "#C4906A" }}>
-	                        Featured Piece
-	                      </p>
-	                      <h3 className="text-2xl md:text-4xl font-bold text-white leading-[1.05] mb-2">
-	                        {filteredItems[0].category ? filteredItems[0].category : "Signature Design"}
-	                      </h3>
-	                      <p className="text-sm md:text-base leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-	                        {filteredItems[0].description || "Explore our curated collection of premium designs."}
-	                      </p>
-	                      <div className="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2" style={{ background: "rgba(196,144,106,0.14)", border: "1px solid rgba(196,144,106,0.28)", color: "#DEB48A", backdropFilter: "blur(12px)" }}>
-	                        <ZoomIn className="h-4 w-4" />
-	                        <span className="text-[10px] font-black tracking-[0.22em] uppercase">Open</span>
-	                      </div>
-	                    </div>
-	                  </div>
-	                </button>
-	              )}
+                            <div className="absolute left-5 right-5 bottom-5 md:left-10 md:bottom-8 z-10 max-w-xl">
+                              <p className="text-[10px] tracking-[0.38em] uppercase font-black mb-3" style={{ color: "#C4906A" }}>
+                                Featured Piece
+                              </p>
+                              <h3 className="text-2xl md:text-4xl font-bold text-white leading-[1.05] mb-2">
+                                {filteredItems[0].category ? filteredItems[0].category : "Signature Design"}
+                              </h3>
+                              <p className="text-sm md:text-base leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
+                                {filteredItems[0].description || "Explore our curated collection of premium designs."}
+                              </p>
+                              <div className="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2" style={{ background: "rgba(196,144,106,0.14)", border: "1px solid rgba(196,144,106,0.28)", color: "#DEB48A", backdropFilter: "blur(12px)" }}>
+                                <ZoomIn className="h-4 w-4" />
+                                <span className="text-[10px] font-black tracking-[0.22em] uppercase">Open</span>
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+                      )}
 
-	              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-	                {filteredItems.slice(1).map((item: any, index: number) => {
-	                  const actualIndex = index + 1;
-	                  return (
-	                    <GalleryCard
-	                      key={item.id}
-	                      item={item}
-	                      index={actualIndex}
-	                      onClick={() => openLightbox(actualIndex)}
-	                    />
-	                  );
-	                })}
-	              </div>
-	            </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                        {filteredItems.slice(1).map((item: any, index: number) => {
+                          const actualIndex = index + 1;
+                          return (
+                            <GalleryCard
+                              key={item.id}
+                              item={item}
+                              index={actualIndex}
+                              onClick={() => openLightbox(actualIndex)}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
 
-	            <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.22) 50%, transparent 95%)' }} />
-	          </div>
-	        )}
+                    <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.22) 50%, transparent 95%)' }} />
+                  </div>
+                )}
 
         {/* ── CTA ── */}
         {filteredItems.length > 0 && (
