@@ -659,8 +659,8 @@ export default function Index() {
               {sortedBlogs[0] && (
                 <article className="lg:col-span-3 group cursor-pointer" onClick={() => openBlog(sortedBlogs[0])}>
                   <div className="relative h-64 md:h-[400px] rounded-3xl overflow-hidden mb-6">
-                    <img src={sortedBlogs[0].thumbnail || sortedBlogs[0].image} alt={sortedBlogs[0].title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                    <OptimizedImage noWrapper src={sortedBlogs[0].thumbnail || sortedBlogs[0].image} alt={sortedBlogs[0].title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.55) 0%, transparent 55%)' }} />
                     <span className="absolute top-5 left-5 text-[10px] font-black tracking-[0.2em] uppercase px-3.5 py-1.5 rounded-full"
                       style={{ background: GOLD, color: '#fff' }}>
@@ -683,9 +683,9 @@ export default function Index() {
               <div className="lg:col-span-2 flex flex-col gap-7">
                 {sortedBlogs.slice(1, 3).map(blog => (
                   <article key={blog.id} className="group cursor-pointer flex gap-5" onClick={() => openBlog(blog)}>
-                    <div className="flex-shrink-0 w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden">
-                      <img src={blog.thumbnail || blog.image} alt={blog.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                    <div className="relative flex-shrink-0 w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden">
+                      <OptimizedImage noWrapper src={blog.thumbnail || blog.image} alt={blog.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <time className="text-[10.5px] text-muted-foreground tracking-widest uppercase font-semibold mb-1.5">

@@ -219,7 +219,9 @@ const AppContent = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Collect important images to preload (banners are most critical)
+  // Collect important images to preload. Deferred images (gallery, featured,
+  // instagram) are added here so the browser starts caching them as soon as
+  // that data arrives — before the user ever scrolls to those sections.
   const assetUrls = useMemo(() => {
     const take = (arr: string[], n: number) => arr.filter(Boolean).slice(0, n);
     if (isAdminRoute) return [];
@@ -227,11 +229,19 @@ const AppContent = () => {
       ...take(data.banners.map((b) => b.image), 1),
       ...take(data.categories.map((c) => c.image), 6),
       ...take(data.products.map((p) => p.image), 8),
+      ...take(data.featuredCollection.map((f) => f.image), 6),
+      ...take(data.galleryItems.map((g) => g.image), 8),
+      ...take(data.instagramPosts.map((i) => i.image), 6),
+      ...take((data.testimonials ?? []).map((t: any) => t.image).filter(Boolean), 6),
     ];
   }, [
     data.banners,
     data.categories,
     data.products,
+    data.featuredCollection,
+    data.galleryItems,
+    data.instagramPosts,
+    data.testimonials,
     isAdminRoute,
   ]);
 
