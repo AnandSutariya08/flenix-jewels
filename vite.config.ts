@@ -12,10 +12,26 @@ export default defineConfig({
       protocol: "wss",
     },
   },
+  preview: {
+    host: "0.0.0.0",
+    port: 3000,
+    allowedHosts: true,
+  },
   plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+          firebase: ["firebase/app", "firebase/firestore", "firebase/storage"],
+          ui: ["@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu", "@radix-ui/react-tooltip"],
+        },
+      },
     },
   },
 });

@@ -387,9 +387,18 @@ const Blog = () => {
         title={seoTitle} description={seoDescription}
         keywords="jewelry blog, diamond buying guide, engagement ring tips, jewelry trends 2024, gemstone guide, diamond education, luxury jewelry tips"
         canonicalUrl={`https://www.flenixjewels.com/blog${selectedBlog ? `/${selectedBlog.id}` : ''}`}
+        ogType={selectedBlog ? "article" : "website"}
+        ogImage={selectedBlog?.image || undefined}
         structuredData={structuredData}
         breadcrumbs={[{ name: "Home", url: "https://www.flenixjewels.com" }, { name: "Blog", url: "https://www.flenixjewels.com/blog" }]}
         faqItems={faqItems}
+        articleMeta={selectedBlog ? {
+          publishedTime: selectedBlog.date,
+          modifiedTime: selectedBlog.date,
+          author: selectedBlog.author || "Flenix Jewels",
+          section: selectedBlog.category || "Jewelry",
+          tags: selectedBlog.tags || [],
+        } : undefined}
       />
       <Header promoHeader={promoHeader} />
       {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
