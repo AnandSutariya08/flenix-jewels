@@ -165,7 +165,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
               {current?.type === 'video' ? (
                 <video
                   ref={videoRef}
-                  className="absolute inset-0 w-full h-full object-contain"
+                  className="absolute inset-0 w-full h-full object-cover"
                   loop muted={muted} playsInline preload="auto"
                   src={current.url} poster={poster || undefined}
                   onLoadedData={() => setLoaded(true)}
@@ -178,7 +178,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                   alt={product.name}
                   draggable={false}
                   loading="eager"
-                  className="absolute inset-0 w-full h-full object-contain"
+                  className="absolute inset-0 w-full h-full object-cover"
                   onLoad={() => { setLoaded(true); keepImageAlive(current.url); }}
                 />
               ) : null}
@@ -372,7 +372,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                 {current?.type === 'video' ? (
                   <video
                     ref={videoRef}
-                    className="absolute inset-0 w-full h-full object-contain"
+                    className="absolute inset-0 w-full h-full object-cover"
                     loop muted={muted} playsInline preload="auto"
                     src={current.url} poster={poster || undefined}
                     onLoadedData={() => setLoaded(true)}
@@ -385,7 +385,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                     alt={product.name}
                     draggable={false}
                     loading="eager"
-                    className="absolute inset-0 w-full h-full object-contain"
+                    className="absolute inset-0 w-full h-full object-cover"
                     onLoad={() => { setLoaded(true); keepImageAlive(current.url); }}
                   />
                 ) : null}
