@@ -100,10 +100,6 @@ const AdminGallery = () => {
         toast.error('Sequence must be a number starting from 1');
         return;
       }
-      if (usedSequences.has(seqNum!)) {
-        toast.error(`Sequence #${seqNum} is already used by another image`);
-        return;
-      }
     }
 
     setIsUploading(true);
@@ -111,6 +107,17 @@ const AdminGallery = () => {
       let imageUrl = image;
       if (imageFile) {
         imageUrl = await uploadImageToStorage(imageFile, 'gallery');
+      }
+
+      // If the chosen sequence is already held by a DIFFERENT item, clear it from that item first
+      if (seqNum != null && usedSequences.has(seqNum)) {
+        const conflict = gallery.find(
+          (g) => g.sequence === seqNum && g.id !== editingId
+        );
+        if (conflict) {
+          const { sequence: _removed, ...rest } = conflict;
+          await saveGalleryItem(rest as GalleryItem);
+        }
       }
 
       const itemData: GalleryItem = {
@@ -219,8 +226,8 @@ const AdminGallery = () => {
                 </p>
               )}
               {sequenceInput.trim() && usedSequences.has(parseInt(sequenceInput.trim())) && (
-                <p className="text-xs text-red-600 font-semibold">
-                  ⚠ Sequence #{sequenceInput} is already used. Choose a different number.
+                <p className="text-xs font-semibold" style={{ color: '#9B6844' }}>
+                  ℹ Sequence #{sequenceInput} is currently assigned to another image — it will be moved here automatically.
                 </p>
               )}
             </div>
