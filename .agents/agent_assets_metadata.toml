@@ -66,3 +66,63 @@ id = "Gcr1QCXOL9t2mYTmmH9Oe"
 uri = "file://src/assets/diamond-hero.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "Z0F4Ed7pXFcurZ7fiVAgS"
+uri = "file://public/diamonds/round_1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "zlk83p0GMxvEsljCYcbk5"
+uri = "file://public/diamonds/round_2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "rer_NVfDNhIJoyw8UAW1E"
+uri = "file://public/diamonds/oval_1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "sdk1VPDE4wapSr-bl7D9g"
+uri = "file://public/diamonds/princess_1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "FrwndjgWm5042_cTeXmTe"
+uri = "file://public/diamonds/cushion_1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "0SZJ1GDc1uY6MTpN2Hsvi"
+uri = "file://public/diamonds/emerald_1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "bcC57ilXgqYJRiG_bhjv6"
+uri = "file://public/diamonds/pear_1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "mzC9hU5s-2VnPV61BEdCY"
+uri = "file://public/diamonds/marquise_1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "srcfHKJzeBl2WApe6vSbl"
+uri = "file://public/diamonds/heart_1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "mO4sxwX5O47lmP6T2dvQ5"
+uri = "file://public/diamonds/radiant_1.png"
+type = "image"
+title = "generated_image"

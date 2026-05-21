@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { TouchEvent } from 'react';
-import { CatalogItem } from '@/lib/storage';
+import { CatalogItem, type Diamond } from '@/lib/storage';
 import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
 import { keepImageAlive, isImageCached } from '@/lib/preload';
@@ -8,6 +8,16 @@ import { stripHtml } from '@/lib/seo';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { formatPriceRounded } from "@/lib/utils";
+
+function isDiamond(product: CatalogItem): product is Diamond {
+  return 'diamondType' in product;
+}
+
+const SHAPE_LABEL: Record<string, string> = {
+  round: 'Round', pear: 'Pear', marquise: 'Marquise', oval: 'Oval',
+  heart: 'Heart', princess: 'Princess', cushion: 'Cushion', emerald: 'Emerald',
+  sq_emerald: 'Sq Emerald', radiant: 'Radiant', sq_radiant: 'Sq Radiant', other: 'Other',
+};
 
 const productImgCache = new Set<string>();
 
@@ -177,6 +187,47 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
         <h3 className="font-semibold text-base sm:text-lg lg:text-xl mb-2 line-clamp-2 min-h-[3rem] text-foreground group-hover:text-primary transition-colors">
           {product.name}
         </h3>
+
+        {/* Diamond spec badges */}
+        {isDiamond(product) && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {product.diamondType && (
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border ${product.diamondType === 'cvd' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800' : 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800'}`}>
+                {product.diamondType === 'cvd' ? 'Lab Grown' : 'Natural'}
+              </span>
+            )}
+            {product.shape && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground">
+                {SHAPE_LABEL[product.shape] ?? product.shape}
+              </span>
+            )}
+            {product.carat !== undefined && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground">
+                {product.carat}ct
+              </span>
+            )}
+            {product.clarity && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground">
+                {product.clarity}
+              </span>
+            )}
+            {product.colorGrade && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground">
+                {product.colorGrade} Colour
+              </span>
+            )}
+            {product.cut && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground capitalize">
+                {product.cut.replace('_', ' ')} Cut
+              </span>
+            )}
+            {product.certificate && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-stone-100 text-stone-700 border border-stone-300 dark:bg-stone-800 dark:text-stone-300 dark:border-stone-600">
+                {product.certificate}
+              </span>
+            )}
+          </div>
+        )}
 
         {priceSettings.showPrices ? (
           <div className="mb-3 text-sm font-semibold tracking-wide text-foreground/90">
