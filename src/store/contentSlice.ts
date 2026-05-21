@@ -384,8 +384,9 @@ export const loadDeferredData = createAsyncThunk<
       if (args?.force) return true;
       if (content.deferredStatus === "loading") return false;
       if (content.deferredLoaded) {
-        // Allow a re-fetch if any deferred section is still empty.
-        // This prevents stale caches from showing "Coming Soon" even when Firestore has data.
+        // Allow a re-fetch if gallery is still empty (newly added items may not be cached yet).
+        if (content.data.galleryItems.length === 0) return true;
+        // Allow a re-fetch if ALL deferred sections are empty.
         const hasAnyDeferredContent =
           content.data.galleryItems.length > 0 ||
           content.data.featuredCollection.length > 0 ||

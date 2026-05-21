@@ -515,14 +515,16 @@ export default function Index() {
                 description="We’re curating an exceptional collection for you."
                 className="py-10"
               />
-            ) : homeGalleryItems.length >= 5 ? (
+            ) : (() => {
+              const displayItems = homeGalleryItems.length > 0 ? homeGalleryItems : galleryItems.slice(0, 5);
+              if (displayItems.length >= 5) return (
               <div className="grid grid-cols-12 gap-3 md:gap-4" style={{ gridAutoRows: '180px' }}>
 
                 {/* Hero tall image — 5 cols × 3 rows */}
                 <Link to="/gallery"
                   className="col-span-12 md:col-span-5 row-span-3 relative overflow-hidden rounded-3xl group block"
                   style={{ gridRow: 'span 3' }}>
-                  <OptimizedImage noWrapper src={homeGalleryItems[0].image} alt={homeGalleryItems[0].description || 'Gallery'}
+                  <OptimizedImage noWrapper src={displayItems[0].image} alt={displayItems[0].description || 'Gallery'}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.85) 0%, rgba(6,3,1,0.25) 50%, transparent 80%)' }} />
@@ -535,8 +537,8 @@ export default function Index() {
                     style={{ borderBottom: '2px solid rgba(196,144,106,0.7)', borderRight: '2px solid rgba(196,144,106,0.7)', borderRadius: '0 0 20px 0' }} />
                   <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
                     <p className="text-[9px] tracking-[0.28em] uppercase font-black mb-1.5" style={{ color: '#C4906A' }}>✦ Featured</p>
-                    {homeGalleryItems[0].description && (
-                      <p className="text-white text-sm leading-relaxed line-clamp-2">{homeGalleryItems[0].description}</p>
+                    {displayItems[0].description && (
+                      <p className="text-white text-sm leading-relaxed line-clamp-2">{displayItems[0].description}</p>
                     )}
                   </div>
                 </Link>
@@ -544,22 +546,22 @@ export default function Index() {
                 {/* Top-right wide — 7 cols × 2 rows */}
                 <Link to="/gallery"
                   className="col-span-12 md:col-span-7 row-span-2 relative overflow-hidden rounded-2xl group block">
-                  <OptimizedImage noWrapper src={homeGalleryItems[1].image} alt={homeGalleryItems[1].description || 'Gallery'}
+                  <OptimizedImage noWrapper src={displayItems[1].image} alt={displayItems[1].description || 'Gallery'}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
                     style={{ background: 'linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)' }} />
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
                     style={{ background: 'linear-gradient(135deg, rgba(196,144,106,0.10), transparent)' }} />
-                  {homeGalleryItems[1].description && (
+                  {displayItems[1].description && (
                     <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
-                      <p className="text-white text-sm leading-relaxed line-clamp-1">{homeGalleryItems[1].description}</p>
+                      <p className="text-white text-sm leading-relaxed line-clamp-1">{displayItems[1].description}</p>
                     </div>
                   )}
                 </Link>
 
                 {/* Bottom-right 3 small tiles — contained in col-span-7 wrapper */}
                 <div className="col-span-12 md:col-span-7 grid grid-cols-3 gap-3 md:gap-4">
-                  {homeGalleryItems.slice(2, 5).map((item) => (
+                  {displayItems.slice(2, 5).map((item) => (
                     <Link key={item.id} to="/gallery"
                       className="relative overflow-hidden group block h-full min-h-[140px] md:min-h-0"
                       style={{ borderRadius: 16 }}>
@@ -573,10 +575,11 @@ export default function Index() {
                   ))}
                 </div>
               </div>
-            ) : (
-              /* Fallback — editorial scroll (fewer than 5 home images assigned) */
+              );
+              return (
+              /* Fallback — editorial scroll (fewer than 5 images) */
               <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-                {homeGalleryItems.map(item => (
+                {displayItems.map(item => (
                   <Link key={item.id} to="/gallery" className="flex-shrink-0 w-64 h-80 rounded-2xl overflow-hidden group relative block">
                     <OptimizedImage noWrapper src={item.image} alt={item.description || 'Gallery'}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
@@ -585,7 +588,8 @@ export default function Index() {
                   </Link>
                 ))}
               </div>
-            )}
+              );
+            })()}
 
             {/* Count pill */}
             {galleryItems.length > 0 && (
