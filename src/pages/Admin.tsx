@@ -44,6 +44,7 @@ const AdminPromoHeader = lazy(() => import('@/components/admin/AdminPromoHeader'
 const AdminAds = lazy(() => import('@/components/admin/AdminAds'));
 const AdminTestimonials = lazy(() => import('@/components/admin/AdminTestimonials'));
 const AdminContactSubmissions = lazy(() => import('@/components/admin/AdminContactSubmissions'));
+const AdminTicker = lazy(() => import('@/components/admin/AdminTicker'));
 
 const SectionFallback = () => (
   <div className="flex items-center justify-center min-h-[360px]">
@@ -99,6 +100,7 @@ class SectionErrorBoundary extends Component<
 }
 
 const NAV_ITEMS = [
+  { key: 'ticker',       label: 'Ticker Bar',    icon: Megaphone },
   { key: 'promo',        label: 'Promo Header',  icon: Megaphone },
   { key: 'ads',          label: 'Website Ads',   icon: Megaphone },
   { key: 'banners',      label: 'Banners',        icon: Image },
@@ -118,6 +120,7 @@ const NAV_ITEMS = [
 ];
 
 const SECTION_MAP: Record<string, () => ReactNode> = {
+  ticker:       () => <AdminTicker />,
   promo:        () => <AdminPromoHeader />,
   ads:          () => <AdminAds />,
   banners:      () => <AdminBanners />,

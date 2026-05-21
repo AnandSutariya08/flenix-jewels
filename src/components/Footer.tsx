@@ -164,7 +164,7 @@ export default function Footer() {
             <p className="text-sm leading-relaxed" style={{ color: C.text }}>
               Elegant jewellery crafted with precision, authenticity, and timeless beauty. Discover our natural and lab-grown diamond collections for every occasion.
             </p>
-            <div className="flex flex-row gap-2 w-full">
+            {/* <div className="flex flex-row gap-2 w-full">
               <a
                 href={whatsappUrl}
                 target="_blank"
@@ -195,7 +195,7 @@ export default function Footer() {
                 <Mail className="h-4 w-4 flex-shrink-0" />
                 Email
               </a>
-            </div>
+            </div> */}
           </div>
 
           {/* Column 2: Explore */}
@@ -240,7 +240,7 @@ export default function Footer() {
               className="text-sm font-black tracking-[0.22em] uppercase"
               style={{ color: C.gold }}
             >
-              Contact
+              Contact Us
             </p>
             <ul className="space-y-3 text-sm" style={{ color: C.text }}>
               {contactInfo?.address && (
@@ -306,7 +306,7 @@ export default function Footer() {
               className="text-sm font-black tracking-[0.22em] uppercase"
               style={{ color: C.gold }}
             >
-              Follow
+              Follow Us
             </p>
             <div className="flex flex-wrap gap-3">
               <a
@@ -552,7 +552,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Flenix Jewels Ltd. All rights
             reserved.
           </p>
-          <div
+          {/* <div
             className="flex items-center gap-4 text-xs"
             style={{ color: C.muted }}
           >
@@ -571,7 +571,7 @@ export default function Footer() {
             >
               Buying Guide
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

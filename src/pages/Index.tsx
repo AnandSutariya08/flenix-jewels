@@ -37,7 +37,7 @@ const features = [
 ];
 
 export default function Index() {
-  const { banners, categories, featuredCollection, galleryItems, blogs, instagramPosts, testimonials, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
+  const { banners, categories, featuredCollection, galleryItems, blogs, instagramPosts, testimonials, promoHeader, contactInfo, tickerItems } = useAppSelector(selectGlobalData);
   const dispatch = useAppDispatch();
 
   const homeGalleryItems = useMemo(() =>
@@ -124,7 +124,7 @@ export default function Index() {
             1. HERO — full-bleed carousel
         ═══════════════════════════════════════════════════════ */}
         <section className="w-full">
-          <BannerCarousel banners={banners} />
+          <BannerCarousel banners={banners} tickerItems={tickerItems} />
         </section>
 
 

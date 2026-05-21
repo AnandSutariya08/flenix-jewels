@@ -15,6 +15,7 @@ import {
   getContact,
   getOffices,
   getPriceSettings,
+  getTickerItems,
   initializeDefaultData,
   type AdCampaign,
   type Banner,
@@ -52,6 +53,7 @@ export interface GlobalData {
   offices: Office[];
   buyingGuides: BuyingGuide[];
   priceSettings: PriceSettings;
+  tickerItems: string[];
 }
 
 interface ContentState {
@@ -78,8 +80,8 @@ const computeDeferredLoaded = (data: GlobalData) =>
   data.buyingGuides.length > 0;
 
 // Bump cache version to avoid stale data (especially after Firebase project changes).
-const SESSION_KEY = "flenix_global_data_v7";
-const LOCAL_KEY = "flenix_global_data_v7_persisted";
+const SESSION_KEY = "flenix_global_data_v8";
+const LOCAL_KEY = "flenix_global_data_v8_persisted";
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 const emptyData: GlobalData = {
@@ -99,6 +101,7 @@ const emptyData: GlobalData = {
   offices: [],
   buyingGuides: [],
   priceSettings: { showPrices: false },
+  tickerItems: [],
 };
 
 const normalizeBuyingGuides = (guides: BuyingGuide[]): BuyingGuide[] => {
@@ -273,6 +276,7 @@ export const loadGlobalData = createAsyncThunk<
       promoHeader,
       priceSettings,
       contactInfo,
+      tickerItems,
     ] = await Promise.all([
       getAds(),
       getBanners(),
@@ -282,6 +286,7 @@ export const loadGlobalData = createAsyncThunk<
       getPromoHeader(),
       getPriceSettings(),
       getContact(),
+      getTickerItems(),
     ]);
 
     return {
@@ -299,6 +304,7 @@ export const loadGlobalData = createAsyncThunk<
       promoHeader: promoHeader ?? null,
       contactInfo,
       offices: [],
+      tickerItems,
       buyingGuides: [],
       priceSettings,
     };

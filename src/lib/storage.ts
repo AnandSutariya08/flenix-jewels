@@ -229,6 +229,17 @@ const COLLECTIONS = {
   ADS: 'ads',
 };
 
+const DEFAULT_TICKER_ITEMS = [
+  'GIA Certified',
+  'IGI Graded',
+  'Worldwide Shipping',
+  'Lifetime Guarantee',
+  '1K+ Happy Clients',
+  '15+ Countries',
+  'Ethically Sourced',
+  'Custom Design',
+];
+
 const sanitizeForFirestore = <T>(value: T): T => {
   if (Array.isArray(value)) {
     return value
@@ -1080,6 +1091,30 @@ export const uploadImageToStorage = async (file: File, path: string, skipWaterma
     return downloadURL;
   } catch (error) {
     console.error('Error uploading image:', error);
+    throw error;
+  }
+};
+
+// Ticker Items (stored as settings/ticker document)
+export const getTickerItems = async (): Promise<string[]> => {
+  try {
+    const docSnap = await getDoc(doc(db, COLLECTIONS.SETTINGS, 'ticker'));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (Array.isArray(data.items) && data.items.length > 0) return data.items as string[];
+    }
+    return DEFAULT_TICKER_ITEMS;
+  } catch (error) {
+    console.error('Error getting ticker items:', error);
+    return DEFAULT_TICKER_ITEMS;
+  }
+};
+
+export const saveTickerItems = async (items: string[]): Promise<void> => {
+  try {
+    await setDoc(doc(db, COLLECTIONS.SETTINGS, 'ticker'), { items });
+  } catch (error) {
+    console.error('Error saving ticker items:', error);
     throw error;
   }
 };
