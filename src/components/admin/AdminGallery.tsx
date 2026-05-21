@@ -8,7 +8,7 @@ import { Plus, Trash2, Pencil, Home, ImageIcon } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/store/hooks';
-import { loadDeferredData } from '@/store/contentSlice';
+import { loadDeferredData, invalidateDeferredCache } from '@/store/contentSlice';
 
 const HOME_SLOTS = 5;
 
@@ -124,6 +124,7 @@ const AdminGallery = () => {
       await saveGalleryItem(itemData);
       const updated = await getGallery();
       setGallery(updated);
+      invalidateDeferredCache();
       dispatch(loadDeferredData({ force: true }));
       resetForm();
       setIsFormOpen(false);
@@ -141,6 +142,7 @@ const AdminGallery = () => {
       await deleteGalleryItem(id);
       const updated = await getGallery();
       setGallery(updated);
+      invalidateDeferredCache();
       dispatch(loadDeferredData({ force: true }));
       toast.success('Image deleted');
     } catch {

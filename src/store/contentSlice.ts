@@ -84,6 +84,34 @@ const SESSION_KEY = "flenix_global_data_v8";
 const LOCAL_KEY = "flenix_global_data_v8_persisted";
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
+// Call this from admin after saving/deleting gallery items so the home page
+// always fetches fresh deferred data on the next visit instead of using stale cache.
+export const invalidateDeferredCache = () => {
+  if (typeof window === "undefined") return;
+  try {
+    const sessionRaw = sessionStorage.getItem(SESSION_KEY);
+    if (sessionRaw) {
+      const parsed = JSON.parse(sessionRaw);
+      if (parsed?.data) {
+        parsed.data.galleryItems = [];
+        parsed.deferredLoaded = false;
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(parsed));
+      }
+    }
+    const localRaw = localStorage.getItem(LOCAL_KEY);
+    if (localRaw) {
+      const parsed = JSON.parse(localRaw);
+      if (parsed?.data) {
+        parsed.data.galleryItems = [];
+        parsed.deferredLoaded = false;
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
+      }
+    }
+  } catch {
+    // ignore
+  }
+};
+
 const emptyData: GlobalData = {
   ads: [],
   banners: [],
