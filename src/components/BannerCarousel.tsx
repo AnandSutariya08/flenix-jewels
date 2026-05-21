@@ -147,7 +147,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
               <img
                 src={banner.image}
                 alt={banner.title}
-                className={`w-full h-full object-cover object-center transition-transform duration-[8000ms] ease-out ${isActive ? 'scale-110' : 'scale-100'}`}
+                className="w-full h-full object-cover object-center"
                 style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
                 loading={isActive ? 'eager' : 'lazy'}
                 decoding="async"

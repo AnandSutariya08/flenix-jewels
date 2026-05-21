@@ -443,6 +443,7 @@ export default function Header({ promoHeader }: HeaderProps) {
                             : 'transparent',
                         }}
                       >
+                        <span className="absolute left-4 right-4 bottom-0 h-px" style={{ background: isDark ? 'linear-gradient(90deg, transparent, rgba(196,144,106,0.22), transparent)' : 'linear-gradient(90deg, transparent, rgba(155,104,68,0.18), transparent)' }} aria-hidden="true" />
                         <span className="text-[12px] font-semibold tracking-[0.14em] uppercase" style={{ color: active ? (isDark ? '#DEB48A' : '#7A4A2A') : (isDark ? 'rgba(255,255,255,0.70)' : 'rgba(20,12,6,0.82)') }}>
                           {link.name}
                         </span>
@@ -466,12 +467,11 @@ export default function Header({ promoHeader }: HeaderProps) {
                               <button
                                 type="button"
                                 onClick={() => { navigate('/categories'); setIsMenuOpen(false); setMobileExpanded(null); }}
-                                className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg transition-all text-left"
+                                className="flex items-center justify-center py-2.5 rounded-lg transition-all"
                                 style={{ background: 'transparent' }}
                                 onTouchStart={e => { (e.currentTarget as HTMLElement).style.background = isDark ? 'rgba(196,144,106,0.08)' : 'rgba(155,104,68,0.06)'; }}
                                 onTouchEnd={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                               >
-                                <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: isDark ? 'rgba(196,144,106,0.6)' : 'rgba(155,104,68,0.5)' }} />
                                 <span className="text-[12px] font-medium tracking-wide" style={{ color: isDark ? 'rgba(245,232,216,0.75)' : 'rgba(20,12,6,0.72)' }}>All Jewellery</span>
                               </button>
                               {categories.map(cat => (
@@ -479,10 +479,9 @@ export default function Header({ promoHeader }: HeaderProps) {
                                   key={cat.id}
                                   type="button"
                                   onClick={() => { navigate(`/category/${cat.id}`); setIsMenuOpen(false); setMobileExpanded(null); }}
-                                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg transition-all text-left"
+                                  className="flex items-center justify-center py-2.5 rounded-lg transition-all"
                                   style={{ background: 'transparent' }}
                                 >
-                                  <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: isDark ? 'rgba(196,144,106,0.6)' : 'rgba(155,104,68,0.5)' }} />
                                   <span className="text-[12px] font-medium tracking-wide" style={{ color: isDark ? 'rgba(245,232,216,0.75)' : 'rgba(20,12,6,0.72)' }}>{cat.name}</span>
                                 </button>
                               ))}
@@ -495,17 +494,15 @@ export default function Header({ promoHeader }: HeaderProps) {
                                   key={opt.value}
                                   type="button"
                                   onClick={() => { navigate(`/diamond?type=${opt.value}`); setIsMenuOpen(false); setMobileExpanded(null); }}
-                                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg transition-all text-left"
+                                  className="flex items-center justify-center py-2.5 rounded-lg transition-all"
                                   style={{ background: 'transparent' }}
                                 >
-                                  <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: isDark ? 'rgba(196,144,106,0.6)' : 'rgba(155,104,68,0.5)' }} />
                                   <span className="text-[12px] font-medium tracking-wide" style={{ color: isDark ? 'rgba(245,232,216,0.75)' : 'rgba(20,12,6,0.72)' }}>{opt.label}</span>
                                 </button>
                               ))}
                             </>
                           )}
                         </div>
-                        <div className="mx-4 mb-1 h-px" style={{ background: isDark ? 'rgba(196,144,106,0.10)' : 'rgba(155,104,68,0.10)' }} />
                       </div>
                     </div>
                   );

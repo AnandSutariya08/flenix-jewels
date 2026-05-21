@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronLeft, ChevronRight, Minus, RotateCcw, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, Minus, RotateCcw, SlidersHorizontal } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { DiamondCategory } from '@/lib/storage';
@@ -261,15 +261,8 @@ export default function DiamondFilterPanel({
   const [isOpen, setIsOpen] = useState(false);
   const [showAllColors, setShowAllColors] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
-  const shapeScrollRef = useRef<HTMLDivElement>(null);
 
   const isActive = hasActiveDiamondFilters(filters);
-
-  const scrollShapes = (delta: number) => {
-    if (shapeScrollRef.current) {
-      shapeScrollRef.current.scrollBy({ left: delta, behavior: 'smooth' });
-    }
-  };
 
   const handlePreset = (p: typeof CARAT_PRESETS[number]) => {
     if (activePreset === p.label) {
@@ -351,60 +344,36 @@ export default function DiamondFilterPanel({
         className="overflow-hidden transition-all duration-300 ease-in-out"
         style={{ maxHeight: isOpen ? '1200px' : '0px', opacity: isOpen ? 1 : 0 }}
       >
-        {/* Shape row with scroll arrows */}
-        <div className="relative border-b bg-background/60">
-          <button
-            type="button"
-            aria-label="Scroll shapes left"
-            onClick={() => scrollShapes(-240)}
-            className="absolute left-0 top-0 bottom-0 z-10 flex items-center justify-center w-8 bg-gradient-to-r from-background via-background/90 to-transparent hover:text-amber-700 text-muted-foreground transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-
-          <div
-            ref={shapeScrollRef}
-            className="overflow-x-auto mx-8"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            <div className="flex min-w-max">
-              {SHAPES.map(s => {
-                const active = filters.shape === s.value;
-                return (
-                  <button
-                    key={s.value}
-                    type="button"
-                    onClick={() => onChange('shape', s.value)}
-                    className={cn(
-                      'flex flex-col items-center justify-end gap-2 px-4 py-3.5 min-w-[70px] transition-all duration-150 border-b-2 relative select-none',
-                      active
-                        ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30'
-                        : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30',
-                    )}
-                  >
-                    <span className="w-10 h-10 flex items-center justify-center">
-                      {s.icon}
-                    </span>
-                    <span className={cn(
-                      'text-[8px] font-bold tracking-[0.12em] uppercase leading-none text-center whitespace-nowrap',
-                      active ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground',
-                    )}>
-                      {s.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+        {/* Shape grid — auto-fit wrap, no scroll arrows */}
+        <div className="border-b bg-background/60 px-2 py-1">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(62px, 1fr))' }}>
+            {SHAPES.map(s => {
+              const active = filters.shape === s.value;
+              return (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => onChange('shape', s.value)}
+                  className={cn(
+                    'flex flex-col items-center justify-end gap-1.5 px-1 py-3 transition-all duration-150 border-b-2 relative select-none',
+                    active
+                      ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30',
+                  )}
+                >
+                  <span className="w-8 h-8 flex items-center justify-center">
+                    {s.icon}
+                  </span>
+                  <span className={cn(
+                    'text-[7px] font-bold tracking-[0.10em] uppercase leading-none text-center',
+                    active ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground',
+                  )}>
+                    {s.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
-
-          <button
-            type="button"
-            aria-label="Scroll shapes right"
-            onClick={() => scrollShapes(240)}
-            className="absolute right-0 top-0 bottom-0 z-10 flex items-center justify-center w-8 bg-gradient-to-l from-background via-background/90 to-transparent hover:text-amber-700 text-muted-foreground transition-colors"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
         </div>
 
         {/* Main filter rows — full width, no wasted space */}
