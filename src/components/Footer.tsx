@@ -1,23 +1,19 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, MessageCircle, ChevronRight, Linkedin, Youtube } from "lucide-react";
+import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, ChevronRight, Linkedin, Youtube } from "lucide-react";
 import logo from "@/assets/flenix-logo-full.png";
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { useTheme } from "next-themes";
 import { cleanWhatsApp } from "@/lib/utils";
 import { FaWhatsapp } from "react-icons/fa";
-import Zelle from "@/assets/paylogo/Zelle_(payment_service)-Logo.wine.png";
-import Venmo from "@/assets/paylogo/Venmo-Logo.wine.png";
-import Google from "@/assets/paylogo/Google_Pay-Logo.wine.png";
-import Visa from "@/assets/paylogo/Visa_Inc.-Logo.wine.png";
-import Bank from "@/assets/paylogo/Wells_Fargo-Logo.wine.png";
 import GIA from "@/assets/paylogo/GIA_Logo.png";
 import Rapaport from "@/assets/paylogo/Rapaport-header-20250120083212-20250210092659-20250227142926-20250310094122.svg";
 import SDA from "@/assets/paylogo/sda.png";
 import Bourse from "@/assets/paylogo/SDB LOGO.png";
+import IGI from "@/assets/paylogo/igi logo.webp";
+import LGD from "@/assets/paylogo/LGD ASSOCIATION.png";
 
-const GOLD = "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
 const FOOTER_WHATSAPP_NUMBER = "+852 51254000";
 
 export default function Footer() {
@@ -40,6 +36,8 @@ export default function Footer() {
           text: "rgba(245,232,216,0.70)",
           muted: "rgba(245,232,216,0.55)",
           hover: "#ffffff",
+          certBg: "rgba(255,255,255,0.05)",
+          certBorder: "rgba(196,144,106,0.12)",
         }
         : {
           footerBg: "linear-gradient(180deg, rgba(255,252,248,1) 0%, rgba(250,244,236,1) 100%)",
@@ -52,28 +50,21 @@ export default function Footer() {
           text: "rgba(20,12,6,0.78)",
           muted: "rgba(20,12,6,0.55)",
           hover: "#130900",
+          certBg: "rgba(255,255,255,0.80)",
+          certBorder: "rgba(196,144,106,0.15)",
         },
     [isDark],
   );
 
-  const paymentMethods = useMemo(
-    () => [
-      { name: "Zelle", logo: Zelle },
-      { name: "Venmo", logo: Venmo },
-      { name: "Google Pay", logo: Google },
-      { name: "Visa", logo: Visa },
-      { name: "Bank Wire", logo: Bank },
-    ],
-    [],
-  );
-
-  const trustedBadges = useMemo(
+  const certifications = useMemo(
     () => [
       { name: "GIA", logo: GIA },
+      { name: "IGI", logo: IGI },
       { name: "Rapaport", logo: Rapaport },
       { name: "Surat Diamond Assoc.", logo: SDA },
       { name: "Surat Diamond Bourse", logo: Bourse },
-      { name: "Surat Jewellery Assoc.", logo: "https://sjma.in/cdn/shop/files/SJMA_Logo.png?v=1755163553&width=210" },
+      { name: "LGD Association", logo: LGD },
+      { name: "SJMA", logo: "https://sjma.in/cdn/shop/files/SJMA_Logo.png?v=1755163553&width=210" },
     ],
     [],
   );
@@ -132,7 +123,7 @@ export default function Footer() {
                   color: C.gold,
                 }}
               >
-                <MessageCircle className="h-4 w-4" />
+                <FaWhatsapp className="h-4 w-4" />
                 WhatsApp Support
               </a>
           </div>
@@ -156,7 +147,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Contact (no map here anymore) */}
+          {/* Column 3: Contact */}
           <div className="space-y-4">
             <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Contact
@@ -193,7 +184,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4: Follow + Map at bottom */}
+          {/* Column 4: Follow + Map */}
           <div className="space-y-4">
             <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Follow
@@ -295,7 +286,7 @@ export default function Footer() {
               New arrivals, behind-the-scenes, and diamond education — follow along.
             </p>
 
-            {/* Google Maps embed — moved here from Contact column */}
+            {/* Google Maps embed */}
             <div
               className="mt-2 overflow-hidden rounded-xl"
               style={{
@@ -317,8 +308,38 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Certifications & Memberships Strip */}
+        <div className="mt-10 pt-8 border-t" style={{ borderColor: C.borderSoft }}>
+          <p className="text-[10px] font-black tracking-[0.28em] uppercase text-center mb-5" style={{ color: C.muted }}>
+            Certified &amp; Trusted By
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {certifications.map((cert) => (
+              <div
+                key={cert.name}
+                className="flex items-center justify-center rounded-full px-4 py-2.5 transition-opacity hover:opacity-80"
+                style={{
+                  background: C.certBg,
+                  border: `1px solid ${C.certBorder}`,
+                  minWidth: 80,
+                  height: 52,
+                }}
+                title={cert.name}
+              >
+                <img
+                  src={cert.logo}
+                  alt={cert.name}
+                  className="max-h-7 w-auto object-contain"
+                  style={{ filter: isDark ? "brightness(0.9) saturate(0.7)" : "none" }}
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Bottom */}
-        <div className="mt-12 pt-6 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-3" style={{ borderColor: C.borderSoft }}>
+        <div className="mt-8 pt-6 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-3" style={{ borderColor: C.borderSoft }}>
           <p className="text-xs" style={{ color: C.muted }}>
             © {new Date().getFullYear()} Flenix Jewels Ltd. All rights reserved.
           </p>
