@@ -121,6 +121,7 @@ export interface GalleryItem {
   image: string;
   description: string;
   category?: string;
+  sequence?: number;
 }
 
 export interface FeaturedCollection {

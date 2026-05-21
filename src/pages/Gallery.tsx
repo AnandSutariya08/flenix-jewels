@@ -149,10 +149,20 @@ const Gallery = () => {
     dispatch(loadDeferredData({ force: true }));
   }, [deferredLoaded, deferredStatus, dispatch, galleryItems.length]);
 
+  const sortedGalleryItems = useMemo(() =>
+    [...galleryItems].sort((a: any, b: any) => {
+      if (a.sequence != null && b.sequence != null) return a.sequence - b.sequence;
+      if (a.sequence != null) return -1;
+      if (b.sequence != null) return 1;
+      return 0;
+    }),
+    [galleryItems]
+  );
+
   const filteredItems = useMemo(() => {
-    if (filter === 'all') return galleryItems;
-    return galleryItems.filter((item: any) => item.category === filter);
-  }, [galleryItems, filter]);
+    if (filter === 'all') return sortedGalleryItems;
+    return sortedGalleryItems.filter((item: any) => item.category === filter);
+  }, [sortedGalleryItems, filter]);
 
   const openLightbox = useCallback((index: number) => setSelectedIndex(index), []);
   const closeLightbox = useCallback(() => setSelectedIndex(null), []);
