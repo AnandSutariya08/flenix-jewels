@@ -43,6 +43,7 @@ const AdminVisitors = lazy(() => import('@/components/admin/AdminVisitors'));
 const AdminPromoHeader = lazy(() => import('@/components/admin/AdminPromoHeader'));
 const AdminAds = lazy(() => import('@/components/admin/AdminAds'));
 const AdminTestimonials = lazy(() => import('@/components/admin/AdminTestimonials'));
+const AdminContactSubmissions = lazy(() => import('@/components/admin/AdminContactSubmissions'));
 
 const SectionFallback = () => (
   <div className="flex items-center justify-center min-h-[360px]">
@@ -111,6 +112,7 @@ const NAV_ITEMS = [
   { key: 'blogs',        label: 'Blogs',          icon: Newspaper },
   { key: 'instagram',    label: 'Instagram',      icon: Instagram },
   { key: 'contact',      label: 'Contact',        icon: Phone },
+  { key: 'messages',     label: 'Messages',       icon: MessageSquareQuote },
   { key: 'offices',      label: 'Offices',        icon: Building2 },
   { key: 'visitors',     label: 'Visitors',       icon: Users },
 ];
@@ -129,6 +131,7 @@ const SECTION_MAP: Record<string, () => ReactNode> = {
   blogs:        () => <AdminBlogs />,
   instagram:    () => <AdminInstagram />,
   contact:      () => <AdminContact />,
+  messages:     () => <AdminContactSubmissions />,
   offices:      () => <AdminOffices />,
   visitors:     () => <AdminVisitors />,
 };

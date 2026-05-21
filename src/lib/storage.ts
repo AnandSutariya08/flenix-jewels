@@ -198,6 +198,16 @@ export interface Office {
   flagImage?: string;
 }
 
+export interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  submittedAt: number;
+  read: boolean;
+}
+
 // Collection names
 const COLLECTIONS = {
   BANNERS: 'banners',
@@ -208,6 +218,7 @@ const COLLECTIONS = {
   GALLERY: 'gallery',
   FEATURED: 'featured-collection',
   CONTACT: 'contact',
+  CONTACT_SUBMISSIONS: 'contact-submissions',
   OFFICES: 'offices',
   BLOGS: 'blogs',
   INSTAGRAM: 'instagram',
@@ -1070,5 +1081,50 @@ export const uploadImageToStorage = async (file: File, path: string, skipWaterma
   } catch (error) {
     console.error('Error uploading image:', error);
     throw error;
+  }
+};
+
+// Contact Submissions
+export const saveContactSubmission = async (submission: Omit<ContactSubmission, 'id' | 'submittedAt' | 'read'>): Promise<void> => {
+  try {
+    const id = Date.now().toString();
+    const data: ContactSubmission = {
+      id,
+      ...submission,
+      submittedAt: Date.now(),
+      read: false,
+    };
+    await setDoc(doc(db, COLLECTIONS.CONTACT_SUBMISSIONS, id), data);
+  } catch (error) {
+    console.error('Error saving contact submission:', error);
+    throw error;
+  }
+};
+
+export const getContactSubmissions = async (): Promise<ContactSubmission[]> => {
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTIONS.CONTACT_SUBMISSIONS));
+    return snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() } as ContactSubmission))
+      .sort((a, b) => b.submittedAt - a.submittedAt);
+  } catch (error) {
+    console.error('Error getting contact submissions:', error);
+    return [];
+  }
+};
+
+export const markContactSubmissionRead = async (id: string, read: boolean): Promise<void> => {
+  try {
+    await setDoc(doc(db, COLLECTIONS.CONTACT_SUBMISSIONS, id), { read }, { merge: true });
+  } catch (error) {
+    console.error('Error marking submission read:', error);
+  }
+};
+
+export const deleteContactSubmission = async (id: string): Promise<void> => {
+  try {
+    await deleteDoc(doc(db, COLLECTIONS.CONTACT_SUBMISSIONS, id));
+  } catch (error) {
+    console.error('Error deleting contact submission:', error);
   }
 };

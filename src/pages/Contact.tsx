@@ -8,6 +8,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { cleanWhatsApp } from "@/lib/utils";
+import { saveContactSubmission } from "@/lib/storage";
 import { MapPin, Phone, Mail, Clock, Send, Flag, Loader2, Gem, MessageCircle, ChevronRight } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { toast } from 'sonner';
@@ -53,11 +54,16 @@ const Contact = () => {
     }
     setIsSubmitting(true);
     try {
-      const whatsappMessage = `*New Contact Form*\n\n*Name:* ${name.trim()}\n*Email:* ${email.trim()}\n*Subject:* ${subject.trim()}\n*Message:*\n${message.trim()}`;
-      const waNum = cleanWhatsApp(CONTACT_WHATSAPP_NUMBER);
-      window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+      await saveContactSubmission({
+        name: name.trim(),
+        email: email.trim(),
+        subject: subject.trim(),
+        message: message.trim(),
+      });
       setName(''); setEmail(''); setSubject(''); setMessage('');
-      toast.success('Message sent via WhatsApp!');
+      toast.success('Message sent! We will get back to you soon.');
+    } catch {
+      toast.error('Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -192,11 +198,11 @@ const Contact = () => {
                     {isSubmitting ? (
                       <><Loader2 className="h-4 w-4 animate-spin" />Sending…</>
                     ) : (
-                      <><FaWhatsapp className="h-4 w-4" />Send via WhatsApp</>
+                      <><Send className="h-4 w-4" />Send Message</>
                     )}
                   </button>
                   <p className="text-center text-[11px] text-[#B89878] dark:text-[#6A5040]">
-                    Your message will open in WhatsApp — ready to send instantly.
+                    We will review your message and get back to you shortly.
                   </p>
                 </form>
               </div>
