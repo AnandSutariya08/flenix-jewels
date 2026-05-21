@@ -207,7 +207,7 @@ export default function Footer() {
                 style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                 aria-label="WhatsApp"
               >
-                <MessageCircle className="h-5 w-5" />
+                <FaWhatsapp className="h-5 w-5" />
                 <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wide px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ background: C.chipBg, color: C.gold, border: `1px solid ${C.chipBorder}` }}>WhatsApp</span>
               </a>
               {contactInfo?.facebook && (
