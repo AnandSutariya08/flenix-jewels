@@ -264,7 +264,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
           )}
 
           {/* Info panel */}
-          <div className="flex-1 overflow-y-auto min-h-0" style={{ background: 'linear-gradient(160deg, #faf7f3 0%, #f5ede3 100%)' }}>
+          <div className="dialog-scroll flex-1 overflow-y-auto min-h-0" style={{ background: 'linear-gradient(160deg, #faf7f3 0%, #f5ede3 100%)' }}>
             <div className="px-5 pt-5 pb-4 space-y-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-3 w-3" style={{ color: '#C4906A' }} />
@@ -456,7 +456,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
             <div className="flex-shrink-0 h-1 w-full" style={{ background: 'linear-gradient(90deg, #9B6844, #D4A96A, #C4906A, transparent)' }} />
 
             {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="dialog-scroll flex-1 overflow-y-auto">
               <div className="px-8 xl:px-10 pt-8 pb-6 space-y-5">
 
                 {/* Brand eyebrow */}
