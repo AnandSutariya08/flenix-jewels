@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { getContactSubmissions, markContactSubmissionRead, deleteContactSubmission, ContactSubmission } from '@/lib/storage';
+import { subscribeContactSubmissions, markContactSubmissionRead, deleteContactSubmission, ContactSubmission } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Mail, MailOpen, RefreshCw, User, Clock, MessageSquare, AtSign } from 'lucide-react';
+import { Trash2, Mail, MailOpen, User, Clock, MessageSquare, AtSign, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
@@ -13,14 +13,13 @@ const AdminContactSubmissions = () => {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [selected, setSelected] = useState<ContactSubmission | null>(null);
 
-  const load = async () => {
-    setLoading(true);
-    const data = await getContactSubmissions();
-    setSubmissions(data);
-    setLoading(false);
-  };
-
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    const unsub = subscribeContactSubmissions((data) => {
+      setSubmissions(data);
+      setLoading(false);
+    });
+    return () => unsub();
+  }, []);
 
   const handleOpen = async (sub: ContactSubmission) => {
     setSelected(sub);
@@ -36,7 +35,6 @@ const AdminContactSubmissions = () => {
     setDeleting(id);
     try {
       await deleteContactSubmission(id);
-      setSubmissions((prev) => prev.filter((s) => s.id !== id));
       if (selected?.id === id) setSelected(null);
       toast.success('Message deleted');
     } catch {
@@ -76,12 +74,8 @@ const AdminContactSubmissions = () => {
               </Badge>
             )}
           </div>
-          <p className="text-sm text-muted-foreground">Messages submitted via the contact form.</p>
+          <p className="text-sm text-muted-foreground">Messages submitted via the contact form — updates in real time.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={load} disabled={loading}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
-        </Button>
       </div>
 
       {/* List */}
@@ -114,7 +108,6 @@ const AdminContactSubmissions = () => {
             >
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  {/* Unread dot / read icon */}
                   <div className="mt-1 flex-shrink-0">
                     {sub.read
                       ? <MailOpen className="h-4 w-4 text-muted-foreground" />
@@ -131,6 +124,11 @@ const AdminContactSubmissions = () => {
                         <span className="text-xs text-muted-foreground truncate hidden sm:block">
                           {sub.email}
                         </span>
+                        {sub.phone && (
+                          <span className="text-xs text-muted-foreground truncate hidden md:block">
+                            · {sub.phone}
+                          </span>
+                        )}
                       </div>
                       <span className="text-xs text-muted-foreground whitespace-nowrap flex-shrink-0">
                         {formatDate(sub.submittedAt)}
@@ -144,7 +142,6 @@ const AdminContactSubmissions = () => {
                     </p>
                   </div>
 
-                  {/* Delete */}
                   <Button
                     variant="ghost"
                     size="sm"
@@ -170,39 +167,59 @@ const AdminContactSubmissions = () => {
             </DialogHeader>
 
             <div className="space-y-5">
-              {/* Sender info */}
+              {/* Sender info — all fields */}
               <div className="grid sm:grid-cols-2 gap-3">
                 <div className="flex items-center gap-3 p-3 rounded-xl"
                   style={{ background: 'rgba(196,144,106,0.08)', border: '1px solid rgba(196,144,106,0.14)' }}>
                   <User className="h-4 w-4 flex-shrink-0" style={{ color: '#C4906A' }} />
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[10px] tracking-widest uppercase font-black text-muted-foreground">Name</p>
-                    <p className="text-sm font-bold">{selected.name}</p>
+                    <p className="text-sm font-bold truncate">{selected.name}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-xl"
                   style={{ background: 'rgba(196,144,106,0.08)', border: '1px solid rgba(196,144,106,0.14)' }}>
                   <AtSign className="h-4 w-4 flex-shrink-0" style={{ color: '#C4906A' }} />
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[10px] tracking-widest uppercase font-black text-muted-foreground">Email</p>
                     <a href={`mailto:${selected.email}`}
-                      className="text-sm font-bold hover:underline"
+                      className="text-sm font-bold hover:underline truncate block"
                       style={{ color: '#C4906A' }}>
                       {selected.email}
                     </a>
                   </div>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
-                {formatDate(selected.submittedAt)}
+                {selected.phone && (
+                  <div className="flex items-center gap-3 p-3 rounded-xl"
+                    style={{ background: 'rgba(196,144,106,0.08)', border: '1px solid rgba(196,144,106,0.14)' }}>
+                    <Phone className="h-4 w-4 flex-shrink-0" style={{ color: '#C4906A' }} />
+                    <div className="min-w-0">
+                      <p className="text-[10px] tracking-widest uppercase font-black text-muted-foreground">Phone</p>
+                      <a href={`tel:${selected.phone}`}
+                        className="text-sm font-bold hover:underline truncate block"
+                        style={{ color: '#C4906A' }}>
+                        {selected.phone}
+                      </a>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center gap-3 p-3 rounded-xl"
+                  style={{ background: 'rgba(196,144,106,0.08)', border: '1px solid rgba(196,144,106,0.14)' }}>
+                  <Clock className="h-4 w-4 flex-shrink-0" style={{ color: '#C4906A' }} />
+                  <div className="min-w-0">
+                    <p className="text-[10px] tracking-widest uppercase font-black text-muted-foreground">Received</p>
+                    <p className="text-sm font-bold">{formatDate(selected.submittedAt)}</p>
+                  </div>
+                </div>
               </div>
 
               {/* Message body */}
-              <div className="p-5 rounded-2xl whitespace-pre-wrap text-sm leading-relaxed"
-                style={{ background: 'rgba(196,144,106,0.06)', border: '1px solid rgba(196,144,106,0.14)' }}>
-                {selected.message}
+              <div>
+                <p className="text-[10px] tracking-widest uppercase font-black text-muted-foreground mb-2">Message</p>
+                <div className="p-5 rounded-2xl whitespace-pre-wrap text-sm leading-relaxed"
+                  style={{ background: 'rgba(196,144,106,0.06)', border: '1px solid rgba(196,144,106,0.14)' }}>
+                  {selected.message}
+                </div>
               </div>
 
               {/* Actions */}
@@ -217,15 +234,19 @@ const AdminContactSubmissions = () => {
                     <Mail className="h-3.5 w-3.5 mr-2" />
                     Mark as Unread
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                  >
+                  <Button variant="outline" size="sm" asChild>
                     <a href={`mailto:${selected.email}?subject=Re: ${encodeURIComponent(selected.subject)}`}>
                       Reply by Email
                     </a>
                   </Button>
+                  {selected.phone && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={`tel:${selected.phone}`}>
+                        <Phone className="h-3.5 w-3.5 mr-2" />
+                        Call
+                      </a>
+                    </Button>
+                  )}
                 </div>
                 <Button
                   variant="destructive"

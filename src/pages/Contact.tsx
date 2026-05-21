@@ -37,6 +37,7 @@ const Contact = () => {
   const { categories, promoHeader, contactInfo, offices } = useAppSelector(selectGlobalData);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,10 +58,11 @@ const Contact = () => {
       await saveContactSubmission({
         name: name.trim(),
         email: email.trim(),
+        phone: phone.trim() || undefined,
         subject: subject.trim(),
         message: message.trim(),
       });
-      setName(''); setEmail(''); setSubject(''); setMessage('');
+      setName(''); setEmail(''); setPhone(''); setSubject(''); setMessage('');
       toast.success('Message sent! We will get back to you soon.');
     } catch {
       toast.error('Failed to send message. Please try again.');
@@ -174,13 +176,23 @@ const Contact = () => {
                       />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070] dark:text-[#7A6050]">Subject *</label>
-                    <input
-                      id="subject" type="text" value={subject} onChange={e => setSubject(e.target.value)}
-                      placeholder="e.g. Custom engagement ring inquiry" required
-                      className={inputBase}
-                    />
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070] dark:text-[#7A6050]">Phone Number</label>
+                      <input
+                        id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+                        placeholder="+1 234 567 8900"
+                        className={inputBase}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070] dark:text-[#7A6050]">Subject *</label>
+                      <input
+                        id="subject" type="text" value={subject} onChange={e => setSubject(e.target.value)}
+                        placeholder="e.g. Custom engagement ring inquiry" required
+                        className={inputBase}
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070] dark:text-[#7A6050]">Message *</label>

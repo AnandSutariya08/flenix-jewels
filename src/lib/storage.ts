@@ -202,6 +202,7 @@ export interface ContactSubmission {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   subject: string;
   message: string;
   submittedAt: number;
@@ -398,6 +399,14 @@ export const subscribePromoHeader = (onChange: (promo: PromoHeader | null) => vo
 export const subscribeContact = (onChange: (contact: ContactInfo | null) => void) =>
   onSnapshot(doc(db, COLLECTIONS.CONTACT, 'main'), (docSnap) => {
     onChange(docSnap.exists() ? (docSnap.data() as ContactInfo) : null);
+  });
+
+export const subscribeContactSubmissions = (onChange: (items: ContactSubmission[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.CONTACT_SUBMISSIONS), (snapshot) => {
+    const items = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() } as ContactSubmission))
+      .sort((a, b) => b.submittedAt - a.submittedAt);
+    onChange(items);
   });
 
 export const subscribePriceSettings = (onChange: (settings: PriceSettings) => void) =>
