@@ -4,8 +4,10 @@ import {
   doc, 
   getDocs, 
   getDoc,
-  setDoc, 
+  setDoc,
+  updateDoc,
   deleteDoc, 
+  deleteField,
   onSnapshot,
   query,
   where,
@@ -681,6 +683,16 @@ export const saveGalleryItem = async (item: GalleryItem) => {
     await setDoc(doc(db, COLLECTIONS.GALLERY, item.id), { ...item, id: item.id });
   } catch (error) {
     console.error('Error saving gallery item:', error);
+    throw error;
+  }
+};
+
+export const clearGalleryItemSequence = async (id: string) => {
+  try {
+    await updateDoc(doc(db, COLLECTIONS.GALLERY, id), { sequence: deleteField() });
+  } catch (error) {
+    console.error('Error clearing gallery item sequence:', error);
+    throw error;
   }
 };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { getGallery, saveGalleryItem, deleteGalleryItem, GalleryItem, uploadImageToStorage } from '@/lib/storage';
+import { getGallery, saveGalleryItem, clearGalleryItemSequence, deleteGalleryItem, GalleryItem, uploadImageToStorage } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -115,8 +115,7 @@ const AdminGallery = () => {
           (g) => g.sequence === seqNum && g.id !== editingId
         );
         if (conflict) {
-          const { sequence: _removed, ...rest } = conflict;
-          await saveGalleryItem(rest as GalleryItem);
+          await clearGalleryItemSequence(conflict.id);
         }
       }
 
