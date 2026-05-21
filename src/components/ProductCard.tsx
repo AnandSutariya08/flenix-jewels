@@ -3,7 +3,8 @@ import type { TouchEvent } from 'react';
 import { CatalogItem, type Diamond } from '@/lib/storage';
 import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
-import { keepImageAlive, isImageCached } from '@/lib/preload';
+import { keepImageAlive } from '@/lib/preload';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { stripHtml } from '@/lib/seo';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
@@ -19,8 +20,6 @@ const SHAPE_LABEL: Record<string, string> = {
   sq_emerald: 'Sq Emerald', radiant: 'Radiant', sq_radiant: 'Sq Radiant', other: 'Other',
 };
 
-const productImgCache = new Set<string>();
-
 interface ProductCardProps {
   product: CatalogItem;
   onClick?: () => void;
@@ -33,7 +32,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const touchStartX = useRef<number | null>(null);
 
   const mediaRaw = product.images && product.images.length > 0 ? product.images : [product.image];
-  const media = mediaRaw.filter((item) => Boolean(item));
+  const media = mediaRaw.filter(Boolean);
   const hasMultiple = media.length > 1;
 
   const isCoarsePointer = useMemo(() => {
@@ -57,28 +56,12 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   };
 
   const currentMediaType = getMediaType(displayMedia);
-  const hasVideo = media.some(url => getMediaType(url) === 'video');
   const isSecondaryImage = secondaryMedia ? getMediaType(secondaryMedia) === 'image' : false;
-
-  const imgReady = (url: string) => Boolean(url && (productImgCache.has(url) || isImageCached(url)));
-
-  const [imgLoaded, setImgLoaded] = useState(() => imgReady(primaryMedia));
 
   useEffect(() => {
     setCurrentIndex(0);
     setIsHovered(false);
   }, [product.id]);
-
-  useEffect(() => {
-    if (!primaryMedia) return;
-    if (imgReady(primaryMedia)) {
-      productImgCache.add(primaryMedia);
-      setImgLoaded(true);
-    } else {
-      setImgLoaded(false);
-      keepImageAlive(primaryMedia);
-    }
-  }, [primaryMedia]);
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     if (!isCoarsePointer) return;
@@ -89,13 +72,10 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
     if (!isCoarsePointer || touchStartX.current === null) return;
     const endX = e.changedTouches[0]?.clientX ?? touchStartX.current;
     const deltaX = endX - touchStartX.current;
-    const threshold = 30;
-    if (Math.abs(deltaX) >= threshold && hasMultiple) {
-      if (deltaX < 0) {
-        setCurrentIndex((prev) => (prev + 1) % media.length);
-      } else {
-        setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
-      }
+    if (Math.abs(deltaX) >= 30 && hasMultiple) {
+      setCurrentIndex(prev =>
+        deltaX < 0 ? (prev + 1) % media.length : (prev - 1 + media.length) % media.length
+      );
     }
     touchStartX.current = null;
   };
@@ -103,9 +83,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const handleMouseEnter = () => {
     setIsHovered(true);
     [primaryMedia, secondaryMedia].filter(Boolean).forEach(url => keepImageAlive(url as string));
-    if (hasMultiple) {
-      setCurrentIndex(1);
-    }
+    if (hasMultiple) setCurrentIndex(1);
   };
 
   const handleMouseLeave = () => {
@@ -143,34 +121,39 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
             </div>
           </div>
         ) : (
-          <div className="relative w-full h-full">
-            {!imgLoaded && (
-              <div className="absolute inset-0 bg-gradient-to-br from-stone-100 via-stone-50 to-amber-50/40 dark:from-stone-800 dark:via-stone-700 dark:to-stone-800 animate-pulse" />
-            )}
-            <img
-              src={primaryMedia}
-              alt={product.name}
-              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-              loading="lazy"
-              decoding="async"
-              style={{ opacity: !imgLoaded ? 0 : isHovered && isSecondaryImage ? 0 : 1 }}
-              onLoad={() => {
-                if (primaryMedia) productImgCache.add(primaryMedia);
-                keepImageAlive(primaryMedia);
-                setImgLoaded(true);
-              }}
-            />
-            {secondaryMedia && isSecondaryImage && (
-              <img
-                src={secondaryMedia}
+          <>
+            {/* Primary image — wrapper div controls hover-swap opacity */}
+            <div
+              className="absolute inset-0 transition-opacity duration-300"
+              style={{ opacity: isHovered && isSecondaryImage ? 0 : 1 }}
+            >
+              <OptimizedImage
+                noWrapper
+                src={primaryMedia}
                 alt={product.name}
-                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-150"
+                className="absolute inset-0 w-full h-full object-cover"
                 loading="lazy"
-                decoding="async"
-                style={{ opacity: isHovered ? 1 : 0 }}
+                draggable={false}
               />
+            </div>
+
+            {/* Secondary image — hover overlay */}
+            {secondaryMedia && isSecondaryImage && (
+              <div
+                className="absolute inset-0 transition-opacity duration-150"
+                style={{ opacity: isHovered ? 1 : 0 }}
+              >
+                <OptimizedImage
+                  noWrapper
+                  src={secondaryMedia}
+                  alt={product.name}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
+                  draggable={false}
+                />
+              </div>
             )}
-          </div>
+          </>
         )}
 
         {/* Media Count Badge */}
@@ -229,11 +212,11 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
           </div>
         )}
 
-        {priceSettings.showPrices ? (
+        {priceSettings.showPrices && (
           <div className="mb-3 text-sm font-semibold tracking-wide text-foreground/90">
             ${formatPriceRounded(product.price)}
           </div>
-        ) : null}
+        )}
 
         <p className="text-xs sm:text-sm text-muted-foreground mb-4 line-clamp-3 flex-1 leading-6">
           {descriptionPreview}
