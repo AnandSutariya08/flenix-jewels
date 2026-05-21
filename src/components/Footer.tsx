@@ -149,6 +149,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
           {/* Column 1: Brand */}
           <div className="space-y-4">
+            <img
+              src={logo}
+              alt="Flenix Jewels Ltd"
+              className="h-10 w-auto object-contain"
+              style={{ filter: isDark ? "brightness(1.1)" : "none" }}
+            />
             <p
               className="text-sm font-black tracking-[0.22em] uppercase"
               style={{ color: C.gold }}
@@ -156,25 +162,40 @@ export default function Footer() {
               Flenix Jewels Ltd
             </p>
             <p className="text-sm leading-relaxed" style={{ color: C.text }}>
-              Premium natural &amp; lab-grown diamond jewelry — crafted with
-              timeless elegance and trusted certification.
+              Elegant jewellery crafted with precision, authenticity, and timeless beauty. Discover our natural and lab-grown diamond collections for every occasion.
             </p>
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all hover:opacity-80"
-              style={{
-                background: isDark
-                  ? "rgba(196,144,106,0.12)"
-                  : "rgba(155,104,68,0.08)",
-                border: `1px solid ${C.chipBorder}`,
-                color: C.gold,
-              }}
-            >
-              <FaWhatsapp className="h-4 w-4" />
-              WhatsApp Support
-            </a>
+            <div className="flex flex-col gap-2">
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all hover:opacity-80"
+                style={{
+                  background: isDark
+                    ? "rgba(196,144,106,0.12)"
+                    : "rgba(155,104,68,0.08)",
+                  border: `1px solid ${C.chipBorder}`,
+                  color: C.gold,
+                }}
+              >
+                <FaWhatsapp className="h-4 w-4" />
+                WhatsApp Support
+              </a>
+              <a
+                href={`mailto:${contactInfo?.email || "info@flenixjewels.com"}`}
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all hover:opacity-80"
+                style={{
+                  background: isDark
+                    ? "rgba(196,144,106,0.12)"
+                    : "rgba(155,104,68,0.08)",
+                  border: `1px solid ${C.chipBorder}`,
+                  color: C.gold,
+                }}
+              >
+                <Mail className="h-4 w-4" />
+                Email Support
+              </a>
+            </div>
           </div>
 
           {/* Column 2: Explore */}
