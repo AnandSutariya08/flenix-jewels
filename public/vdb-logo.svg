@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 60" fill="none">
+  <!-- Diamond shape -->
+  <polygon points="24,10 38,10 46,22 24,50 2,22 10,10" fill="#1a1a2e" opacity="0.08"/>
+  <polygon points="24,10 38,10 46,22 24,50 2,22 10,10" fill="none" stroke="#1a1a2e" stroke-width="1.6" stroke-linejoin="round"/>
+  <!-- inner facet lines -->
+  <line x1="10" y1="22" x2="46" y2="22" stroke="#1a1a2e" stroke-width="1" opacity="0.6"/>
+  <line x1="24" y1="10" x2="24" y2="50" stroke="#1a1a2e" stroke-width="0.8" opacity="0.4"/>
+  <line x1="10" y1="22" x2="24" y2="10" stroke="#1a1a2e" stroke-width="0.8" opacity="0.4"/>
+  <line x1="38" y1="10" x2="46" y2="22" stroke="#1a1a2e" stroke-width="0.8" opacity="0.4"/>
+  <!-- VDB text -->
+  <text x="56" y="29" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#1a1a2e" letter-spacing="2">VDB</text>
+  <!-- subtitle -->
+  <text x="56" y="40" font-family="Arial, sans-serif" font-size="6.2" fill="#1a1a2e" letter-spacing="1.2" opacity="0.7">POLISHED DIAMONDS</text>
+  <text x="56" y="50" font-family="Arial, sans-serif" font-size="5.5" fill="#1a1a2e" letter-spacing="0.8" opacity="0.5">VERIFIED · TRUSTED · CERTIFIED</text>
+</svg>

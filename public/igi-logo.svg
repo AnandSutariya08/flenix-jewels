@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 60" fill="none">
+  <!-- IGI globe icon -->
+  <circle cx="28" cy="30" r="18" fill="#003087" opacity="0.12"/>
+  <circle cx="28" cy="30" r="18" fill="none" stroke="#003087" stroke-width="1.8"/>
+  <ellipse cx="28" cy="30" rx="9" ry="18" fill="none" stroke="#003087" stroke-width="1.4"/>
+  <line x1="10" y1="30" x2="46" y2="30" stroke="#003087" stroke-width="1.4"/>
+  <line x1="12" y1="22" x2="44" y2="22" stroke="#003087" stroke-width="1"/>
+  <line x1="12" y1="38" x2="44" y2="38" stroke="#003087" stroke-width="1"/>
+  <!-- IGI text -->
+  <text x="58" y="36" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#003087" letter-spacing="2">IGI</text>
+  <!-- subtitle -->
+  <text x="58" y="47" font-family="Arial, sans-serif" font-size="6.5" fill="#003087" letter-spacing="1.5" opacity="0.75">INTERNATIONAL GEMOLOGICAL</text>
+</svg>

@@ -9,9 +9,6 @@ import { cleanWhatsApp } from "@/lib/utils";
 import { FaWhatsapp } from "react-icons/fa";
 import GIA from "@/assets/paylogo/GIA_Logo.png";
 import Rapaport from "@/assets/paylogo/Rapaport-header-20250120083212-20250210092659-20250227142926-20250310094122.svg";
-import SDA from "@/assets/paylogo/sda.png";
-import Bourse from "@/assets/paylogo/SDB LOGO.png";
-import IGI from "@/assets/paylogo/igi logo.webp";
 import LGD from "@/assets/paylogo/LGD ASSOCIATION.png";
 
 const FOOTER_WHATSAPP_NUMBER = "+852 51254000";
@@ -59,12 +56,10 @@ export default function Footer() {
   const certifications = useMemo(
     () => [
       { name: "GIA", logo: GIA },
-      { name: "IGI", logo: IGI },
+      { name: "IGI", logo: "/igi-logo.svg" },
       { name: "Rapaport", logo: Rapaport },
-      { name: "Surat Diamond Assoc.", logo: SDA },
-      { name: "Surat Diamond Bourse", logo: Bourse },
       { name: "LGD Association", logo: LGD },
-      { name: "SJMA", logo: "https://sjma.in/cdn/shop/files/SJMA_Logo.png?v=1755163553&width=210" },
+      { name: "VDB", logo: "/vdb-logo.svg" },
     ],
     [],
   );
@@ -101,6 +96,37 @@ export default function Footer() {
       />
 
       <div className="w-full px-4 sm:px-6 lg:px-10 py-12">
+
+        {/* Certifications & Memberships Strip — top of footer */}
+        <div className="pb-8 mb-8 border-b" style={{ borderColor: C.borderSoft }}>
+          <p className="text-[10px] font-black tracking-[0.28em] uppercase text-center mb-5" style={{ color: C.muted }}>
+            Certified &amp; Trusted By
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {certifications.map((cert) => (
+              <div
+                key={cert.name}
+                className="flex items-center justify-center rounded-2xl px-5 py-3 transition-opacity hover:opacity-80"
+                style={{
+                  background: C.certBg,
+                  border: `1px solid ${C.certBorder}`,
+                  minWidth: 90,
+                  height: 56,
+                }}
+                title={cert.name}
+              >
+                <img
+                  src={cert.logo}
+                  alt={cert.name}
+                  className="max-h-8 w-auto object-contain"
+                  style={{ filter: isDark ? "brightness(0.85) saturate(0.65)" : "none" }}
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Main */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
 
@@ -305,36 +331,6 @@ export default function Footer() {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-          </div>
-        </div>
-
-        {/* Certifications & Memberships Strip */}
-        <div className="mt-10 pt-8 border-t" style={{ borderColor: C.borderSoft }}>
-          <p className="text-[10px] font-black tracking-[0.28em] uppercase text-center mb-5" style={{ color: C.muted }}>
-            Certified &amp; Trusted By
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {certifications.map((cert) => (
-              <div
-                key={cert.name}
-                className="flex items-center justify-center rounded-full px-4 py-2.5 transition-opacity hover:opacity-80"
-                style={{
-                  background: C.certBg,
-                  border: `1px solid ${C.certBorder}`,
-                  minWidth: 80,
-                  height: 52,
-                }}
-                title={cert.name}
-              >
-                <img
-                  src={cert.logo}
-                  alt={cert.name}
-                  className="max-h-7 w-auto object-contain"
-                  style={{ filter: isDark ? "brightness(0.9) saturate(0.7)" : "none" }}
-                  loading="lazy"
-                />
-              </div>
-            ))}
           </div>
         </div>
 
