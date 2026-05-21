@@ -113,7 +113,7 @@ export default function Footer() {
           style={{ borderColor: C.borderSoft }}
         >
           <p
-            className="text-[10px] font-black tracking-[0.28em] uppercase text-center mb-5"
+            className="text-sm font-black tracking-[0.28em] uppercase text-center mb-5"
             style={{ color: C.muted }}
           >
             Certified &amp; Trusted By
