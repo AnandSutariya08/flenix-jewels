@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Moon, Sun, MessageCircle, ChevronDown, Gem } from 'lucide-react';
+import { Moon, Sun, MessageCircle, ChevronDown, ChevronRight, Gem } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import logo from '@/assets/flenix-logo-horizontal.png';
 import { PromoHeader as PromoHeaderType } from '@/lib/storage';
@@ -14,39 +14,16 @@ interface HeaderProps {
 const WHATSAPP_URL = 'https://wa.me/85251254000?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.';
 
 const DIAMOND_OPTIONS = [
-  {
-    value: 'real',
-    label: 'Natural Diamonds',
-    desc: 'Timeless. Natural. Forever.',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 flex-shrink-0">
-        <polygon points="12,3 20,9 17,21 7,21 4,9"/>
-        <line x1="4" y1="9" x2="20" y2="9" strokeOpacity="0.5"/>
-        <line x1="12" y1="3" x2="7" y2="21" strokeOpacity="0.5"/>
-        <line x1="12" y1="3" x2="17" y2="21" strokeOpacity="0.5"/>
-      </svg>
-    ),
-  },
-  {
-    value: 'cvd',
-    label: 'Lab Grown Diamonds',
-    desc: 'Modern. Ethical. Brilliant.',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 flex-shrink-0">
-        <polygon points="12,2 22,8 19,22 5,22 2,8"/>
-        <line x1="2" y1="8" x2="22" y2="8" strokeOpacity="0.5"/>
-        <line x1="12" y1="2" x2="5" y2="22" strokeOpacity="0.5"/>
-        <line x1="12" y1="2" x2="19" y2="22" strokeOpacity="0.5"/>
-      </svg>
-    ),
-  },
+  { value: 'real', label: 'Natural Diamonds' },
+  { value: 'cvd',  label: 'Lab Grown Diamonds' },
 ];
 
 export default function Header({ promoHeader }: HeaderProps) {
-  const [isMenuOpen, setIsMenuOpen]     = useState(false);
-  const [isScrolled, setIsScrolled]     = useState(false);
-  const [hoveredLink, setHoveredLink]   = useState<string | null>(null);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [isMenuOpen, setIsMenuOpen]         = useState(false);
+  const [isScrolled, setIsScrolled]         = useState(false);
+  const [hoveredLink, setHoveredLink]       = useState<string | null>(null);
+  const [openDropdown, setOpenDropdown]     = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { theme, setTheme, resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
@@ -63,7 +40,7 @@ export default function Header({ promoHeader }: HeaderProps) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setIsMenuOpen(false); setOpenDropdown(null); }, [location.pathname]);
+  useEffect(() => { setIsMenuOpen(false); setOpenDropdown(null); setMobileExpanded(null); }, [location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : '';
@@ -83,8 +60,6 @@ export default function Header({ promoHeader }: HeaderProps) {
     if (dropdownTimer.current) clearTimeout(dropdownTimer.current);
   };
 
-  const headerHeight = isScrolled ? 84 : 70;
-
   const navLinks = [
     { name: 'Home',         path: '/',            dropdown: null },
     { name: 'Jewellery',    path: '/categories',  dropdown: 'jewellery' },
@@ -95,6 +70,38 @@ export default function Header({ promoHeader }: HeaderProps) {
     { name: 'About',        path: '/about',       dropdown: null },
     { name: 'Contact',      path: '/contact',     dropdown: null },
   ];
+
+  /* ─── Shared dropdown panel style ──────────────────────────── */
+  const ddPanelStyle: React.CSSProperties = {
+    background: isDark
+      ? 'linear-gradient(160deg, rgba(18,10,5,0.98) 0%, rgba(22,13,7,0.98) 100%)'
+      : 'rgba(255,252,248,0.99)',
+    border: `1px solid ${isDark ? 'rgba(196,144,106,0.22)' : 'rgba(196,144,106,0.28)'}`,
+    boxShadow: isDark
+      ? '0 12px 36px -6px rgba(0,0,0,0.65), 0 4px 10px rgba(0,0,0,0.28)'
+      : '0 10px 32px -6px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)',
+    backdropFilter: 'blur(32px)',
+    WebkitBackdropFilter: 'blur(32px)',
+  };
+
+  /* ─── Dropdown item style ──────────────────────────────────── */
+  const DdItem = ({
+    label, onClick,
+  }: { label: string; onClick: () => void }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full text-left px-4 py-2.5 flex items-center gap-2 group transition-all duration-150 rounded-lg"
+      style={{ background: 'transparent' }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = isDark ? 'rgba(196,144,106,0.10)' : 'rgba(155,104,68,0.07)'; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+    >
+      <ChevronRight className="h-3 w-3 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: isDark ? 'rgba(196,144,106,0.8)' : 'rgba(155,104,68,0.7)' }} />
+      <span className="text-[11.5px] font-semibold tracking-[0.08em]" style={{ color: isDark ? 'rgba(245,232,216,0.85)' : 'rgba(20,12,6,0.82)' }}>
+        {label}
+      </span>
+    </button>
+  );
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
@@ -126,7 +133,7 @@ export default function Header({ promoHeader }: HeaderProps) {
         style={{ padding: isScrolled ? '10px 10px 0' : '0' }}
       >
         <header
-          className="relative transition-all duration-500 ease-in-out overflow-hidden"
+          className="relative transition-all duration-500 ease-in-out overflow-visible"
           style={{
             borderRadius:         isScrolled ? 9999 : 0,
             background:           isScrolled
@@ -190,25 +197,10 @@ export default function Header({ promoHeader }: HeaderProps) {
                 {navLinks.map((link) => {
                   const active  = isActive(link.path);
                   const hovered = hoveredLink === link.path;
-                  const ddOpen  = openDropdown === link.dropdown;
+                  const ddOpen  = link.dropdown ? openDropdown === link.dropdown : false;
 
-                  const linkEl = (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      onMouseEnter={() => { setHoveredLink(link.path); if (link.dropdown) showDd(link.dropdown); else hideDd(); }}
-                      onMouseLeave={() => { setHoveredLink(null); if (link.dropdown) hideDd(); }}
-                      onClick={() => setOpenDropdown(null)}
-                      className="group relative flex items-center justify-center gap-1 rounded-full transition-all duration-200"
-                      style={{
-                        padding:   isScrolled ? '9px 14px' : '9px 15px',
-                        transform: hovered ? 'translateY(-0.5px)' : 'translateY(0)',
-                        background: ddOpen
-                          ? (isDark ? 'rgba(196,144,106,0.12)' : 'rgba(155,104,68,0.10)')
-                          : 'transparent',
-                        border: '1px solid transparent',
-                      }}
-                    >
+                  const linkInner = (
+                    <>
                       <span
                         className="absolute inset-0 rounded-full transition-opacity duration-200"
                         style={{
@@ -257,10 +249,102 @@ export default function Header({ promoHeader }: HeaderProps) {
                             : 'linear-gradient(90deg, transparent, rgba(196,144,106,0.85), transparent)',
                         }}
                       />
-                    </Link>
+                    </>
                   );
 
-                  return linkEl;
+                  if (link.dropdown) {
+                    return (
+                      <div
+                        key={link.path}
+                        className="relative"
+                        onMouseEnter={() => { setHoveredLink(link.path); showDd(link.dropdown!); }}
+                        onMouseLeave={() => { setHoveredLink(null); hideDd(); }}
+                      >
+                        <Link
+                          to={link.path}
+                          onClick={() => setOpenDropdown(null)}
+                          className="group relative flex items-center justify-center gap-1 rounded-full transition-all duration-200"
+                          style={{
+                            padding:   isScrolled ? '9px 14px' : '9px 15px',
+                            transform: hovered ? 'translateY(-0.5px)' : 'translateY(0)',
+                            background: ddOpen
+                              ? (isDark ? 'rgba(196,144,106,0.12)' : 'rgba(155,104,68,0.10)')
+                              : 'transparent',
+                            border: '1px solid transparent',
+                          }}
+                        >
+                          {linkInner}
+                        </Link>
+
+                        {/* Simple dropdown panel */}
+                        <div
+                          className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-xl overflow-hidden z-50 transition-all duration-200"
+                          style={{
+                            ...ddPanelStyle,
+                            minWidth: 190,
+                            opacity: ddOpen ? 1 : 0,
+                            pointerEvents: ddOpen ? 'auto' : 'none',
+                            transform: `translateX(-50%) translateY(${ddOpen ? '0px' : '-6px'})`,
+                          }}
+                          onMouseEnter={keepDd}
+                          onMouseLeave={hideDd}
+                        >
+                          {/* Top gold line */}
+                          <div className="h-px" style={{ background: isDark ? 'linear-gradient(90deg,transparent,rgba(196,144,106,0.55),transparent)' : 'linear-gradient(90deg,transparent,rgba(155,104,68,0.32),transparent)' }} />
+                          <div className="p-2">
+                            {link.dropdown === 'jewellery' && (
+                              <>
+                                {categories.length === 0 ? (
+                                  <DdItem label="All Jewellery" onClick={() => { navigate('/categories'); setOpenDropdown(null); }} />
+                                ) : (
+                                  <>
+                                    <DdItem label="All Jewellery" onClick={() => { navigate('/categories'); setOpenDropdown(null); }} />
+                                    {categories.map(cat => (
+                                      <DdItem
+                                        key={cat.id}
+                                        label={cat.name}
+                                        onClick={() => { navigate(`/category/${cat.id}`); setOpenDropdown(null); }}
+                                      />
+                                    ))}
+                                  </>
+                                )}
+                              </>
+                            )}
+                            {link.dropdown === 'diamond' && (
+                              <>
+                                {DIAMOND_OPTIONS.map(opt => (
+                                  <DdItem
+                                    key={opt.value}
+                                    label={opt.label}
+                                    onClick={() => { navigate(`/diamond?type=${opt.value}`); setOpenDropdown(null); }}
+                                  />
+                                ))}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      onMouseEnter={() => { setHoveredLink(link.path); hideDd(); }}
+                      onMouseLeave={() => setHoveredLink(null)}
+                      onClick={() => setOpenDropdown(null)}
+                      className="group relative flex items-center justify-center gap-1 rounded-full transition-all duration-200"
+                      style={{
+                        padding:   isScrolled ? '9px 14px' : '9px 15px',
+                        transform: hovered ? 'translateY(-0.5px)' : 'translateY(0)',
+                        background: 'transparent',
+                        border: '1px solid transparent',
+                      }}
+                    >
+                      {linkInner}
+                    </Link>
+                  );
                 })}
               </div>
             </nav>
@@ -319,7 +403,7 @@ export default function Header({ promoHeader }: HeaderProps) {
           </div>
         </header>
 
-        {/* Mobile dropdown */}
+        {/* Mobile menu */}
         <div
           className="lg:hidden absolute left-0 right-0 z-50 transition-all duration-500"
           style={{
@@ -340,15 +424,99 @@ export default function Header({ promoHeader }: HeaderProps) {
             }}
           >
             <div className="h-px" style={{ background: isDark ? 'linear-gradient(90deg, transparent, rgba(196,144,106,0.5), transparent)' : 'linear-gradient(90deg, transparent, rgba(155,104,68,0.35), transparent)' }} />
-            <nav className="px-3 py-3 flex flex-col gap-1" role="navigation" aria-label="Mobile navigation">
+            <nav className="px-3 py-3 flex flex-col gap-0.5" role="navigation" aria-label="Mobile navigation">
               {navLinks.map((link) => {
                 const active = isActive(link.path);
+                const expanded = mobileExpanded === link.dropdown;
+
+                if (link.dropdown) {
+                  return (
+                    <div key={link.path}>
+                      {/* Accordion header row */}
+                      <button
+                        type="button"
+                        onClick={() => setMobileExpanded(expanded ? null : link.dropdown)}
+                        className="w-full relative flex items-center justify-between px-4 py-3 transition-all duration-200 rounded-xl"
+                        style={{
+                          background: expanded
+                            ? (isDark ? 'rgba(196,144,106,0.08)' : 'rgba(155,104,68,0.06)')
+                            : 'transparent',
+                        }}
+                      >
+                        <span className="text-[12px] font-semibold tracking-[0.14em] uppercase" style={{ color: active ? (isDark ? '#DEB48A' : '#7A4A2A') : (isDark ? 'rgba(255,255,255,0.70)' : 'rgba(20,12,6,0.82)') }}>
+                          {link.name}
+                        </span>
+                        <ChevronDown
+                          className="h-4 w-4 transition-transform duration-200 flex-shrink-0"
+                          style={{
+                            color: isDark ? 'rgba(196,144,106,0.7)' : 'rgba(155,104,68,0.6)',
+                            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                          }}
+                        />
+                      </button>
+
+                      {/* Accordion sub-items */}
+                      <div
+                        className="overflow-hidden transition-all duration-300"
+                        style={{ maxHeight: expanded ? '600px' : '0px', opacity: expanded ? 1 : 0 }}
+                      >
+                        <div className="px-3 pb-2 flex flex-col gap-0.5">
+                          {link.dropdown === 'jewellery' && (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => { navigate('/categories'); setIsMenuOpen(false); setMobileExpanded(null); }}
+                                className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg transition-all text-left"
+                                style={{ background: 'transparent' }}
+                                onTouchStart={e => { (e.currentTarget as HTMLElement).style.background = isDark ? 'rgba(196,144,106,0.08)' : 'rgba(155,104,68,0.06)'; }}
+                                onTouchEnd={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                              >
+                                <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: isDark ? 'rgba(196,144,106,0.6)' : 'rgba(155,104,68,0.5)' }} />
+                                <span className="text-[12px] font-medium tracking-wide" style={{ color: isDark ? 'rgba(245,232,216,0.75)' : 'rgba(20,12,6,0.72)' }}>All Jewellery</span>
+                              </button>
+                              {categories.map(cat => (
+                                <button
+                                  key={cat.id}
+                                  type="button"
+                                  onClick={() => { navigate(`/category/${cat.id}`); setIsMenuOpen(false); setMobileExpanded(null); }}
+                                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg transition-all text-left"
+                                  style={{ background: 'transparent' }}
+                                >
+                                  <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: isDark ? 'rgba(196,144,106,0.6)' : 'rgba(155,104,68,0.5)' }} />
+                                  <span className="text-[12px] font-medium tracking-wide" style={{ color: isDark ? 'rgba(245,232,216,0.75)' : 'rgba(20,12,6,0.72)' }}>{cat.name}</span>
+                                </button>
+                              ))}
+                            </>
+                          )}
+                          {link.dropdown === 'diamond' && (
+                            <>
+                              {DIAMOND_OPTIONS.map(opt => (
+                                <button
+                                  key={opt.value}
+                                  type="button"
+                                  onClick={() => { navigate(`/diamond?type=${opt.value}`); setIsMenuOpen(false); setMobileExpanded(null); }}
+                                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-lg transition-all text-left"
+                                  style={{ background: 'transparent' }}
+                                >
+                                  <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: isDark ? 'rgba(196,144,106,0.6)' : 'rgba(155,104,68,0.5)' }} />
+                                  <span className="text-[12px] font-medium tracking-wide" style={{ color: isDark ? 'rgba(245,232,216,0.75)' : 'rgba(20,12,6,0.72)' }}>{opt.label}</span>
+                                </button>
+                              ))}
+                            </>
+                          )}
+                        </div>
+                        <div className="mx-4 mb-1 h-px" style={{ background: isDark ? 'rgba(196,144,106,0.10)' : 'rgba(155,104,68,0.10)' }} />
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <Link
                     key={link.path}
                     to={link.path}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="relative flex items-center justify-center px-4 py-3 transition-all duration-200"
+                    onClick={() => { setIsMenuOpen(false); setMobileExpanded(null); }}
+                    className="relative flex items-center justify-center px-4 py-3 rounded-xl transition-all duration-200"
                   >
                     <span className="text-[12px] font-semibold tracking-[0.14em] uppercase" style={{ color: active ? (isDark ? '#DEB48A' : '#7A4A2A') : (isDark ? 'rgba(255,255,255,0.70)' : 'rgba(20,12,6,0.82)') }}>
                       {link.name}
@@ -358,25 +526,9 @@ export default function Header({ promoHeader }: HeaderProps) {
                   </Link>
                 );
               })}
-              {/* Mobile diamond sub-links */}
-              <div className="px-4 pt-1 pb-2 flex gap-2">
-                {DIAMOND_OPTIONS.map(opt => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => { navigate(`/diamond?type=${opt.value}`); setIsMenuOpen(false); }}
-                    className="flex-1 text-center text-[10px] font-bold tracking-wide py-2 rounded-xl border transition-all"
-                    style={{
-                      color: isDark ? 'rgba(196,144,106,0.9)' : '#9B6844',
-                      borderColor: isDark ? 'rgba(196,144,106,0.22)' : 'rgba(196,144,106,0.30)',
-                      background: isDark ? 'rgba(196,144,106,0.06)' : 'rgba(196,144,106,0.05)',
-                    }}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
             </nav>
+
+            {/* Bottom actions */}
             <div className="px-3 pb-3 pt-4 flex flex-col gap-2.5" style={{ borderTop: `1px solid ${isDark ? 'rgba(196,144,106,0.10)' : 'rgba(155,104,68,0.14)'}` }}>
               <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 rounded-2xl font-bold text-[12px] tracking-[0.1em] uppercase transition-all hover:scale-[1.02] active:scale-95"
@@ -395,153 +547,6 @@ export default function Header({ promoHeader }: HeaderProps) {
           </div>
         </div>
       </div>
-
-      {/* ── Desktop dropdown panels ────────────────────────────────── */}
-      <div
-        className="hidden lg:block absolute left-0 right-0 z-40"
-        style={{
-          top: headerHeight,
-          transform: openDropdown ? 'translateY(0)' : 'translateY(-8px)',
-          opacity: openDropdown ? 1 : 0,
-          pointerEvents: openDropdown ? 'auto' : 'none',
-          transition: 'opacity 0.22s ease, transform 0.22s ease',
-        }}
-        onMouseEnter={keepDd}
-        onMouseLeave={hideDd}
-      >
-        <div className="mx-4 mt-1 overflow-hidden rounded-2xl"
-          style={{
-            background: isDark
-              ? 'linear-gradient(160deg, rgba(18,10,5,0.97) 0%, rgba(22,13,7,0.97) 100%)'
-              : 'rgba(255,252,248,0.98)',
-            border: `1px solid ${isDark ? 'rgba(196,144,106,0.20)' : 'rgba(196,144,106,0.28)'}`,
-            boxShadow: isDark
-              ? '0 16px 48px -8px rgba(0,0,0,0.60), 0 4px 12px rgba(0,0,0,0.30)'
-              : '0 12px 40px -8px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06)',
-            backdropFilter: 'blur(32px)',
-            WebkitBackdropFilter: 'blur(32px)',
-          }}
-        >
-          {/* Gold top line */}
-          <div className="h-px" style={{ background: isDark ? 'linear-gradient(90deg,transparent,rgba(196,144,106,0.55),transparent)' : 'linear-gradient(90deg,transparent,rgba(155,104,68,0.32),transparent)' }} />
-
-          {/* JEWELLERY dropdown */}
-          {openDropdown === 'jewellery' && (
-            <div className="px-6 py-5">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-[9px] font-black tracking-[0.28em] uppercase" style={{ color: isDark ? 'rgba(196,144,106,0.7)' : 'rgba(155,104,68,0.7)' }}>
-                  Jewellery Categories
-                </span>
-                <div className="flex-1 h-px" style={{ background: isDark ? 'rgba(196,144,106,0.15)' : 'rgba(196,144,106,0.20)' }} />
-              </div>
-              <div className="flex items-stretch gap-3 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-                {categories.length > 0 ? categories.map(cat => (
-                  <Link
-                    key={cat.id}
-                    to={`/category/${cat.id}`}
-                    onClick={() => setOpenDropdown(null)}
-                    className="group flex-shrink-0 flex flex-col items-center gap-2 w-20 transition-all duration-200"
-                  >
-                    <div
-                      className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 transition-all duration-200 group-hover:scale-105 group-hover:shadow-md"
-                      style={{ border: `1px solid ${isDark ? 'rgba(196,144,106,0.18)' : 'rgba(196,144,106,0.22)'}` }}
-                    >
-                      {cat.image ? (
-                        <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" loading="lazy" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center" style={{ background: isDark ? 'rgba(196,144,106,0.08)' : 'rgba(196,144,106,0.06)' }}>
-                          <Gem className="h-5 w-5" style={{ color: isDark ? 'rgba(196,144,106,0.5)' : 'rgba(155,104,68,0.5)' }} />
-                        </div>
-                      )}
-                    </div>
-                    <span
-                      className="text-[10px] font-semibold tracking-wide text-center leading-tight line-clamp-2 transition-colors duration-200 group-hover:text-amber-700"
-                      style={{ color: isDark ? 'rgba(245,232,216,0.75)' : 'rgba(20,12,6,0.75)' }}
-                    >
-                      {cat.name}
-                    </span>
-                  </Link>
-                )) : (
-                  <Link
-                    to="/categories"
-                    onClick={() => setOpenDropdown(null)}
-                    className="text-sm font-medium transition-colors hover:text-amber-700"
-                    style={{ color: isDark ? 'rgba(245,232,216,0.75)' : 'rgba(20,12,6,0.75)' }}
-                  >
-                    View All Categories →
-                  </Link>
-                )}
-                <Link
-                  to="/categories"
-                  onClick={() => setOpenDropdown(null)}
-                  className="flex-shrink-0 flex flex-col items-center justify-center gap-1 w-20 rounded-xl border border-dashed transition-all duration-200 hover:border-amber-600/60 hover:text-amber-700 py-2"
-                  style={{
-                    borderColor: isDark ? 'rgba(196,144,106,0.20)' : 'rgba(196,144,106,0.25)',
-                    color: isDark ? 'rgba(196,144,106,0.7)' : 'rgba(155,104,68,0.7)',
-                  }}
-                >
-                  <span className="text-[18px]">→</span>
-                  <span className="text-[9px] font-bold tracking-wide uppercase text-center leading-tight">View All</span>
-                </Link>
-              </div>
-            </div>
-          )}
-
-          {/* DIAMOND dropdown */}
-          {openDropdown === 'diamond' && (
-            <div className="px-6 py-5">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-[9px] font-black tracking-[0.28em] uppercase" style={{ color: isDark ? 'rgba(196,144,106,0.7)' : 'rgba(155,104,68,0.7)' }}>
-                  Diamond Collection
-                </span>
-                <div className="flex-1 h-px" style={{ background: isDark ? 'rgba(196,144,106,0.15)' : 'rgba(196,144,106,0.20)' }} />
-              </div>
-              <div className="flex gap-3">
-                {DIAMOND_OPTIONS.map(opt => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => { navigate(`/diamond?type=${opt.value}`); setOpenDropdown(null); }}
-                    className="group flex items-center gap-3 px-5 py-4 rounded-xl border transition-all duration-200 hover:scale-[1.02] text-left"
-                    style={{
-                      background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(196,144,106,0.04)',
-                      borderColor: isDark ? 'rgba(196,144,106,0.18)' : 'rgba(196,144,106,0.22)',
-                    }}
-                  >
-                    <span style={{ color: isDark ? 'rgba(196,144,106,0.8)' : 'rgba(155,104,68,0.8)' }}>
-                      {opt.icon}
-                    </span>
-                    <div>
-                      <div
-                        className="text-sm font-bold tracking-wide mb-0.5 transition-colors duration-200 group-hover:text-amber-700"
-                        style={{ color: isDark ? 'rgba(245,232,216,0.90)' : 'rgba(20,12,6,0.85)' }}
-                      >
-                        {opt.label}
-                      </div>
-                      <div
-                        className="text-[10px] tracking-wide"
-                        style={{ color: isDark ? 'rgba(245,232,216,0.45)' : 'rgba(20,12,6,0.45)' }}
-                      >
-                        {opt.desc}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Gold bottom line */}
-          <div className="h-px" style={{ background: isDark ? 'linear-gradient(90deg,transparent,rgba(196,144,106,0.18),transparent)' : 'linear-gradient(90deg,transparent,rgba(196,144,106,0.14),transparent)' }} />
-        </div>
-      </div>
-
-      {/* Backdrop */}
-      <div
-        onClick={() => setIsMenuOpen(false)}
-        className="lg:hidden fixed inset-0 z-30 transition-all duration-400"
-        style={{ background: 'rgba(6,3,2,0.72)', opacity: isMenuOpen ? 1 : 0, pointerEvents: isMenuOpen ? 'auto' : 'none' }}
-      />
     </div>
   );
 }

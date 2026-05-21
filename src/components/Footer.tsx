@@ -110,11 +110,10 @@ export default function Footer() {
       />
 
       <div className="w-full px-4 sm:px-6 lg:px-10 py-12">
-        {/* Trust + payments */}
-
-
         {/* Main */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
+
+          {/* Column 1: Brand */}
           <div className="space-y-4">
             <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Flenix Jewels Ltd
@@ -138,6 +137,7 @@ export default function Footer() {
               </a>
           </div>
 
+          {/* Column 2: Explore */}
           <div className="space-y-4">
             <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Explore
@@ -156,6 +156,7 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Column 3: Contact (no map here anymore) */}
           <div className="space-y-4">
             <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Contact
@@ -190,28 +191,9 @@ export default function Footer() {
                 </li>
               )}
             </ul>
-
-            {/* Google Maps embed */}
-            <div
-              className="mt-4 overflow-hidden rounded-xl"
-              style={{
-                border: `1px solid ${C.border}`,
-                boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.35)' : '0 2px 10px rgba(0,0,0,0.08)',
-              }}
-            >
-              <iframe
-                title="Flenix Jewels Ltd Location"
-                src="https://maps.google.com/maps?q=Hart+Avenue+Plaza,+5-9+Hart+Avenue,+Tsim+Sha+Tsui,+Kowloon,+Hong+Kong&output=embed&z=16"
-                width="100%"
-                height="180"
-                style={{ display: 'block', border: 0, filter: isDark ? 'brightness(0.85) saturate(0.8)' : 'none' }}
-                allowFullScreen={false}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
           </div>
 
+          {/* Column 4: Follow + Map at bottom */}
           <div className="space-y-4">
             <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
               Follow
@@ -312,6 +294,26 @@ export default function Footer() {
             <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
               New arrivals, behind-the-scenes, and diamond education — follow along.
             </p>
+
+            {/* Google Maps embed — moved here from Contact column */}
+            <div
+              className="mt-2 overflow-hidden rounded-xl"
+              style={{
+                border: `1px solid ${C.border}`,
+                boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.35)' : '0 2px 10px rgba(0,0,0,0.08)',
+              }}
+            >
+              <iframe
+                title="Flenix Jewels Ltd Location"
+                src="https://maps.google.com/maps?q=Hart+Avenue+Plaza,+5-9+Hart+Avenue,+Tsim+Sha+Tsui,+Kowloon,+Hong+Kong&output=embed&z=16"
+                width="100%"
+                height="180"
+                style={{ display: 'block', border: 0, filter: isDark ? 'brightness(0.85) saturate(0.8)' : 'none' }}
+                allowFullScreen={false}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
           </div>
         </div>
 

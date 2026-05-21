@@ -92,6 +92,14 @@ const DiamondPage = () => {
     return sorted;
   }, [diamonds, filters]);
 
+  // Sync ?type= URL param → filter (set by header Diamond dropdown: real / cvd)
+  useEffect(() => {
+    const typeParam = searchParams.get('type');
+    if (typeParam === 'real' || typeParam === 'cvd') {
+      setFilters(f => ({ ...f, type: typeParam }));
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     const diamondId = searchParams.get('diamond');
     if (!diamondId) return;

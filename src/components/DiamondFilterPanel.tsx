@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, Minus, RotateCcw, SlidersHorizontal } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { DiamondCategory } from '@/lib/storage';
@@ -245,10 +245,10 @@ const FRow = ({
   label, children, noBorder = false,
 }: { label: string; children: React.ReactNode; noBorder?: boolean }) => (
   <div className={cn(
-    'flex items-start gap-0 py-3',
+    'flex items-start gap-4 py-2.5',
     !noBorder && 'border-b border-border/40 last:border-0',
   )}>
-    <div className="text-[9px] font-black tracking-[0.20em] uppercase text-muted-foreground w-28 flex-shrink-0 pt-1.5 leading-tight">
+    <div className="text-[9px] font-black tracking-[0.20em] uppercase text-muted-foreground w-24 flex-shrink-0 pt-1.5 leading-tight">
       {label}
     </div>
     <div className="flex flex-wrap gap-1.5 flex-1 min-w-0">{children}</div>
@@ -258,6 +258,7 @@ const FRow = ({
 export default function DiamondFilterPanel({
   filters, onChange, onToggle, onReset, diamondCategories,
 }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
   const [showAllColors, setShowAllColors] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const shapeScrollRef = useRef<HTMLDivElement>(null);
@@ -293,207 +294,251 @@ export default function DiamondFilterPanel({
   return (
     <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
 
-      {/* Header */}
+      {/* ── Header (always visible) ───────────────────────────── */}
       <div className="flex items-center justify-between px-5 py-3 bg-muted/30 border-b">
-        <div className="flex items-center gap-2.5">
-          <span className="text-[10px] font-black tracking-[0.30em] uppercase text-foreground">
-            Diamond Filters
-          </span>
+        <div className="flex items-center gap-3">
+          {/* Toggle open/close */}
+          <button
+            type="button"
+            onClick={() => setIsOpen(v => !v)}
+            className="flex items-center gap-2 group transition-all duration-150 rounded-lg px-2 py-1 -ml-2 hover:bg-muted/50"
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
+            <span className="text-[10px] font-black tracking-[0.30em] uppercase text-foreground">
+              Diamond Filters
+            </span>
+            <ChevronDown
+              className="h-3.5 w-3.5 text-muted-foreground transition-transform duration-200"
+              style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            />
+          </button>
           {isActive && (
             <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-600/20 text-amber-700 dark:text-amber-400 tracking-wide">
               Active
             </span>
           )}
         </div>
-        {isActive && (
+
+        <div className="flex items-center gap-2">
+          {isActive && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Reset All
+            </button>
+          )}
+          {isOpen && (
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors ml-1 pl-2 border-l border-border/50"
+              aria-label="Minimise filters"
+            >
+              <Minus className="h-3 w-3" />
+              Minimise
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── Collapsible body ─────────────────────────────────── */}
+      <div
+        className="overflow-hidden transition-all duration-300 ease-in-out"
+        style={{ maxHeight: isOpen ? '1200px' : '0px', opacity: isOpen ? 1 : 0 }}
+      >
+        {/* Shape row with scroll arrows */}
+        <div className="relative border-b bg-background/60">
           <button
             type="button"
-            onClick={handleReset}
-            className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Scroll shapes left"
+            onClick={() => scrollShapes(-240)}
+            className="absolute left-0 top-0 bottom-0 z-10 flex items-center justify-center w-8 bg-gradient-to-r from-background via-background/90 to-transparent hover:text-amber-700 text-muted-foreground transition-colors"
           >
-            <RotateCcw className="h-3 w-3" />
-            Reset All
+            <ChevronLeft className="h-4 w-4" />
           </button>
-        )}
-      </div>
 
-      {/* Shape row with scroll arrows */}
-      <div className="relative border-b bg-background/60">
-        {/* Left arrow */}
-        <button
-          type="button"
-          aria-label="Scroll shapes left"
-          onClick={() => scrollShapes(-240)}
-          className="absolute left-0 top-0 bottom-0 z-10 flex items-center justify-center w-8 bg-gradient-to-r from-background via-background/90 to-transparent hover:text-amber-700 text-muted-foreground transition-colors"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-
-        {/* Scrollable shapes */}
-        <div
-          ref={shapeScrollRef}
-          className="overflow-x-auto mx-8"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          <style>{`#shape-scroll::-webkit-scrollbar{display:none}`}</style>
-          <div className="flex min-w-max">
-            {SHAPES.map(s => {
-              const active = filters.shape === s.value;
-              return (
-                <button
-                  key={s.value}
-                  type="button"
-                  onClick={() => onChange('shape', s.value)}
-                  className={cn(
-                    'flex flex-col items-center justify-end gap-2 px-4 py-3.5 min-w-[70px] transition-all duration-150 border-b-2 relative select-none',
-                    active
-                      ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30'
-                      : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30',
-                  )}
-                >
-                  <span className="w-10 h-10 flex items-center justify-center">
-                    {s.icon}
-                  </span>
-                  <span className={cn(
-                    'text-[8px] font-bold tracking-[0.12em] uppercase leading-none text-center whitespace-nowrap',
-                    active ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground',
-                  )}>
-                    {s.label}
-                  </span>
-                </button>
-              );
-            })}
+          <div
+            ref={shapeScrollRef}
+            className="overflow-x-auto mx-8"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            <div className="flex min-w-max">
+              {SHAPES.map(s => {
+                const active = filters.shape === s.value;
+                return (
+                  <button
+                    key={s.value}
+                    type="button"
+                    onClick={() => onChange('shape', s.value)}
+                    className={cn(
+                      'flex flex-col items-center justify-end gap-2 px-4 py-3.5 min-w-[70px] transition-all duration-150 border-b-2 relative select-none',
+                      active
+                        ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30'
+                        : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30',
+                    )}
+                  >
+                    <span className="w-10 h-10 flex items-center justify-center">
+                      {s.icon}
+                    </span>
+                    <span className={cn(
+                      'text-[8px] font-bold tracking-[0.12em] uppercase leading-none text-center whitespace-nowrap',
+                      active ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground',
+                    )}>
+                      {s.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          <button
+            type="button"
+            aria-label="Scroll shapes right"
+            onClick={() => scrollShapes(240)}
+            className="absolute right-0 top-0 bottom-0 z-10 flex items-center justify-center w-8 bg-gradient-to-l from-background via-background/90 to-transparent hover:text-amber-700 text-muted-foreground transition-colors"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
         </div>
 
-        {/* Right arrow */}
-        <button
-          type="button"
-          aria-label="Scroll shapes right"
-          onClick={() => scrollShapes(240)}
-          className="absolute right-0 top-0 bottom-0 z-10 flex items-center justify-center w-8 bg-gradient-to-l from-background via-background/90 to-transparent hover:text-amber-700 text-muted-foreground transition-colors"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      </div>
+        {/* Main filter rows — full width, no wasted space */}
+        <div className="px-5 py-0">
 
-      {/* Main filter rows */}
-      <div className="px-5 py-0">
+          {/* Type */}
+          <FRow label="Type">
+            {[
+              { value: 'all',  label: 'All Types' },
+              { value: 'real', label: 'Natural' },
+              { value: 'cvd',  label: 'Lab Grown' },
+            ].map(o => (
+              <Chip key={o.value} label={o.label} active={filters.type === o.value} onClick={() => onChange('type', o.value)} />
+            ))}
+          </FRow>
 
-        {/* Type */}
-        <FRow label="Type">
-          {[
-            { value: 'all',  label: 'All Types' },
-            { value: 'real', label: 'Natural' },
-            { value: 'cvd',  label: 'Lab Grown' },
-          ].map(o => (
-            <Chip key={o.value} label={o.label} active={filters.type === o.value} onClick={() => onChange('type', o.value)} />
-          ))}
-        </FRow>
-
-        {/* Carat */}
-        <FRow label="Carat">
-          <div className="flex flex-col gap-2 w-full">
-            <div className="flex items-center gap-2">
-              <Input
-                value={filters.caratMin}
-                onChange={e => { setActivePreset(null); onChange('caratMin', e.target.value); }}
-                placeholder="From"
-                type="number" step="0.01" min="0"
-                className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
-              />
-              <span className="text-muted-foreground text-sm font-light">–</span>
-              <Input
-                value={filters.caratMax}
-                onChange={e => { setActivePreset(null); onChange('caratMax', e.target.value); }}
-                placeholder="To"
-                type="number" step="0.01" min="0"
-                className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
-              />
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {CARAT_PRESETS.map(p => (
-                <PresetChip
-                  key={p.label}
-                  label={p.label}
-                  active={activePreset === p.label}
-                  onClick={() => handlePreset(p)}
+          {/* Carat */}
+          <FRow label="Carat">
+            <div className="flex flex-col gap-2 w-full">
+              <div className="flex items-center gap-2">
+                <Input
+                  value={filters.caratMin}
+                  onChange={e => { setActivePreset(null); onChange('caratMin', e.target.value); }}
+                  placeholder="From"
+                  type="number" step="0.01" min="0"
+                  className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
                 />
-              ))}
+                <span className="text-muted-foreground text-sm font-light">–</span>
+                <Input
+                  value={filters.caratMax}
+                  onChange={e => { setActivePreset(null); onChange('caratMax', e.target.value); }}
+                  placeholder="To"
+                  type="number" step="0.01" min="0"
+                  className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
+                />
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {CARAT_PRESETS.map(p => (
+                  <PresetChip
+                    key={p.label}
+                    label={p.label}
+                    active={activePreset === p.label}
+                    onClick={() => handlePreset(p)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        </FRow>
+          </FRow>
 
-        {/* Clarity */}
-        <FRow label="Clarity">
-          {CLARITIES.map(c => (
-            <Chip key={c} label={c} active={filters.clarity.includes(c)} onClick={() => onToggle('clarity', c)} />
-          ))}
-        </FRow>
-
-        {/* Color */}
-        <FRow label="Color" noBorder>
-          {visibleColors.map(c => (
-            <Chip key={c} label={c} active={filters.color.includes(c)} onClick={() => onToggle('color', c)} />
-          ))}
-          <button
-            type="button"
-            onClick={() => setShowAllColors(v => !v)}
-            className="text-[9px] font-bold tracking-wide text-amber-700 dark:text-amber-400 hover:underline self-center px-1"
-          >
-            {showAllColors ? '▲ Less' : `▼ +${COLOR_GRADES.length - 14}`}
-          </button>
-        </FRow>
-      </div>
-
-      {/* Advanced 2-column section */}
-      <div className="border-t border-border/50 grid grid-cols-1 md:grid-cols-2">
-
-        {/* Left column */}
-        <div className="px-5 py-0 md:border-r border-border/50">
-          <FRow label="Cut">
-            {GRADES.map(g => (
-              <Chip key={g.value} label={g.label} active={filters.cut.includes(g.value)} onClick={() => onToggle('cut', g.value)} />
+          {/* Clarity */}
+          <FRow label="Clarity">
+            {CLARITIES.map(c => (
+              <Chip key={c} label={c} active={filters.clarity.includes(c)} onClick={() => onToggle('clarity', c)} />
             ))}
           </FRow>
-          <FRow label="Polish">
-            {GRADES.map(g => (
-              <Chip key={g.value} label={g.label} active={filters.polish.includes(g.value)} onClick={() => onToggle('polish', g.value)} />
+
+          {/* Color */}
+          <FRow label="Color" noBorder>
+            {visibleColors.map(c => (
+              <Chip key={c} label={c} active={filters.color.includes(c)} onClick={() => onToggle('color', c)} />
             ))}
-          </FRow>
-          <FRow label="Symmetry">
-            {GRADES.map(g => (
-              <Chip key={g.value} label={g.label} active={filters.symmetry.includes(g.value)} onClick={() => onToggle('symmetry', g.value)} />
-            ))}
-          </FRow>
-          <FRow label="Fluorescence" noBorder>
-            {FLUORESCENCES.map(f => (
-              <Chip key={f.value} label={f.label} active={filters.fluorescence.includes(f.value)} onClick={() => onToggle('fluorescence', f.value)} />
-            ))}
+            <button
+              type="button"
+              onClick={() => setShowAllColors(v => !v)}
+              className="text-[9px] font-bold tracking-wide text-amber-700 dark:text-amber-400 hover:underline self-center px-1"
+            >
+              {showAllColors ? '▲ Less' : `▼ +${COLOR_GRADES.length - 14}`}
+            </button>
           </FRow>
         </div>
 
-        {/* Right column */}
-        <div className="px-5 py-0 border-t md:border-t-0 border-border/50">
-          <FRow label="Certificate">
-            {CERTIFICATES.map(c => (
-              <Chip key={c} label={c} active={filters.certificate.includes(c)} onClick={() => onToggle('certificate', c)} />
-            ))}
-          </FRow>
-          {diamondCategories.length > 0 && (
-            <FRow label="Category" noBorder>
-              <Select value={filters.category} onValueChange={v => onChange('category', v)}>
-                <SelectTrigger className="h-8 rounded border-border/70 shadow-none text-[11px] font-semibold w-52">
-                  <SelectValue placeholder="All Categories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {diamondCategories.map(c => (
-                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        {/* Advanced 4-column section — full width, balanced */}
+        <div className="border-t border-border/50 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+
+          {/* Cut */}
+          <div className="px-5 py-0 border-b md:border-b-0 md:border-r border-border/40">
+            <FRow label="Cut" noBorder>
+              {GRADES.map(g => (
+                <Chip key={g.value} label={g.label} active={filters.cut.includes(g.value)} onClick={() => onToggle('cut', g.value)} />
+              ))}
             </FRow>
+          </div>
+
+          {/* Polish */}
+          <div className="px-5 py-0 border-b md:border-b-0 xl:border-r border-border/40">
+            <FRow label="Polish" noBorder>
+              {GRADES.map(g => (
+                <Chip key={g.value} label={g.label} active={filters.polish.includes(g.value)} onClick={() => onToggle('polish', g.value)} />
+              ))}
+            </FRow>
+          </div>
+
+          {/* Symmetry */}
+          <div className="px-5 py-0 border-b xl:border-b-0 md:border-r xl:border-r border-border/40">
+            <FRow label="Symmetry" noBorder>
+              {GRADES.map(g => (
+                <Chip key={g.value} label={g.label} active={filters.symmetry.includes(g.value)} onClick={() => onToggle('symmetry', g.value)} />
+              ))}
+            </FRow>
+          </div>
+
+          {/* Fluorescence */}
+          <div className="px-5 py-0 border-b md:border-b-0 border-border/40">
+            <FRow label="Fluorescence" noBorder>
+              {FLUORESCENCES.map(f => (
+                <Chip key={f.value} label={f.label} active={filters.fluorescence.includes(f.value)} onClick={() => onToggle('fluorescence', f.value)} />
+              ))}
+            </FRow>
+          </div>
+        </div>
+
+        {/* Certificate + Category row */}
+        <div className="border-t border-border/50 grid grid-cols-1 md:grid-cols-2">
+          <div className="px-5 py-0 md:border-r border-border/40">
+            <FRow label="Certificate" noBorder>
+              {CERTIFICATES.map(c => (
+                <Chip key={c} label={c} active={filters.certificate.includes(c)} onClick={() => onToggle('certificate', c)} />
+              ))}
+            </FRow>
+          </div>
+          {diamondCategories.length > 0 && (
+            <div className="px-5 py-0">
+              <FRow label="Category" noBorder>
+                <Select value={filters.category} onValueChange={v => onChange('category', v)}>
+                  <SelectTrigger className="h-8 rounded border-border/70 shadow-none text-[11px] font-semibold w-52">
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {diamondCategories.map(c => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FRow>
+            </div>
           )}
         </div>
       </div>
