@@ -242,9 +242,6 @@ export const loadGlobalData = createAsyncThunk<
     if (!args?.force) {
       const session = readSessionCache() ?? readPersistentCache();
       if (session?.data) {
-        const promoHeaderDisabled = session.data.promoHeader
-          ? { ...session.data.promoHeader, enabled: false }
-          : null;
         return {
           ...emptyData,
           ...session.data,
@@ -258,7 +255,7 @@ export const loadGlobalData = createAsyncThunk<
           contactInfo: null,
           offices: [],
           buyingGuides: [],
-          promoHeader: promoHeaderDisabled,
+          promoHeader: session.data.promoHeader ?? null,
           blogs: session.blogsLoaded ? session.data.blogs : [],
           products: session.productsLoaded ? session.data.products : [],
         };
@@ -299,7 +296,7 @@ export const loadGlobalData = createAsyncThunk<
       blogs: [],
       instagramPosts: [],
       testimonials: [],
-      promoHeader: promoHeader ? { ...promoHeader, enabled: false } : promoHeader,
+      promoHeader: promoHeader ?? null,
       contactInfo,
       offices: [],
       buyingGuides: [],
