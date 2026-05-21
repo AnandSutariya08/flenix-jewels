@@ -10,7 +10,7 @@ import { loadProducts, selectContentHydrated, selectContentStatus, selectGlobalD
 import { buildFaqForProduct, buildMetaDescriptionForProduct, buildMetaTitleForProduct, buildOffer } from "@/lib/seo";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { preloadMedia } from "@/lib/preload";
-import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { formatPriceRounded } from "@/lib/utils";
 
 const ProductDetail = () => {
@@ -24,7 +24,7 @@ const ProductDetail = () => {
   const isReady = status === "succeeded" || hydrated;
   const productsReady = productsLoaded || productsStatus === "succeeded" || productsStatus === "failed";
 
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
 
   const product = useMemo(() => products.find((p) => p.id === id) || null, [products, id]);
   const category = useMemo(

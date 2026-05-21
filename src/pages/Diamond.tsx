@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAppSelector } from '@/store/hooks';
 import { selectContentHydrated, selectContentStatus, selectGlobalData } from '@/store/contentSlice';
-import { HEADER_OFFSET_PX } from '@/lib/layout';
+import { useHeaderOffset } from '@/hooks/useHeaderOffset';
 import { buildOffer } from '@/lib/seo';
 import { type Diamond } from '@/lib/storage';
 import { Gem, Search } from 'lucide-react';
@@ -47,7 +47,7 @@ const DiamondPage = () => {
   const status = useAppSelector(selectContentStatus);
   const hydrated = useAppSelector(selectContentHydrated);
   const isReady = status === 'succeeded' || hydrated;
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<DiamondFilters>(DEFAULT_DIAMOND_FILTERS);
   const [selectedDiamond, setSelectedDiamond] = useState<Diamond | null>(null);

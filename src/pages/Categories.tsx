@@ -5,14 +5,14 @@
 // import SEOHead from '@/components/SEOHead';
 // import { useAppSelector } from "@/store/hooks";
 // import { selectGlobalData } from "@/store/contentSlice";
-// import { HEADER_OFFSET_PX } from "@/lib/layout";
+// import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 // import { Card, CardContent } from '@/components/ui/card';
 // import { Gem } from 'lucide-react';
 
 // const Categories = () => {
 //   const { categories, promoHeader } = useAppSelector(selectGlobalData);
 
-//   const paddingTop = HEADER_OFFSET_PX;
+//   const paddingTop = useHeaderOffset();
 
 //   const structuredData = {
 //     '@context': 'https://schema.org',
@@ -136,7 +136,7 @@ import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
-import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { Gem, ArrowRight } from 'lucide-react';
 import PageHero from "@/components/PageHero";
 import EmptyState from "@/components/EmptyState";
@@ -145,7 +145,7 @@ import hero2 from "@/assets/hero2.png";
 
 const Categories = () => {
   const { categories, promoHeader } = useAppSelector(selectGlobalData);
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
 const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
 
   const structuredData = {

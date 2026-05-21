@@ -21,7 +21,7 @@ import { loadProducts, selectContentHydrated, selectContentStatus, selectGlobalD
 import { Product } from "@/lib/storage";
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, SlidersHorizontal } from 'lucide-react';
-import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import {
   Select,
   SelectContent,
@@ -44,7 +44,7 @@ const CategoryProducts = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortBy, setSortBy] = useState<string>('newest');
   const [searchParams, setSearchParams] = useSearchParams();
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
   const category = useMemo(
     () => categories.find((c) => c.id === id) ?? null,
     [categories, id]

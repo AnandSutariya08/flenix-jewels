@@ -13,7 +13,7 @@ import EmptyState from '@/components/EmptyState';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadBlogs, loadDeferredData, selectBlogsLoaded, selectBlogsStatus, selectGlobalData, selectDeferredStatus, selectDeferredLoaded } from '@/store/contentSlice';
-import { HEADER_OFFSET_PX } from '@/lib/layout';
+import { useHeaderOffset } from '@/hooks/useHeaderOffset';
 import { Truck, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight, BookOpen, Gem } from 'lucide-react';
 import { BlogPost } from '@/lib/storage';
 import { SITE, YEARS_OF_EXCELLENCE_LABEL } from '@/lib/seo';
@@ -94,7 +94,7 @@ export default function Index() {
     }
   }, [blogsLoaded, blogsStatus, dispatch]);
 
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
 
   const openBlog = (blog: BlogPost) => { setSelectedBlog(blog); setIsBlogDialogOpen(true); };
 

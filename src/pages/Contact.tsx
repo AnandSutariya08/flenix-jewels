@@ -6,7 +6,7 @@ import SEOHead from '@/components/SEOHead';
 import PageHero from "@/components/PageHero";
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
-import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { cleanWhatsApp } from "@/lib/utils";
 import { MapPin, Phone, Mail, Clock, Send, Flag, Loader2, Gem, MessageCircle, ChevronRight } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
@@ -43,7 +43,7 @@ const Contact = () => {
   const infoReveal = useReveal(0.08);
   const officesReveal = useReveal(0.08);
 
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

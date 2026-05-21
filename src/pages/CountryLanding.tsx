@@ -7,7 +7,7 @@ import SEOHead from "@/components/SEOHead";
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { Button } from "@/components/ui/button";
-import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 
 type CountryConfig = {
   name: string;
@@ -73,7 +73,7 @@ const COUNTRIES: CountryConfig[] = [
 const CountryLanding = () => {
   const { country } = useParams<{ country: string }>();
   const { categories, promoHeader } = useAppSelector(selectGlobalData);
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
 
   const config = useMemo(
     () => COUNTRIES.find((c) => c.slug === country) ?? null,

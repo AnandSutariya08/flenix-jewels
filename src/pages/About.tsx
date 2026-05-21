@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
-import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { Link } from 'react-router-dom';
 import { Award, Shield, Heart, Globe, Gem, Crown, Sparkles, Target, Users, Clock, Zap, ArrowRight, ChevronRight } from 'lucide-react';
 import logo1 from '@/assets/about_1.png';
@@ -76,7 +76,7 @@ const expertise = [
 const About = () => {
   const { categories, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
 
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
 
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'AboutPage',

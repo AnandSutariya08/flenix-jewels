@@ -8,7 +8,7 @@ import PageHero from "@/components/PageHero";
 import BlogDialog from '@/components/BlogDialog';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadBlogs, loadGlobalData, selectBlogsLoaded, selectBlogsStatus, selectContentStatus, selectGlobalData } from "@/store/contentSlice";
-import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { BlogPost } from '@/lib/storage';
 import { buildMetaDescriptionForBlog, buildMetaTitleForBlog } from '@/lib/seo';
 import { ArrowRight, Clock, CalendarDays, BookOpen, Gem, ChevronRight } from 'lucide-react';
@@ -295,7 +295,7 @@ const Blog = () => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
 
   const sortedBlogs = useMemo(
     () => [...blogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),

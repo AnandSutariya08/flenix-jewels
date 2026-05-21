@@ -6,7 +6,7 @@ import SEOHead from '@/components/SEOHead';
 import PageHero from "@/components/PageHero";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadDeferredData, selectDeferredLoaded, selectDeferredStatus, selectGlobalData } from "@/store/contentSlice";
-import { HEADER_OFFSET_PX } from "@/lib/layout";
+import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { ChevronLeft, ChevronRight, X, ZoomIn, Gem } from 'lucide-react';
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { FaWhatsapp } from 'react-icons/fa';
@@ -134,7 +134,7 @@ const Gallery = () => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
-  const paddingTop = HEADER_OFFSET_PX;
+  const paddingTop = useHeaderOffset();
 
   const whatsappNumber = useMemo(() => (contactInfo?.whatsapp || "85251254000").replace(/\D/g, ''), [contactInfo?.whatsapp]);
 
