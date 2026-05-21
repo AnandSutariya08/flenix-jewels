@@ -59,6 +59,11 @@ export interface Category {
 }
 
 export type DiamondType = 'real' | 'cvd';
+export type DiamondShape = 'round' | 'pear' | 'marquise' | 'oval' | 'heart' | 'princess' | 'cushion' | 'emerald' | 'sq_emerald' | 'radiant' | 'sq_radiant' | 'other';
+export type DiamondClarity = 'FL' | 'IF' | 'VVS1' | 'VVS2' | 'VS1' | 'VS2' | 'SI1' | 'SI2' | 'I1' | 'I2';
+export type DiamondGrade = 'excellent' | 'very_good' | 'good' | 'fair';
+export type DiamondFluorescence = 'none' | 'faint' | 'medium' | 'strong' | 'very_strong';
+export type DiamondCertificate = 'GIA' | 'IGI' | 'HRD' | 'GSI' | 'SNJ';
 
 export interface DiamondCategory {
   id: string;
@@ -100,6 +105,15 @@ export interface Diamond {
   metaTitle?: string;
   metaDescription?: string;
   seoFaq?: { question: string; answer: string }[];
+  shape?: DiamondShape;
+  carat?: number;
+  clarity?: DiamondClarity;
+  colorGrade?: string;
+  cut?: DiamondGrade;
+  polish?: DiamondGrade;
+  symmetry?: DiamondGrade;
+  fluorescence?: DiamondFluorescence;
+  certificate?: DiamondCertificate;
 }
 
 export interface GalleryItem {

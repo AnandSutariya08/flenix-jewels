@@ -8,6 +8,11 @@ import {
   type Diamond,
   type DiamondCategory,
   type DiamondType,
+  type DiamondShape,
+  type DiamondClarity,
+  type DiamondGrade,
+  type DiamondFluorescence,
+  type DiamondCertificate,
 } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,9 +34,62 @@ interface MediaItem {
 }
 
 const DIAMOND_TYPE_OPTIONS: Array<{ value: DiamondType; label: string }> = [
-  { value: 'real', label: 'Real Diamond' },
+  { value: 'real', label: 'Natural Diamond' },
   { value: 'cvd', label: 'Lab Grown Diamond' },
 ];
+
+const SHAPE_OPTIONS: Array<{ value: DiamondShape; label: string }> = [
+  { value: 'round', label: 'Round' },
+  { value: 'pear', label: 'Pear' },
+  { value: 'marquise', label: 'Marquise' },
+  { value: 'oval', label: 'Oval' },
+  { value: 'heart', label: 'Heart' },
+  { value: 'princess', label: 'Princess' },
+  { value: 'cushion', label: 'Cushion' },
+  { value: 'emerald', label: 'Emerald' },
+  { value: 'sq_emerald', label: 'Sq Emerald' },
+  { value: 'radiant', label: 'Radiant' },
+  { value: 'sq_radiant', label: 'Sq Radiant' },
+  { value: 'other', label: 'Other' },
+];
+
+const CLARITY_OPTIONS: Array<{ value: DiamondClarity; label: string }> = [
+  { value: 'FL', label: 'FL' },
+  { value: 'IF', label: 'IF' },
+  { value: 'VVS1', label: 'VVS1' },
+  { value: 'VVS2', label: 'VVS2' },
+  { value: 'VS1', label: 'VS1' },
+  { value: 'VS2', label: 'VS2' },
+  { value: 'SI1', label: 'SI1' },
+  { value: 'SI2', label: 'SI2' },
+  { value: 'I1', label: 'I1' },
+  { value: 'I2', label: 'I2' },
+];
+
+const GRADE_OPTIONS: Array<{ value: DiamondGrade; label: string }> = [
+  { value: 'excellent', label: 'Excellent' },
+  { value: 'very_good', label: 'Very Good' },
+  { value: 'good', label: 'Good' },
+  { value: 'fair', label: 'Fair' },
+];
+
+const FLUORESCENCE_OPTIONS: Array<{ value: DiamondFluorescence; label: string }> = [
+  { value: 'none', label: 'None' },
+  { value: 'faint', label: 'Faint' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'strong', label: 'Strong' },
+  { value: 'very_strong', label: 'Very Strong' },
+];
+
+const CERTIFICATE_OPTIONS: Array<{ value: DiamondCertificate; label: string }> = [
+  { value: 'GIA', label: 'GIA' },
+  { value: 'IGI', label: 'IGI' },
+  { value: 'HRD', label: 'HRD' },
+  { value: 'GSI', label: 'GSI' },
+  { value: 'SNJ', label: 'SNJ' },
+];
+
+const COLOR_GRADES = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 
 const AdminDiamonds = () => {
   const [diamonds, setDiamonds] = useState<Diamond[]>([]);
@@ -47,6 +105,16 @@ const AdminDiamonds = () => {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const mediaInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [shape, setShape] = useState<DiamondShape | ''>('');
+  const [carat, setCarat] = useState('');
+  const [clarity, setClarity] = useState<DiamondClarity | ''>('');
+  const [colorGrade, setColorGrade] = useState('');
+  const [cut, setCut] = useState<DiamondGrade | ''>('');
+  const [polish, setPolish] = useState<DiamondGrade | ''>('');
+  const [symmetry, setSymmetry] = useState<DiamondGrade | ''>('');
+  const [fluorescence, setFluorescence] = useState<DiamondFluorescence | ''>('');
+  const [certificate, setCertificate] = useState<DiamondCertificate | ''>('');
 
   useEffect(() => {
     getDiamonds().then(setDiamonds);
@@ -100,6 +168,15 @@ const AdminDiamonds = () => {
     setDiamondType('real');
     setMediaItems([]);
     if (mediaInputRef.current) mediaInputRef.current.value = '';
+    setShape('');
+    setCarat('');
+    setClarity('');
+    setColorGrade('');
+    setCut('');
+    setPolish('');
+    setSymmetry('');
+    setFluorescence('');
+    setCertificate('');
   };
 
   const handleEdit = (diamond: Diamond) => {
@@ -114,6 +191,15 @@ const AdminDiamonds = () => {
       url,
       source: 'existing',
     })));
+    setShape(diamond.shape || '');
+    setCarat(diamond.carat !== undefined ? String(diamond.carat) : '');
+    setClarity(diamond.clarity || '');
+    setColorGrade(diamond.colorGrade || '');
+    setCut(diamond.cut || '');
+    setPolish(diamond.polish || '');
+    setSymmetry(diamond.symmetry || '');
+    setFluorescence(diamond.fluorescence || '');
+    setCertificate(diamond.certificate || '');
     setIsFormOpen(true);
   };
 
@@ -150,6 +236,15 @@ const AdminDiamonds = () => {
         image: imageUrls[0],
         images: imageUrls,
         createdAt: existing?.createdAt ?? Date.now(),
+        ...(shape ? { shape } : {}),
+        ...(carat ? { carat: parseFloat(carat) } : {}),
+        ...(clarity ? { clarity } : {}),
+        ...(colorGrade ? { colorGrade } : {}),
+        ...(cut ? { cut } : {}),
+        ...(polish ? { polish } : {}),
+        ...(symmetry ? { symmetry } : {}),
+        ...(fluorescence ? { fluorescence } : {}),
+        ...(certificate ? { certificate } : {}),
       };
 
       await saveDiamond(payload);
@@ -209,6 +304,7 @@ const AdminDiamonds = () => {
           </DialogHeader>
 
           <div className="space-y-4">
+            {/* Category + Type */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="diamond-category">Diamond Category *</Label>
@@ -243,6 +339,7 @@ const AdminDiamonds = () => {
               </div>
             </div>
 
+            {/* Name */}
             <div className="space-y-2">
               <Label htmlFor="diamond-name">Diamond Name *</Label>
               <Input
@@ -253,6 +350,7 @@ const AdminDiamonds = () => {
               />
             </div>
 
+            {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="diamond-description">Description</Label>
               <RichTextEditor
@@ -262,6 +360,7 @@ const AdminDiamonds = () => {
               />
             </div>
 
+            {/* Price */}
             <div className="space-y-2">
               <Label htmlFor="diamond-price">Price (in $) *</Label>
               <Input
@@ -274,6 +373,148 @@ const AdminDiamonds = () => {
               />
             </div>
 
+            {/* Diamond Specifications */}
+            <div className="space-y-3 rounded-xl border p-4 bg-muted/30">
+              <p className="text-sm font-semibold text-muted-foreground tracking-wide">Diamond Specifications <span className="font-normal">(optional — used for filters on Diamond page)</span></p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Shape */}
+                <div className="space-y-2">
+                  <Label>Shape</Label>
+                  <Select value={shape} onValueChange={(v) => setShape(v as DiamondShape)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select shape" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SHAPE_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Carat */}
+                <div className="space-y-2">
+                  <Label htmlFor="diamond-carat">Carat Weight</Label>
+                  <Input
+                    id="diamond-carat"
+                    value={carat}
+                    onChange={(e) => setCarat(e.target.value)}
+                    placeholder="e.g., 1.25"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                  />
+                </div>
+
+                {/* Clarity */}
+                <div className="space-y-2">
+                  <Label>Clarity</Label>
+                  <Select value={clarity} onValueChange={(v) => setClarity(v as DiamondClarity)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select clarity" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CLARITY_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Color Grade */}
+                <div className="space-y-2">
+                  <Label>Color Grade</Label>
+                  <Select value={colorGrade} onValueChange={setColorGrade}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select color grade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COLOR_GRADES.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Cut */}
+                <div className="space-y-2">
+                  <Label>Cut</Label>
+                  <Select value={cut} onValueChange={(v) => setCut(v as DiamondGrade)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select cut" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GRADE_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Polish */}
+                <div className="space-y-2">
+                  <Label>Polish</Label>
+                  <Select value={polish} onValueChange={(v) => setPolish(v as DiamondGrade)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select polish" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GRADE_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Symmetry */}
+                <div className="space-y-2">
+                  <Label>Symmetry</Label>
+                  <Select value={symmetry} onValueChange={(v) => setSymmetry(v as DiamondGrade)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select symmetry" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GRADE_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Fluorescence */}
+                <div className="space-y-2">
+                  <Label>Fluorescence</Label>
+                  <Select value={fluorescence} onValueChange={(v) => setFluorescence(v as DiamondFluorescence)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select fluorescence" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FLUORESCENCE_OPTIONS.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Certificate — full width */}
+              <div className="space-y-2">
+                <Label>Certificate</Label>
+                <Select value={certificate} onValueChange={(v) => setCertificate(v as DiamondCertificate)}>
+                  <SelectTrigger className="max-w-sm">
+                    <SelectValue placeholder="Select certificate" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CERTIFICATE_OPTIONS.map((o) => (
+                      <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Images */}
             <div className="space-y-2">
               <Label htmlFor="diamond-media">
                 Diamond Images * ({mediaItems.length} file{mediaItems.length !== 1 ? 's' : ''})
@@ -351,6 +592,14 @@ const AdminDiamonds = () => {
           const categoryName = diamondCategories.find((category) => category.id === diamond.diamondCategoryId)?.name || 'Unknown';
           const typeLabel = DIAMOND_TYPE_OPTIONS.find((option) => option.value === diamond.diamondType)?.label || diamond.diamondType;
 
+          const specTags = [
+            diamond.shape ? SHAPE_OPTIONS.find(s => s.value === diamond.shape)?.label : null,
+            diamond.carat ? `${diamond.carat} ct` : null,
+            diamond.clarity ?? null,
+            diamond.colorGrade ? `Color ${diamond.colorGrade}` : null,
+            diamond.certificate ?? null,
+          ].filter(Boolean) as string[];
+
           return (
             <Card key={diamond.id} className="overflow-hidden">
               <div className="relative aspect-video bg-muted">
@@ -375,6 +624,15 @@ const AdminDiamonds = () => {
                     {getDescriptionPreview(diamond.description)}
                   </p>
                 ) : null}
+                {specTags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {specTags.map(tag => (
+                      <span key={tag} className="text-[10px] px-2 py-0.5 rounded bg-muted text-muted-foreground font-medium">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <p className="font-bold text-xl text-primary mb-4">${formatPriceRounded(diamond.price)}</p>
 
                 <div className="flex gap-2">

@@ -1,35 +1,125 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import PageHero from '@/components/PageHero';
 import ProductCard from '@/components/ProductCard';
 import ProductDialog from '@/components/ProductDialog';
 import EmptyState from '@/components/EmptyState';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAppSelector } from '@/store/hooks';
 import { selectContentHydrated, selectContentStatus, selectGlobalData } from '@/store/contentSlice';
 import { HEADER_OFFSET_PX } from '@/lib/layout';
 import { buildOffer } from '@/lib/seo';
 import { type Diamond, type DiamondType } from '@/lib/storage';
-import { Gem, Search, SlidersHorizontal } from 'lucide-react';
+import { Gem, Search, SlidersHorizontal, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
 import diamondHero from '@/assets/diamond-hero.png';
+import { cn } from '@/lib/utils';
 
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 
-const TYPE_LABELS: Record<'all' | DiamondType, string> = {
-  all: 'All Diamonds',
-  real: 'Real Diamonds',
-  cvd: 'Lab Grown Diamonds',
+const SHAPES = [
+  { value: 'all', label: 'All Shape' },
+  { value: 'round', label: 'Round' },
+  { value: 'pear', label: 'Pear' },
+  { value: 'marquise', label: 'Marquise' },
+  { value: 'oval', label: 'Oval' },
+  { value: 'heart', label: 'Heart' },
+  { value: 'princess', label: 'Princess' },
+  { value: 'cushion', label: 'Cushion' },
+  { value: 'emerald', label: 'Emerald' },
+  { value: 'sq_emerald', label: 'Sq Emerald' },
+  { value: 'radiant', label: 'Radiant' },
+  { value: 'sq_radiant', label: 'Sq Radiant' },
+  { value: 'other', label: 'Other' },
+];
+
+const CLARITIES = ['FL', 'IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2', 'I1', 'I2'];
+const COLOR_GRADES = ['D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+const GRADES = [
+  { value: 'excellent', label: 'Excellent' },
+  { value: 'very_good', label: 'Very Good' },
+  { value: 'good', label: 'Good' },
+  { value: 'fair', label: 'Fair' },
+];
+const FLUORESCENCES = [
+  { value: 'none', label: 'None' },
+  { value: 'faint', label: 'Faint' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'strong', label: 'Strong' },
+  { value: 'very_strong', label: 'Very Strong' },
+];
+const CERTIFICATES = ['GIA', 'IGI', 'HRD', 'GSI', 'SNJ'];
+
+type Filters = {
+  type: string;
+  shape: string;
+  caratMin: string;
+  caratMax: string;
+  clarity: string[];
+  color: string[];
+  cut: string[];
+  polish: string[];
+  symmetry: string[];
+  fluorescence: string[];
+  certificate: string[];
+  search: string;
+  category: string;
+  sort: string;
 };
+
+const DEFAULT_FILTERS: Filters = {
+  type: 'all', shape: 'all',
+  caratMin: '', caratMax: '',
+  clarity: [], color: [], cut: [], polish: [],
+  symmetry: [], fluorescence: [], certificate: [],
+  search: '', category: 'all', sort: 'newest',
+};
+
+function toggleArr(arr: string[], val: string): string[] {
+  return arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val];
+}
+
+function hasActiveFilters(f: Filters): boolean {
+  return f.type !== 'all' || f.shape !== 'all' || !!f.caratMin || !!f.caratMax ||
+    !!f.clarity.length || !!f.color.length || !!f.cut.length || !!f.polish.length ||
+    !!f.symmetry.length || !!f.fluorescence.length || !!f.certificate.length ||
+    !!f.search || f.category !== 'all';
+}
+
+interface ChipBtnProps {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  className?: string;
+}
+const ChipBtn = ({ label, active, onClick, className }: ChipBtnProps) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={cn(
+      'px-3 py-1 rounded text-xs font-semibold tracking-wide border transition-all duration-150 whitespace-nowrap',
+      active
+        ? 'bg-amber-700 border-amber-700 text-white shadow-sm'
+        : 'border-border text-muted-foreground hover:border-amber-600/50 hover:text-foreground bg-background',
+      className
+    )}
+  >
+    {label}
+  </button>
+);
+
+const FilterRow = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4 py-2 border-b border-border/40 last:border-0">
+    <div className="text-[9px] font-black tracking-[0.22em] uppercase text-muted-foreground sm:w-28 flex-shrink-0 sm:pt-2">
+      {label}
+    </div>
+    <div className="flex flex-wrap gap-1.5">{children}</div>
+  </div>
+);
 
 const getItemTime = (item: Diamond): number => {
   if (item.createdAt) {
@@ -52,46 +142,53 @@ const DiamondPage = () => {
   const isReady = status === 'succeeded' || hydrated;
   const paddingTop = HEADER_OFFSET_PX;
   const [searchParams, setSearchParams] = useSearchParams();
-  const [search, setSearch] = useState('');
-  const [selectedType, setSelectedType] = useState<'all' | DiamondType>('all');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'a-z'>('newest');
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [selectedDiamond, setSelectedDiamond] = useState<Diamond | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
+  const [showAllColors, setShowAllColors] = useState(false);
+
+  const setFilter = <K extends keyof Filters>(key: K, value: Filters[K]) =>
+    setFilters(f => ({ ...f, [key]: value }));
+
+  const toggleFilter = (key: 'clarity' | 'color' | 'cut' | 'polish' | 'symmetry' | 'fluorescence' | 'certificate', val: string) =>
+    setFilters(f => ({ ...f, [key]: toggleArr(f[key] as string[], val) }));
 
   const filteredDiamonds = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+    const f = filters;
+    let items = diamonds;
 
-    const items = diamonds.filter((diamond) => {
-      const matchesType = selectedType === 'all' ? true : diamond.diamondType === selectedType;
-      const matchesCategory = selectedCategory === 'all' ? true : diamond.diamondCategoryId === selectedCategory;
-      const matchesSearch = normalizedSearch.length === 0
-        ? true
-        : [diamond.name, diamond.description]
-          .filter(Boolean)
-          .join(' ')
-          .toLowerCase()
-          .includes(normalizedSearch);
-
-      return matchesType && matchesCategory && matchesSearch;
-    });
-
-    const sorted = [...items];
-    if (sortBy === 'oldest') {
-      sorted.sort((a, b) => getItemTime(a) - getItemTime(b));
-    } else if (sortBy === 'a-z') {
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-    } else {
-      sorted.sort((a, b) => getItemTime(b) - getItemTime(a));
+    if (f.type !== 'all') items = items.filter(d => d.diamondType === f.type);
+    if (f.shape !== 'all') items = items.filter(d => !d.shape || d.shape === f.shape);
+    if (f.caratMin) items = items.filter(d => d.carat === undefined || d.carat >= parseFloat(f.caratMin));
+    if (f.caratMax) items = items.filter(d => d.carat === undefined || d.carat <= parseFloat(f.caratMax));
+    if (f.clarity.length) items = items.filter(d => !d.clarity || f.clarity.includes(d.clarity));
+    if (f.color.length) items = items.filter(d => !d.colorGrade || f.color.includes(d.colorGrade));
+    if (f.cut.length) items = items.filter(d => !d.cut || f.cut.includes(d.cut));
+    if (f.polish.length) items = items.filter(d => !d.polish || f.polish.includes(d.polish));
+    if (f.symmetry.length) items = items.filter(d => !d.symmetry || f.symmetry.includes(d.symmetry));
+    if (f.fluorescence.length) items = items.filter(d => !d.fluorescence || f.fluorescence.includes(d.fluorescence));
+    if (f.certificate.length) items = items.filter(d => !d.certificate || f.certificate.includes(d.certificate));
+    if (f.category !== 'all') items = items.filter(d => d.diamondCategoryId === f.category);
+    if (f.search) {
+      const q = f.search.trim().toLowerCase();
+      items = items.filter(d =>
+        [d.name, d.description].filter(Boolean).join(' ').toLowerCase().includes(q)
+      );
     }
 
+    const sorted = [...items];
+    if (f.sort === 'oldest') sorted.sort((a, b) => getItemTime(a) - getItemTime(b));
+    else if (f.sort === 'a-z') sorted.sort((a, b) => a.name.localeCompare(b.name));
+    else sorted.sort((a, b) => getItemTime(b) - getItemTime(a));
+
     return sorted;
-  }, [diamonds, search, selectedCategory, selectedType, sortBy]);
+  }, [diamonds, filters]);
 
   useEffect(() => {
     const diamondId = searchParams.get('diamond');
     if (!diamondId) return;
-    const match = diamonds.find((diamond) => diamond.id === diamondId);
+    const match = diamonds.find((d) => d.id === diamondId);
     if (match) {
       setSelectedDiamond(match);
       setIsDialogOpen(true);
@@ -106,9 +203,7 @@ const DiamondPage = () => {
 
   const handleDialogOpenChange = (open: boolean) => {
     setIsDialogOpen(open);
-    if (!open) {
-      setSearchParams({});
-    }
+    if (!open) setSearchParams({});
   };
 
   const structuredData = {
@@ -133,17 +228,10 @@ const DiamondPage = () => {
           image: diamond.images && diamond.images.length > 0 ? diamond.images : [diamond.image],
           description: diamond.description || `${diamond.name} from Flenix Jewels Ltd`,
           sku: diamond.id,
-          category: diamondCategories.find((category) => category.id === diamond.diamondCategoryId)?.name || 'Diamond',
-          brand: {
-            '@type': 'Brand',
-            name: 'Flenix Jewels Ltd',
-          },
+          category: diamondCategories.find((c) => c.id === diamond.diamondCategoryId)?.name || 'Diamond',
+          brand: { '@type': 'Brand', name: 'Flenix Jewels Ltd' },
           additionalProperty: [
-            {
-              '@type': 'PropertyValue',
-              name: 'Diamond Type',
-              value: TYPE_LABELS[diamond.diamondType],
-            },
+            { '@type': 'PropertyValue', name: 'Diamond Type', value: diamond.diamondType === 'real' ? 'Natural Diamond' : 'Lab Grown Diamond' },
           ],
           offers: buildOffer(`https://www.flenixjewels.com/diamond?diamond=${diamond.id}`, diamond.price),
         },
@@ -153,8 +241,8 @@ const DiamondPage = () => {
 
   const faqItems = [
     {
-      question: 'Can I filter between real diamonds and lab grown diamonds?',
-      answer: 'Yes. The Diamond page lets you switch between real diamonds, lab grown diamonds, or browse both together.',
+      question: 'Can I filter between natural diamonds and lab grown diamonds?',
+      answer: 'Yes. The Diamond page lets you switch between natural diamonds, lab grown diamonds, or browse both together.',
     },
     {
       question: 'Can I search within the Diamond page?',
@@ -178,7 +266,7 @@ const DiamondPage = () => {
         <main className="flex-1 px-4 py-10" style={{ paddingTop: `${paddingTop}px` }}>
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="h-[280px] rounded-3xl bg-muted animate-pulse" />
-            <div className="h-24 rounded-2xl bg-muted/70 animate-pulse" />
+            <div className="h-64 rounded-2xl bg-muted/70 animate-pulse" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, index) => (
                 <div key={index} className="h-80 rounded-xl bg-muted animate-pulse" />
@@ -190,6 +278,8 @@ const DiamondPage = () => {
       </div>
     );
   }
+
+  const visibleColors = showAllColors ? COLOR_GRADES : COLOR_GRADES.slice(0, 13);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -209,155 +299,227 @@ const DiamondPage = () => {
       <Header promoHeader={promoHeader} />
 
       <main className="flex-1" style={{ paddingTop: `${paddingTop}px` }}>
-        <section className="px-3 sm:px-5 pt-4 sm:pt-6">
-          <div className="max-w-[1600px] mx-auto overflow-hidden rounded-[32px] border border-[rgba(196,144,106,0.18)] shadow-[0_18px_60px_-20px_rgba(0,0,0,0.25)] bg-white">
-            <img
-              src={diamondHero}
-              alt="Choose your brilliance - real diamonds and lab grown diamonds"
-              className="w-full h-auto block"
-              loading="eager"
-              decoding="async"
-            />
-          </div>
-        </section>
+        <PageHero
+          backgroundImage={diamondHero}
+          eyebrow={
+            <span className="inline-flex items-center justify-center gap-2">
+              <Gem className="h-3 w-3" />
+              <span>Diamond Collection</span>
+              <Gem className="h-3 w-3" />
+            </span>
+          }
+          title={
+            <>
+              Find Your{' '}
+              <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                Perfect Diamond
+              </span>
+            </>
+          }
+          subtitle="Browse our curated collection of natural and lab grown diamonds — filter by shape, clarity, color, cut, and more."
+        />
 
-        <section className="px-4 sm:px-6 lg:px-10 py-8 md:py-10">
-          <div className="max-w-[1500px] mx-auto space-y-8">
-            <div className="rounded-3xl border bg-card/70 backdrop-blur-sm p-6 md:p-8 shadow-sm">
-              <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-                <div className="max-w-3xl">
-                  <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3 text-primary">Diamond Collection</p>
-                  <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.06]">
-                    Find Your
-                    <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', marginLeft: 10 }}>
-                      Perfect Diamond
+        <section className="px-3 sm:px-5 py-6 sm:py-8">
+          <div className="max-w-[1600px] mx-auto space-y-4">
+
+            {/* Filter panel */}
+            <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
+              <div
+                className="flex items-center justify-between px-5 py-3.5 cursor-pointer select-none"
+                onClick={() => setShowFilters(v => !v)}
+              >
+                <div className="flex items-center gap-2.5">
+                  <SlidersHorizontal className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-bold tracking-wide">Diamond Filters</span>
+                  {hasActiveFilters(filters) && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-600/15 text-amber-700 dark:text-amber-400">
+                      Active
                     </span>
-                  </h1>
-                  <p className="mt-4 text-sm md:text-base text-muted-foreground leading-relaxed max-w-2xl">
-                    Explore admin-managed real diamonds and lab grown diamonds in one refined catalog. Search by name, filter by type and category, and open any piece for a closer look.
-                  </p>
+                  )}
                 </div>
-
-                <div className="grid grid-cols-3 gap-3 min-w-full lg:min-w-[360px]">
-                  <div className="rounded-2xl border bg-background/80 p-4 text-center">
-                    <div className="text-2xl font-bold text-primary">{diamonds.length}</div>
-                    <div className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground">Total Diamonds</div>
-                  </div>
-                  <div className="rounded-2xl border bg-background/80 p-4 text-center">
-                    <div className="text-2xl font-bold text-primary">{diamonds.filter((item) => item.diamondType === 'real').length}</div>
-                    <div className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground">Real</div>
-                  </div>
-                  <div className="rounded-2xl border bg-background/80 p-4 text-center">
-                    <div className="text-2xl font-bold text-primary">{diamonds.filter((item) => item.diamondType === 'cvd').length}</div>
-                    <div className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground">Lab Grown</div>
-                  </div>
+                <div className="flex items-center gap-3">
+                  {hasActiveFilters(filters) && (
+                    <button
+                      type="button"
+                      onClick={e => { e.stopPropagation(); setFilters(DEFAULT_FILTERS); }}
+                      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      Reset
+                    </button>
+                  )}
+                  {showFilters ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
                 </div>
               </div>
+
+              {showFilters && (
+                <div className="px-5 pb-5 border-t border-border/50 space-y-0">
+
+                  {/* Type */}
+                  <FilterRow label="Type">
+                    {[{ value: 'all', label: 'All Types' }, { value: 'real', label: 'Natural Diamond' }, { value: 'cvd', label: 'Lab Grown Diamond' }].map(o => (
+                      <ChipBtn key={o.value} label={o.label} active={filters.type === o.value} onClick={() => setFilter('type', o.value)} />
+                    ))}
+                  </FilterRow>
+
+                  {/* Shape */}
+                  <FilterRow label="Shape">
+                    {SHAPES.map(s => (
+                      <ChipBtn key={s.value} label={s.label} active={filters.shape === s.value} onClick={() => setFilter('shape', s.value)} />
+                    ))}
+                  </FilterRow>
+
+                  {/* Carat */}
+                  <FilterRow label="Carat">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={filters.caratMin}
+                        onChange={e => setFilter('caratMin', e.target.value)}
+                        placeholder="From"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        className="h-7 w-24 text-xs rounded"
+                      />
+                      <span className="text-muted-foreground text-xs">–</span>
+                      <Input
+                        value={filters.caratMax}
+                        onChange={e => setFilter('caratMax', e.target.value)}
+                        placeholder="To"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        className="h-7 w-24 text-xs rounded"
+                      />
+                    </div>
+                  </FilterRow>
+
+                  {/* Clarity */}
+                  <FilterRow label="Clarity">
+                    {CLARITIES.map(c => (
+                      <ChipBtn key={c} label={c} active={filters.clarity.includes(c)} onClick={() => toggleFilter('clarity', c)} />
+                    ))}
+                  </FilterRow>
+
+                  {/* Color */}
+                  <FilterRow label="Color">
+                    {visibleColors.map(c => (
+                      <ChipBtn key={c} label={c} active={filters.color.includes(c)} onClick={() => toggleFilter('color', c)} />
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setShowAllColors(v => !v)}
+                      className="text-[10px] font-bold tracking-wide text-amber-700 dark:text-amber-400 hover:underline ml-1 self-center"
+                    >
+                      {showAllColors ? 'Less ▲' : `+${COLOR_GRADES.length - 13} more ▼`}
+                    </button>
+                  </FilterRow>
+
+                  {/* Cut */}
+                  <FilterRow label="Cut">
+                    {GRADES.map(g => (
+                      <ChipBtn key={g.value} label={g.label} active={filters.cut.includes(g.value)} onClick={() => toggleFilter('cut', g.value)} />
+                    ))}
+                  </FilterRow>
+
+                  {/* Polish */}
+                  <FilterRow label="Polish">
+                    {GRADES.map(g => (
+                      <ChipBtn key={g.value} label={g.label} active={filters.polish.includes(g.value)} onClick={() => toggleFilter('polish', g.value)} />
+                    ))}
+                  </FilterRow>
+
+                  {/* Symmetry */}
+                  <FilterRow label="Symmetry">
+                    {GRADES.map(g => (
+                      <ChipBtn key={g.value} label={g.label} active={filters.symmetry.includes(g.value)} onClick={() => toggleFilter('symmetry', g.value)} />
+                    ))}
+                  </FilterRow>
+
+                  {/* Fluorescence */}
+                  <FilterRow label="Fluorescence">
+                    {FLUORESCENCES.map(f => (
+                      <ChipBtn key={f.value} label={f.label} active={filters.fluorescence.includes(f.value)} onClick={() => toggleFilter('fluorescence', f.value)} />
+                    ))}
+                  </FilterRow>
+
+                  {/* Certificate */}
+                  <FilterRow label="Certificate">
+                    {CERTIFICATES.map(c => (
+                      <ChipBtn key={c} label={c} active={filters.certificate.includes(c)} onClick={() => toggleFilter('certificate', c)} />
+                    ))}
+                  </FilterRow>
+
+                </div>
+              )}
             </div>
 
-            <div className="rounded-3xl border bg-card/70 backdrop-blur-sm p-5 md:p-6 shadow-sm space-y-5">
-              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_220px_220px_220px] gap-4">
-                <div className="relative">
-                  <Search className="h-4 w-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    value={search}
-                    onChange={(event) => setSearch(event.target.value)}
-                    placeholder="Search diamonds by name or details"
-                    className="h-12 pl-11 rounded-2xl border-2 shadow-none"
-                  />
-                </div>
+            {/* Search + Category + Sort bar */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="h-4 w-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={filters.search}
+                  onChange={e => setFilter('search', e.target.value)}
+                  placeholder="Search diamonds by name or details"
+                  className="h-10 pl-10 rounded-xl border-2 shadow-none"
+                />
+              </div>
 
-                <Select value={selectedType} onValueChange={(value) => setSelectedType(value as 'all' | DiamondType)}>
-                  <SelectTrigger className="h-12 rounded-2xl border-2 shadow-none">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="real">Real Diamonds</SelectItem>
-                    <SelectItem value="cvd">Lab Grown Diamonds</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="h-12 rounded-2xl border-2 shadow-none">
-                    <SelectValue placeholder="Select category" />
+              {diamondCategories.length > 0 && (
+                <Select value={filters.category} onValueChange={v => setFilter('category', v)}>
+                  <SelectTrigger className="h-10 rounded-xl border-2 shadow-none sm:w-52">
+                    <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
-                    {diamondCategories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
+                    {diamondCategories.map(c => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+              )}
 
-                <Select value={sortBy} onValueChange={(value) => setSortBy(value as 'newest' | 'oldest' | 'a-z')}>
-                  <SelectTrigger className="h-12 rounded-2xl border-2 shadow-none">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="newest">Newest First</SelectItem>
-                    <SelectItem value="oldest">Oldest First</SelectItem>
-                    <SelectItem value="a-z">Name A-Z</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                {/* <div className="flex items-center gap-2 flex-wrap">
-                  {(['all', 'real', 'cvd'] as Array<'all' | DiamondType>).map((type) => (
-                    <Button
-                      key={type}
-                      type="button"
-                      variant={selectedType === type ? 'default' : 'outline'}
-                      className="rounded-full"
-                      onClick={() => setSelectedType(type)}
-                    >
-                      {TYPE_LABELS[type]}
-                    </Button>
-                  ))}
-                </div> */}
-
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <SlidersHorizontal className="h-4 w-4" />
-                  <span>{filteredDiamonds.length} result{filteredDiamonds.length !== 1 ? 's' : ''}</span>
-                </div>
-              </div>
-              {/* 
-              {diamondCategories.length > 0 ? (
-                <div className="flex gap-2 overflow-x-auto pb-1">
-                  <Button
-                    type="button"
-                    variant={selectedCategory === 'all' ? 'default' : 'outline'}
-                    className="rounded-full flex-shrink-0"
-                    onClick={() => setSelectedCategory('all')}
-                  >
-                    All Categories
-                  </Button>
-                  {diamondCategories.map((category) => (
-                    <Button
-                      key={category.id}
-                      type="button"
-                      variant={selectedCategory === category.id ? 'default' : 'outline'}
-                      className="rounded-full flex-shrink-0"
-                      onClick={() => setSelectedCategory(category.id)}
-                    >
-                      {category.name}
-                    </Button>
-                  ))}
-                </div>
-              ) : null} */}
+              <Select value={filters.sort} onValueChange={v => setFilter('sort', v)}>
+                <SelectTrigger className="h-10 rounded-xl border-2 shadow-none sm:w-44">
+                  <SelectValue placeholder="Sort" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="oldest">Oldest First</SelectItem>
+                  <SelectItem value="a-z">Name A–Z</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
+            {/* Results count */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>{filteredDiamonds.length} result{filteredDiamonds.length !== 1 ? 's' : ''}</span>
+                {hasActiveFilters(filters) && (
+                  <button
+                    type="button"
+                    onClick={() => setFilters(DEFAULT_FILTERS)}
+                    className="text-amber-700 dark:text-amber-400 hover:underline text-xs font-semibold"
+                  >
+                    Clear all filters
+                  </button>
+                )}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {diamonds.filter(d => d.diamondType === 'real').length} Natural · {diamonds.filter(d => d.diamondType === 'cvd').length} Lab Grown
+              </div>
+            </div>
+
+            {/* Grid */}
             {filteredDiamonds.length === 0 ? (
               <EmptyState
                 icon={<Gem className="h-7 w-7" />}
                 title="No Diamonds Found"
-                description="Try adjusting the search term, diamond type, or category filter."
+                description="Try adjusting or clearing the filters above."
               />
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {filteredDiamonds.map((diamond) => (
                   <ProductCard
                     key={diamond.id}
@@ -367,39 +529,6 @@ const DiamondPage = () => {
                 ))}
               </div>
             )}
-
-            {/* {diamondCategories.length > 0 ? (
-              <section className="pt-6">
-                <div className="flex items-center justify-between gap-4 mb-5">
-                  <div>
-                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Browse by Diamond Category</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Quick filters powered by your admin-managed diamond categories.</p>
-                  </div>
-                  <Link to="/contact">
-                    <Button variant="outline" className="rounded-full">Need Help Choosing?</Button>
-                  </Link>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                  {diamondCategories.map((category) => (
-                    <button
-                      key={category.id}
-                      type="button"
-                      onClick={() => setSelectedCategory(category.id)}
-                      className="group text-left rounded-3xl overflow-hidden border bg-card hover:shadow-lg transition-all"
-                    >
-                      <div className="aspect-[4/5] overflow-hidden bg-muted">
-                        <img src={category.image} alt={category.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      </div>
-                      <div className="p-4">
-                        <div className="text-[10px] tracking-[0.2em] uppercase text-primary font-bold mb-2">Category</div>
-                        <div className="font-semibold leading-snug">{category.name}</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </section>
-            ) : null} */}
           </div>
         </section>
       </main>

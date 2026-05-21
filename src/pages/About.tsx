@@ -55,7 +55,7 @@ const RevealSection = ({ children, className = '', delay = 0 }: { children: Reac
 const stats = [
   { value: YEARS_OF_EXCELLENCE_LABEL, label: 'Years of Excellence' },
   { value: '1K+', label: 'Happy Clients' },
-  { value: '7+', label: 'Countries Served' },
+  { value: '15+', label: 'Countries Served' },
   { value: '500+', label: 'Unique Designs' },
 ];
 
