@@ -190,6 +190,26 @@ export default function Footer() {
                 </li>
               )}
             </ul>
+
+            {/* Google Maps embed */}
+            <div
+              className="mt-4 overflow-hidden rounded-xl"
+              style={{
+                border: `1px solid ${C.border}`,
+                boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.35)' : '0 2px 10px rgba(0,0,0,0.08)',
+              }}
+            >
+              <iframe
+                title="Flenix Jewels Ltd Location"
+                src="https://maps.google.com/maps?q=Hart+Avenue+Plaza,+5-9+Hart+Avenue,+Tsim+Sha+Tsui,+Kowloon,+Hong+Kong&output=embed&z=16"
+                width="100%"
+                height="180"
+                style={{ display: 'block', border: 0, filter: isDark ? 'brightness(0.85) saturate(0.8)' : 'none' }}
+                allowFullScreen={false}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
           </div>
 
           <div className="space-y-4">

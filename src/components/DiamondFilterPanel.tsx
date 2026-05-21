@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { RotateCcw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { DiamondCategory } from '@/lib/storage';
@@ -79,135 +79,159 @@ const CARAT_PRESETS = [
 
 const SHAPES: { value: string; label: string; icon: React.ReactNode }[] = [
   {
-    value: 'all',
-    label: 'All Shape',
+    value: 'all', label: 'All Shape',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <polygon points="20,4 34,15 29,36 11,36 6,15"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <polygon points="24,5 40,17 34,42 14,42 8,17"/>
+        <line x1="24" y1="5" x2="14" y2="42"/><line x1="24" y1="5" x2="34" y2="42"/>
+        <line x1="8" y1="17" x2="40" y2="17"/>
       </svg>
     ),
   },
   {
-    value: 'round',
-    label: 'Round',
+    value: 'round', label: 'Round',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-full h-full">
-        <circle cx="20" cy="20" r="14"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
+        <circle cx="24" cy="24" r="17"/>
+        <ellipse cx="24" cy="24" rx="17" ry="8" strokeOpacity="0.3"/>
+        <line x1="7" y1="24" x2="41" y2="24" strokeOpacity="0.3"/>
       </svg>
     ),
   },
   {
-    value: 'pear',
-    label: 'Pear',
+    value: 'pear', label: 'Pear',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <path d="M20,36 C10,29 6,21 6,15 C6,8 12,4 20,4 C28,4 34,8 34,15 C34,21 30,29 20,36Z"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <path d="M24,43 C12,35 7,26 7,18 C7,10 14,5 24,5 C34,5 41,10 41,18 C41,26 36,35 24,43Z"/>
+        <line x1="24" y1="5" x2="24" y2="43" strokeOpacity="0.25"/>
+        <line x1="10" y1="20" x2="38" y2="20" strokeOpacity="0.25"/>
       </svg>
     ),
   },
   {
-    value: 'marquise',
-    label: 'Marquise',
+    value: 'marquise', label: 'Marquise',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <path d="M4,20 C8,9 14,5 20,5 C26,5 32,9 36,20 C32,31 26,35 20,35 C14,35 8,31 4,20Z"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <path d="M4,24 C9,10 16,6 24,6 C32,6 39,10 44,24 C39,38 32,42 24,42 C16,42 9,38 4,24Z"/>
+        <line x1="4" y1="24" x2="44" y2="24" strokeOpacity="0.25"/>
+        <line x1="24" y1="6" x2="24" y2="42" strokeOpacity="0.25"/>
       </svg>
     ),
   },
   {
-    value: 'oval',
-    label: 'Oval',
+    value: 'oval', label: 'Oval',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-full h-full">
-        <ellipse cx="20" cy="20" rx="15" ry="11"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-full h-full">
+        <ellipse cx="24" cy="24" rx="18" ry="13"/>
+        <ellipse cx="24" cy="24" rx="18" ry="5" strokeOpacity="0.25"/>
+        <line x1="6" y1="24" x2="42" y2="24" strokeOpacity="0.25"/>
       </svg>
     ),
   },
   {
-    value: 'heart',
-    label: 'Heart',
+    value: 'heart', label: 'Heart',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <path d="M20,33 C20,33 5,22 5,14 C5,8 10,5 15,6.5 C17,7.5 19,10 20,13 C21,10 23,7.5 25,6.5 C30,5 35,8 35,14 C35,22 20,33 20,33Z"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <path d="M24,40 C24,40 6,28 6,17 C6,10 12,6 18,8 C21,9 23,12 24,15 C25,12 27,9 30,8 C36,6 42,10 42,17 C42,28 24,40 24,40Z"/>
+        <line x1="24" y1="15" x2="24" y2="40" strokeOpacity="0.25"/>
       </svg>
     ),
   },
   {
-    value: 'princess',
-    label: 'Princess',
+    value: 'princess', label: 'Princess',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <rect x="8" y="8" width="24" height="24"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <rect x="8" y="8" width="32" height="32"/>
+        <line x1="8" y1="8" x2="40" y2="40" strokeOpacity="0.25"/>
+        <line x1="40" y1="8" x2="8" y2="40" strokeOpacity="0.25"/>
+        <line x1="8" y1="24" x2="40" y2="24" strokeOpacity="0.25"/>
+        <line x1="24" y1="8" x2="24" y2="40" strokeOpacity="0.25"/>
       </svg>
     ),
   },
   {
-    value: 'cushion',
-    label: 'Cushion',
+    value: 'cushion', label: 'Cushion',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <path d="M11,7 Q7,7 7,11 L7,29 Q7,33 11,33 L29,33 Q33,33 33,29 L33,11 Q33,7 29,7Z"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <path d="M13,7 Q7,7 7,13 L7,35 Q7,41 13,41 L35,41 Q41,41 41,35 L41,13 Q41,7 35,7Z"/>
+        <line x1="7" y1="24" x2="41" y2="24" strokeOpacity="0.25"/>
+        <line x1="24" y1="7" x2="24" y2="41" strokeOpacity="0.25"/>
       </svg>
     ),
   },
   {
-    value: 'emerald',
-    label: 'Emerald',
+    value: 'emerald', label: 'Emerald',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <polygon points="12,5 28,5 37,13 37,27 28,35 12,35 3,27 3,13"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <polygon points="14,6 34,6 44,16 44,32 34,42 14,42 4,32 4,16"/>
+        <polygon points="14,11 34,11 40,16 40,32 34,37 14,37 8,32 8,16" strokeOpacity="0.3"/>
       </svg>
     ),
   },
   {
-    value: 'sq_emerald',
-    label: 'Sq Emerald',
+    value: 'sq_emerald', label: 'Sq Emerald',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <polygon points="11,5 29,5 35,11 35,29 29,35 11,35 5,29 5,11"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <polygon points="13,5 35,5 43,13 43,35 35,43 13,43 5,35 5,13"/>
+        <polygon points="13,11 35,11 37,13 37,35 35,37 13,37 11,35 11,13" strokeOpacity="0.3"/>
       </svg>
     ),
   },
   {
-    value: 'radiant',
-    label: 'Radiant',
+    value: 'radiant', label: 'Radiant',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <polygon points="10,4 30,4 38,12 38,28 30,36 10,36 2,28 2,12"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <polygon points="12,5 36,5 44,13 44,35 36,43 12,43 4,35 4,13"/>
+        <polygon points="14,10 34,10 40,16 40,32 34,38 14,38 8,32 8,16" strokeOpacity="0.3"/>
       </svg>
     ),
   },
   {
-    value: 'sq_radiant',
-    label: 'Sq Radiant',
+    value: 'sq_radiant', label: 'Sq Radiant',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <polygon points="9,4 31,4 36,9 36,31 31,36 9,36 4,31 4,9"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <polygon points="11,5 37,5 43,11 43,37 37,43 11,43 5,37 5,11"/>
+        <polygon points="13,10 35,10 38,13 38,35 35,38 13,38 10,35 10,13" strokeOpacity="0.3"/>
       </svg>
     ),
   },
   {
-    value: 'other',
-    label: 'Other',
+    value: 'other', label: 'Other',
     icon: (
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" className="w-full h-full">
-        <polygon points="20,4 32,10 36,23 29,35 11,35 4,23 8,10"/>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" className="w-full h-full">
+        <polygon points="24,5 38,12 44,27 37,41 11,41 4,27 10,12"/>
+        <line x1="24" y1="5" x2="24" y2="41" strokeOpacity="0.25"/>
+        <line x1="10" y1="20" x2="38" y2="20" strokeOpacity="0.25"/>
       </svg>
     ),
   },
 ];
 
 const Chip = ({
-  label, active, onClick, small = false,
-}: { label: string; active: boolean; onClick: () => void; small?: boolean }) => (
+  label, active, onClick,
+}: { label: string; active: boolean; onClick: () => void }) => (
   <button
     type="button"
     onClick={onClick}
     className={cn(
-      'border transition-all duration-150 whitespace-nowrap font-semibold tracking-wide select-none',
-      small
-        ? 'px-2 py-0.5 rounded text-[10px]'
-        : 'px-2.5 py-1 rounded text-[11px]',
+      'border transition-all duration-150 whitespace-nowrap font-semibold tracking-wide select-none px-2.5 py-1 rounded text-[11px]',
+      active
+        ? 'bg-amber-700 border-amber-700 text-white shadow-sm'
+        : 'border-border/70 text-muted-foreground hover:border-amber-600/60 hover:text-foreground bg-background',
+    )}
+  >
+    {label}
+  </button>
+);
+
+const PresetChip = ({
+  label, active, onClick,
+}: { label: string; active: boolean; onClick: () => void }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={cn(
+      'border transition-all duration-150 whitespace-nowrap font-semibold tracking-wide select-none px-2 py-0.5 rounded text-[10px]',
       active
         ? 'bg-amber-700 border-amber-700 text-white shadow-sm'
         : 'border-border/70 text-muted-foreground hover:border-amber-600/60 hover:text-foreground bg-background',
@@ -221,13 +245,13 @@ const FRow = ({
   label, children, noBorder = false,
 }: { label: string; children: React.ReactNode; noBorder?: boolean }) => (
   <div className={cn(
-    'flex items-start gap-0 py-2',
+    'flex items-start gap-0 py-3',
     !noBorder && 'border-b border-border/40 last:border-0',
   )}>
-    <div className="text-[9px] font-black tracking-[0.20em] uppercase text-muted-foreground w-24 flex-shrink-0 pt-1.5 leading-tight">
+    <div className="text-[9px] font-black tracking-[0.20em] uppercase text-muted-foreground w-28 flex-shrink-0 pt-1.5 leading-tight">
       {label}
     </div>
-    <div className="flex flex-wrap gap-1 flex-1 min-w-0">{children}</div>
+    <div className="flex flex-wrap gap-1.5 flex-1 min-w-0">{children}</div>
   </div>
 );
 
@@ -236,8 +260,15 @@ export default function DiamondFilterPanel({
 }: Props) {
   const [showAllColors, setShowAllColors] = useState(false);
   const [activePreset, setActivePreset] = useState<string | null>(null);
+  const shapeScrollRef = useRef<HTMLDivElement>(null);
 
   const isActive = hasActiveDiamondFilters(filters);
+
+  const scrollShapes = (delta: number) => {
+    if (shapeScrollRef.current) {
+      shapeScrollRef.current.scrollBy({ left: delta, behavior: 'smooth' });
+    }
+  };
 
   const handlePreset = (p: typeof CARAT_PRESETS[number]) => {
     if (activePreset === p.label) {
@@ -263,13 +294,13 @@ export default function DiamondFilterPanel({
     <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
 
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-muted/40 border-b">
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-black tracking-[0.28em] uppercase text-foreground">
+      <div className="flex items-center justify-between px-5 py-3 bg-muted/30 border-b">
+        <div className="flex items-center gap-2.5">
+          <span className="text-[10px] font-black tracking-[0.30em] uppercase text-foreground">
             Diamond Filters
           </span>
           {isActive && (
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-600/20 text-amber-700 dark:text-amber-400 tracking-wide">
+            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-600/20 text-amber-700 dark:text-amber-400 tracking-wide">
               Active
             </span>
           )}
@@ -286,40 +317,68 @@ export default function DiamondFilterPanel({
         )}
       </div>
 
-      {/* Shape icons row */}
-      <div className="border-b overflow-x-auto bg-background/60">
-        <div className="flex min-w-max">
-          {SHAPES.map(s => {
-            const active = filters.shape === s.value;
-            return (
-              <button
-                key={s.value}
-                type="button"
-                onClick={() => onChange('shape', s.value)}
-                className={cn(
-                  'flex flex-col items-center justify-end gap-1.5 px-3 py-3 min-w-[64px] transition-all duration-150 border-b-2 relative',
-                  active
-                    ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-amber-50/60 dark:bg-amber-900/20'
-                    : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/40',
-                )}
-              >
-                <span className="w-7 h-7 flex items-center justify-center">
-                  {s.icon}
-                </span>
-                <span className={cn(
-                  'text-[8.5px] font-bold tracking-[0.12em] uppercase leading-none text-center',
-                  active ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground',
-                )}>
-                  {s.label}
-                </span>
-              </button>
-            );
-          })}
+      {/* Shape row with scroll arrows */}
+      <div className="relative border-b bg-background/60">
+        {/* Left arrow */}
+        <button
+          type="button"
+          aria-label="Scroll shapes left"
+          onClick={() => scrollShapes(-240)}
+          className="absolute left-0 top-0 bottom-0 z-10 flex items-center justify-center w-8 bg-gradient-to-r from-background via-background/90 to-transparent hover:text-amber-700 text-muted-foreground transition-colors"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+
+        {/* Scrollable shapes */}
+        <div
+          ref={shapeScrollRef}
+          className="overflow-x-auto mx-8"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          <style>{`#shape-scroll::-webkit-scrollbar{display:none}`}</style>
+          <div className="flex min-w-max">
+            {SHAPES.map(s => {
+              const active = filters.shape === s.value;
+              return (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => onChange('shape', s.value)}
+                  className={cn(
+                    'flex flex-col items-center justify-end gap-2 px-4 py-3.5 min-w-[70px] transition-all duration-150 border-b-2 relative select-none',
+                    active
+                      ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/30',
+                  )}
+                >
+                  <span className="w-10 h-10 flex items-center justify-center">
+                    {s.icon}
+                  </span>
+                  <span className={cn(
+                    'text-[8px] font-bold tracking-[0.12em] uppercase leading-none text-center whitespace-nowrap',
+                    active ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground',
+                  )}>
+                    {s.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        {/* Right arrow */}
+        <button
+          type="button"
+          aria-label="Scroll shapes right"
+          onClick={() => scrollShapes(240)}
+          className="absolute right-0 top-0 bottom-0 z-10 flex items-center justify-center w-8 bg-gradient-to-l from-background via-background/90 to-transparent hover:text-amber-700 text-muted-foreground transition-colors"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
       </div>
 
       {/* Main filter rows */}
-      <div className="px-4 py-1">
+      <div className="px-5 py-0">
 
         {/* Type */}
         <FRow label="Type">
@@ -334,30 +393,29 @@ export default function DiamondFilterPanel({
 
         {/* Carat */}
         <FRow label="Carat">
-          <div className="flex flex-col gap-1.5 w-full">
-            <div className="flex items-center gap-1.5">
+          <div className="flex flex-col gap-2 w-full">
+            <div className="flex items-center gap-2">
               <Input
                 value={filters.caratMin}
                 onChange={e => { setActivePreset(null); onChange('caratMin', e.target.value); }}
                 placeholder="From"
                 type="number" step="0.01" min="0"
-                className="h-6 w-20 text-[11px] rounded px-2 shadow-none"
+                className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
               />
-              <span className="text-muted-foreground text-xs">–</span>
+              <span className="text-muted-foreground text-sm font-light">–</span>
               <Input
                 value={filters.caratMax}
                 onChange={e => { setActivePreset(null); onChange('caratMax', e.target.value); }}
                 placeholder="To"
                 type="number" step="0.01" min="0"
-                className="h-6 w-20 text-[11px] rounded px-2 shadow-none"
+                className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
               />
             </div>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {CARAT_PRESETS.map(p => (
-                <Chip
+                <PresetChip
                   key={p.label}
                   label={p.label}
-                  small
                   active={activePreset === p.label}
                   onClick={() => handlePreset(p)}
                 />
@@ -389,10 +447,10 @@ export default function DiamondFilterPanel({
       </div>
 
       {/* Advanced 2-column section */}
-      <div className="border-t border-border/60 grid grid-cols-1 md:grid-cols-2">
+      <div className="border-t border-border/50 grid grid-cols-1 md:grid-cols-2">
 
         {/* Left column */}
-        <div className="px-4 py-1 md:border-r border-border/60">
+        <div className="px-5 py-0 md:border-r border-border/50">
           <FRow label="Cut">
             {GRADES.map(g => (
               <Chip key={g.value} label={g.label} active={filters.cut.includes(g.value)} onClick={() => onToggle('cut', g.value)} />
@@ -416,7 +474,7 @@ export default function DiamondFilterPanel({
         </div>
 
         {/* Right column */}
-        <div className="px-4 py-1 border-t md:border-t-0 border-border/60">
+        <div className="px-5 py-0 border-t md:border-t-0 border-border/50">
           <FRow label="Certificate">
             {CERTIFICATES.map(c => (
               <Chip key={c} label={c} active={filters.certificate.includes(c)} onClick={() => onToggle('certificate', c)} />
@@ -425,7 +483,7 @@ export default function DiamondFilterPanel({
           {diamondCategories.length > 0 && (
             <FRow label="Category" noBorder>
               <Select value={filters.category} onValueChange={v => onChange('category', v)}>
-                <SelectTrigger className="h-7 rounded border-border/70 shadow-none text-[11px] font-semibold w-48">
+                <SelectTrigger className="h-8 rounded border-border/70 shadow-none text-[11px] font-semibold w-52">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
