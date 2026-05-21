@@ -85,7 +85,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
     slideTimerRef.current = window.setTimeout(() => {
       setLeavingIndex(null);
       setAnimated(false);
-    }, 860);
+    }, 1600);
   }, [leavingIndex, currentIndex]);
 
   useEffect(() => {
@@ -155,12 +155,12 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
         if (isLeaving) {
           // outgoing slide: sits at 0 until animation fires, then slides out
           transform = animated ? `translateX(${direction === 1 ? '-100%' : '100%'})` : 'translateX(0)';
-          transition = 'transform 0.82s cubic-bezier(0.76, 0, 0.24, 1)';
+          transition = 'transform 1.5s cubic-bezier(0.65, 0, 0.35, 1)';
           zIndex = 5;
         } else if (leavingIndex !== null) {
           // entering slide during an active transition: start offscreen, slide into view
           transform = animated ? 'translateX(0)' : `translateX(${direction === 1 ? '100%' : '-100%'})`;
-          transition = animated ? 'transform 0.82s cubic-bezier(0.76, 0, 0.24, 1)' : 'none';
+          transition = animated ? 'transform 1.5s cubic-bezier(0.65, 0, 0.35, 1)' : 'none';
           zIndex = 10;
         } else {
           // idle current slide (no transition happening) — always fully visible
