@@ -10,7 +10,7 @@ interface BannerCarouselProps {
   banners?: Banner[];
 }
 
-const TRUST_ITEMS = ['GIA Certified', 'IGI Graded', 'Worldwide Shipping', 'Lifetime Guarantee', '12K+ Happy Clients', '30+ Countries', 'Ethically Sourced', 'Custom Design'];
+const TRUST_ITEMS = ['GIA Certified', 'IGI Graded', 'Worldwide Shipping', 'Lifetime Guarantee', '1K+ Happy Clients', '15+ Countries', 'Ethically Sourced', 'Custom Design'];
 
 const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);

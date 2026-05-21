@@ -27,7 +27,7 @@ const faqItems = [
   { question: 'Do you ship internationally?', answer: 'Yes. We ship globally with secure packaging and insured delivery options for select regions.' },
 ];
 
-const trustItems = ['GIA Certified', 'IGI Graded', 'Free Shipping', 'Lifetime Guarantee', '12K+ Happy Clients', '30+ Countries Served', 'Ethically Sourced', 'Custom Design'];
+const trustItems = ['GIA Certified', 'IGI Graded', 'Free Shipping', 'Lifetime Guarantee', '1K+ Happy Clients', '15+ Countries Served', 'Ethically Sourced', 'Custom Design'];
 
 const features = [
   { icon: Truck, label: 'Worldwide Shipping', sub: '15+ Countries', detail: 'Fully insured express delivery to your door.' },
@@ -101,7 +101,7 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Premium Diamond & Gold Jewelry | Lab Grown & Natural Diamonds | Flenix Jewels Ltd"
+        title="Fine Jewellery | Natural & Lab Grown Diamonds | Flenix Jewels Ltd"
         description="Shop certified natural and lab-grown diamond jewelry at Flenix Jewels Ltd. Explore GIA certified engagement rings, wedding bands, necklaces, earrings & bracelets. worldwide shipping."
         keywords="diamond jewelry, gold rings, engagement rings, wedding bands, lab grown diamonds, natural diamonds, certified jewelry, luxury jewelry store"
         canonicalUrl="https://www.flenixjewels.com"
@@ -401,8 +401,8 @@ export default function Index() {
               <div className="grid grid-cols-2 gap-4 md:gap-5">
                 {[
                   { num: YEARS_OF_EXCELLENCE_LABEL, label: 'Years of Excellence', icon: Award },
-                  { num: '12K+', label: 'Happy Customers', icon: Star },
-                  { num: '30+', label: 'Countries Served', icon: Truck },
+                  { num: '1K+', label: 'Happy Customers', icon: Star },
+                  { num: '15+', label: 'Countries Served', icon: Truck },
                   { num: '100%', label: 'Satisfaction Rate', icon: CheckCircle },
                 ].map(({ num, label, icon: Icon }) => (
                   <div key={label} className="relative p-7 md:p-8 rounded-2xl overflow-hidden group transition-all duration-300 hover:-translate-y-1"

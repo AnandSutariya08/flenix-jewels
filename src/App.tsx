@@ -56,6 +56,7 @@ import { pingSitemapOncePerDay } from "@/lib/seo";
 import GlobalLoader from "@/components/GlobalLoader";
 import WebsiteAdModal from "@/components/WebsiteAdModal";
 import CountryLanding from "./pages/CountryLanding";
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
 
 const queryClient = new QueryClient();
 const DEFERRED_LOAD_DELAY_MS = 0;
@@ -288,6 +289,7 @@ const AppContent = () => {
       <GlobalLoader isLoading={showLoader} imagesToPreload={[]} />
       <ScrollToTop />
       <WebsiteAdModal disabled={isAdminRoute} />
+      {!isAdminRoute && <FloatingWhatsApp />}
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />
