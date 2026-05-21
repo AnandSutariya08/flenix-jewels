@@ -414,7 +414,7 @@ export default function Header({ promoHeader }: HeaderProps) {
           }}
         >
           <div
-            className="mx-3 overflow-hidden rounded-3xl"
+            className="mx-3 rounded-3xl overflow-hidden"
             style={{
               background: isDark
                 ? 'linear-gradient(170deg, #0d0806 0%, #1c1008 60%, #140c06 100%)'
@@ -423,7 +423,12 @@ export default function Header({ promoHeader }: HeaderProps) {
               boxShadow: isDark ? '0 22px 80px rgba(0,0,0,0.55)' : '0 18px 60px rgba(0,0,0,0.16)',
             }}
           >
-            <div className="h-px" style={{ background: isDark ? 'linear-gradient(90deg, transparent, rgba(196,144,106,0.5), transparent)' : 'linear-gradient(90deg, transparent, rgba(155,104,68,0.35), transparent)' }} />
+            <div className="h-px flex-shrink-0" style={{ background: isDark ? 'linear-gradient(90deg, transparent, rgba(196,144,106,0.5), transparent)' : 'linear-gradient(90deg, transparent, rgba(155,104,68,0.35), transparent)' }} />
+            {/* Scrollable content area */}
+            <div
+              className="overflow-y-auto"
+              style={{ maxHeight: 'calc(100svh - 110px)', scrollbarWidth: 'thin', scrollbarColor: isDark ? 'rgba(196,144,106,0.25) transparent' : 'rgba(155,104,68,0.20) transparent' }}
+            >
             <nav className="px-3 py-3 flex flex-col gap-0.5" role="navigation" aria-label="Mobile navigation">
               {navLinks.map((link) => {
                 const active = isActive(link.path);
@@ -541,6 +546,7 @@ export default function Header({ promoHeader }: HeaderProps) {
                 {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
               </button>
             </div>
+            </div>{/* end scrollable area */}
           </div>
         </div>
       </div>

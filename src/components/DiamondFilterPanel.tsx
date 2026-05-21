@@ -342,11 +342,11 @@ export default function DiamondFilterPanel({
       {/* ── Collapsible body ─────────────────────────────────── */}
       <div
         className="overflow-hidden transition-all duration-300 ease-in-out"
-        style={{ maxHeight: isOpen ? '1200px' : '0px', opacity: isOpen ? 1 : 0 }}
+        style={{ maxHeight: isOpen ? '1400px' : '0px', opacity: isOpen ? 1 : 0 }}
       >
-        {/* Shape grid — auto-fit wrap, no scroll arrows */}
+        {/* Shape grid — full width, auto-fit responsive */}
         <div className="border-b bg-background/60 px-2 py-1">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(62px, 1fr))' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(58px, 1fr))' }}>
             {SHAPES.map(s => {
               const active = filters.shape === s.value;
               return (
@@ -376,117 +376,116 @@ export default function DiamondFilterPanel({
           </div>
         </div>
 
-        {/* Main filter rows — full width, no wasted space */}
-        <div className="px-5 py-0">
+        {/* Two-column filter layout on lg+ screens */}
+        <div className="lg:grid lg:grid-cols-2 lg:divide-x divide-border/40">
 
-          {/* Type */}
-          <FRow label="Type">
-            {[
-              { value: 'all',  label: 'All Types' },
-              { value: 'real', label: 'Natural' },
-              { value: 'cvd',  label: 'Lab Grown' },
-            ].map(o => (
-              <Chip key={o.value} label={o.label} active={filters.type === o.value} onClick={() => onChange('type', o.value)} />
-            ))}
-          </FRow>
-
-          {/* Carat */}
-          <FRow label="Carat">
-            <div className="flex flex-col gap-2 w-full">
-              <div className="flex items-center gap-2">
-                <Input
-                  value={filters.caratMin}
-                  onChange={e => { setActivePreset(null); onChange('caratMin', e.target.value); }}
-                  placeholder="From"
-                  type="number" step="0.01" min="0"
-                  className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
-                />
-                <span className="text-muted-foreground text-sm font-light">–</span>
-                <Input
-                  value={filters.caratMax}
-                  onChange={e => { setActivePreset(null); onChange('caratMax', e.target.value); }}
-                  placeholder="To"
-                  type="number" step="0.01" min="0"
-                  className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
-                />
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {CARAT_PRESETS.map(p => (
-                  <PresetChip
-                    key={p.label}
-                    label={p.label}
-                    active={activePreset === p.label}
-                    onClick={() => handlePreset(p)}
-                  />
-                ))}
-              </div>
-            </div>
-          </FRow>
-
-          {/* Clarity */}
-          <FRow label="Clarity">
-            {CLARITIES.map(c => (
-              <Chip key={c} label={c} active={filters.clarity.includes(c)} onClick={() => onToggle('clarity', c)} />
-            ))}
-          </FRow>
-
-          {/* Color */}
-          <FRow label="Color" noBorder>
-            {visibleColors.map(c => (
-              <Chip key={c} label={c} active={filters.color.includes(c)} onClick={() => onToggle('color', c)} />
-            ))}
-            <button
-              type="button"
-              onClick={() => setShowAllColors(v => !v)}
-              className="text-[9px] font-bold tracking-wide text-amber-700 dark:text-amber-400 hover:underline self-center px-1"
-            >
-              {showAllColors ? '▲ Less' : `▼ +${COLOR_GRADES.length - 14}`}
-            </button>
-          </FRow>
-        </div>
-
-        {/* All remaining filters — single full-width column, no dead space */}
-        <div className="border-t border-border/50 px-5 py-0">
-          <FRow label="Cut">
-            {GRADES.map(g => (
-              <Chip key={g.value} label={g.label} active={filters.cut.includes(g.value)} onClick={() => onToggle('cut', g.value)} />
-            ))}
-          </FRow>
-          <FRow label="Polish">
-            {GRADES.map(g => (
-              <Chip key={g.value} label={g.label} active={filters.polish.includes(g.value)} onClick={() => onToggle('polish', g.value)} />
-            ))}
-          </FRow>
-          <FRow label="Symmetry">
-            {GRADES.map(g => (
-              <Chip key={g.value} label={g.label} active={filters.symmetry.includes(g.value)} onClick={() => onToggle('symmetry', g.value)} />
-            ))}
-          </FRow>
-          <FRow label="Fluorescence">
-            {FLUORESCENCES.map(f => (
-              <Chip key={f.value} label={f.label} active={filters.fluorescence.includes(f.value)} onClick={() => onToggle('fluorescence', f.value)} />
-            ))}
-          </FRow>
-          <FRow label="Certificate">
-            {CERTIFICATES.map(c => (
-              <Chip key={c} label={c} active={filters.certificate.includes(c)} onClick={() => onToggle('certificate', c)} />
-            ))}
-          </FRow>
-          {diamondCategories.length > 0 && (
-            <FRow label="Category" noBorder>
-              <Select value={filters.category} onValueChange={v => onChange('category', v)}>
-                <SelectTrigger className="h-8 rounded border-border/70 shadow-none text-[11px] font-semibold w-52">
-                  <SelectValue placeholder="All Categories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {diamondCategories.map(c => (
-                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {/* ── Left column: Type · Carat · Clarity · Color ── */}
+          <div className="px-4 sm:px-5 py-0">
+            <FRow label="Type">
+              {[
+                { value: 'all',  label: 'All Types' },
+                { value: 'real', label: 'Natural' },
+                { value: 'cvd',  label: 'Lab Grown' },
+              ].map(o => (
+                <Chip key={o.value} label={o.label} active={filters.type === o.value} onClick={() => onChange('type', o.value)} />
+              ))}
             </FRow>
-          )}
+
+            <FRow label="Carat">
+              <div className="flex flex-col gap-2 w-full">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={filters.caratMin}
+                    onChange={e => { setActivePreset(null); onChange('caratMin', e.target.value); }}
+                    placeholder="From"
+                    type="number" step="0.01" min="0"
+                    className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
+                  />
+                  <span className="text-muted-foreground text-sm font-light">–</span>
+                  <Input
+                    value={filters.caratMax}
+                    onChange={e => { setActivePreset(null); onChange('caratMax', e.target.value); }}
+                    placeholder="To"
+                    type="number" step="0.01" min="0"
+                    className="h-7 w-24 text-[11px] rounded px-2.5 shadow-none"
+                  />
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {CARAT_PRESETS.map(p => (
+                    <PresetChip
+                      key={p.label}
+                      label={p.label}
+                      active={activePreset === p.label}
+                      onClick={() => handlePreset(p)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </FRow>
+
+            <FRow label="Clarity">
+              {CLARITIES.map(c => (
+                <Chip key={c} label={c} active={filters.clarity.includes(c)} onClick={() => onToggle('clarity', c)} />
+              ))}
+            </FRow>
+
+            <FRow label="Color" noBorder>
+              {visibleColors.map(c => (
+                <Chip key={c} label={c} active={filters.color.includes(c)} onClick={() => onToggle('color', c)} />
+              ))}
+              <button
+                type="button"
+                onClick={() => setShowAllColors(v => !v)}
+                className="text-[9px] font-bold tracking-wide text-amber-700 dark:text-amber-400 hover:underline self-center px-1"
+              >
+                {showAllColors ? '▲ Less' : `▼ +${COLOR_GRADES.length - 14}`}
+              </button>
+            </FRow>
+          </div>
+
+          {/* ── Right column: Cut · Polish · Symmetry · Fluorescence · Certificate · Category ── */}
+          <div className="px-4 sm:px-5 py-0 border-t border-border/50 lg:border-t-0">
+            <FRow label="Cut">
+              {GRADES.map(g => (
+                <Chip key={g.value} label={g.label} active={filters.cut.includes(g.value)} onClick={() => onToggle('cut', g.value)} />
+              ))}
+            </FRow>
+            <FRow label="Polish">
+              {GRADES.map(g => (
+                <Chip key={g.value} label={g.label} active={filters.polish.includes(g.value)} onClick={() => onToggle('polish', g.value)} />
+              ))}
+            </FRow>
+            <FRow label="Symmetry">
+              {GRADES.map(g => (
+                <Chip key={g.value} label={g.label} active={filters.symmetry.includes(g.value)} onClick={() => onToggle('symmetry', g.value)} />
+              ))}
+            </FRow>
+            <FRow label="Fluorescence">
+              {FLUORESCENCES.map(f => (
+                <Chip key={f.value} label={f.label} active={filters.fluorescence.includes(f.value)} onClick={() => onToggle('fluorescence', f.value)} />
+              ))}
+            </FRow>
+            <FRow label="Certificate">
+              {CERTIFICATES.map(c => (
+                <Chip key={c} label={c} active={filters.certificate.includes(c)} onClick={() => onToggle('certificate', c)} />
+              ))}
+            </FRow>
+            {diamondCategories.length > 0 && (
+              <FRow label="Category" noBorder>
+                <Select value={filters.category} onValueChange={v => onChange('category', v)}>
+                  <SelectTrigger className="h-8 rounded border-border/70 shadow-none text-[11px] font-semibold w-52">
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {diamondCategories.map(c => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FRow>
+            )}
+          </div>
         </div>
       </div>
     </div>
