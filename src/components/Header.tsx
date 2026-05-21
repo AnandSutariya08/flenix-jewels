@@ -91,13 +91,13 @@ export default function Header({ promoHeader }: HeaderProps) {
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left px-4 py-2.5 flex items-center gap-2 group transition-all duration-150 rounded-lg"
+      className="w-full text-left px-4 py-2.5 flex items-center gap-2 group transition-all duration-150 rounded-lg whitespace-nowrap"
       style={{ background: 'transparent' }}
       onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = isDark ? 'rgba(196,144,106,0.10)' : 'rgba(155,104,68,0.07)'; }}
       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
     >
       <ChevronRight className="h-3 w-3 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: isDark ? 'rgba(196,144,106,0.8)' : 'rgba(155,104,68,0.7)' }} />
-      <span className="text-[11.5px] font-semibold tracking-[0.08em]" style={{ color: isDark ? 'rgba(245,232,216,0.85)' : 'rgba(20,12,6,0.82)' }}>
+      <span className="text-[11.5px] font-semibold tracking-[0.08em] whitespace-nowrap" style={{ color: isDark ? 'rgba(245,232,216,0.85)' : 'rgba(20,12,6,0.82)' }}>
         {label}
       </span>
     </button>
@@ -281,7 +281,7 @@ export default function Header({ promoHeader }: HeaderProps) {
                           className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-xl overflow-hidden z-50 transition-all duration-200"
                           style={{
                             ...ddPanelStyle,
-                            minWidth: 190,
+                            minWidth: 220,
                             opacity: ddOpen ? 1 : 0,
                             pointerEvents: ddOpen ? 'auto' : 'none',
                             transform: `translateX(-50%) translateY(${ddOpen ? '0px' : '-6px'})`,
@@ -432,11 +432,11 @@ export default function Header({ promoHeader }: HeaderProps) {
                 if (link.dropdown) {
                   return (
                     <div key={link.path}>
-                      {/* Accordion header row */}
+                      {/* Accordion header row — text centered, chevron absolute-right */}
                       <button
                         type="button"
                         onClick={() => setMobileExpanded(expanded ? null : link.dropdown)}
-                        className="w-full relative flex items-center justify-between px-4 py-3 transition-all duration-200 rounded-xl"
+                        className="w-full relative flex items-center justify-center px-10 py-3 transition-all duration-200 rounded-xl"
                         style={{
                           background: expanded
                             ? (isDark ? 'rgba(196,144,106,0.08)' : 'rgba(155,104,68,0.06)')
@@ -447,7 +447,7 @@ export default function Header({ promoHeader }: HeaderProps) {
                           {link.name}
                         </span>
                         <ChevronDown
-                          className="h-4 w-4 transition-transform duration-200 flex-shrink-0"
+                          className="absolute right-4 h-4 w-4 transition-transform duration-200 flex-shrink-0"
                           style={{
                             color: isDark ? 'rgba(196,144,106,0.7)' : 'rgba(155,104,68,0.6)',
                             transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',

@@ -294,24 +294,18 @@ export default function DiamondFilterPanel({
   return (
     <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
 
-      {/* ── Header (always visible) ───────────────────────────── */}
-      <div className="flex items-center justify-between px-5 py-3 bg-muted/30 border-b">
-        <div className="flex items-center gap-3">
-          {/* Toggle open/close */}
-          <button
-            type="button"
-            onClick={() => setIsOpen(v => !v)}
-            className="flex items-center gap-2 group transition-all duration-150 rounded-lg px-2 py-1 -ml-2 hover:bg-muted/50"
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
-            <span className="text-[10px] font-black tracking-[0.30em] uppercase text-foreground">
-              Diamond Filters
-            </span>
-            <ChevronDown
-              className="h-3.5 w-3.5 text-muted-foreground transition-transform duration-200"
-              style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            />
-          </button>
+      {/* ── Header — entire row is clickable ─────────────────── */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(v => !v)}
+        className="w-full flex items-center px-5 py-3 bg-muted/30 border-b cursor-pointer hover:bg-muted/50 transition-colors duration-150"
+      >
+        {/* Left: icon + label + active badge */}
+        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+          <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+          <span className="text-[10px] font-black tracking-[0.30em] uppercase text-foreground">
+            Diamond Filters
+          </span>
           {isActive && (
             <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-600/20 text-amber-700 dark:text-amber-400 tracking-wide">
               Active
@@ -319,30 +313,38 @@ export default function DiamondFilterPanel({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Right: reset + minimise + chevron */}
+        <div className="flex items-center gap-3 flex-shrink-0">
           {isActive && (
-            <button
-              type="button"
-              onClick={handleReset}
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={e => { e.stopPropagation(); handleReset(); }}
+              onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); handleReset(); } }}
               className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
             >
               <RotateCcw className="h-3 w-3" />
               Reset All
-            </button>
+            </span>
           )}
           {isOpen && (
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors ml-1 pl-2 border-l border-border/50"
-              aria-label="Minimise filters"
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={e => { e.stopPropagation(); setIsOpen(false); }}
+              onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); setIsOpen(false); } }}
+              className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground transition-colors pl-2 border-l border-border/50"
             >
               <Minus className="h-3 w-3" />
               Minimise
-            </button>
+            </span>
           )}
+          <ChevronDown
+            className="h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 flex-shrink-0"
+            style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          />
         </div>
-      </div>
+      </button>
 
       {/* ── Collapsible body ─────────────────────────────────── */}
       <div
@@ -474,71 +476,47 @@ export default function DiamondFilterPanel({
           </FRow>
         </div>
 
-        {/* Advanced 4-column section — full width, balanced */}
-        <div className="border-t border-border/50 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-
-          {/* Cut */}
-          <div className="px-5 py-0 border-b md:border-b-0 md:border-r border-border/40">
-            <FRow label="Cut" noBorder>
-              {GRADES.map(g => (
-                <Chip key={g.value} label={g.label} active={filters.cut.includes(g.value)} onClick={() => onToggle('cut', g.value)} />
-              ))}
-            </FRow>
-          </div>
-
-          {/* Polish */}
-          <div className="px-5 py-0 border-b md:border-b-0 xl:border-r border-border/40">
-            <FRow label="Polish" noBorder>
-              {GRADES.map(g => (
-                <Chip key={g.value} label={g.label} active={filters.polish.includes(g.value)} onClick={() => onToggle('polish', g.value)} />
-              ))}
-            </FRow>
-          </div>
-
-          {/* Symmetry */}
-          <div className="px-5 py-0 border-b xl:border-b-0 md:border-r xl:border-r border-border/40">
-            <FRow label="Symmetry" noBorder>
-              {GRADES.map(g => (
-                <Chip key={g.value} label={g.label} active={filters.symmetry.includes(g.value)} onClick={() => onToggle('symmetry', g.value)} />
-              ))}
-            </FRow>
-          </div>
-
-          {/* Fluorescence */}
-          <div className="px-5 py-0 border-b md:border-b-0 border-border/40">
-            <FRow label="Fluorescence" noBorder>
-              {FLUORESCENCES.map(f => (
-                <Chip key={f.value} label={f.label} active={filters.fluorescence.includes(f.value)} onClick={() => onToggle('fluorescence', f.value)} />
-              ))}
-            </FRow>
-          </div>
-        </div>
-
-        {/* Certificate + Category row */}
-        <div className="border-t border-border/50 grid grid-cols-1 md:grid-cols-2">
-          <div className="px-5 py-0 md:border-r border-border/40">
-            <FRow label="Certificate" noBorder>
-              {CERTIFICATES.map(c => (
-                <Chip key={c} label={c} active={filters.certificate.includes(c)} onClick={() => onToggle('certificate', c)} />
-              ))}
-            </FRow>
-          </div>
+        {/* All remaining filters — single full-width column, no dead space */}
+        <div className="border-t border-border/50 px-5 py-0">
+          <FRow label="Cut">
+            {GRADES.map(g => (
+              <Chip key={g.value} label={g.label} active={filters.cut.includes(g.value)} onClick={() => onToggle('cut', g.value)} />
+            ))}
+          </FRow>
+          <FRow label="Polish">
+            {GRADES.map(g => (
+              <Chip key={g.value} label={g.label} active={filters.polish.includes(g.value)} onClick={() => onToggle('polish', g.value)} />
+            ))}
+          </FRow>
+          <FRow label="Symmetry">
+            {GRADES.map(g => (
+              <Chip key={g.value} label={g.label} active={filters.symmetry.includes(g.value)} onClick={() => onToggle('symmetry', g.value)} />
+            ))}
+          </FRow>
+          <FRow label="Fluorescence">
+            {FLUORESCENCES.map(f => (
+              <Chip key={f.value} label={f.label} active={filters.fluorescence.includes(f.value)} onClick={() => onToggle('fluorescence', f.value)} />
+            ))}
+          </FRow>
+          <FRow label="Certificate">
+            {CERTIFICATES.map(c => (
+              <Chip key={c} label={c} active={filters.certificate.includes(c)} onClick={() => onToggle('certificate', c)} />
+            ))}
+          </FRow>
           {diamondCategories.length > 0 && (
-            <div className="px-5 py-0">
-              <FRow label="Category" noBorder>
-                <Select value={filters.category} onValueChange={v => onChange('category', v)}>
-                  <SelectTrigger className="h-8 rounded border-border/70 shadow-none text-[11px] font-semibold w-52">
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {diamondCategories.map(c => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FRow>
-            </div>
+            <FRow label="Category" noBorder>
+              <Select value={filters.category} onValueChange={v => onChange('category', v)}>
+                <SelectTrigger className="h-8 rounded border-border/70 shadow-none text-[11px] font-semibold w-52">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {diamondCategories.map(c => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FRow>
           )}
         </div>
       </div>
