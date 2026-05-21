@@ -14,10 +14,13 @@ const TRUST_ITEMS = ['GIA Certified', 'IGI Graded', 'Worldwide Shipping', 'Lifet
 
 const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [leavingIndex, setLeavingIndex] = useState<number | null>(null);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [animated, setAnimated] = useState(false);
   const [loadedIndexes, setLoadedIndexes] = useState<Set<number>>(new Set());
-  const [isAnimating, setIsAnimating] = useState(false);
   const [hasAnyLoaded, setHasAnyLoaded] = useState(false);
   const isMountedRef = useRef(true);
+  const slideTimerRef = useRef<number | null>(null);
   const hasMultiple = banners.length > 1;
   const currentBanner = banners[currentIndex];
   const safeTitle = currentBanner?.title?.trim() || 'Flenix Jewels Ltd';
@@ -39,12 +42,15 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   useEffect(() => {
     setHasAnyLoaded(false);
     setCurrentIndex(0);
+    setLeavingIndex(null);
+    setAnimated(false);
   }, [banners]);
 
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
+      if (slideTimerRef.current) clearTimeout(slideTimerRef.current);
     };
   }, []);
 
@@ -62,15 +68,35 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
     if (isMountedRef.current) markLoaded(index);
   }, [banners, loadedIndexes, markLoaded]);
 
+  // Two-phase slide: set up leaving/entering positions, then trigger animation
+  const navigate = useCallback((newIndex: number, dir?: 1 | -1) => {
+    if (leavingIndex !== null || newIndex === currentIndex) return;
+    const d: 1 | -1 = dir ?? (newIndex > currentIndex ? 1 : -1);
+    if (slideTimerRef.current) clearTimeout(slideTimerRef.current);
+    setDirection(d);
+    setLeavingIndex(currentIndex);
+    setCurrentIndex(newIndex);
+    setAnimated(false); // entering slide starts offscreen
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setAnimated(true); // trigger CSS transition
+      });
+    });
+    slideTimerRef.current = window.setTimeout(() => {
+      setLeavingIndex(null);
+      setAnimated(false);
+    }, 860);
+  }, [leavingIndex, currentIndex]);
+
   useEffect(() => {
     if (banners.length <= 1) return;
     const interval = window.setInterval(async () => {
       const next = (currentIndex + 1) % banners.length;
       await ensureLoaded(next);
-      setCurrentIndex(next);
+      if (isMountedRef.current) navigate(next, 1);
     }, 7000);
     return () => window.clearInterval(interval);
-  }, [banners.length, currentIndex, ensureLoaded]);
+  }, [banners.length, currentIndex, ensureLoaded, navigate]);
 
   useEffect(() => {
     if (!banners[0] || banners[0].mediaType === 'video') return;
@@ -84,17 +110,8 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
     preloadMedia(urls);
   }, [banners, currentIndex]);
 
-  const navigate = useCallback((newIndex: number) => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    void ensureLoaded(newIndex).finally(() => {
-      setCurrentIndex(newIndex);
-      setTimeout(() => setIsAnimating(false), 800);
-    });
-  }, [ensureLoaded, isAnimating]);
-
-  const goToNext = useCallback(() => navigate((currentIndex + 1) % banners.length), [navigate, currentIndex, banners.length]);
-  const goToPrev = useCallback(() => navigate((currentIndex - 1 + banners.length) % banners.length), [navigate, currentIndex, banners.length]);
+  const goToNext = useCallback(() => navigate((currentIndex + 1) % banners.length, 1), [navigate, currentIndex, banners.length]);
+  const goToPrev = useCallback(() => navigate((currentIndex - 1 + banners.length) % banners.length, -1), [navigate, currentIndex, banners.length]);
 
   if (banners.length === 0) {
     return (
@@ -108,14 +125,10 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
     );
   }
 
-  const nextIndex = (currentIndex + 1) % banners.length;
-  const prevIndex = (currentIndex - 1 + banners.length) % banners.length;
-  const visibleIndexes = new Set([currentIndex, nextIndex, prevIndex]);
-
   return (
     <div className="relative h-[85svh] md:h-[90svh] min-h-[580px] max-h-[1000px] overflow-hidden w-full bg-[#0c0703]">
       {/* Fallback image while loading */}
-      <div className={`absolute inset-0 transition-opacity duration-1000 ease-out ${hasAnyLoaded ? 'opacity-0' : 'opacity-100'}`}>
+      <div className={`absolute inset-0 transition-opacity duration-1000 ease-out ${hasAnyLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} style={{ zIndex: 1 }}>
         <img
           src={heroFallback}
           alt="Hero"
@@ -126,18 +139,42 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
         />
       </div>
 
-      {/* Slides */}
+      {/* Slides — directional slide transition */}
       {banners.map((banner, index) => {
-        if (!visibleIndexes.has(index)) return null;
-        const isActive = index === currentIndex;
+        const isCurrent = index === currentIndex;
+        const isLeaving = index === leavingIndex;
+        if (!isCurrent && !isLeaving) return null;
+
+        // Slide transform logic:
+        // Leaving slide: starts at translateX(0), animates out in the opposite direction
+        // Entering slide: starts off-screen in direction of travel, animates to translateX(0)
+        let transform: string;
+        let transition: string;
+        let zIndex: number;
+
+        if (isLeaving) {
+          transform = animated ? `translateX(${direction === 1 ? '-100%' : '100%'})` : 'translateX(0)';
+          transition = 'transform 0.82s cubic-bezier(0.76, 0, 0.24, 1)';
+          zIndex = 5;
+        } else {
+          // entering/current
+          transform = animated ? 'translateX(0)' : `translateX(${direction === 1 ? '100%' : '-100%'})`;
+          transition = animated ? 'transform 0.82s cubic-bezier(0.76, 0, 0.24, 1)' : 'none';
+          zIndex = 10;
+        }
+
         return (
-          <div key={banner.id} className={`absolute inset-0 transition-all duration-1000 ease-out ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
+          <div
+            key={banner.id}
+            className="absolute inset-0"
+            style={{ transform, transition, zIndex, willChange: 'transform' }}
+          >
             {banner.mediaType === 'video' ? (
               <video
                 src={banner.image}
                 className="w-full h-full object-cover"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                autoPlay={isActive}
+                autoPlay={isCurrent}
                 muted
                 loop
                 playsInline
@@ -149,9 +186,9 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
                 alt={banner.title}
                 className="w-full h-full object-cover object-center"
                 style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-                loading={isActive ? 'eager' : 'lazy'}
+                loading={isCurrent ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchPriority={isActive ? 'high' : 'auto'} sizes="100vw" onLoad={() => markLoaded(index)} />
+                fetchPriority={isCurrent ? 'high' : 'auto'} sizes="100vw" onLoad={() => markLoaded(index)} />
             )}
 
             {/* Multi-layer overlays for depth */}
@@ -163,15 +200,15 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
             <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(196,144,106,0.7) 30%, rgba(212,169,106,0.9) 50%, rgba(196,144,106,0.7) 70%, transparent 95%)' }} />
 
             {/* Floating diamond accents */}
-            <div className={`absolute top-[15%] right-[8%] transition-all duration-1000 ${isActive ? 'opacity-30 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '400ms' }}>
+            <div className="absolute top-[15%] right-[8%] opacity-30">
               <Gem className="h-8 w-8 md:h-12 md:w-12" style={{ color: '#C4906A' }} />
             </div>
-            <div className={`absolute top-[35%] right-[18%] transition-all duration-1000 ${isActive ? 'opacity-15 translate-y-0' : 'opacity-0 -translate-y-4'}`} style={{ transitionDelay: '600ms' }}>
+            <div className="absolute top-[35%] right-[18%] opacity-15">
               <span className="text-4xl md:text-6xl" style={{ color: '#D4A96A' }}>✦</span>
             </div>
 
             {/* Content */}
-            {isActive && <HeroContent title={banner.title} description={banner.description} isActive={isActive} />}
+            {isCurrent && <HeroContent title={banner.title} description={banner.description} isActive />}
           </div>
         );
       })}
