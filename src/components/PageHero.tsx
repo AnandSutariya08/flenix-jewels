@@ -6,6 +6,7 @@ type PageHeroProps = {
   subtitle?: ReactNode;
   eyebrow?: ReactNode;
   backgroundImage?: string;
+  darkOverlay?: boolean;
   className?: string;
   contentClassName?: string;
 };
@@ -15,9 +16,14 @@ export default function PageHero({
   subtitle,
   eyebrow,
   backgroundImage,
+  darkOverlay = false,
   className,
   contentClassName,
 }: PageHeroProps) {
+  const overlayGradient = darkOverlay
+    ? "linear-gradient(180deg, rgba(19,9,0,0.82) 0%, rgba(19,9,0,0.90) 50%, rgba(19,9,0,0.96) 100%)"
+    : "linear-gradient(180deg, rgba(19,9,0,0.55) 0%, rgba(19,9,0,0.78) 55%, rgba(19,9,0,0.9) 100%)";
+
   return (
     <section className={cn("relative overflow-hidden", className)}>
       {backgroundImage ? (
@@ -30,13 +36,10 @@ export default function PageHero({
         <div className="absolute inset-0 bg-[#130900] dark:bg-[#0c0703]" aria-hidden="true" />
       )}
 
-      {/* Brown/espresso overlay to keep text readable */}
+      {/* Overlay — heavier when darkOverlay=true to subdue busy background images */}
       <div
         className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(19,9,0,0.55) 0%, rgba(19,9,0,0.78) 55%, rgba(19,9,0,0.9) 100%)",
-        }}
+        style={{ background: overlayGradient }}
         aria-hidden="true"
       />
       <div

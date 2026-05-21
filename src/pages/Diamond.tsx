@@ -16,7 +16,7 @@ import { HEADER_OFFSET_PX } from '@/lib/layout';
 import { buildOffer } from '@/lib/seo';
 import { type Diamond, type DiamondType } from '@/lib/storage';
 import { Gem, Search, SlidersHorizontal, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
-import diamondHero from '@/assets/diamond-hero.png';
+import diamondHero from '@/assets/hero2.png';
 import { cn } from '@/lib/utils';
 
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
