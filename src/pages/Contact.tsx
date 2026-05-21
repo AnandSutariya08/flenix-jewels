@@ -71,18 +71,18 @@ const Contact = () => {
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'ContactPage',
     '@id': 'https://www.flenixjewels.com/contact#contactpage',
-    name: 'Contact Flenix Jewels - Diamond Jewelry Store',
-    description: 'Contact Flenix Jewels for premium diamond jewelry, custom designs, engagement rings, and wholesale inquiries.',
+    name: 'Contact Flenix Jewels Ltd - Diamond Jewelry Store',
+    description: 'Contact Flenix Jewels Ltd for premium diamond jewelry, custom designs, engagement rings, and wholesale inquiries.',
     url: 'https://www.flenixjewels.com/contact',
     mainEntityOfPage: 'https://www.flenixjewels.com/contact',
     mainEntity: {
       '@type': 'Organization', '@id': 'https://www.flenixjewels.com/#jewelry-store',
-      name: 'Flenix Jewels', telephone: contactInfo?.phone, email: contactInfo?.email,
+      name: 'Flenix Jewels Ltd', telephone: contactInfo?.phone, email: contactInfo?.email,
       address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressCountry: 'India' }
     }
   };
   const faqItems = [
-    { question: "How can I contact Flenix Jewels?", answer: "You can contact us via phone or WhatsApp for product inquiries, custom orders, and wholesale requests." },
+    { question: "How can I contact Flenix Jewels Ltd?", answer: "You can contact us via phone or WhatsApp for product inquiries, custom orders, and wholesale requests." },
     { question: "Do you offer custom jewelry design?", answer: "Yes. We provide custom design and manufacturing for engagement rings, wedding bands, and fine jewelry." },
     { question: "Do you ship internationally?", answer: "Yes. We ship globally with secure packaging and delivery options for select regions." },
   ];
@@ -92,8 +92,8 @@ const Contact = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#FDF8F2] dark:bg-[#0a0603]">
       <SEOHead
-        title="Contact Us - Diamond Jewelry Inquiries & Custom Orders | Flenix Jewels"
-        description="Contact Flenix Jewels for GIA certified diamonds, custom jewelry designs, engagement rings, wholesale orders. Global offices. 24/7 WhatsApp support."
+        title="Contact Us - Diamond Jewelry Inquiries & Custom Orders | Flenix Jewels Ltd"
+        description="Contact Flenix Jewels Ltd for GIA certified diamonds, custom jewelry designs, engagement rings, wholesale orders. Global offices. 24/7 WhatsApp support."
         keywords="contact flenix jewels, jewelry store contact, diamond jewelry inquiries, custom jewelry design, wholesale diamond jewelry"
         canonicalUrl="https://www.flenixjewels.com/contact"
         structuredData={structuredData}

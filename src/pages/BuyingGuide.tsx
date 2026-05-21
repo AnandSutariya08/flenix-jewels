@@ -160,7 +160,7 @@ const STATIC_BUYING_GUIDES: StaticBuyingGuide[] = [
   //       id: "differences",
   //       title: "What’s the difference?",
   //       intro:
-  //         "Chemically and optically, lab-grown and natural diamonds are the same material. The key differences are origin and market pricing.",
+  //         "Chemically and optically, natural and lab-grown diamonds are the same material. The key differences are origin and market pricing.",
   //       bullets: [
   //         "Natural: formed in the earth over time.",
   //         "Lab-grown: created in controlled conditions (HPHT/CVD).",
@@ -359,14 +359,14 @@ const BuyingGuidePage = () => {
 
   const defaultFaqItems = [
     {
-      question: "What are Flenix Jewels buying guides?",
+      question: "What are Flenix Jewels Ltd buying guides?",
       answer:
         "They are expert guides covering diamond quality, ring styles, certifications, and purchase tips.",
     },
     {
-      question: "Do the guides cover lab-grown and natural diamonds?",
+      question: "Do the guides cover natural and lab-grown diamonds?",
       answer:
-        "Yes. The guides explain both lab-grown and natural options to help you choose confidently.",
+        "Yes. The guides explain both natural and lab-grown options to help you choose confidently.",
     },
     {
       question: "Can I request a custom recommendation?",

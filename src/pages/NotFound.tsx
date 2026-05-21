@@ -12,7 +12,7 @@ const NotFound = () => {
   return (
     <>
       <Helmet>
-        <title>Page Not Found | Flenix Jewels</title>
+        <title>Page Not Found | Flenix Jewels Ltd</title>
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="description" content="The page you are looking for could not be found." />

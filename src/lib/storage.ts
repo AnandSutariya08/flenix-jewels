@@ -1,4 +1,4 @@
-// Firebase data management for Flenix Jewels
+// Firebase data management for Flenix Jewels Ltd
 import { 
   collection, 
   doc, 

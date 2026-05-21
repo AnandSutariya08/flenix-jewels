@@ -184,7 +184,7 @@ const LoginPage = ({ onLogin }: { onLogin: (u: string, p: string) => void }) => 
               style={{ background: `linear-gradient(135deg, ${C.roseGoldDark}, ${C.roseGold}, ${C.gold})` }}>
               <Gem className="h-10 w-10 text-white drop-shadow" />
             </div>
-            <img src="/flenix-logo.png" alt="Flenix Jewels" className="h-12 w-auto mb-2 object-contain" />
+            <img src="/flenix-logo.png" alt="Flenix Jewels Ltd" className="h-12 w-auto mb-2 object-contain" />
             <p className="text-sm" style={{ color: C.roseGoldLight }}>Admin Control Panel</p>
           </div>
 
@@ -288,7 +288,7 @@ const Admin = () => {
     if (username === 'Flenix' && password === 'Flenix123') {
       setIsAuthenticated(true);
       try { localStorage.setItem('flenix_admin_authed', '1'); } catch {}
-      toast.success('Welcome back — Flenix Jewels Admin');
+      toast.success('Welcome back — Flenix Jewels Ltd Admin');
     } else {
       toast.error('Invalid credentials');
     }

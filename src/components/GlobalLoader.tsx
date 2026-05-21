@@ -84,7 +84,7 @@ const GlobalLoader = ({ isLoading, imagesToPreload = [] }: GlobalLoaderProps) =>
           <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-ping" />
           <img
             src={logo}
-            alt="Flenix Jewels"
+            alt="Flenix Jewels Ltd"
             className="h-16 sm:h-20 w-auto relative z-10 animate-[pulse_2s_ease-in-out_infinite]"
             loading="eager"
             decoding="async"

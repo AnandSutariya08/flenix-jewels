@@ -18,7 +18,7 @@
 //     '@context': 'https://schema.org',
 //     '@type': 'CollectionPage',
 //     '@id': 'https://www.flenixjewels.com/categories#collectionpage',
-//     name: 'Jewelry Collections - Premium Diamond & Gold Jewelry | Flenix Jewels',
+//     name: 'Jewelry Collections - Premium Diamond & Gold Jewelry | Flenix Jewels Ltd',
 //     description: 'Explore our premium jewelry collections featuring GIA certified diamonds, gold, platinum rings, necklaces, earrings, and bracelets.',
 //     url: 'https://www.flenixjewels.com/categories',
 //     mainEntityOfPage: 'https://www.flenixjewels.com/categories',
@@ -49,7 +49,7 @@
 //     {
 //       question: "Are your diamonds certified?",
 //       answer:
-//         "Yes. We provide certified lab-grown and natural diamonds with trusted grading standards.",
+//         "Yes. We provide certified natural and lab-grown diamonds with trusted grading standards.",
 //     },
 //     {
 //       question: "Can I request a custom design?",
@@ -61,7 +61,7 @@
 //   return (
 //     <div className="min-h-screen bg-background flex flex-col">
 //       <SEOHead
-//         title="Jewelry Collections - Diamond Rings, Gold Necklaces, Earrings & Bracelets | Flenix Jewels"
+//         title="Jewelry Collections - Diamond Rings, Gold Necklaces, Earrings & Bracelets | Flenix Jewels Ltd"
 //         description="Explore our curated jewelry collections. Shop premium GIA certified diamond rings, 18K gold necklaces, elegant earrings, platinum bracelets. Best prices, free shipping worldwide."
 //         keywords="jewelry collections, diamond rings collection, gold necklaces, diamond earrings, bracelets, engagement rings, wedding bands, solitaire rings, tennis bracelets, pearl necklaces, gemstone jewelry, ruby rings, emerald jewelry, sapphire earrings, custom jewelry"
 //         canonicalUrl="https://www.flenixjewels.com/categories"
@@ -152,7 +152,7 @@ const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     '@id': 'https://www.flenixjewels.com/categories#collectionpage',
-    name: 'Jewelry Collections - Premium Diamond & Gold Jewelry | Flenix Jewels',
+    name: 'Jewelry Collections - Premium Diamond & Gold Jewelry | Flenix Jewels Ltd',
     description: 'Explore our premium jewelry collections featuring GIA certified diamonds, gold, platinum rings, necklaces, earrings, and bracelets.',
     url: 'https://www.flenixjewels.com/categories',
     mainEntityOfPage: 'https://www.flenixjewels.com/categories',
@@ -176,7 +176,7 @@ const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
 
   const faqItems = [
     { question: "What jewelry categories do you offer?", answer: "We offer engagement rings, wedding bands, necklaces, earrings, bracelets, and custom diamond jewelry collections." },
-    { question: "Are your diamonds certified?", answer: "Yes. We provide certified lab-grown and natural diamonds with trusted grading standards." },
+    { question: "Are your diamonds certified?", answer: "Yes. We provide certified natural and lab-grown diamonds with trusted grading standards." },
     { question: "Can I request a custom design?", answer: "Yes. Our team can create custom designs, matching sets, and bespoke jewelry." },
   ];
 
@@ -245,7 +245,7 @@ const GOLD= "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
       `}</style>
 
       <SEOHead
-        title="Jewelry Collections - Diamond Rings, Gold Necklaces, Earrings & Bracelets | Flenix Jewels"
+        title="Jewelry Collections - Diamond Rings, Gold Necklaces, Earrings & Bracelets | Flenix Jewels Ltd"
         description="Explore our curated jewelry collections. Shop premium GIA certified diamond rings, 18K gold necklaces, elegant earrings, platinum bracelets."
         keywords="jewelry collections, diamond rings, gold necklaces, diamond earrings, bracelets, engagement rings"
         canonicalUrl="https://www.flenixjewels.com/categories"

@@ -55,7 +55,7 @@ const GalleryCard = ({
         <OptimizedImage
           noWrapper
           src={item.image}
-          alt={item.description || "Flenix Jewels"}
+          alt={item.description || "Flenix Jewels Ltd"}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
           draggable={false}
         />
@@ -235,12 +235,12 @@ const Gallery = () => {
 
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'ImageGallery',
-    name: 'Flenix Jewels Gallery', url: 'https://www.flenixjewels.com/gallery',
+    name: 'Flenix Jewels Ltd Gallery', url: 'https://www.flenixjewels.com/gallery',
     image: galleryItems.slice(0, 10).map((i: any) => i.image),
   };
 
   const faqItems = [
-    { question: "What is shown in the Flenix Jewels gallery?", answer: "Our gallery showcases premium diamond and gold jewelry, including rings, earrings, necklaces, and bracelets." },
+    { question: "What is shown in the Flenix Jewels Ltd gallery?", answer: "Our gallery showcases premium diamond and gold jewelry, including rings, earrings, necklaces, and bracelets." },
     { question: "Can I request a similar design from the gallery?", answer: "Yes. You can contact us on WhatsApp to request similar or customized designs." },
     { question: "Are gallery items available for international shipping?", answer: "Yes. We ship worldwide with secure packaging for select regions." },
   ];
@@ -248,7 +248,7 @@ const Gallery = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Jewelry Gallery - Diamond & Gold Collection Photos | Flenix Jewels"
+        title="Jewelry Gallery - Diamond & Gold Collection Photos | Flenix Jewels Ltd"
         description="Browse our gallery of exquisite GIA certified diamond jewelry. View stunning engagement rings, gold necklaces, earrings, bracelets."
         keywords="jewelry gallery, diamond jewelry photos, gold jewelry images, engagement ring photos, luxury jewelry collection"
         canonicalUrl="https://www.flenixjewels.com/gallery"
@@ -357,7 +357,7 @@ const Gallery = () => {
                             <OptimizedImage
                               noWrapper
                               src={filteredItems[0].image}
-                              alt={filteredItems[0].description || "Flenix Jewels"}
+                              alt={filteredItems[0].description || "Flenix Jewels Ltd"}
                               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                               loading="eager"
                               decoding="async"
@@ -445,7 +445,7 @@ const Gallery = () => {
           <div className="flex items-center justify-between px-5 sm:px-7 py-4 flex-shrink-0" style={{ borderBottom: '1px solid rgba(196,144,106,0.12)' }}>
             <div className="flex items-center gap-2.5">
               <Gem className="h-4 w-4" style={{ color: '#C4906A' }} />
-              <span className="text-[11px] tracking-[0.3em] uppercase font-black hidden sm:block" style={{ color: '#C4906A' }}>Flenix Jewels</span>
+              <span className="text-[11px] tracking-[0.3em] uppercase font-black hidden sm:block" style={{ color: '#C4906A' }}>Flenix Jewels Ltd</span>
             </div>
             <span className="text-sm font-mono" style={{ color: 'rgba(255,255,255,0.35)' }}>
               {String(selectedIndex + 1).padStart(2, '0')} / {String(filteredItems.length).padStart(2, '0')}
@@ -483,7 +483,7 @@ const Gallery = () => {
                   noWrapper
                   key={selectedIndex}
                   src={filteredItems[selectedIndex].image}
-                  alt={filteredItems[selectedIndex].description || 'Flenix Jewels'}
+                  alt={filteredItems[selectedIndex].description || 'Flenix Jewels Ltd'}
                   className="max-w-full max-h-full object-contain"
                   style={{
                     animation: 'lightboxFadeIn 0.35s ease',
@@ -510,7 +510,7 @@ const Gallery = () => {
                   </p>
                 ) : (
                   <p className="text-sm leading-relaxed mb-5" style={{ color: 'rgba(255,255,255,0.28)' }}>
-                    Fine jewelry crafted with exceptional artisanship at Flenix Jewels.
+                    Fine jewelry crafted with exceptional artisanship at Flenix Jewels Ltd.
                   </p>
                 )}
 

@@ -60,3 +60,9 @@ id = "CS64Qivd5PcsOeZh3MUj3"
 uri = "file://src/assets/guide_metals.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "Gcr1QCXOL9t2mYTmmH9Oe"
+uri = "file://src/assets/diamond-hero.png"
+type = "image"
+title = "generated_image"

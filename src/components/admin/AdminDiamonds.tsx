@@ -30,7 +30,7 @@ interface MediaItem {
 
 const DIAMOND_TYPE_OPTIONS: Array<{ value: DiamondType; label: string }> = [
   { value: 'real', label: 'Real Diamond' },
-  { value: 'cvd', label: 'CVD Diamond' },
+  { value: 'cvd', label: 'Lab Grown Diamond' },
 ];
 
 const AdminDiamonds = () => {

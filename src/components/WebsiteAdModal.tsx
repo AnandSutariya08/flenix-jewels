@@ -65,8 +65,8 @@ const WebsiteAdModal = ({ disabled = false }: { disabled?: boolean }) => {
 
   const whatsappNumber = cleanWhatsApp(contactInfo?.whatsapp || DEFAULT_WHATSAPP_NUMBER);
   const defaultMessage = activeAd.title
-    ? `Hello Flenix Jewels, I saw your "${activeAd.title}" offer on the website and would like more details.`
-    : 'Hello Flenix Jewels, I saw your website offer and would like more details.';
+    ? `Hello Flenix Jewels Ltd, I saw your "${activeAd.title}" offer on the website and would like more details.`
+    : 'Hello Flenix Jewels Ltd, I saw your website offer and would like more details.';
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(defaultMessage)}`;
   const title = activeAd.title || 'Special Offer';
   const description =

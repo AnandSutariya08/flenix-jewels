@@ -340,17 +340,17 @@ const Blog = () => {
   const baseStructuredData = {
     '@context': 'https://schema.org', '@type': 'Blog',
     '@id': 'https://www.flenixjewels.com/blog#blog',
-    name: 'Flenix Jewels Blog - Expert Jewelry Insights & Guides',
-    description: 'Expert insights, trends, and comprehensive guides about luxury jewelry, diamonds, gemstones, and precious metals from Flenix Jewels.',
+    name: 'Flenix Jewels Ltd Blog - Expert Jewelry Insights & Guides',
+    description: 'Expert insights, trends, and comprehensive guides about luxury jewelry, diamonds, gemstones, and precious metals from Flenix Jewels Ltd.',
     url: 'https://www.flenixjewels.com/blog',
     mainEntityOfPage: 'https://www.flenixjewels.com/blog',
-    publisher: { '@type': 'Organization', name: 'Flenix Jewels', logo: { '@type': 'ImageObject', url: 'https://www.flenixjewels.com/icon.png' } },
+    publisher: { '@type': 'Organization', name: 'Flenix Jewels Ltd', logo: { '@type': 'ImageObject', url: 'https://www.flenixjewels.com/icon.png' } },
     blogPost: sortedBlogs.slice(0, 10).map(blog => ({
       '@type': 'BlogPosting', '@id': `https://www.flenixjewels.com/blog/${blog.id}#blogpost`,
       headline: blog.title, datePublished: blog.date, dateModified: blog.date,
       image: blog.image, description: blog.content.substring(0, 160),
       mainEntityOfPage: `https://www.flenixjewels.com/blog/${blog.id}`,
-      author: { '@type': 'Organization', name: 'Flenix Jewels' }
+      author: { '@type': 'Organization', name: 'Flenix Jewels Ltd' }
     })),
   };
   const blogStructuredData = selectedBlog ? {
@@ -358,19 +358,19 @@ const Blog = () => {
     '@id': `https://www.flenixjewels.com/blog/${selectedBlog.id}#blogpost`,
     headline: selectedBlog.title, datePublished: selectedBlog.date, dateModified: selectedBlog.date,
     image: selectedBlog.image, description: buildMetaDescriptionForBlog(selectedBlog.content),
-    author: { '@type': 'Organization', name: 'Flenix Jewels' },
+    author: { '@type': 'Organization', name: 'Flenix Jewels Ltd' },
     mainEntityOfPage: `https://www.flenixjewels.com/blog/${selectedBlog.id}`,
   } : undefined;
   const structuredData = [baseStructuredData, ...(blogStructuredData ? [blogStructuredData] : [])];
   const seoTitle = selectedBlog
     ? (selectedBlog.metaTitle || buildMetaTitleForBlog(selectedBlog.title))
-    : "Jewelry Blog - Diamond Tips, Engagement Ring Guides & Luxury Trends | Flenix Jewels";
+    : "Jewelry Blog - Diamond Tips, Engagement Ring Guides & Luxury Trends | Flenix Jewels Ltd";
   const seoDescription = selectedBlog
     ? (selectedBlog.metaDescription || buildMetaDescriptionForBlog(selectedBlog.content))
-    : "Discover expert jewelry insights, diamond buying guides, engagement ring tips, gemstone education, and the latest luxury jewelry trends from Flenix Jewels experts.";
+    : "Discover expert jewelry insights, diamond buying guides, engagement ring tips, gemstone education, and the latest luxury jewelry trends from Flenix Jewels Ltd experts.";
   const defaultFaqItems = [
-    { question: "What topics do you cover in the Flenix Jewels blog?", answer: "We cover diamond buying guides, engagement ring tips, jewelry care, gemstone education, and luxury jewelry trends." },
-    { question: "Are your blog guides suitable for lab-grown and natural diamonds?", answer: "Yes. Our guides explain both lab-grown and natural diamond options with practical buying advice." },
+    { question: "What topics do you cover in the Flenix Jewels Ltd blog?", answer: "We cover diamond buying guides, engagement ring tips, jewelry care, gemstone education, and luxury jewelry trends." },
+    { question: "Are your blog guides suitable for natural and lab-grown diamonds?", answer: "Yes. Our guides explain both natural and lab-grown diamond options with practical buying advice." },
     { question: "Can I request a topic?", answer: "Yes. You can contact us to request specific jewelry or diamond topics." },
   ];
   const faqItems = selectedBlog?.seoFaq && selectedBlog.seoFaq.length > 0 ? selectedBlog.seoFaq : defaultFaqItems;
@@ -395,7 +395,7 @@ const Blog = () => {
         articleMeta={selectedBlog ? {
           publishedTime: selectedBlog.date,
           modifiedTime: selectedBlog.date,
-          author: selectedBlog.author || "Flenix Jewels",
+          author: selectedBlog.author || "Flenix Jewels Ltd",
           section: selectedBlog.category || "Jewelry",
           tags: selectedBlog.tags || [],
         } : undefined}

@@ -117,7 +117,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
           <div className="space-y-4">
             <p className="text-sm font-black tracking-[0.22em] uppercase" style={{ color: C.gold }}>
-              Flenix Jewels
+              Flenix Jewels Ltd
             </p>
             <p className="text-sm leading-relaxed" style={{ color: C.text }}>
               Premium lab-grown &amp; natural diamond jewelry — crafted with timeless elegance and trusted certification.
@@ -201,22 +201,24 @@ export default function Footer() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                className="relative group w-11 h-11 rounded-full flex items-center justify-center transition-all"
                 style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                 aria-label="WhatsApp"
               >
                 <MessageCircle className="h-5 w-5" />
+                <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wide px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ background: C.chipBg, color: C.gold, border: `1px solid ${C.chipBorder}` }}>WhatsApp</span>
               </a>
               {contactInfo?.facebook && (
                 <a
                   href={contactInfo.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                  className="relative group w-11 h-11 rounded-full flex items-center justify-center transition-all"
                   style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="Facebook"
                 >
                   <Facebook className="h-5 w-5" />
+                  <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wide px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ background: C.chipBg, color: C.gold, border: `1px solid ${C.chipBorder}` }}>Facebook</span>
                 </a>
               )}
               {contactInfo?.instagram && (
@@ -224,11 +226,12 @@ export default function Footer() {
                   href={contactInfo.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                  className="relative group w-11 h-11 rounded-full flex items-center justify-center transition-all"
                   style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="Instagram"
                 >
                   <Instagram className="h-5 w-5" />
+                  <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wide px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ background: C.chipBg, color: C.gold, border: `1px solid ${C.chipBorder}` }}>Instagram</span>
                 </a>
               )}
               {contactInfo?.twitter && (
@@ -236,11 +239,12 @@ export default function Footer() {
                   href={contactInfo.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                  className="relative group w-11 h-11 rounded-full flex items-center justify-center transition-all"
                   style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="Twitter"
                 >
                   <Twitter className="h-5 w-5" />
+                  <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wide px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ background: C.chipBg, color: C.gold, border: `1px solid ${C.chipBorder}` }}>Twitter</span>
                 </a>
               )}
               {contactInfo?.pinterest && (
@@ -248,13 +252,14 @@ export default function Footer() {
                   href={contactInfo.pinterest}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                  className="relative group w-11 h-11 rounded-full flex items-center justify-center transition-all"
                   style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="Pinterest"
                 >
                   <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 19c-.721 0-1.418-.109-2.073-.312.286-.465.713-1.227.87-1.835l.437-1.664c.229.436.895.804 1.604.804 2.111 0 3.633-1.941 3.633-4.354 0-2.312-1.888-4.042-4.383-4.042-3.104 0-4.688 2.029-4.688 4.191 0 1.025.388 1.938 1.221 2.279.137.056.21.031.243-.084l.23-.944c.019-.081.01-.15-.056-.23-.213-.263-.384-.746-.384-1.194 0-1.16.876-2.278 2.364-2.278 1.289 0 2.211.878 2.211 2.132 0 1.428-.708 2.413-1.622 2.413-.504 0-.883-.417-.762-.928.144-.609.424-1.267.424-1.707 0-.394-.211-.723-.649-.723-.515 0-.928.533-.928 1.249 0 .456.154.764.154.764l-.624 2.642c-.148.621-.082 1.584-.021 2.144C5.757 17.998 3.5 15.238 3.5 12c0-4.687 3.813-8.5 8.5-8.5s8.5 3.813 8.5 8.5-3.813 8.5-8.5 8.5z" />
                   </svg>
+                  <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wide px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ background: C.chipBg, color: C.gold, border: `1px solid ${C.chipBorder}` }}>Pinterest</span>
                 </a>
               )}
               {contactInfo?.youtube && (
@@ -262,11 +267,12 @@ export default function Footer() {
                   href={contactInfo.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                  className="relative group w-11 h-11 rounded-full flex items-center justify-center transition-all"
                   style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="YouTube"
                 >
                   <Youtube className="h-5 w-5" />
+                  <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wide px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ background: C.chipBg, color: C.gold, border: `1px solid ${C.chipBorder}` }}>YouTube</span>
                 </a>
               )}
               {contactInfo?.linkedin && (
@@ -274,11 +280,12 @@ export default function Footer() {
                   href={contactInfo.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+                  className="relative group w-11 h-11 rounded-full flex items-center justify-center transition-all"
                   style={{ background: C.chipBg, border: `1px solid ${C.chipBorder}`, color: isDark ? "rgba(196,144,106,0.9)" : "rgba(155,104,68,0.9)" }}
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="h-5 w-5" />
+                  <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wide px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" style={{ background: C.chipBg, color: C.gold, border: `1px solid ${C.chipBorder}` }}>LinkedIn</span>
                 </a>
               )}
             </div>

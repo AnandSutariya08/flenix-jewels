@@ -28,7 +28,7 @@ const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 const TYPE_LABELS: Record<'all' | DiamondType, string> = {
   all: 'All Diamonds',
   real: 'Real Diamonds',
-  cvd: 'CVD Diamonds',
+  cvd: 'Lab Grown Diamonds',
 };
 
 const getItemTime = (item: Diamond): number => {
@@ -115,8 +115,8 @@ const DiamondPage = () => {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     '@id': 'https://www.flenixjewels.com/diamond#collectionpage',
-    name: 'Diamond Collection - Real & CVD Diamonds | Flenix Jewels',
-    description: 'Explore real diamonds and CVD diamonds at Flenix Jewels. Filter by type, category, and discover curated diamond selections with premium imagery and expert support.',
+    name: 'Diamond Collection - Real & Lab Grown Diamonds | Flenix Jewels Ltd',
+    description: 'Explore real diamonds and lab grown diamonds at Flenix Jewels Ltd. Filter by type, category, and discover curated diamond selections with premium imagery and expert support.',
     url: 'https://www.flenixjewels.com/diamond',
     mainEntityOfPage: 'https://www.flenixjewels.com/diamond',
     mainEntity: {
@@ -131,12 +131,12 @@ const DiamondPage = () => {
           '@id': `https://www.flenixjewels.com/diamond?diamond=${diamond.id}#product`,
           name: diamond.name,
           image: diamond.images && diamond.images.length > 0 ? diamond.images : [diamond.image],
-          description: diamond.description || `${diamond.name} from Flenix Jewels`,
+          description: diamond.description || `${diamond.name} from Flenix Jewels Ltd`,
           sku: diamond.id,
           category: diamondCategories.find((category) => category.id === diamond.diamondCategoryId)?.name || 'Diamond',
           brand: {
             '@type': 'Brand',
-            name: 'Flenix Jewels',
+            name: 'Flenix Jewels Ltd',
           },
           additionalProperty: [
             {
@@ -153,8 +153,8 @@ const DiamondPage = () => {
 
   const faqItems = [
     {
-      question: 'Can I filter between real diamonds and CVD diamonds?',
-      answer: 'Yes. The Diamond page lets you switch between real diamonds, CVD diamonds, or browse both together.',
+      question: 'Can I filter between real diamonds and lab grown diamonds?',
+      answer: 'Yes. The Diamond page lets you switch between real diamonds, lab grown diamonds, or browse both together.',
     },
     {
       question: 'Can I search within the Diamond page?',
@@ -194,9 +194,9 @@ const DiamondPage = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Diamond Collection - Real & CVD Diamonds | Flenix Jewels"
-        description="Browse premium real diamonds and CVD diamonds at Flenix Jewels. Filter by type and category, search designs, and explore curated diamond selections."
-        keywords="diamond page, real diamonds, cvd diamonds, loose diamonds, diamond jewelry, flenix jewels diamonds"
+        title="Diamond Collection - Real & Lab Grown Diamonds | Flenix Jewels Ltd"
+        description="Browse premium real diamonds and lab grown diamonds at Flenix Jewels Ltd. Filter by type and category, search designs, and explore curated diamond selections."
+        keywords="diamond page, real diamonds, lab grown diamonds, loose diamonds, diamond jewelry, flenix jewels diamonds"
         canonicalUrl="https://www.flenixjewels.com/diamond"
         structuredData={structuredData}
         breadcrumbs={[
@@ -213,7 +213,7 @@ const DiamondPage = () => {
           <div className="max-w-[1600px] mx-auto overflow-hidden rounded-[32px] border border-[rgba(196,144,106,0.18)] shadow-[0_18px_60px_-20px_rgba(0,0,0,0.25)] bg-white">
             <img
               src={diamondHero}
-              alt="Choose your brilliance - real diamonds and CVD diamonds"
+              alt="Choose your brilliance - real diamonds and lab grown diamonds"
               className="w-full h-auto block"
               loading="eager"
               decoding="async"
@@ -234,7 +234,7 @@ const DiamondPage = () => {
                     </span>
                   </h1>
                   <p className="mt-4 text-sm md:text-base text-muted-foreground leading-relaxed max-w-2xl">
-                    Explore admin-managed real diamonds and CVD diamonds in one refined catalog. Search by name, filter by type and category, and open any piece for a closer look.
+                    Explore admin-managed real diamonds and lab grown diamonds in one refined catalog. Search by name, filter by type and category, and open any piece for a closer look.
                   </p>
                 </div>
 
@@ -249,7 +249,7 @@ const DiamondPage = () => {
                   </div>
                   <div className="rounded-2xl border bg-background/80 p-4 text-center">
                     <div className="text-2xl font-bold text-primary">{diamonds.filter((item) => item.diamondType === 'cvd').length}</div>
-                    <div className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground">CVD</div>
+                    <div className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground">Lab Grown</div>
                   </div>
                 </div>
               </div>
@@ -274,7 +274,7 @@ const DiamondPage = () => {
                   <SelectContent>
                     <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="real">Real Diamonds</SelectItem>
-                    <SelectItem value="cvd">CVD Diamonds</SelectItem>
+                    <SelectItem value="cvd">Lab Grown Diamonds</SelectItem>
                   </SelectContent>
                 </Select>
 

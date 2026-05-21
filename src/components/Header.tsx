@@ -11,7 +11,7 @@ interface HeaderProps {
 
 const navLinks = [
   { name: 'Home',         path: '/' },
-  { name: 'Categories',   path: '/categories' },
+  { name: 'Jewellery',    path: '/categories' },
   { name: 'Diamond',      path: '/diamond' },
   { name: 'Gallery',      path: '/gallery' },
   { name: 'Blog',         path: '/blog' },
@@ -119,7 +119,7 @@ export default function Header({ promoHeader }: HeaderProps) {
             <Link to="/" className="flex items-center flex-shrink-0 z-10">
               <img
                 src={logo}
-                alt="Flenix Jewels - Premium Diamond Jewelry"
+                alt="Flenix Jewels Ltd - Premium Diamond Jewelry"
                 className="w-auto transition-all duration-300"
                 style={{
                   height:      isScrolled ? 42 : 50,

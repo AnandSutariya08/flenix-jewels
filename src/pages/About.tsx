@@ -81,28 +81,28 @@ const About = () => {
   const structuredData = {
     '@context': 'https://schema.org', '@type': 'AboutPage',
     '@id': 'https://www.flenixjewels.com/about#aboutpage',
-    name: `About Flenix Jewels - Premium Diamond Jewelry Since ${SITE.foundingYear}`,
-    description: `Learn about Flenix Jewels - a premier luxury jewelry brand with over ${YEARS_OF_EXCELLENCE} years of excellence.`,
+    name: `About Flenix Jewels Ltd - Premium Diamond Jewelry Since ${SITE.foundingYear}`,
+    description: `Learn about Flenix Jewels Ltd - a premier luxury jewelry brand with over ${YEARS_OF_EXCELLENCE} years of excellence.`,
     url: 'https://www.flenixjewels.com/about',
     mainEntityOfPage: 'https://www.flenixjewels.com/about',
     mainEntity: {
       '@type': 'Organization', '@id': 'https://www.flenixjewels.com/#jewelry-store',
-      name: 'Flenix Jewels', foundingDate: SITE.foundingYear, numberOfEmployees: '50+',
+      name: 'Flenix Jewels Ltd', foundingDate: SITE.foundingYear, numberOfEmployees: '50+',
       areaServed: 'Worldwide', award: 'GIA Certified Partner',
       knowsAbout: ['Diamond Jewelry', 'Gold Jewelry', 'Custom Jewelry Design', 'Lab Grown Diamonds']
     }
   };
   const faqItems = [
-    { question: "How long has Flenix Jewels been in business?", answer: `We have ${YEARS_OF_EXCELLENCE_LABEL} years of experience in diamond and gold jewelry design, manufacturing, and exports.` },
-    { question: "Do you offer certified diamonds?", answer: "Yes. We offer certified lab-grown and natural diamonds with trusted grading standards." },
+    { question: "How long has Flenix Jewels Ltd been in business?", answer: `We have ${YEARS_OF_EXCELLENCE_LABEL} years of experience in diamond and gold jewelry design, manufacturing, and exports.` },
+    { question: "Do you offer certified diamonds?", answer: "Yes. We offer certified natural and lab-grown diamonds with trusted grading standards." },
     { question: "Do you serve international clients?", answer: "Yes. We serve clients globally with secure delivery and customer support." },
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FDF8F2] dark:bg-[#0a0603]">
       <SEOHead
-        title={`About Us - ${YEARS_OF_EXCELLENCE_LABEL} Years of Diamond Jewelry Excellence | Flenix Jewels`}
-        description={`Discover Flenix Jewels - ${YEARS_OF_EXCELLENCE_LABEL} years of crafting exceptional GIA certified diamond and gold jewelry. Master craftsmanship, ethical sourcing, 50K+ happy clients worldwide.`}
+        title={`About Us - ${YEARS_OF_EXCELLENCE_LABEL} Years of Diamond Jewelry Excellence | Flenix Jewels Ltd`}
+        description={`Discover Flenix Jewels Ltd - ${YEARS_OF_EXCELLENCE_LABEL} years of crafting exceptional GIA certified diamond and gold jewelry. Master craftsmanship, ethical sourcing, 50K+ happy clients worldwide.`}
         keywords="about flenix jewels, jewelry brand story, luxury jewelry heritage, diamond jewelry craftsmanship, GIA certified jeweler"
         canonicalUrl="https://www.flenixjewels.com/about"
         structuredData={structuredData}
@@ -131,7 +131,7 @@ const About = () => {
               </span>
             </>
           }
-          subtitle={`For over ${YEARS_OF_EXCELLENCE} years, Flenix Jewels has been transforming precious metals and gems into timeless masterpieces that celebrate life's most precious moments.`}
+          subtitle={`For over ${YEARS_OF_EXCELLENCE} years, Flenix Jewels Ltd has been transforming precious metals and gems into timeless masterpieces that celebrate life's most precious moments.`}
         />
 
         {/* Stats strip (kept separate so hero height stays consistent) */}
@@ -167,7 +167,7 @@ const About = () => {
                 <span style={{ background: GOLD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Excellence</span>
               </h2>
               <p className="text-base leading-relaxed mb-5 text-[#5A3D2A] dark:text-[#B89880]">
-                Flenix Jewels is a modern fine jewelry manufacturer and supplier, specializing in both lab-grown and natural diamond jewelry. With a strong focus on craftsmanship, ethical sourcing, and precision, we create timeless designs that blend luxury with everyday wearability.
+                Flenix Jewels Ltd is a modern fine jewelry manufacturer and supplier, specializing in both natural and lab-grown diamond jewelry. With a strong focus on craftsmanship, ethical sourcing, and precision, we create timeless designs that blend luxury with everyday wearability.
               </p>
               <p className="text-base leading-relaxed mb-8 text-[#5A3D2A] dark:text-[#B89880]">
                 Every piece is made to order, ensuring superior quality, attention to detail, and complete customization. We proudly serve jewelers and buyers across the world — from concept and CAD design to final polishing and secure worldwide delivery, entirely in-house.

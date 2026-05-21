@@ -3,7 +3,7 @@ export const YEARS_OF_EXCELLENCE = Math.max(new Date().getFullYear() - FOUNDING_
 export const YEARS_OF_EXCELLENCE_LABEL = `${YEARS_OF_EXCELLENCE}+`;
 
 export const SITE = {
-  name: "Flenix Jewels",
+  name: "Flenix Jewels Ltd",
   url: "https://www.flenixjewels.com",
   ogImage: "https://www.flenixjewels.com/icon.png",
   logo: "https://www.flenixjewels.com/flenix-logo.png",
@@ -113,7 +113,7 @@ export const buildMetaTitleForCategory = (categoryName: string) => {
 
 export const buildMetaDescriptionForCategory = (categoryName: string, desc?: string) => {
   if (desc && desc.trim().length > 40) return desc.trim();
-  return `Explore premium ${categoryName.toLowerCase()} jewelry at ${SITE.name}. Certified lab-grown and natural diamonds with worldwide delivery to USA, Canada, Australia, and Germany.`;
+  return `Explore premium ${categoryName.toLowerCase()} jewelry at ${SITE.name}. Certified natural and lab-grown diamonds with worldwide delivery to USA, Canada, Australia, and Germany.`;
 };
 
 export const buildMetaTitleForProduct = (productName: string) => {
@@ -122,7 +122,7 @@ export const buildMetaTitleForProduct = (productName: string) => {
 
 export const buildMetaDescriptionForProduct = (productName: string, categoryName?: string) => {
   const categoryText = categoryName ? ` in ${categoryName}` : "";
-  return `Discover ${productName}${categoryText} at ${SITE.name}. Certified lab-grown and natural diamonds with worldwide delivery to USA, Canada, Australia, and Germany.`;
+  return `Discover ${productName}${categoryText} at ${SITE.name}. Certified natural and lab-grown diamonds with worldwide delivery to USA, Canada, Australia, and Germany.`;
 };
 
 export const parsePrice = (price?: string): number | null => {
@@ -157,7 +157,7 @@ export const buildMetaDescriptionForBlog = (html: string) => {
 export const buildFaqForCategory = (categoryName: string) => [
   {
     question: `Are ${categoryName} diamonds certified?`,
-    answer: "Yes. We offer certified lab-grown and natural diamonds with trusted grading standards.",
+    answer: "Yes. We offer certified natural and lab-grown diamonds with trusted grading standards.",
   },
   {
     question: `Can I customize ${categoryName} designs?`,
@@ -172,7 +172,7 @@ export const buildFaqForCategory = (categoryName: string) => [
 export const buildFaqForProduct = (productName: string, categoryName?: string) => [
   {
     question: `Is ${productName} certified?`,
-    answer: "Yes. We provide certification for lab-grown and natural diamonds where applicable.",
+    answer: "Yes. We provide certification for natural and lab-grown diamonds where applicable.",
   },
   {
     question: `Can ${productName} be customized?`,
@@ -198,7 +198,7 @@ export const buildOrganizationSchema = () => ({
   },
   image: SITE.ogImage,
   description:
-    `Premium diamond and gold jewelry brand established in ${FOUNDING_YEAR}. Certified lab-grown and natural diamonds, engagement rings, wedding bands, and bespoke jewelry with worldwide delivery.`,
+    `Premium diamond and gold jewelry brand established in ${FOUNDING_YEAR}. Certified natural and lab-grown diamonds, engagement rings, wedding bands, and bespoke jewelry with worldwide delivery.`,
   foundingDate: SITE.foundingYear,
   email: SITE.email,
   telephone: SITE.phonePrimary,
@@ -259,7 +259,7 @@ export const buildLocalBusinessSchema = () => ({
   "@id": `${SITE.url}/#local-business`,
   name: SITE.name,
   description:
-    "Premium diamond and gold jewelry store. GIA- and IGI-certified lab-grown and natural diamonds. Engagement rings, wedding bands, necklaces, earrings, and bracelets. worldwide shipping.",
+    "Premium diamond and gold jewelry store. GIA- and IGI-certified natural and lab-grown diamonds. Engagement rings, wedding bands, necklaces, earrings, and bracelets. worldwide shipping.",
   url: SITE.url,
   telephone: SITE.phonePrimary,
   email: SITE.email,

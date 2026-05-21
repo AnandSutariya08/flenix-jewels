@@ -22,7 +22,7 @@ const WHATSAPP = 'https://wa.me/85251254000?text=Hi!%20I%20am%20interested%20in%
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 
 const faqItems = [
-  { question: 'Do you offer both lab-grown and natural diamonds?', answer: 'Yes. Flenix Jewels offers certified lab-grown diamonds and natural diamonds with authenticated grading and quality checks.' },
+  { question: 'Do you offer both natural and lab-grown diamonds?', answer: 'Yes. Flenix Jewels Ltd offers certified lab-grown diamonds and natural diamonds with authenticated grading and quality checks.' },
   { question: 'Can I customize an engagement ring or jewelry design?', answer: 'Yes. We provide custom design and manufacturing for engagement rings, wedding bands, and fine jewelry.' },
   { question: 'Do you ship internationally?', answer: 'Yes. We ship globally with secure packaging and insured delivery options for select regions.' },
 ];
@@ -30,8 +30,8 @@ const faqItems = [
 const trustItems = ['GIA Certified', 'IGI Graded', 'Free Shipping', 'Lifetime Guarantee', '12K+ Happy Clients', '30+ Countries Served', 'Ethically Sourced', 'Custom Design'];
 
 const features = [
-  { icon: Truck, label: 'Worldwide Shipping', sub: '7+ Countries', detail: 'Fully insured express delivery to your door.' },
-  { icon: MessageCircle, label: 'WhatsApp Support', sub: 'Fast Replies', detail: 'Get quick help for orders, custom designs, and diamond inquiries.' },
+  { icon: Truck, label: 'Worldwide Shipping', sub: '15+ Countries', detail: 'Fully insured express delivery to your door.' },
+  { icon: MessageCircle, label: 'WhatsApp Support', sub: '24/7 Support', detail: 'Get quick help for orders, custom designs, and diamond inquiries.' },
   { icon: ShieldCheck, label: 'Secure Payments', sub: '100% Encrypted', detail: 'Bank-level security on every transaction.' },
   { icon: Award, label: 'Certified Authentic', sub: 'GIA / IGI', detail: 'Lifetime guarantee on all certified pieces.' },
 ];
@@ -101,8 +101,8 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
-        title="Premium Diamond & Gold Jewelry | Lab Grown & Natural Diamonds | Flenix Jewels"
-        description="Shop certified lab-grown and natural diamond jewelry at Flenix Jewels. Explore GIA certified engagement rings, wedding bands, necklaces, earrings & bracelets. worldwide shipping."
+        title="Premium Diamond & Gold Jewelry | Lab Grown & Natural Diamonds | Flenix Jewels Ltd"
+        description="Shop certified natural and lab-grown diamond jewelry at Flenix Jewels Ltd. Explore GIA certified engagement rings, wedding bands, necklaces, earrings & bracelets. worldwide shipping."
         keywords="diamond jewelry, gold rings, engagement rings, wedding bands, lab grown diamonds, natural diamonds, certified jewelry, luxury jewelry store"
         canonicalUrl="https://www.flenixjewels.com"
         faqItems={faqItems}
@@ -297,7 +297,7 @@ export default function Index() {
 
                     {/* Bottom content */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                      <p className="text-[9px] tracking-[0.3em] uppercase font-black mb-2" style={{ color: '#C4906A' }}>Flenix Jewels</p>
+                      <p className="text-[9px] tracking-[0.3em] uppercase font-black mb-2" style={{ color: '#C4906A' }}>Flenix Jewels Ltd</p>
                       <h3 className="font-bold text-white leading-snug mb-1.5" style={{ fontSize: 'clamp(16px, 2vw, 22px)' }}>
                         {item.title}
                       </h3>
@@ -380,7 +380,7 @@ export default function Index() {
                   Crafting<br />Excellence<br />Since {SITE.foundingYear}
                 </h2>
                 <p className="text-lg leading-[1.8] mb-10 max-w-md" style={{ color: 'rgba(255,255,255,0.50)' }}>
-                  Flenix Jewels is a premier destination for luxury jewelry — combining traditional artisanship with contemporary design. From ethically sourced diamonds to handcrafted settings, every piece tells a unique story.
+                  Flenix Jewels Ltd is a premier destination for luxury jewelry — combining traditional artisanship with contemporary design. From ethically sourced diamonds to handcrafted settings, every piece tells a unique story.
                 </p>
                 <div className="flex flex-wrap gap-2.5 mb-12">
                   {['GIA Certified', 'IGI Certified', 'Ethically Sourced', 'Custom Design'].map(tag => (

@@ -61,13 +61,13 @@ const ProductDetail = () => {
         "@id": `https://www.flenixjewels.com/product/${product.id}#product`,
         name: product.name,
         image: media.length > 0 ? media : undefined,
-        description: product.description || `${product.name} from Flenix Jewels`,
+        description: product.description || `${product.name} from Flenix Jewels Ltd`,
         sku: product.id,
         category: category?.name,
         mainEntityOfPage: `https://www.flenixjewels.com/product/${product.id}`,
         brand: {
           "@type": "Brand",
-          name: "Flenix Jewels",
+          name: "Flenix Jewels Ltd",
         },
         offers: {
           ...buildOffer(`https://www.flenixjewels.com/product/${product.id}`, product.price),

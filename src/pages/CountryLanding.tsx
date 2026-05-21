@@ -26,7 +26,7 @@ const COUNTRIES: CountryConfig[] = [
     locale: "en-US",
     headline: "Diamond Jewelry Delivered Across the USA",
     description:
-      "Shop certified lab-grown and natural diamond jewelry from Flenix Jewels with secure worldwide delivery to the United States. Custom designs, premium craftsmanship, and WhatsApp support.",
+      "Shop certified natural and lab-grown diamond jewelry from Flenix Jewels Ltd with secure worldwide delivery to the United States. Custom designs, premium craftsmanship, and WhatsApp support.",
     shippingText:
       "Fast, insured international shipping to all US states with secure packaging and tracking.",
     keywords:
@@ -38,7 +38,7 @@ const COUNTRIES: CountryConfig[] = [
     locale: "en-CA",
     headline: "Luxury Jewelry Delivery Across Canada",
     description:
-      "Discover premium diamond and gold jewelry with worldwide delivery to Canada. Certified lab-grown and natural diamonds with custom design options.",
+      "Discover premium diamond and gold jewelry with worldwide delivery to Canada. Certified natural and lab-grown diamonds with custom design options.",
     shippingText:
       "Secure international shipping to all Canadian provinces with tracking and insurance.",
     keywords:
@@ -50,7 +50,7 @@ const COUNTRIES: CountryConfig[] = [
     locale: "en-AU",
     headline: "Premium Diamond Jewelry for Australia",
     description:
-      "Shop certified diamond jewelry and custom designs delivered to Australia. Ethical lab-grown and natural diamonds with expert craftsmanship.",
+      "Shop certified diamond jewelry and custom designs delivered to Australia. Ethical natural and lab-grown diamonds with expert craftsmanship.",
     shippingText:
       "Tracked, insured shipping to all Australian states and territories.",
     keywords:
@@ -62,7 +62,7 @@ const COUNTRIES: CountryConfig[] = [
     locale: "en-DE",
     headline: "Certified Diamond Jewelry Delivered to Germany",
     description:
-      "Explore Flenix Jewels luxury diamond collections with secure delivery to Germany. Lab-grown and natural diamonds, custom jewelry, and expert support.",
+      "Explore Flenix Jewels Ltd luxury diamond collections with secure delivery to Germany. Lab-grown and natural diamonds, custom jewelry, and expert support.",
     shippingText:
       "Reliable international shipping to Germany with secure packaging and tracking.",
     keywords:
@@ -128,9 +128,9 @@ const CountryLanding = () => {
           </div>
 
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-2">Why Flenix Jewels</h2>
+            <h2 className="text-xl font-semibold mb-2">Why Flenix Jewels Ltd</h2>
             <ul className="text-muted-foreground space-y-2">
-              <li>Certified lab-grown and natural diamonds.</li>
+              <li>Certified natural and lab-grown diamonds.</li>
               <li>Custom design and manufacturing support.</li>
               <li>Secure worldwide shipping with tracking.</li>
               <li>WhatsApp support for quick inquiries.</li>

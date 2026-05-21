@@ -127,7 +127,7 @@ const AdminBlogs = () => {
       <p>Clean and store your jewelry properly to preserve brilliance.</p>
       <h3>FAQ</h3>
       <ul>
-        <li>Do you provide certification? Yes, for lab-grown and natural diamonds.</li>
+        <li>Do you provide certification? Yes, for natural and lab-grown diamonds.</li>
         <li>Can I customize designs? Yes, contact us for custom work.</li>
         <li>Do you ship internationally? Yes, with secure, insured delivery.</li>
       </ul>

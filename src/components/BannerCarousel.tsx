@@ -20,7 +20,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
   const isMountedRef = useRef(true);
   const hasMultiple = banners.length > 1;
   const currentBanner = banners[currentIndex];
-  const safeTitle = currentBanner?.title?.trim() || 'Flenix Jewels';
+  const safeTitle = currentBanner?.title?.trim() || 'Flenix Jewels Ltd';
   const safeDesc =
     currentBanner?.description?.trim() ||
     'Certified diamonds. Timeless designs. Crafted with precision.';

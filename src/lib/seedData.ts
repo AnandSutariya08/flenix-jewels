@@ -19,7 +19,7 @@ export const seedInitialData = async () => {
           id: '1',
           image: heroImage1,
           title: 'Exquisite Diamond Collection',
-          description: 'Discover our finest selection of lab-grown and natural diamonds',
+          description: 'Discover our finest selection of natural and lab-grown diamonds',
         },
         {
           id: '2',

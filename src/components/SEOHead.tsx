@@ -51,7 +51,7 @@ const SEOHead = ({
     "@id": `${baseUrl}/#website`,
     name: siteName,
     url: baseUrl,
-    description: "Premium diamond and gold jewelry — certified lab-grown and natural diamonds with worldwide delivery.",
+    description: "Premium diamond and gold jewelry — certified natural and lab-grown diamonds with worldwide delivery.",
     inLanguage: "en-US",
     publisher: { "@id": `${baseUrl}/#organization` },
     potentialAction: {

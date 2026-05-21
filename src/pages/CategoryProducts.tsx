@@ -150,7 +150,7 @@ const CategoryProducts = () => {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     '@id': `https://www.flenixjewels.com/category/${id}#collectionpage`,
-    name: `${category.name} - Flenix Jewels`,
+    name: `${category.name} - Flenix Jewels Ltd`,
     description: category.description || `Shop our ${category.name} collection`,
     url: `https://www.flenixjewels.com/category/${id}`,
     mainEntityOfPage: `https://www.flenixjewels.com/category/${id}`,
@@ -167,12 +167,12 @@ const CategoryProducts = () => {
           '@id': `https://www.flenixjewels.com/product/${p.id}#product`,
           name: p.name,
           image: (p.images && p.images.length > 0) ? p.images : [p.image],
-          description: p.description || `${p.name} from Flenix Jewels`,
+          description: p.description || `${p.name} from Flenix Jewels Ltd`,
           sku: p.id,
           category: category.name,
           brand: {
             '@type': 'Brand',
-            name: 'Flenix Jewels',
+            name: 'Flenix Jewels Ltd',
           },
           offers: {
             ...buildOffer(`https://www.flenixjewels.com/category/${id}?product=${p.id}`, p.price),
@@ -194,13 +194,13 @@ const CategoryProducts = () => {
             activeProduct.images && activeProduct.images.length > 0
               ? activeProduct.images
               : [activeProduct.image],
-          description: activeProduct.description || `${activeProduct.name} from Flenix Jewels`,
+          description: activeProduct.description || `${activeProduct.name} from Flenix Jewels Ltd`,
           sku: activeProduct.id,
           category: category.name,
           mainEntityOfPage: `https://www.flenixjewels.com/category/${id}?product=${activeProduct.id}`,
           brand: {
             '@type': 'Brand',
-            name: 'Flenix Jewels',
+            name: 'Flenix Jewels Ltd',
           },
           offers: {
             ...buildOffer(`https://www.flenixjewels.com/category/${id}?product=${activeProduct.id}`, activeProduct.price),
@@ -240,7 +240,7 @@ const CategoryProducts = () => {
     {
       question: `Are ${category.name} diamonds certified?`,
       answer:
-        "Yes. We offer certified lab-grown and natural diamonds with trusted grading standards.",
+        "Yes. We offer certified natural and lab-grown diamonds with trusted grading standards.",
     },
     {
       question: `Can I customize ${category.name} designs?`,
@@ -256,7 +256,7 @@ const CategoryProducts = () => {
     {
       question: "Are your diamonds certified?",
       answer:
-        "Yes. We offer certified lab-grown and natural diamonds with trusted grading standards.",
+        "Yes. We offer certified natural and lab-grown diamonds with trusted grading standards.",
     },
   ];
   if (!category && !isReady) {
