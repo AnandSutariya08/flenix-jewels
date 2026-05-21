@@ -148,7 +148,7 @@ export default function Footer() {
         {/* Main */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
           {/* Column 1: Brand */}
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-center text-center">
             <img
               src={logo}
               alt="Flenix Jewels Ltd"
@@ -164,12 +164,12 @@ export default function Footer() {
             <p className="text-sm leading-relaxed" style={{ color: C.text }}>
               Elegant jewellery crafted with precision, authenticity, and timeless beauty. Discover our natural and lab-grown diamond collections for every occasion.
             </p>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-row gap-2 w-full">
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all hover:opacity-80"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all hover:opacity-80"
                 style={{
                   background: isDark
                     ? "rgba(196,144,106,0.12)"
@@ -178,12 +178,12 @@ export default function Footer() {
                   color: C.gold,
                 }}
               >
-                <FaWhatsapp className="h-4 w-4" />
-                WhatsApp Support
+                <FaWhatsapp className="h-4 w-4 flex-shrink-0" />
+                WhatsApp
               </a>
               <a
                 href={`mailto:${contactInfo?.email || "info@flenixjewels.com"}`}
-                className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all hover:opacity-80"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-[11px] font-black tracking-[0.18em] uppercase transition-all hover:opacity-80"
                 style={{
                   background: isDark
                     ? "rgba(196,144,106,0.12)"
@@ -192,8 +192,8 @@ export default function Footer() {
                   color: C.gold,
                 }}
               >
-                <Mail className="h-4 w-4" />
-                Email Support
+                <Mail className="h-4 w-4 flex-shrink-0" />
+                Email
               </a>
             </div>
           </div>
