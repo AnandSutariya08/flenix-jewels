@@ -178,6 +178,7 @@ const normalizeCachePayload = (raw: unknown): CacheSnapshot | null => {
       ...snapshot.data,
       ads: Array.isArray(snapshot.data.ads) ? snapshot.data.ads : [],
       blogs: Array.isArray(snapshot.data.blogs) ? snapshot.data.blogs : [],
+      tickerItems: Array.isArray(snapshot.data.tickerItems) ? snapshot.data.tickerItems : [],
     },
     savedAt: snapshot.savedAt || Date.now(),
     deferredLoaded: Boolean(snapshot.deferredLoaded),
