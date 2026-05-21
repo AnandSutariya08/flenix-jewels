@@ -53,7 +53,7 @@ const Contact = () => {
     }
     setIsSubmitting(true);
     try {
-      const whatsappMessage = `*New Contact Form*\n\n*Name:* ${name.trim()}\n*Email:* ${email.trim()}\n*Subject:* ${subject.trim()}\n*Message:*\n${message.trim()}`;
+      const Message = `*New Contact Form*\n\n*Name:* ${name.trim()}\n*Email:* ${email.trim()}\n*Subject:* ${subject.trim()}\n*Message:*\n${message.trim()}`;
       const waNum = cleanWhatsApp(CONTACT_WHATSAPP_NUMBER);
       window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
       setName(''); setEmail(''); setSubject(''); setMessage('');
@@ -236,10 +236,7 @@ const Contact = () => {
 
               {/* Contact info cards */}
               {[
-                {
-                  icon: FaWhatsapp, label: 'WhatsApp', value: CONTACT_WHATSAPP_NUMBER, href: `https://wa.me/${cleanWhatsApp(CONTACT_WHATSAPP_NUMBER)}`,
-                  iconColor: '#25D366', iconBackground: 'rgba(37,211,102,0.12)', iconBorder: '1px solid rgba(37,211,102,0.22)',
-                },
+               
                 contactInfo?.phone && {
                   icon: Phone, label: 'Phone', value: contactInfo.phone, href: `tel:${contactInfo.phone}`,
                 },
