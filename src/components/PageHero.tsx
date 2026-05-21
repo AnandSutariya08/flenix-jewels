@@ -9,6 +9,7 @@ type PageHeroProps = {
   darkOverlay?: boolean;
   className?: string;
   contentClassName?: string;
+  style?: React.CSSProperties;
 };
 
 export default function PageHero({
@@ -19,13 +20,14 @@ export default function PageHero({
   darkOverlay = false,
   className,
   contentClassName,
+  style,
 }: PageHeroProps) {
   const overlayGradient = darkOverlay
     ? "linear-gradient(180deg, rgba(19,9,0,0.82) 0%, rgba(19,9,0,0.90) 50%, rgba(19,9,0,0.96) 100%)"
     : "linear-gradient(180deg, rgba(19,9,0,0.55) 0%, rgba(19,9,0,0.78) 55%, rgba(19,9,0,0.9) 100%)";
 
   return (
-    <section className={cn("relative overflow-hidden", className)}>
+    <section className={cn("relative overflow-hidden", className)} style={style}>
       {backgroundImage ? (
         <div
           className="absolute inset-0 bg-center bg-cover"
