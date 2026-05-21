@@ -7,6 +7,7 @@ type PageHeroProps = {
   eyebrow?: ReactNode;
   backgroundImage?: string;
   darkOverlay?: boolean;
+  overlayGradient?: string;
   className?: string;
   contentClassName?: string;
   style?: React.CSSProperties;
@@ -18,13 +19,14 @@ export default function PageHero({
   eyebrow,
   backgroundImage,
   darkOverlay = false,
+  overlayGradient: overlayGradientProp,
   className,
   contentClassName,
   style,
 }: PageHeroProps) {
-  const overlayGradient = darkOverlay
+  const overlayGradient = overlayGradientProp ?? (darkOverlay
     ? "linear-gradient(180deg, rgba(19,9,0,0.82) 0%, rgba(19,9,0,0.90) 50%, rgba(19,9,0,0.96) 100%)"
-    : "linear-gradient(180deg, rgba(19,9,0,0.55) 0%, rgba(19,9,0,0.78) 55%, rgba(19,9,0,0.9) 100%)";
+    : "linear-gradient(180deg, rgba(19,9,0,0.55) 0%, rgba(19,9,0,0.78) 55%, rgba(19,9,0,0.9) 100%)");
 
   return (
     <section className={cn("relative overflow-hidden", className)} style={style}>

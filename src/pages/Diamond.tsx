@@ -20,7 +20,7 @@ import { HEADER_OFFSET_PX } from '@/lib/layout';
 import { buildOffer } from '@/lib/seo';
 import { type Diamond } from '@/lib/storage';
 import { Gem, Search } from 'lucide-react';
-import diamondBanner from '@/assets/hero-banner-2.jpg';
+import diamondBanner from '@/assets/diamond-banner.png';
 
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 
@@ -214,7 +214,7 @@ const DiamondPage = () => {
       <main className="flex-1">
         <PageHero
           backgroundImage={diamondBanner}
-          darkOverlay
+          overlayGradient="linear-gradient(180deg, rgba(10,5,0,0.38) 0%, rgba(10,5,0,0.52) 50%, rgba(10,5,0,0.65) 100%)"
           style={{ paddingTop: `${paddingTop}px` }}
           eyebrow={
             <span className="inline-flex items-center justify-center gap-2">
