@@ -214,7 +214,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
             </div>
 
             {/* Content */}
-            {isCurrent && <HeroContent title={banner.title} description={banner.description} isActive />}
+            {(isCurrent || isLeaving) && <HeroContent title={banner.title} description={banner.description} isActive={!isLeaving || !animated} />}
           </div>
         );
       })}
