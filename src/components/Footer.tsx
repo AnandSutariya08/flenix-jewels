@@ -156,7 +156,7 @@ export default function Footer() {
               Flenix Jewels Ltd
             </p>
             <p className="text-sm leading-relaxed" style={{ color: C.text }}>
-              Premium natural diamond &amp; lab-grown jewelry — crafted with
+              Premium natural &amp; lab-grown diamond jewelry — crafted with
               timeless elegance and trusted certification.
             </p>
             <a
