@@ -58,13 +58,22 @@ export default function Index() {
   // and show skeleton instead of "Coming Soon" — useRef doesn't affect rendering so
   // with a ref the condition would flash "Coming Soon" for one frame before the effect fires.
   const [galleryFetched, setGalleryFetched] = useState(false);
+  const didSequenceRefetchRef = useRef(false);
   useEffect(() => {
-    if (galleryItems.length > 0) return;
     if (deferredStatus === 'loading') return;
     if (galleryFetched) return;
-    setGalleryFetched(true);
-    dispatch(loadDeferredData({ force: true }));
-  }, [deferredLoaded, deferredStatus, dispatch, galleryItems.length, galleryFetched]);
+    // No gallery items at all — fetch deferred data
+    if (galleryItems.length === 0) {
+      setGalleryFetched(true);
+      dispatch(loadDeferredData({ force: true }));
+      return;
+    }
+    // Gallery items exist but none have sequences 1-5 — stale cache missing sequence field
+    if (homeGalleryItems.length === 0 && !didSequenceRefetchRef.current) {
+      didSequenceRefetchRef.current = true;
+      dispatch(loadDeferredData({ force: true }));
+    }
+  }, [deferredLoaded, deferredStatus, dispatch, galleryItems.length, homeGalleryItems.length, galleryFetched]);
 
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
