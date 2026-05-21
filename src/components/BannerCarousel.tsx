@@ -94,7 +94,7 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
       const next = (currentIndex + 1) % banners.length;
       await ensureLoaded(next);
       if (isMountedRef.current) navigate(next, 1);
-    }, 12000);
+    }, 2000);
     return () => window.clearInterval(interval);
   }, [banners.length, currentIndex, ensureLoaded, navigate]);
 
