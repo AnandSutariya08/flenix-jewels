@@ -153,13 +153,19 @@ const BannerCarousel = memo(({ banners = [] }: BannerCarouselProps) => {
         let zIndex: number;
 
         if (isLeaving) {
+          // outgoing slide: sits at 0 until animation fires, then slides out
           transform = animated ? `translateX(${direction === 1 ? '-100%' : '100%'})` : 'translateX(0)';
           transition = 'transform 0.82s cubic-bezier(0.76, 0, 0.24, 1)';
           zIndex = 5;
-        } else {
-          // entering/current
+        } else if (leavingIndex !== null) {
+          // entering slide during an active transition: start offscreen, slide into view
           transform = animated ? 'translateX(0)' : `translateX(${direction === 1 ? '100%' : '-100%'})`;
           transition = animated ? 'transform 0.82s cubic-bezier(0.76, 0, 0.24, 1)' : 'none';
+          zIndex = 10;
+        } else {
+          // idle current slide (no transition happening) — always fully visible
+          transform = 'translateX(0)';
+          transition = 'none';
           zIndex = 10;
         }
 
