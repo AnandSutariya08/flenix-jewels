@@ -31,7 +31,7 @@ export default function Header({ promoHeader }: HeaderProps) {
   const navigate  = useNavigate();
   const { categories } = useAppSelector(selectGlobalData);
 
-  const hasPromo = false;
+  const hasPromo = !!(promoHeader?.enabled && promoHeader?.text);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 64);

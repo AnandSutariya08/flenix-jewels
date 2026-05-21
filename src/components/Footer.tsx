@@ -19,7 +19,8 @@ import { cleanWhatsApp } from "@/lib/utils";
 import { FaWhatsapp } from "react-icons/fa";
 import GIA from "@/assets/paylogo/GIA_Logo.png";
 import Rapaport from "@/assets/paylogo/Rapaport-header-20250120083212-20250210092659-20250227142926-20250310094122.svg";
-import LGD from "@/assets/paylogo/LGD ASSOCIATION.png";
+import IGI from "@/assets/igi-logo.png";
+import VDB from "@/assets/vdb-logo.png";
 
 const FOOTER_WHATSAPP_NUMBER = "+852 51254000";
 
@@ -67,10 +68,9 @@ export default function Footer() {
   const certifications = useMemo(
     () => [
       { name: "GIA", logo: GIA },
-      { name: "IGI", logo: "/igi-logo.svg" },
+      { name: "IGI", logo: IGI },
       { name: "Rapaport", logo: Rapaport },
-      { name: "LGD Association", logo: LGD },
-      { name: "VDB", logo: "/vdb-logo.svg" },
+      { name: "VDB", logo: VDB },
     ],
     [],
   );
