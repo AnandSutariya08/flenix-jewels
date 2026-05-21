@@ -164,7 +164,7 @@ export default function Footer() {
             <p className="text-sm leading-relaxed" style={{ color: C.text }}>
               Elegant jewellery crafted with precision, authenticity, and timeless beauty. Discover our natural and lab-grown diamond collections for every occasion.
             </p>
-            <div className="flex flex-row gap-2 w-full">
+            {/* <div className="flex flex-row gap-2 w-full">
               <a
                 href={whatsappUrl}
                 target="_blank"
@@ -195,7 +195,7 @@ export default function Footer() {
                 <Mail className="h-4 w-4 flex-shrink-0" />
                 Email
               </a>
-            </div>
+            </div> */}
           </div>
 
           {/* Column 2: Explore */}
