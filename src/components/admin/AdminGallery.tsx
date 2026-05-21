@@ -122,8 +122,8 @@ const AdminGallery = () => {
       const itemData: GalleryItem = {
         id: editingId || Date.now().toString(),
         description,
-        category: category.trim() || undefined,
         image: imageUrl,
+        ...(category.trim() ? { category: category.trim() } : {}),
         ...(seqNum != null ? { sequence: seqNum } : {}),
       };
 
