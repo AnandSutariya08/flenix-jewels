@@ -37,7 +37,7 @@ import {
   Send,
   Loader2,
 } from "lucide-react";
-import { BlogPost, Testimonial, getApprovedTestimonials } from "@/lib/storage";
+import { BlogPost, Testimonial, subscribeApprovedTestimonials } from "@/lib/storage";
 import { saveCustomerTestimonial } from "@/lib/storage";
 import { SITE, YEARS_OF_EXCELLENCE_LABEL } from "@/lib/seo";
 
@@ -244,11 +244,10 @@ export default function Index() {
   }, [blogsLoaded, blogsStatus, dispatch]);
 
   useEffect(() => {
-    let cancelled = false;
-    getApprovedTestimonials().then((fresh) => {
-      if (!cancelled) setFreshTestimonials(fresh);
+    const unsub = subscribeApprovedTestimonials((fresh) => {
+      setFreshTestimonials(fresh);
     });
-    return () => { cancelled = true; };
+    return () => unsub();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

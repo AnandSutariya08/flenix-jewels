@@ -943,6 +943,15 @@ export const subscribeAllTestimonials = (onChange: (items: Testimonial[]) => voi
     onChange(items);
   });
 
+export const subscribeApprovedTestimonials = (onChange: (items: Testimonial[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.TESTIMONIALS), (snapshot) => {
+    const items = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() } as Testimonial))
+      .filter((t) => t.approved !== false)
+      .sort((a, b) => (b.submittedAt ?? 0) - (a.submittedAt ?? 0));
+    onChange(items);
+  });
+
 export const deleteTestimonial = async (id: string) => {
   try {
     await deleteDoc(doc(db, COLLECTIONS.TESTIMONIALS, id));
