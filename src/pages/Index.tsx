@@ -14,8 +14,9 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadBlogs, loadDeferredData, selectBlogsLoaded, selectBlogsStatus, selectGlobalData, selectDeferredStatus, selectDeferredLoaded } from '@/store/contentSlice';
 import { useHeaderOffset } from '@/hooks/useHeaderOffset';
-import { Truck, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight, BookOpen, Gem } from 'lucide-react';
+import { Truck, ShieldCheck, Award, Star, MessageCircle, ArrowRight, CheckCircle, ChevronLeft, ChevronRight, BookOpen, Gem, Send, Loader2 } from 'lucide-react';
 import { BlogPost } from '@/lib/storage';
+import { saveCustomerTestimonial } from '@/lib/storage';
 import { SITE, YEARS_OF_EXCELLENCE_LABEL } from '@/lib/seo';
 
 const WHATSAPP = 'https://wa.me/85251254000?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.';
@@ -53,6 +54,16 @@ export default function Index() {
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
   const [isBlogDialogOpen, setIsBlogDialogOpen] = useState(false);
 
+  // Review form state
+  const [reviewName, setReviewName] = useState('');
+  const [reviewEmail, setReviewEmail] = useState('');
+  const [reviewLocation, setReviewLocation] = useState('');
+  const [reviewText, setReviewText] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewHoverRating, setReviewHoverRating] = useState(0);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+
   // Force-fetch deferred data when home page detects gallery is empty.
   // Using useState (not useRef) so the FIRST render can read galleryFetched = false
   // and show skeleton instead of "Coming Soon" — useRef doesn't affect rendering so
@@ -74,6 +85,28 @@ export default function Index() {
       dispatch(loadDeferredData({ force: true }));
     }
   }, [deferredLoaded, deferredStatus, dispatch, galleryItems.length, homeGalleryItems.length, galleryFetched]);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewName.trim() || !reviewText.trim()) return;
+    setReviewSubmitting(true);
+    try {
+      await saveCustomerTestimonial({
+        name: reviewName.trim(),
+        text: reviewText.trim(),
+        rating: reviewRating,
+        ...(reviewEmail.trim() ? { email: reviewEmail.trim() } : {}),
+        ...(reviewLocation.trim() ? { location: reviewLocation.trim() } : {}),
+      });
+      setReviewSubmitted(true);
+      setReviewName(''); setReviewEmail(''); setReviewLocation('');
+      setReviewText(''); setReviewRating(5);
+    } catch {
+      // silently ignore — user doesn't need to see technical errors
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
@@ -660,6 +693,113 @@ export default function Index() {
             </div>
           </section>
         )}
+
+        {/* ═══════════════════════════════════════════════════════
+            8b. WRITE A REVIEW — Customer testimonial submission
+        ═══════════════════════════════════════════════════════ */}
+        <section className="py-16 md:py-20 bg-[#FDF8F2] dark:bg-[#0e0805]">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-10">
+              <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3" style={{ color: '#C4906A' }}>✦ Share Your Story ✦</p>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-[#1C0D05] dark:text-[#F5E8D8]">Write a Review</h2>
+              <p className="mt-3 text-sm text-[#9B8070] dark:text-[#7A6050]">Your experience matters — leave a review and help others discover Flenix Jewels.</p>
+            </div>
+
+            {reviewSubmitted ? (
+              <div className="flex flex-col items-center justify-center gap-4 py-12 text-center rounded-3xl"
+                style={{ background: 'rgba(196,144,106,0.07)', border: '1px solid rgba(196,144,106,0.2)' }}>
+                <div className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ background: 'linear-gradient(135deg, #9B6844, #C4906A)' }}>
+                  <CheckCircle className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-[#1C0D05] dark:text-[#F5E8D8]">Thank you for your review!</h3>
+                <p className="text-sm text-[#9B8070] dark:text-[#7A6050] max-w-sm">Your review has been submitted and will appear on the website once approved by our team.</p>
+                <button
+                  onClick={() => setReviewSubmitted(false)}
+                  className="mt-2 text-sm font-bold underline underline-offset-2"
+                  style={{ color: '#C4906A' }}
+                >
+                  Submit another review
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleReviewSubmit}
+                className="rounded-3xl p-8 md:p-10 space-y-5"
+                style={{ background: 'white', border: '1px solid rgba(196,144,106,0.18)', boxShadow: '0 8px 48px -12px rgba(0,0,0,0.08)' }}>
+
+                {/* Star rating */}
+                <div className="flex flex-col items-center gap-2 pb-2">
+                  <p className="text-[11px] tracking-[0.18em] uppercase font-black text-[#9B8070]">Your Rating *</p>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star
+                        key={s}
+                        className={`h-8 w-8 cursor-pointer transition-all duration-150 ${
+                          s <= (reviewHoverRating || reviewRating) ? 'fill-yellow-400 text-yellow-400 scale-110' : 'text-[#D4B896] dark:text-[#5A4030]'
+                        }`}
+                        onClick={() => setReviewRating(s)}
+                        onMouseEnter={() => setReviewHoverRating(s)}
+                        onMouseLeave={() => setReviewHoverRating(0)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070]">Your Name *</label>
+                    <input
+                      type="text" value={reviewName} onChange={(e) => setReviewName(e.target.value)}
+                      placeholder="John Doe" required maxLength={100}
+                      className="w-full px-4 py-3 rounded-xl text-sm font-medium outline-none transition-all duration-200 bg-[#F5EDE3] dark:bg-[#1a0c06] text-[#1C0D05] dark:text-[#F5E8D8] placeholder:text-[#C4A080] border border-transparent focus:border-[#C4906A]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070]">Email (Private)</label>
+                    <input
+                      type="email" value={reviewEmail} onChange={(e) => setReviewEmail(e.target.value)}
+                      placeholder="john@example.com"
+                      className="w-full px-4 py-3 rounded-xl text-sm font-medium outline-none transition-all duration-200 bg-[#F5EDE3] dark:bg-[#1a0c06] text-[#1C0D05] dark:text-[#F5E8D8] placeholder:text-[#C4A080] border border-transparent focus:border-[#C4906A]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070]">Location (Optional)</label>
+                  <input
+                    type="text" value={reviewLocation} onChange={(e) => setReviewLocation(e.target.value)}
+                    placeholder="e.g. Mumbai, India" maxLength={80}
+                    className="w-full px-4 py-3 rounded-xl text-sm font-medium outline-none transition-all duration-200 bg-[#F5EDE3] dark:bg-[#1a0c06] text-[#1C0D05] dark:text-[#F5E8D8] placeholder:text-[#C4A080] border border-transparent focus:border-[#C4906A]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] tracking-[0.18em] uppercase font-black mb-2 text-[#9B8070]">Your Review *</label>
+                  <textarea
+                    value={reviewText} onChange={(e) => setReviewText(e.target.value)}
+                    placeholder="Tell us about your experience with Flenix Jewels…" rows={4} required maxLength={500}
+                    className="w-full px-4 py-3 rounded-xl text-sm font-medium outline-none transition-all duration-200 bg-[#F5EDE3] dark:bg-[#1a0c06] text-[#1C0D05] dark:text-[#F5E8D8] placeholder:text-[#C4A080] border border-transparent focus:border-[#C4906A] resize-none"
+                  />
+                  <p className="text-right text-[10px] text-[#C4A080] mt-1">{reviewText.length}/500</p>
+                </div>
+
+                <button
+                  type="submit" disabled={reviewSubmitting || !reviewName.trim() || !reviewText.trim()}
+                  className="w-full flex items-center justify-center gap-3 font-bold text-sm tracking-[0.12em] uppercase py-4 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: GOLD, color: '#fff', boxShadow: '0 8px 28px -8px rgba(155,104,68,0.55)' }}
+                >
+                  {reviewSubmitting
+                    ? <><Loader2 className="h-4 w-4 animate-spin" />Submitting…</>
+                    : <><Send className="h-4 w-4" />Submit Review</>
+                  }
+                </button>
+                <p className="text-center text-[11px] text-[#B89878]">
+                  Reviews are reviewed by our team before publishing.
+                </p>
+              </form>
+            )}
+          </div>
+        </section>
 
         {/* ═══════════════════════════════════════════════════════
             9. BLOG — Editorial magazine layout

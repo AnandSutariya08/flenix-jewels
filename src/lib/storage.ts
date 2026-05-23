@@ -185,8 +185,13 @@ export interface PriceSettings {
 export interface Testimonial {
   id: string;
   name: string;
+  email?: string;
+  location?: string;
   text: string;
   rating: number;
+  approved?: boolean;
+  source?: 'admin' | 'customer';
+  submittedAt?: number;
 }
 
 export interface Office {
@@ -881,19 +886,69 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
   }
 };
 
+export const getApprovedTestimonials = async (): Promise<Testimonial[]> => {
+  try {
+    const snapshot = await getDocs(collection(db, COLLECTIONS.TESTIMONIALS));
+    return snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() } as Testimonial))
+      .filter(t => t.approved !== false);
+  } catch (error) {
+    console.error('Error getting approved testimonials:', error);
+    return [];
+  }
+};
+
 export const saveTestimonial = async (testimonial: Testimonial) => {
   try {
     await setDoc(doc(db, COLLECTIONS.TESTIMONIALS, testimonial.id), { ...testimonial, id: testimonial.id });
   } catch (error) {
     console.error('Error saving testimonial:', error);
+    throw error;
   }
 };
+
+export const approveTestimonial = async (id: string) => {
+  try {
+    await updateDoc(doc(db, COLLECTIONS.TESTIMONIALS, id), { approved: true });
+  } catch (error) {
+    console.error('Error approving testimonial:', error);
+    throw error;
+  }
+};
+
+export const saveCustomerTestimonial = async (
+  submission: Pick<Testimonial, 'name' | 'email' | 'location' | 'text' | 'rating'>
+): Promise<void> => {
+  try {
+    const id = `cust-${Date.now()}`;
+    const data: Testimonial = {
+      ...submission,
+      id,
+      approved: false,
+      source: 'customer',
+      submittedAt: Date.now(),
+    };
+    await setDoc(doc(db, COLLECTIONS.TESTIMONIALS, id), data);
+  } catch (error) {
+    console.error('Error saving customer testimonial:', error);
+    throw error;
+  }
+};
+
+export const subscribeAllTestimonials = (onChange: (items: Testimonial[]) => void) =>
+  onSnapshot(collection(db, COLLECTIONS.TESTIMONIALS), (snapshot) => {
+    const items = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() } as Testimonial))
+      .sort((a, b) => (b.submittedAt ?? 0) - (a.submittedAt ?? 0));
+    onChange(items);
+  });
 
 export const deleteTestimonial = async (id: string) => {
   try {
     await deleteDoc(doc(db, COLLECTIONS.TESTIMONIALS, id));
   } catch (error) {
     console.error('Error deleting testimonial:', error);
+    throw error;
   }
 };
 
