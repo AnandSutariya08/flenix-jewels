@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   loadBlogs,
   loadDeferredData,
+  patchDeferredData,
   selectBlogsLoaded,
   selectBlogsStatus,
   selectGlobalData,
@@ -37,7 +38,7 @@ import {
   Send,
   Loader2,
 } from "lucide-react";
-import { BlogPost } from "@/lib/storage";
+import { BlogPost, getApprovedTestimonials } from "@/lib/storage";
 import { saveCustomerTestimonial } from "@/lib/storage";
 import { SITE, YEARS_OF_EXCELLENCE_LABEL } from "@/lib/seo";
 
@@ -238,6 +239,18 @@ export default function Index() {
       return () => window.clearTimeout(t);
     }
   }, [blogsLoaded, blogsStatus, dispatch]);
+
+  // Always fetch fresh testimonials from Firestore on page load,
+  // bypassing the session/local cache so newly approved reviews appear immediately.
+  useEffect(() => {
+    let cancelled = false;
+    getApprovedTestimonials().then((fresh) => {
+      if (!cancelled && fresh.length > 0) {
+        dispatch(patchDeferredData({ testimonials: fresh } as Parameters<typeof patchDeferredData>[0]));
+      }
+    });
+    return () => { cancelled = true; };
+  }, [dispatch]);
 
   const paddingTop = useHeaderOffset();
 
