@@ -162,7 +162,9 @@ export default function Footer() {
               Flenix Jewels Ltd
             </p>
             <p className="text-sm leading-relaxed" style={{ color: C.text }}>
-              Elegant jewellery crafted with precision, authenticity, and timeless beauty. Discover our natural and lab-grown diamond collections for every occasion.
+              Elegant jewellery crafted with precision, authenticity, and
+              timeless beauty. Discover our natural and lab-grown diamond
+              jewellery collections for every occasion.
             </p>
             {/* <div className="flex flex-row gap-2 w-full">
               <a
