@@ -15,7 +15,6 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   loadBlogs,
   loadDeferredData,
-  patchDeferredData,
   selectBlogsLoaded,
   selectBlogsStatus,
   selectGlobalData,
@@ -38,7 +37,7 @@ import {
   Send,
   Loader2,
 } from "lucide-react";
-import { BlogPost, getApprovedTestimonials } from "@/lib/storage";
+import { BlogPost, Testimonial, getApprovedTestimonials } from "@/lib/storage";
 import { saveCustomerTestimonial } from "@/lib/storage";
 import { SITE, YEARS_OF_EXCELLENCE_LABEL } from "@/lib/seo";
 
@@ -110,12 +109,16 @@ export default function Index() {
     galleryItems,
     blogs,
     instagramPosts,
-    testimonials,
+    testimonials: cachedTestimonials,
     promoHeader,
     contactInfo,
     tickerItems,
   } = useAppSelector(selectGlobalData);
   const dispatch = useAppDispatch();
+
+  // Always fetch approved testimonials directly from Firestore on mount — no cache, no loop.
+  const [freshTestimonials, setFreshTestimonials] = useState<Testimonial[]>([]);
+  const testimonials = freshTestimonials.length > 0 ? freshTestimonials : cachedTestimonials;
 
   const homeGalleryItems = useMemo(
     () =>
@@ -240,17 +243,14 @@ export default function Index() {
     }
   }, [blogsLoaded, blogsStatus, dispatch]);
 
-  // Always fetch fresh testimonials from Firestore on page load,
-  // bypassing the session/local cache so newly approved reviews appear immediately.
   useEffect(() => {
     let cancelled = false;
     getApprovedTestimonials().then((fresh) => {
-      if (!cancelled && fresh.length > 0) {
-        dispatch(patchDeferredData({ testimonials: fresh } as Parameters<typeof patchDeferredData>[0]));
-      }
+      if (!cancelled) setFreshTestimonials(fresh);
     });
     return () => { cancelled = true; };
-  }, [dispatch]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const paddingTop = useHeaderOffset();
 
