@@ -246,6 +246,27 @@ const saveCache = (data: GlobalData, deferredLoaded: boolean, productsLoaded: bo
   }
 };
 
+export const clearTestimonialsCache = () => {
+  try {
+    const bust = (key: string) => {
+      const raw = localStorage.getItem(key) ?? sessionStorage.getItem(key);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed?.data) {
+        parsed.data.testimonials = [];
+        parsed.deferredLoaded = false;
+        const str = JSON.stringify(parsed);
+        sessionStorage.setItem(key, str);
+        localStorage.setItem(key, str);
+      }
+    };
+    bust(SESSION_KEY);
+    bust(LOCAL_KEY);
+  } catch {
+    // ignore
+  }
+};
+
 const cached = readSessionCache() ?? readPersistentCache();
 
 const initialState: ContentState = {

@@ -6,6 +6,7 @@ import {
   deleteTestimonial,
   Testimonial,
 } from '@/lib/storage';
+import { clearTestimonialsCache } from '@/store/contentSlice';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -89,6 +90,7 @@ const AdminTestimonials = () => {
           : Date.now(),
       };
       await saveTestimonial(item);
+      clearTestimonialsCache();
       resetForm();
       setIsFormOpen(false);
       toast.success(editingId ? 'Testimonial updated' : 'Testimonial added');
@@ -103,6 +105,7 @@ const AdminTestimonials = () => {
     setApprovingId(t.id);
     try {
       await approveTestimonial(t.id);
+      clearTestimonialsCache();
       toast.success(`${t.name}'s review approved and published`);
     } catch {
       toast.error('Failed to approve');
@@ -115,6 +118,7 @@ const AdminTestimonials = () => {
     setDeletingId(id);
     try {
       await deleteTestimonial(id);
+      clearTestimonialsCache();
       toast.success('Testimonial deleted');
     } catch {
       toast.error('Failed to delete');
