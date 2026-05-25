@@ -346,14 +346,14 @@ const AIChatWidget = () => {
     step === 'collect_email' ? 'Enter your email address…' : '';
 
   return (
-    <div className="fixed bottom-6 right-5 z-50 flex flex-col items-end gap-2.5 select-none">
+    <div className="fixed bottom-6 right-4 z-50 flex flex-col items-end gap-2 select-none" style={{ maxHeight: 'calc(100vh - 32px)' }}>
       {/* Chat Panel */}
       {open && (
         <div
           className="flex flex-col rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300"
           style={{
-            width: 'min(360px, calc(100vw - 24px))',
-            height: 'min(520px, calc(100vh - 120px))',
+            width: 'min(350px, calc(100vw - 24px))',
+            height: 'min(460px, calc(100vh - 90px))',
             background: '#fff',
             border: '1px solid rgba(196,144,106,0.22)',
             boxShadow: '0 16px 64px -12px rgba(0,0,0,0.22)',
