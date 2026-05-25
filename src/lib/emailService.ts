@@ -39,7 +39,15 @@ const baseTemplate = (bodyContent: string) => `
     <div style="padding:32px 36px;">
       ${bodyContent}
     </div>
-    <div style="background:#f7f3ef;padding:20px 36px;text-align:center;border-top:1px solid #ede5db;">
+    <div style="padding:0 36px 28px;text-align:center;">
+      <p style="margin:0 0 12px;font-size:13px;color:#9B8070;">Need a faster response? Reach us directly on WhatsApp:</p>
+      <a href="https://wa.me/85251254000?text=Hello%20Flenix%20Jewels!%20I%20have%20a%20question." 
+         style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#1ea672,#25D366);color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;padding:12px 28px;border-radius:50px;letter-spacing:0.03em;">
+        <span style="font-size:18px;line-height:1;">&#128236;</span>
+        Chat on WhatsApp
+      </a>
+    </div>
+    <div style="background:#f7f3ef;padding:16px 36px;text-align:center;border-top:1px solid #ede5db;">
       <p style="margin:0;font-size:12px;color:#9B8070;">© 2025 Flenix Jewels Ltd · <a href="mailto:info@flenixjewels.com" style="color:#C4906A;text-decoration:none;">info@flenixjewels.com</a></p>
     </div>
   </div>
