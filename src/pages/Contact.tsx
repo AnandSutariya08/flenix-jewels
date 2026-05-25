@@ -9,6 +9,7 @@ import { selectGlobalData } from "@/store/contentSlice";
 import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { cleanWhatsApp } from "@/lib/utils";
 import { saveContactSubmission } from "@/lib/storage";
+import { sendAdminContactFormEmail, sendCustomerContactConfirmationEmail } from "@/lib/emailService";
 import { MapPin, Phone, Mail, Clock, Send, Flag, Loader2, Gem, MessageCircle, ChevronRight } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { toast } from 'sonner';
@@ -55,13 +56,18 @@ const Contact = () => {
     }
     setIsSubmitting(true);
     try {
-      await saveContactSubmission({
+      const submissionData = {
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim() || undefined,
         subject: subject.trim(),
         message: message.trim(),
-      });
+      };
+      await saveContactSubmission(submissionData);
+      await Promise.allSettled([
+        sendAdminContactFormEmail(submissionData),
+        sendCustomerContactConfirmationEmail({ name: submissionData.name, email: submissionData.email, subject: submissionData.subject }),
+      ]);
       setName(''); setEmail(''); setPhone(''); setSubject(''); setMessage('');
       toast.success('Message sent! We will get back to you soon.');
     } catch {

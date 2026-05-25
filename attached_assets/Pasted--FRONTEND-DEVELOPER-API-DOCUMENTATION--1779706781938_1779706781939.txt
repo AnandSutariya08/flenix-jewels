@@ -1,0 +1,351 @@
+========================================
+FRONTEND DEVELOPER API DOCUMENTATION
+========================================
+
+Project:
+ AI + Email API
+
+Base URL:
+https://flenixjewelsbackend-7ehw.vercel.app/
+Content-Type:
+application/json
+
+========================================
+1. AI API
+========================================
+
+Endpoint:
+POST /api/ai
+
+----------------------------------------
+PURPOSE
+----------------------------------------
+
+This API generates AI responses using  AI.
+
+----------------------------------------
+REQUEST BODY
+----------------------------------------
+
+{
+  "prompt": "Explain diamond quality"
+}
+
+----------------------------------------
+REQUEST PARAMETERS
+----------------------------------------
+
+prompt : string
+Required
+
+User message or question for AI.
+
+----------------------------------------
+SUCCESS RESPONSE
+----------------------------------------
+
+Status Code:
+200
+
+{
+  "success": true,
+  "message": "AI response generated successfully",
+  "data": "Diamond quality is determined by cut, color, clarity and carat weight."
+}
+
+----------------------------------------
+ERROR RESPONSE
+----------------------------------------
+
+Status Code:
+400
+
+{
+  "success": false,
+  "message": "Prompt is required"
+}
+
+----------------------------------------
+
+Status Code:
+500
+
+{
+  "success": false,
+  "message": "Failed to generate AI response"
+}
+
+----------------------------------------
+FRONTEND FETCH EXAMPLE
+----------------------------------------
+
+const response = await fetch("http://localhost:5000/api/ai", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    prompt: "Explain diamond quality"
+  })
+});
+
+const data = await response.json();
+
+console.log(data);
+
+----------------------------------------
+REACT EXAMPLE
+----------------------------------------
+
+const generateAI = async () => {
+
+  try {
+
+    const response = await fetch("http://localhost:5000/api/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: "What is CVD Diamond?"
+      })
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+========================================
+2. SEND MAIL API
+========================================
+
+Endpoint:
+POST /api/send-mail
+
+----------------------------------------
+PURPOSE
+----------------------------------------
+
+This API sends HTML emails using Nodemailer.
+
+----------------------------------------
+REQUEST BODY
+----------------------------------------
+
+{
+  "to": "client@gmail.com",
+  "subject": "Welcome Email",
+  "html": "<h1>Hello User</h1><p>Welcome to Flenix Jewels</p>"
+}
+
+----------------------------------------
+REQUEST PARAMETERS
+----------------------------------------
+
+to : string
+Required
+
+Receiver email address.
+
+----------------------------------------
+
+subject : string
+Required
+
+Email subject.
+
+----------------------------------------
+
+html : string
+Required
+
+HTML email body.
+
+Supports:
+- HTML
+- CSS inline styling
+- Tables
+- Images
+- Buttons
+- Responsive email design
+
+----------------------------------------
+SUCCESS RESPONSE
+----------------------------------------
+
+Status Code:
+200
+
+{
+  "success": true,
+  "message": "Email sent successfully",
+  "messageId": "example-message-id"
+}
+
+----------------------------------------
+ERROR RESPONSE
+----------------------------------------
+
+Status Code:
+400
+
+{
+  "success": false,
+  "message": "to, subject and html are required"
+}
+
+----------------------------------------
+
+Status Code:
+500
+
+{
+  "success": false,
+  "message": "Failed to send email"
+}
+
+----------------------------------------
+FRONTEND FETCH EXAMPLE
+----------------------------------------
+
+const response = await fetch("http://localhost:5000/api/send-mail", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    to: "client@gmail.com",
+    subject: "Welcome Email",
+    html: `
+      <div style="font-family: Arial;">
+        <h1>Welcome</h1>
+        <p>Your account created successfully.</p>
+
+        <button style="
+          background:#000;
+          color:#fff;
+          border:none;
+          padding:10px 20px;
+          border-radius:5px;
+        ">
+          View Account
+        </button>
+      </div>
+    `
+  })
+});
+
+const data = await response.json();
+
+console.log(data);
+
+----------------------------------------
+REACT EXAMPLE
+----------------------------------------
+
+const sendMail = async () => {
+
+  try {
+
+    const response = await fetch("http://localhost:5000/api/send-mail", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        to: "client@gmail.com",
+        subject: "Order Confirmed",
+        html: `
+          <div>
+            <h1>Order Confirmed</h1>
+            <p>Your order placed successfully.</p>
+          </div>
+        `
+      })
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+========================================
+3. COMMON RESPONSE FORMAT
+========================================
+
+All APIs return JSON format.
+
+----------------------------------------
+SUCCESS FORMAT
+----------------------------------------
+
+{
+  "success": true,
+  "message": "Success message",
+  "data": {}
+}
+
+----------------------------------------
+ERROR FORMAT
+----------------------------------------
+
+{
+  "success": false,
+  "message": "Error message"
+}
+
+========================================
+4. IMPORTANT NOTES
+========================================
+
+1. Always send Content-Type:
+application/json
+
+----------------------------------------
+
+2. All APIs are POST APIs except root API.
+
+----------------------------------------
+
+3. HTML emails fully supported.
+
+----------------------------------------
+
+4. AI API returns plain text response.
+
+----------------------------------------
+
+5. Enable CORS in frontend if needed.
+
+----------------------------------------
+
+6. Backend supports large HTML body.
+
+========================================
+5. SERVER STATUS API
+========================================
+
+Endpoint:
+GET /
+
+----------------------------------------
+SUCCESS RESPONSE
+----------------------------------------
+
+{
+  "success": true,
+  "message": "Server running successfully"
+}
+
+========================================
+END OF FRONTEND DOCUMENTATION
+========================================
