@@ -29,13 +29,10 @@ export const getAIResponse = async (prompt: string): Promise<string> => {
   }
 };
 
-const logoHtml = `<img src="https://flenixjewels.com/og-image.jpg" alt="Flenix Jewels" style="height:40px;margin-bottom:12px;" onerror="this.style.display='none'" />`;
-
 const baseTemplate = (bodyContent: string) => `
 <div style="font-family:'Helvetica Neue',Arial,sans-serif;background:#f7f3ef;padding:32px 0;margin:0;">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
     <div style="background:linear-gradient(135deg,#9B6844 0%,#C4906A 55%,#D4A96A 100%);padding:28px 36px;text-align:center;">
-      ${logoHtml}
       <h1 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;letter-spacing:0.04em;">FLENIX JEWELS LTD</h1>
       <p style="margin:4px 0 0;font-size:12px;color:rgba(255,255,255,0.8);letter-spacing:0.12em;text-transform:uppercase;">Fine Jewelry · Est. 2015</p>
     </div>
