@@ -1,0 +1,47 @@
+{
+  "name": "Flenix Jewels Ltd",
+  "short_name": "Flenix Jewels",
+  "description": "Premium diamond and gold jewelry — certified natural and lab-grown diamonds with worldwide delivery.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fffbf5",
+  "theme_color": "#C4906A",
+  "lang": "en-US",
+  "scope": "/",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/flenix-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/flenix-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Jewellery Collections",
+      "short_name": "Collections",
+      "url": "/categories",
+      "description": "Browse all jewelry collections"
+    },
+    {
+      "name": "Diamond Catalog",
+      "short_name": "Diamonds",
+      "url": "/diamond",
+      "description": "Explore natural and lab grown diamonds"
+    },
+    {
+      "name": "Contact Us",
+      "short_name": "Contact",
+      "url": "/contact",
+      "description": "Get in touch with Flenix Jewels Ltd"
+    }
+  ]
+}

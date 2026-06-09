@@ -15,7 +15,7 @@ const firebaseConfig = {
 };
 
 const BASE_URL = "https://www.flenixjewels.com";
-const SITE_NAME = "Flenix Jewels";
+const SITE_NAME = "Flenix Jewels Ltd";
 const SITE_DESCRIPTION = "Premium diamond and gold jewelry — certified lab-grown and natural diamonds with worldwide delivery.";
 const SITE_LANGUAGE = "en-US";
 const SITE_LOGO = `${BASE_URL}/flenix-logo.png`;

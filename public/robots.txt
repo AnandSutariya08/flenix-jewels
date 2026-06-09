@@ -1,7 +1,7 @@
-# Flenix Jewels - Premium Diamond & Gold Jewelry
+# Flenix Jewels Ltd - Premium Diamond & Gold Jewelry
 # https://www.flenixjewels.com
 # robots.txt - Search Engine & AI Crawler Directives
-# Last updated: 2026-05-20
+# Last updated: 2026-06-09
 
 # ─── Google ───────────────────────────────────────────────────────────────────
 User-agent: Googlebot
@@ -173,9 +173,13 @@ Allow: /*.avif$
 Allow: /feed.xml
 Allow: /sitemap.xml
 Allow: /sitemap-images.xml
+Allow: /sitemap-index.xml
+Allow: /site.webmanifest
 Allow: /llms.txt
+Allow: /robots.txt
 
 # ─── Sitemaps ─────────────────────────────────────────────────────────────────
+Sitemap: https://www.flenixjewels.com/sitemap-index.xml
 Sitemap: https://www.flenixjewels.com/sitemap.xml
 Sitemap: https://www.flenixjewels.com/sitemap-images.xml
 

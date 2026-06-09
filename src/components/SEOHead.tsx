@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { SITE, buildKeywords, buildOrganizationSchema, buildLocalBusinessSchema } from "@/lib/seo";
+import { SITE, buildKeywords } from "@/lib/seo";
 
 interface SEOHeadProps {
   title: string;
@@ -40,30 +40,15 @@ const SEOHead = ({
   const pageUrl = canonicalUrl || baseUrl;
   const metaKeywords = keywords || buildKeywords();
   const resolvedImage = ogImage.startsWith("http") ? ogImage : `${baseUrl}${ogImage}`;
+  const today = new Date().toISOString().split("T")[0];
 
-  // ── Core schemas always present ───────────────────────────────────────────────
-  const organizationSchema = buildOrganizationSchema();
-  const localBusinessSchema = buildLocalBusinessSchema();
-
-  const webSiteSchema = {
+  // ── WebPage schema (page-specific) ───────────────────────────────────────────
+  // NOTE: Organization, LocalBusiness, and WebSite global schemas live in
+  // index.html so Googlebot can read them on first-wave (pre-JS) crawl without
+  // duplication. Only page-scoped schemas are injected here.
+  const webPageSchema: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": `${baseUrl}/#website`,
-    name: siteName,
-    url: baseUrl,
-    description: "Premium diamond and gold jewelry — certified natural and lab-grown diamonds with worldwide delivery.",
-    inLanguage: "en-US",
-    publisher: { "@id": `${baseUrl}/#organization` },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: { "@type": "EntryPoint", urlTemplate: `${baseUrl}/categories?search={search_term_string}` },
-      "query-input": "required name=search_term_string",
-    },
-  };
-
-  const webPageSchema = {
-    "@context": "https://schema.org",
-    "@type": ogType === "article" ? "Article" : "WebPage",
+    "@type": ogType === "article" ? "BlogPosting" : "WebPage",
     "@id": `${pageUrl}#webpage`,
     name: fullTitle,
     description,
@@ -71,28 +56,31 @@ const SEOHead = ({
     inLanguage: "en-US",
     isPartOf: { "@id": `${baseUrl}/#website` },
     publisher: { "@id": `${baseUrl}/#organization` },
-    breadcrumb: breadcrumbs?.length ? { "@id": `${pageUrl}#breadcrumb` } : undefined,
-    dateModified: new Date().toISOString(),
+    dateModified: today,
   };
+  if (breadcrumbs?.length) {
+    webPageSchema.breadcrumb = { "@id": `${pageUrl}#breadcrumb` };
+  }
 
+  // ── BreadcrumbList schema ─────────────────────────────────────────────────────
+  // breadcrumbs array must include all items starting with Home (position 1).
+  // Do NOT add a hardcoded Home — that causes a duplicate Home error in Search Console.
   const breadcrumbSchema =
     breadcrumbs && breadcrumbs.length > 0
       ? {
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           "@id": `${pageUrl}#breadcrumb`,
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: baseUrl },
-            ...breadcrumbs.map((b, idx) => ({
-              "@type": "ListItem",
-              position: idx + 2,
-              name: b.name,
-              item: b.url,
-            })),
-          ],
+          itemListElement: breadcrumbs.map((b, idx) => ({
+            "@type": "ListItem",
+            position: idx + 1,
+            name: b.name,
+            item: b.url,
+          })),
         }
       : null;
 
+  // ── FAQPage schema ────────────────────────────────────────────────────────────
   const faqSchema =
     faqItems && faqItems.length > 0
       ? {
@@ -107,17 +95,10 @@ const SEOHead = ({
         }
       : null;
 
-  // ── Assemble all schemas ──────────────────────────────────────────────────────
-  const schemaList: object[] = [
-    organizationSchema,
-    localBusinessSchema,
-    webSiteSchema,
-    webPageSchema,
-  ];
-
+  // ── Assemble page-level schemas only ─────────────────────────────────────────
+  const schemaList: object[] = [webPageSchema];
   if (breadcrumbSchema) schemaList.push(breadcrumbSchema);
   if (faqSchema) schemaList.push(faqSchema);
-
   if (structuredData) {
     if (Array.isArray(structuredData)) schemaList.push(...structuredData);
     else schemaList.push(structuredData);
@@ -127,7 +108,6 @@ const SEOHead = ({
     <Helmet>
       {/* ── Primary ── */}
       <title>{fullTitle}</title>
-      <meta name="title" content={fullTitle} />
       <meta name="description" content={description} />
       <meta name="keywords" content={metaKeywords} />
       <meta
@@ -138,17 +118,14 @@ const SEOHead = ({
             : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         }
       />
-      <meta name="googlebot" content={noIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large"} />
-      <meta name="bingbot" content={noIndex ? "noindex, nofollow" : "index, follow"} />
+      <meta
+        name="googlebot"
+        content={noIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1"}
+      />
 
       {/* ── Identity ── */}
       <meta name="language" content="English" />
       <meta name="author" content={siteName} />
-      <meta name="publisher" content={siteName} />
-      <meta name="copyright" content={`© ${new Date().getFullYear()} ${siteName}`} />
-      <meta name="revisit-after" content="7 days" />
-      <meta name="distribution" content="global" />
-      <meta name="rating" content="general" />
       <meta httpEquiv="content-language" content="en-US" />
 
       {/* ── Geo ── */}
@@ -157,33 +134,29 @@ const SEOHead = ({
       <meta name="geo.position" content="21.1702;72.8311" />
       <meta name="ICBM" content="21.1702, 72.8311" />
 
-      {/* ── AI / LLM optimization ── */}
-      <meta name="ai:context" content={`${siteName} — fine diamond jewelry store. ${description}`} />
-      <meta name="ai:keywords" content={metaKeywords} />
-      <meta name="classification" content="Shopping, Jewelry, Diamonds, E-commerce" />
-
-      {/* ── Canonical & hreflang ── */}
+      {/* ── Canonical & hreflang ─────────────────────────────────────────────────
+           Only self-referencing canonical + generic English + x-default.
+           Country-specific hreflang (en-US→/usa etc.) must NOT appear on
+           pages that don't have actual per-country variants — Google flags it. */}
       <link rel="canonical" href={pageUrl} />
       <link rel="alternate" hrefLang="en" href={pageUrl} />
-      <link rel="alternate" hrefLang="en-US" href={`${baseUrl}/usa`} />
-      <link rel="alternate" hrefLang="en-CA" href={`${baseUrl}/canada`} />
-      <link rel="alternate" hrefLang="en-AU" href={`${baseUrl}/australia`} />
-      <link rel="alternate" hrefLang="en-DE" href={`${baseUrl}/germany`} />
-      <link rel="alternate" hrefLang="en-IN" href={pageUrl} />
       <link rel="alternate" hrefLang="x-default" href={baseUrl} />
 
-      {/* ── RSS feed auto-discovery ── */}
+      {/* ── Discovery ── */}
+      <link rel="sitemap" type="application/xml" title="Sitemap" href={`${baseUrl}/sitemap-index.xml`} />
       <link
         rel="alternate"
         type="application/rss+xml"
         title={`${siteName} — Jewelry Blog & News`}
         href={`${baseUrl}/feed.xml`}
       />
+      <link rel="manifest" href="/site.webmanifest" />
 
-      {/* ── Preconnect for performance ── */}
+      {/* ── Performance preconnects ── */}
       <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       <link rel="dns-prefetch" href="https://ipapi.co" />
 
       {/* ── Open Graph ── */}
@@ -195,27 +168,20 @@ const SEOHead = ({
       <meta property="og:image:secure_url" content={resolvedImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={title} />
+      <meta property="og:image:alt" content={`${siteName} — ${title}`} />
       <meta property="og:image:type" content="image/png" />
       <meta property="og:locale" content="en_US" />
-      <meta property="og:locale:alternate" content="en_GB" />
-      <meta property="og:locale:alternate" content="en_CA" />
-      <meta property="og:locale:alternate" content="en_AU" />
       <meta property="og:url" content={pageUrl} />
 
-      {/* ── Article-specific OG ── */}
+      {/* ── Article OG ── */}
       {articleMeta?.publishedTime && (
         <meta property="article:published_time" content={articleMeta.publishedTime} />
       )}
       {articleMeta?.modifiedTime && (
         <meta property="article:modified_time" content={articleMeta.modifiedTime} />
       )}
-      {articleMeta?.author && (
-        <meta property="article:author" content={articleMeta.author} />
-      )}
-      {articleMeta?.section && (
-        <meta property="article:section" content={articleMeta.section} />
-      )}
+      {articleMeta?.author && <meta property="article:author" content={articleMeta.author} />}
+      {articleMeta?.section && <meta property="article:section" content={articleMeta.section} />}
       {articleMeta?.tags?.map((tag) => (
         <meta key={tag} property="article:tag" content={tag} />
       ))}
@@ -224,11 +190,10 @@ const SEOHead = ({
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:site" content="@flenixjewels" />
       <meta name="twitter:creator" content="@flenixjewels" />
-      <meta name="twitter:domain" content="www.flenixjewels.com" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={resolvedImage} />
-      <meta name="twitter:image:alt" content={title} />
+      <meta name="twitter:image:alt" content={`${siteName} — ${title}`} />
 
       {/* ── Pinterest ── */}
       <meta name="pinterest-rich-pin" content="true" />
@@ -240,15 +205,10 @@ const SEOHead = ({
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="application-name" content={siteName} />
       <meta name="msapplication-TileColor" content="#C4906A" />
-      <meta name="msapplication-TileImage" content={`${baseUrl}/flenix-logo.png`} />
+      <meta name="msapplication-config" content="/browserconfig.xml" />
       <meta name="theme-color" content="#C4906A" />
 
-      {/* ── Verification placeholders (fill in Google/Bing/Pinterest) ── */}
-      {/* <meta name="google-site-verification" content="YOUR_CODE" /> */}
-      {/* <meta name="msvalidate.01" content="YOUR_CODE" /> */}
-      {/* <meta name="p:domain_verify" content="YOUR_CODE" /> */}
-
-      {/* ── JSON-LD structured data ── */}
+      {/* ── JSON-LD: page-level structured data ── */}
       {schemaList.map((schema, idx) => (
         <script key={idx} type="application/ld+json">
           {JSON.stringify(schema)}

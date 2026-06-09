@@ -91,6 +91,7 @@ const run = async () => {
   // ── Core pages ──────────────────────────────────────────────────────────────
   urls.push(buildUrlEntry(`${BASE_URL}/`, "daily", "1.0"));
   urls.push(buildUrlEntry(`${BASE_URL}/categories`, "weekly", "0.9"));
+  urls.push(buildUrlEntry(`${BASE_URL}/diamond`, "weekly", "0.88"));
   urls.push(buildUrlEntry(`${BASE_URL}/gallery`, "weekly", "0.85"));
   urls.push(buildUrlEntry(`${BASE_URL}/blog`, "weekly", "0.75"));
   urls.push(buildUrlEntry(`${BASE_URL}/buying-guide`, "monthly", "0.70"));

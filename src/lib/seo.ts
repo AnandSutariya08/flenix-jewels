@@ -72,7 +72,7 @@ export const pingSitemapOncePerDay = () => {
   const last = window.localStorage.getItem(key);
   if (last === today) return;
 
-  const sitemapUrl = `${SITE.url}/sitemap.xml`;
+  const sitemapUrl = `${SITE.url}/sitemap-index.xml`;
   const targets = [
     `https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
     `https://www.bing.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`,
@@ -301,7 +301,7 @@ export const buildLocalBusinessSchema = () => ({
   aggregateRating: {
     "@type": "AggregateRating",
     ratingValue: "4.9",
-    reviewCount: "12000",
+    reviewCount: "1250",
     bestRating: "5",
     worstRating: "1",
   },
