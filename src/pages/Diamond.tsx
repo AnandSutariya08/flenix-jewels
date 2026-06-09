@@ -157,15 +157,31 @@ const DiamondPage = () => {
   const faqItems = [
     {
       question: 'Can I filter between natural diamonds and lab grown diamonds?',
-      answer: 'Yes. The Diamond page lets you switch between natural diamonds, lab grown diamonds, or browse both together.',
+      answer: 'Yes. The Diamond page lets you switch between natural diamonds, lab grown diamonds, or browse both together using a simple filter toggle.',
     },
     {
-      question: 'Can I search within the Diamond page?',
-      answer: 'Yes. You can use the search bar to find diamonds by name or matching details.',
+      question: 'What diamond shapes do you carry?',
+      answer: 'We carry Round Brilliant, Princess, Oval, Cushion, Emerald, Pear, Marquise, Radiant, Asscher, and Heart-shaped diamonds — both natural and lab-grown.',
     },
     {
-      question: 'Do diamond images follow the same media flow as the rest of the site?',
-      answer: 'Yes. Diamond images are managed through admin and rendered using the same optimized image flow as other catalog sections.',
+      question: 'Are your diamonds GIA or IGI certified?',
+      answer: 'Yes. All significant diamonds are certified by GIA (Gemological Institute of America) or IGI (International Gemological Institute), with grading reports for Cut, Color, Clarity, and Carat weight.',
+    },
+    {
+      question: 'What is the difference between natural and lab-grown diamonds?',
+      answer: 'Natural diamonds are mined from the earth. Lab-grown diamonds (CVD and HPHT) are created in a laboratory with identical chemical, physical, and optical properties. Both are certified real diamonds — the difference is origin and price.',
+    },
+    {
+      question: 'What quality grades do your diamonds come in?',
+      answer: 'Our diamonds range from FL (Flawless) to SI2 in clarity, D through Z in color, and Excellent to Good in cut grade. We recommend Excellent or Very Good cut for maximum brilliance.',
+    },
+    {
+      question: 'Can I enquire about a specific diamond?',
+      answer: 'Yes. Each diamond listing includes a WhatsApp and enquiry button. You can contact us directly for pricing, availability, and custom setting options.',
+    },
+    {
+      question: 'Do you offer custom diamond jewelry settings?',
+      answer: 'Yes. Once you select a diamond, our team can create a custom setting in 14KT or 18KT yellow, white, or rose gold, or platinum — including engagement rings, pendants, earrings, and bracelets.',
     },
   ];
 

@@ -39,27 +39,174 @@ import {
 } from "lucide-react";
 import { BlogPost, Testimonial, subscribeApprovedTestimonials } from "@/lib/storage";
 import { saveCustomerTestimonial } from "@/lib/storage";
-import { SITE, YEARS_OF_EXCELLENCE_LABEL } from "@/lib/seo";
+import {
+  SITE,
+  YEARS_OF_EXCELLENCE_LABEL,
+  buildOrganizationSchema,
+  buildLocalBusinessSchema,
+  buildServiceSchema,
+} from "@/lib/seo";
 
 const WHATSAPP =
   "https://wa.me/85251254000?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.";
 const GOLD = "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
 
+const homepageStructuredData = [
+  buildOrganizationSchema(),
+  buildLocalBusinessSchema(),
+  buildServiceSchema(),
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE.url}/#website`,
+    url: SITE.url,
+    name: SITE.name,
+    description:
+      "Premium diamond and gold jewelry — GIA & IGI certified natural and lab-grown diamonds with worldwide delivery.",
+    publisher: { "@id": `${SITE.url}/#organization` },
+    inLanguage: "en-US",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE.url}/diamond?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${SITE.url}/#featured-collections`,
+    name: "Flenix Jewels – Featured Jewelry Collections",
+    description:
+      "Explore our curated collections of certified diamond rings, necklaces, earrings, bracelets, and wedding bands.",
+    url: `${SITE.url}/categories`,
+    numberOfItems: 6,
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        url: `${SITE.url}/categories`,
+        name: "Diamond Engagement Rings",
+        item: {
+          "@type": "Product",
+          name: "Diamond Engagement Rings",
+          description: "GIA & IGI certified natural and lab-grown diamond engagement rings in 14KT and 18KT gold.",
+          brand: { "@type": "Brand", name: SITE.name },
+          category: "Rings",
+          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        url: `${SITE.url}/categories`,
+        name: "Diamond Necklaces",
+        item: {
+          "@type": "Product",
+          name: "Diamond Necklaces",
+          description: "Certified diamond pendants, tennis necklaces, and solitaire necklaces in gold and platinum.",
+          brand: { "@type": "Brand", name: SITE.name },
+          category: "Necklaces",
+          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        url: `${SITE.url}/categories`,
+        name: "Diamond Earrings",
+        item: {
+          "@type": "Product",
+          name: "Diamond Earrings",
+          description: "Certified diamond studs, hoop earrings, and drop earrings in 14KT and 18KT gold.",
+          brand: { "@type": "Brand", name: SITE.name },
+          category: "Earrings",
+          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        url: `${SITE.url}/categories`,
+        name: "Diamond Bracelets",
+        item: {
+          "@type": "Product",
+          name: "Diamond Bracelets",
+          description: "Certified diamond tennis bracelets, bangles, and cuff bracelets in gold and platinum.",
+          brand: { "@type": "Brand", name: SITE.name },
+          category: "Bracelets",
+          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 5,
+        url: `${SITE.url}/categories`,
+        name: "Wedding Bands",
+        item: {
+          "@type": "Product",
+          name: "Wedding Bands",
+          description: "Diamond and plain wedding bands, eternity rings, and stackable bands for him and her.",
+          brand: { "@type": "Brand", name: SITE.name },
+          category: "Wedding Bands",
+          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+        },
+      },
+      {
+        "@type": "ListItem",
+        position: 6,
+        url: `${SITE.url}/diamond`,
+        name: "Lab Grown Diamonds",
+        item: {
+          "@type": "Product",
+          name: "Lab Grown Diamonds",
+          description: "IGI certified CVD and HPHT lab-grown loose diamonds. Environmentally conscious, conflict-free.",
+          brand: { "@type": "Brand", name: SITE.name },
+          category: "Lab Grown Diamonds",
+          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/diamond` },
+        },
+      },
+    ],
+  },
+];
+
 const faqItems = [
   {
     question: "Do you offer both natural and lab-grown diamonds?",
     answer:
-      "Yes. Flenix Jewels Ltd offers certified lab-grown diamonds and natural diamonds with authenticated grading and quality checks.",
+      "Yes. Flenix Jewels Ltd offers GIA and IGI certified lab-grown diamonds (CVD and HPHT) and natural mined diamonds with authenticated grading and quality checks.",
   },
   {
     question: "Can I customize an engagement ring or jewelry design?",
     answer:
-      "Yes. We provide custom design and manufacturing for engagement rings, wedding bands, and fine jewelry.",
+      "Yes. We provide full custom design and manufacturing for engagement rings, wedding bands, and fine jewelry in 14KT and 18KT yellow, white, and rose gold, as well as platinum.",
   },
   {
     question: "Do you ship internationally?",
     answer:
-      "Yes. We ship globally with secure packaging and insured delivery options for select regions.",
+      "Yes. We offer free insured express shipping to USA, Canada, Australia, Germany, UK, India, and 15+ more countries worldwide.",
+  },
+  {
+    question: "What is the difference between lab-grown and natural diamonds?",
+    answer:
+      "Lab-grown diamonds are created in a controlled environment using CVD or HPHT technology. They have the same physical, chemical, and optical properties as natural diamonds and are certified by GIA and IGI. Natural diamonds are mined from the earth. Both are real diamonds — the choice is based on personal preference, budget, and values.",
+  },
+  {
+    question: "Are your diamonds GIA or IGI certified?",
+    answer:
+      "Yes. We provide both GIA (Gemological Institute of America) and IGI (International Gemological Institute) certified diamonds. Every significant piece comes with a grading report covering Cut, Color, Clarity, and Carat.",
+  },
+  {
+    question: "How long does delivery take?",
+    answer:
+      "Standard delivery takes 5–14 business days depending on your region. We offer fully insured express shipping with tracking to all major countries.",
+  },
+  {
+    question: "Do you offer a return policy or warranty?",
+    answer:
+      "Yes. We offer a 30-day return policy with free return shipping. All certified jewelry pieces also come with a lifetime quality guarantee from Flenix Jewels Ltd.",
   },
 ];
 
@@ -265,6 +412,7 @@ export default function Index() {
         description="Shop certified natural and lab-grown diamond jewelry at Flenix Jewels Ltd. Explore GIA certified engagement rings, wedding bands, necklaces, earrings & bracelets. worldwide shipping."
         keywords="diamond jewelry, gold rings, engagement rings, wedding bands, lab grown diamonds, natural diamonds, certified jewelry, luxury jewelry store"
         canonicalUrl="https://www.flenixjewels.com"
+        structuredData={homepageStructuredData}
         faqItems={faqItems}
       />
 

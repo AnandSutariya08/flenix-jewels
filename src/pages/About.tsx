@@ -78,24 +78,117 @@ const About = () => {
 
   const paddingTop = useHeaderOffset();
 
-  const structuredData = {
-    '@context': 'https://schema.org', '@type': 'AboutPage',
-    '@id': 'https://www.flenixjewels.com/about#aboutpage',
-    name: `About Flenix Jewels Ltd - Premium Diamond Jewelry Since ${SITE.foundingYear}`,
-    description: `Learn about Flenix Jewels Ltd - a premier luxury jewelry brand with over ${YEARS_OF_EXCELLENCE} years of excellence.`,
-    url: 'https://www.flenixjewels.com/about',
-    mainEntityOfPage: 'https://www.flenixjewels.com/about',
-    mainEntity: {
-      '@type': 'Organization', '@id': 'https://www.flenixjewels.com/#jewelry-store',
-      name: 'Flenix Jewels Ltd', foundingDate: SITE.foundingYear, numberOfEmployees: '50+',
-      areaServed: 'Worldwide', award: 'GIA Certified Partner',
-      knowsAbout: ['Diamond Jewelry', 'Gold Jewelry', 'Custom Jewelry Design', 'Lab Grown Diamonds']
-    }
-  };
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "@id": `${SITE.url}/about#aboutpage`,
+      name: `About Flenix Jewels Ltd — Premium Diamond Jewelry Since ${SITE.foundingYear}`,
+      description: `Learn about Flenix Jewels Ltd — ${YEARS_OF_EXCELLENCE_LABEL} years of crafting GIA and IGI certified diamond and gold jewelry. Master craftsmanship, ethical sourcing, 1,000+ happy clients worldwide.`,
+      url: `${SITE.url}/about`,
+      inLanguage: "en-US",
+      mainEntityOfPage: `${SITE.url}/about`,
+      speakable: {
+        "@type": "SpeakableSpecification",
+        cssSelector: ["h1", "h2", ".about-summary"],
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": `${SITE.url}/#organization`,
+      name: SITE.name,
+      url: SITE.url,
+      logo: {
+        "@type": "ImageObject",
+        url: SITE.logo,
+        width: 200,
+        height: 60,
+      },
+      foundingDate: SITE.foundingYear,
+      foundingLocation: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Surat",
+          addressRegion: "Gujarat",
+          addressCountry: "IN",
+        },
+      },
+      numberOfEmployees: {
+        "@type": "QuantitativeValue",
+        minValue: 50,
+        maxValue: 200,
+      },
+      areaServed: SITE.areaServed,
+      award: [
+        "GIA Certified Partner",
+        "IGI Certified Retailer",
+        "VDB Diamond Technology Partner",
+      ],
+      knowsAbout: [
+        "Lab Grown Diamonds",
+        "Natural Diamonds",
+        "GIA Certification",
+        "IGI Certification",
+        "Diamond 4Cs",
+        "Custom Jewelry Design",
+        "Fine Gold Jewelry",
+        "Engagement Rings",
+        "Ethical Diamond Sourcing",
+      ],
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.9",
+        reviewCount: "1250",
+        bestRating: "5",
+        worstRating: "1",
+      },
+      sameAs: [...SITE.sameAs],
+      contactPoint: [
+        {
+          "@type": "ContactPoint",
+          telephone: SITE.phonePrimary,
+          contactType: "sales",
+          areaServed: SITE.areaServed,
+          availableLanguage: ["English"],
+        },
+        {
+          "@type": "ContactPoint",
+          telephone: SITE.phoneWhatsApp,
+          contactType: "customer support",
+          contactOption: "TollFree",
+          areaServed: SITE.areaServed,
+          availableLanguage: ["English"],
+        },
+      ],
+    },
+  ];
   const faqItems = [
-    { question: "How long has Flenix Jewels Ltd been in business?", answer: `We have ${YEARS_OF_EXCELLENCE_LABEL} years of experience in diamond and gold jewelry design, manufacturing, and exports.` },
-    { question: "Do you offer certified diamonds?", answer: "Yes. We offer certified natural and lab-grown diamonds with trusted grading standards." },
-    { question: "Do you serve international clients?", answer: "Yes. We serve clients globally with secure delivery and customer support." },
+    {
+      question: "How long has Flenix Jewels Ltd been in business?",
+      answer: `Flenix Jewels Ltd was founded in ${SITE.foundingYear} and has ${YEARS_OF_EXCELLENCE_LABEL} years of experience in diamond and gold jewelry design, manufacturing, and exports.`,
+    },
+    {
+      question: "Do you offer certified diamonds?",
+      answer: "Yes. We offer GIA (Gemological Institute of America) and IGI (International Gemological Institute) certified natural and lab-grown diamonds.",
+    },
+    {
+      question: "Do you serve international clients?",
+      answer: "Yes. We serve clients globally across USA, Canada, Australia, Germany, UK, and India with free insured express shipping and WhatsApp support.",
+    },
+    {
+      question: "Where is Flenix Jewels Ltd based?",
+      answer: `Flenix Jewels Ltd is headquartered in Surat, Gujarat, India — the world's diamond polishing capital — with a US office at 55 John St, East Rutherford, NJ.`,
+    },
+    {
+      question: "Do you offer custom jewelry design?",
+      answer: "Yes. We offer full bespoke design and manufacturing for engagement rings, wedding bands, necklaces, earrings, and bracelets in 14KT and 18KT gold and platinum.",
+    },
+    {
+      question: "What makes Flenix Jewels different from other jewelers?",
+      answer: `Flenix Jewels combines ${YEARS_OF_EXCELLENCE_LABEL} years of craftsmanship with GIA and IGI certifications, direct manufacturing from Surat (the diamond capital), competitive pricing, and a lifetime quality guarantee on all certified pieces.`,
+    },
   ];
 
   return (

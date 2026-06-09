@@ -346,32 +346,122 @@ const BuyingGuidePage = () => {
 
   const guideForSEO = STATIC_MODE ? selectedStaticGuide : (selected as any);
 
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'HowTo',
-    '@id': `https://www.flenixjewels.com/buying-guide${slug ? `/${slug}` : ''}#howto`,
-    name: guideForSEO?.title || 'Jewelry Buying Guide',
-    description: guideForSEO
-      ? (guideForSEO.metaDescription || (guideForSEO.content ? buildMetaDescriptionFromHtml(guideForSEO.content, 160) : 'Expert advice to help you make the perfect jewelry choice.'))
-      : 'Expert advice to help you make the perfect jewelry choice.',
-    mainEntityOfPage: `https://www.flenixjewels.com/buying-guide${slug ? `/${slug}` : ''}`,
-  };
+  const guideUrl = `https://www.flenixjewels.com/buying-guide${slug ? `/${slug}` : ''}`;
+  const guideDescription = guideForSEO
+    ? (guideForSEO.metaDescription || (guideForSEO.content ? buildMetaDescriptionFromHtml(guideForSEO.content, 160) : 'Expert advice to help you make the perfect jewelry choice.'))
+    : 'Expert advice to help you make the perfect jewelry choice.';
+
+  const structuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'HowTo',
+      '@id': `${guideUrl}#howto`,
+      name: guideForSEO?.title || 'Jewelry Buying Guide',
+      description: guideDescription,
+      url: guideUrl,
+      mainEntityOfPage: guideUrl,
+      image: {
+        '@type': 'ImageObject',
+        url: 'https://www.flenixjewels.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'Flenix Jewels Ltd',
+        url: 'https://www.flenixjewels.com',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Flenix Jewels Ltd',
+        logo: { '@type': 'ImageObject', url: 'https://www.flenixjewels.com/flenix-logo.png', width: 200, height: 60 },
+      },
+      inLanguage: 'en-US',
+      estimatedCost: { '@type': 'MonetaryAmount', currency: 'USD', value: '0' },
+      tool: [
+        { '@type': 'HowToTool', name: 'GIA Diamond Report' },
+        { '@type': 'HowToTool', name: 'IGI Diamond Certificate' },
+        { '@type': 'HowToTool', name: 'Ring Size Guide' },
+      ],
+      step: [
+        {
+          '@type': 'HowToStep',
+          position: 1,
+          name: 'Understand the Diamond 4Cs',
+          text: 'Learn about Cut (brilliance), Color (D–Z scale), Clarity (FL–I3), and Carat weight. Cut is the most important factor for sparkle.',
+          url: 'https://www.flenixjewels.com/buying-guide',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 2,
+          name: 'Choose Natural or Lab-Grown Diamond',
+          text: 'Natural diamonds are mined; lab-grown diamonds are created in a lab with identical properties. Lab-grown are typically 50–70% less expensive.',
+          url: 'https://www.flenixjewels.com/buying-guide',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 3,
+          name: 'Select a Certification (GIA or IGI)',
+          text: 'GIA is the gold standard for natural diamonds. IGI is widely trusted for lab-grown diamonds. Always insist on a grading certificate.',
+          url: 'https://www.flenixjewels.com/buying-guide',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 4,
+          name: 'Pick a Metal and Setting Style',
+          text: 'Choose from 14KT or 18KT yellow, white, or rose gold, or platinum. Consider solitaire, halo, three-stone, or pave settings based on style.',
+          url: 'https://www.flenixjewels.com/buying-guide',
+        },
+        {
+          '@type': 'HowToStep',
+          position: 5,
+          name: 'Confirm Ring Size and Order',
+          text: 'Use our ring size guide to measure accurately. Contact Flenix Jewels via WhatsApp or the enquiry form to finalize your order.',
+          url: 'https://www.flenixjewels.com/buying-guide',
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'EducationalOrganization',
+      '@id': 'https://www.flenixjewels.com/#education',
+      name: 'Flenix Jewels Jewelry Education',
+      description: 'Expert buying guides covering diamond 4Cs, lab-grown vs natural diamonds, ring styles, certification, and purchasing tips.',
+      url: 'https://www.flenixjewels.com/buying-guide',
+      provider: { '@id': 'https://www.flenixjewels.com/#organization' },
+    },
+  ];
 
   const defaultFaqItems = [
     {
-      question: "What are Flenix Jewels Ltd buying guides?",
+      question: "What are the diamond 4Cs?",
       answer:
-        "They are expert guides covering diamond quality, ring styles, certifications, and purchase tips.",
+        "The 4Cs are Cut, Color, Clarity, and Carat weight — the universal grading system for diamonds developed by GIA. Cut is the most important as it determines a diamond's brilliance and sparkle.",
     },
     {
-      question: "Do the guides cover natural and lab-grown diamonds?",
+      question: "What is the difference between lab-grown and natural diamonds?",
       answer:
-        "Yes. The guides explain both natural and lab-grown options to help you choose confidently.",
+        "Natural diamonds are mined from the earth over billions of years. Lab-grown diamonds (CVD or HPHT) are created in a laboratory with identical chemical and optical properties. Both are certified real diamonds — lab-grown typically cost 50–70% less.",
     },
     {
-      question: "Can I request a custom recommendation?",
+      question: "Should I choose a GIA or IGI certified diamond?",
       answer:
-        "Yes. Contact us for personalized advice based on your budget and preferences.",
+        "GIA (Gemological Institute of America) is the gold standard for natural diamond grading. IGI (International Gemological Institute) is widely trusted for lab-grown diamonds. Both provide reliable, internationally recognized grading reports.",
+    },
+    {
+      question: "What metal should I choose for an engagement ring?",
+      answer:
+        "18KT white gold gives a platinum-like appearance with warmth; 14KT is more durable for daily wear. Yellow gold is classic and timeless. Rose gold is romantic and trending. Platinum is the most durable and hypoallergenic.",
+    },
+    {
+      question: "How do I find my ring size?",
+      answer:
+        "You can measure your finger with a strip of paper or string, or visit a local jeweler for sizing. Our team can also guide you — contact us on WhatsApp for a free sizing consultation.",
+    },
+    {
+      question: "Can I request a custom jewelry design?",
+      answer:
+        "Yes. Flenix Jewels Ltd offers full bespoke design services. Contact us via WhatsApp or our enquiry form with your vision, budget, and preferred metal and diamond type.",
     },
   ];
   const faqItems = selected?.seoFaq && selected.seoFaq.length > 0 ? selected.seoFaq : defaultFaqItems;

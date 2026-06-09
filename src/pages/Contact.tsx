@@ -8,6 +8,7 @@ import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
 import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { cleanWhatsApp } from "@/lib/utils";
+import { SITE } from "@/lib/seo";
 import { saveContactSubmission } from "@/lib/storage";
 import { sendAdminContactFormEmail, sendCustomerContactConfirmationEmail } from "@/lib/emailService";
 import { MapPin, Phone, Mail, Clock, Send, Flag, Loader2, Gem, MessageCircle, ChevronRight } from 'lucide-react';
@@ -82,23 +83,105 @@ const Contact = () => {
     [offices]
   );
 
-  const structuredData = {
-    '@context': 'https://schema.org', '@type': 'ContactPage',
-    '@id': 'https://www.flenixjewels.com/contact#contactpage',
-    name: 'Contact Flenix Jewels Ltd - Diamond Jewelry Store',
-    description: 'Contact Flenix Jewels Ltd for premium diamond jewelry, custom designs, engagement rings, and wholesale inquiries.',
-    url: 'https://www.flenixjewels.com/contact',
-    mainEntityOfPage: 'https://www.flenixjewels.com/contact',
-    mainEntity: {
-      '@type': 'Organization', '@id': 'https://www.flenixjewels.com/#jewelry-store',
-      name: 'Flenix Jewels Ltd', telephone: contactInfo?.phone, email: contactInfo?.email,
-      address: { '@type': 'PostalAddress', addressLocality: 'Mumbai', addressCountry: 'India' }
-    }
-  };
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      "@id": `${SITE.url}/contact#contactpage`,
+      name: "Contact Flenix Jewels Ltd — Diamond Jewelry Store",
+      description:
+        "Contact Flenix Jewels Ltd for GIA certified diamonds, custom jewelry designs, engagement rings, wholesale orders. Global offices. 24/7 WhatsApp support.",
+      url: `${SITE.url}/contact`,
+      inLanguage: "en-US",
+      mainEntityOfPage: `${SITE.url}/contact`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": ["JewelryStore", "LocalBusiness"],
+      "@id": `${SITE.url}/#local-business`,
+      name: SITE.name,
+      description:
+        "Premium diamond and gold jewelry store. GIA and IGI certified natural and lab-grown diamonds. Engagement rings, wedding bands, necklaces, earrings, bracelets. Worldwide shipping.",
+      url: SITE.url,
+      telephone: contactInfo?.phone || SITE.phonePrimary,
+      email: contactInfo?.email || SITE.email,
+      logo: SITE.logo,
+      image: SITE.ogImage,
+      priceRange: "$$$",
+      currenciesAccepted: "USD",
+      paymentAccepted: "Credit Card, Bank Transfer, Wire Transfer",
+      address: [
+        {
+          "@type": "PostalAddress",
+          streetAddress: SITE.addressUsa.street,
+          addressLocality: SITE.addressUsa.locality,
+          addressRegion: SITE.addressUsa.region,
+          postalCode: SITE.addressUsa.postalCode,
+          addressCountry: SITE.addressUsa.country,
+        },
+        {
+          "@type": "PostalAddress",
+          addressLocality: SITE.addressIndia.locality,
+          addressRegion: SITE.addressIndia.region,
+          addressCountry: SITE.addressIndia.country,
+        },
+      ],
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: SITE.geo.latitude,
+        longitude: SITE.geo.longitude,
+      },
+      hasMap: `https://maps.google.com/?q=${SITE.geo.latitude},${SITE.geo.longitude}`,
+      openingHoursSpecification: [
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          opens: "09:00",
+          closes: "18:00",
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Saturday"],
+          opens: "10:00",
+          closes: "16:00",
+        },
+      ],
+      areaServed: SITE.areaServed,
+      sameAs: [...SITE.sameAs],
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.9",
+        reviewCount: "1250",
+        bestRating: "5",
+        worstRating: "1",
+      },
+    },
+  ];
   const faqItems = [
-    { question: "How can I contact Flenix Jewels Ltd?", answer: "You can contact us via phone or WhatsApp for product inquiries, custom orders, and wholesale requests." },
-    { question: "Do you offer custom jewelry design?", answer: "Yes. We provide custom design and manufacturing for engagement rings, wedding bands, and fine jewelry." },
-    { question: "Do you ship internationally?", answer: "Yes. We ship globally with secure packaging and delivery options for select regions." },
+    {
+      question: "How can I contact Flenix Jewels Ltd?",
+      answer: `You can contact us via WhatsApp at ${SITE.phoneWhatsApp}, email at ${SITE.email}, or through our online contact form. We respond within a few hours on business days.`,
+    },
+    {
+      question: "Do you offer custom jewelry design?",
+      answer: "Yes. We provide full bespoke design and manufacturing for engagement rings, wedding bands, necklaces, earrings, and bracelets in 14KT and 18KT gold and platinum.",
+    },
+    {
+      question: "Do you ship internationally?",
+      answer: "Yes. We offer free insured express shipping to USA, Canada, Australia, Germany, UK, India, and 15+ more countries worldwide.",
+    },
+    {
+      question: "What are your business hours?",
+      answer: "We are available Monday to Friday, 9:00 AM – 6:00 PM IST, and Saturday 10:00 AM – 4:00 PM IST. WhatsApp messages are monitored outside these hours.",
+    },
+    {
+      question: "Do you handle wholesale diamond jewelry orders?",
+      answer: "Yes. We supply wholesale diamond and gold jewelry to retailers and designers globally. Please contact us via WhatsApp or the enquiry form with your requirements.",
+    },
+    {
+      question: "Where are your offices located?",
+      answer: `Our manufacturing headquarters is in Surat, Gujarat, India — the world's diamond polishing capital. We also have a US office at ${SITE.addressUsa.street}, ${SITE.addressUsa.locality}, ${SITE.addressUsa.region}.`,
+    },
   ];
 
   const inputBase = "w-full px-4 py-3.5 rounded-xl text-sm font-medium outline-none transition-all duration-200 bg-[#F5EDE3] dark:bg-[#1a0c06] text-[#1C0D05] dark:text-[#F5E8D8] placeholder:text-[#C4A080] dark:placeholder:text-[#5A4030] border border-transparent focus:border-[#C4906A] dark:focus:border-[#C4906A]";

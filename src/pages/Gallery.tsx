@@ -243,16 +243,69 @@ const Gallery = () => {
     return map;
   }, [galleryItems]);
 
-  const structuredData = {
-    '@context': 'https://schema.org', '@type': 'ImageGallery',
-    name: 'Flenix Jewels Ltd Gallery', url: 'https://www.flenixjewels.com/gallery',
-    image: galleryItems.slice(0, 10).map((i: any) => i.image),
-  };
+  const structuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ImageGallery',
+      '@id': 'https://www.flenixjewels.com/gallery#imagegallery',
+      name: 'Flenix Jewels Ltd — Diamond & Gold Jewelry Gallery',
+      description: 'High-resolution photos of premium GIA and IGI certified diamond jewelry. Engagement rings, wedding bands, necklaces, earrings, and bracelets by Flenix Jewels Ltd.',
+      url: 'https://www.flenixjewels.com/gallery',
+      mainEntityOfPage: 'https://www.flenixjewels.com/gallery',
+      inLanguage: 'en-US',
+      publisher: {
+        '@type': 'Organization',
+        name: 'Flenix Jewels Ltd',
+        url: 'https://www.flenixjewels.com',
+        logo: { '@type': 'ImageObject', url: 'https://www.flenixjewels.com/flenix-logo.png', width: 200, height: 60 },
+      },
+      image: galleryItems.slice(0, 16).map((i: any, idx: number) => ({
+        '@type': 'ImageObject',
+        '@id': `https://www.flenixjewels.com/gallery#image-${idx + 1}`,
+        url: i.image,
+        name: i.title || `Flenix Jewels — ${i.category || 'Diamond Jewelry'} ${idx + 1}`,
+        description: i.description || `Premium certified diamond jewelry by Flenix Jewels Ltd`,
+        caption: i.title || `Certified Diamond Jewelry — Flenix Jewels Ltd`,
+        representativeOfPage: idx === 0,
+      })),
+      about: [
+        { '@type': 'Thing', name: 'Diamond Engagement Rings' },
+        { '@type': 'Thing', name: 'Diamond Necklaces' },
+        { '@type': 'Thing', name: 'Diamond Earrings' },
+        { '@type': 'Thing', name: 'Wedding Bands' },
+        { '@type': 'Thing', name: 'Lab Grown Diamond Jewelry' },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      '@id': 'https://www.flenixjewels.com/gallery#collectionpage',
+      name: 'Jewelry Gallery — Premium Diamond & Gold Collection Photos',
+      description: 'Browse stunning photographs of Flenix Jewels Ltd certified diamond jewelry collections.',
+      url: 'https://www.flenixjewels.com/gallery',
+      isPartOf: { '@id': 'https://www.flenixjewels.com/#website' },
+      about: { '@id': 'https://www.flenixjewels.com/#organization' },
+      numberOfItems: galleryItems.length,
+    },
+  ];
 
   const faqItems = [
-    { question: "What is shown in the Flenix Jewels Ltd gallery?", answer: "Our gallery showcases premium diamond and gold jewelry, including rings, earrings, necklaces, and bracelets." },
-    { question: "Can I request a similar design from the gallery?", answer: "Yes. You can contact us on WhatsApp to request similar or customized designs." },
-    { question: "Are gallery items available for international shipping?", answer: "Yes. We ship worldwide with secure packaging for select regions." },
+    {
+      question: "What jewelry is shown in the Flenix Jewels Ltd gallery?",
+      answer: "Our gallery showcases premium GIA and IGI certified diamond and gold jewelry including engagement rings, wedding bands, necklaces, earrings, bracelets, and custom bespoke pieces.",
+    },
+    {
+      question: "Can I request a similar design from the gallery?",
+      answer: "Yes. Contact us on WhatsApp or through our enquiry form with any gallery piece you love. We can recreate or customize the design in your preferred metal and diamond type.",
+    },
+    {
+      question: "Are gallery items available for international shipping?",
+      answer: "Yes. We offer free insured express shipping to USA, Canada, Australia, Germany, UK, India, and 15+ countries worldwide.",
+    },
+    {
+      question: "Can I use gallery images on my website?",
+      answer: "No. All images and designs in our gallery are the intellectual property of Flenix Jewels Ltd and may not be reproduced without written permission.",
+    },
   ];
 
   return (
