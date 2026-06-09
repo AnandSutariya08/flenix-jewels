@@ -3,4 +3,118 @@
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
+  <!-- Home page -->
+  <url>
+    <loc>https://www.flenixjewels.com/</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Flenix Jewels Ltd — Premium Diamond &amp; Gold Jewelry</image:title>
+      <image:caption>GIA &amp; IGI certified natural and lab-grown diamond jewelry with worldwide shipping</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/flenix-logo.png</image:loc>
+      <image:title>Flenix Jewels Ltd — Official Logo</image:title>
+    </image:image>
+  </url>
+
+  <!-- Diamond Catalog -->
+  <url>
+    <loc>https://www.flenixjewels.com/diamond</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Flenix Jewels Diamond Catalog — GIA &amp; IGI Certified Diamonds</image:title>
+      <image:caption>Natural and lab-grown certified diamonds in round, oval, princess, and other cuts</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Jewellery Categories -->
+  <url>
+    <loc>https://www.flenixjewels.com/categories</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Flenix Jewels — Diamond Jewelry Collections</image:title>
+      <image:caption>Rings, necklaces, earrings, bracelets and wedding bands in 14KT and 18KT gold</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Gallery -->
+  <url>
+    <loc>https://www.flenixjewels.com/gallery</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Flenix Jewels Jewelry Gallery — Fine Diamond Pieces</image:title>
+      <image:caption>Gallery of premium GIA &amp; IGI certified diamond jewelry by Flenix Jewels</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Buying Guide -->
+  <url>
+    <loc>https://www.flenixjewels.com/buying-guide</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Diamond Buying Guide — 4Cs, Certification &amp; More</image:title>
+      <image:caption>Complete guide to buying diamonds — cut, clarity, color, carat weight, and certification</image:caption>
+    </image:image>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://www.flenixjewels.com/about</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/flenix-logo.png</image:loc>
+      <image:title>About Flenix Jewels Ltd — Our Story</image:title>
+      <image:caption>Flenix Jewels Ltd — premium diamond jewelry brand established in 2015, Surat, India</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://www.flenixjewels.com/contact</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/flenix-logo.png</image:loc>
+      <image:title>Contact Flenix Jewels Ltd</image:title>
+      <image:caption>Get in touch with Flenix Jewels Ltd for inquiries, custom orders, and support</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Country: USA -->
+  <url>
+    <loc>https://www.flenixjewels.com/usa</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Diamond Jewelry in the USA — Flenix Jewels</image:title>
+      <image:caption>GIA &amp; IGI certified diamond jewelry shipped free to the United States</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Country: Canada -->
+  <url>
+    <loc>https://www.flenixjewels.com/canada</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Diamond Jewelry in Canada — Flenix Jewels</image:title>
+      <image:caption>GIA &amp; IGI certified diamond jewelry shipped free to Canada</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Country: Australia -->
+  <url>
+    <loc>https://www.flenixjewels.com/australia</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Diamond Jewelry in Australia — Flenix Jewels</image:title>
+      <image:caption>GIA &amp; IGI certified diamond jewelry shipped free to Australia</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Country: Germany -->
+  <url>
+    <loc>https://www.flenixjewels.com/germany</loc>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Diamantschmuck in Deutschland — Flenix Jewels</image:title>
+      <image:caption>GIA &amp; IGI zertifizierter Diamantschmuck mit kostenlosem Versand nach Deutschland</image:caption>
+    </image:image>
+  </url>
+
 </urlset>
