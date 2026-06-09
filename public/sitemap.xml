@@ -4,27 +4,50 @@
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
+  <!-- Home -->
   <url>
     <loc>https://www.flenixjewels.com/</loc>
     <lastmod>2026-06-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.flenixjewels.com/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://www.flenixjewels.com/usa"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://www.flenixjewels.com/canada"/>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://www.flenixjewels.com/australia"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://www.flenixjewels.com/germany"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.flenixjewels.com/"/>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/og-image.jpg</image:loc>
+      <image:title>Flenix Jewels Ltd — Premium Diamond Jewelry</image:title>
+      <image:caption>GIA &amp; IGI certified natural and lab-grown diamond jewelry with worldwide shipping</image:caption>
+    </image:image>
   </url>
 
+  <!-- Jewellery Categories -->
   <url>
     <loc>https://www.flenixjewels.com/categories</loc>
     <lastmod>2026-06-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.flenixjewels.com/categories"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.flenixjewels.com/categories"/>
   </url>
 
+  <!-- Diamond Catalog -->
   <url>
     <loc>https://www.flenixjewels.com/diamond</loc>
     <lastmod>2026-06-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.88</priority>
+    <changefreq>daily</changefreq>
+    <priority>0.92</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.flenixjewels.com/diamond"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.flenixjewels.com/diamond"/>
+    <image:image>
+      <image:loc>https://www.flenixjewels.com/hero-banner-2.jpg</image:loc>
+      <image:title>Flenix Jewels Diamond Collection — Natural &amp; Lab Grown Diamonds</image:title>
+    </image:image>
   </url>
 
+  <!-- Gallery -->
   <url>
     <loc>https://www.flenixjewels.com/gallery</loc>
     <lastmod>2026-06-09</lastmod>
@@ -32,20 +55,23 @@
     <priority>0.85</priority>
   </url>
 
+  <!-- Blog -->
   <url>
     <loc>https://www.flenixjewels.com/blog</loc>
     <lastmod>2026-06-09</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.80</priority>
   </url>
 
+  <!-- Buying Guide -->
   <url>
     <loc>https://www.flenixjewels.com/buying-guide</loc>
     <lastmod>2026-06-09</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
+    <priority>0.75</priority>
   </url>
 
+  <!-- About -->
   <url>
     <loc>https://www.flenixjewels.com/about</loc>
     <lastmod>2026-06-09</lastmod>
@@ -53,6 +79,7 @@
     <priority>0.65</priority>
   </url>
 
+  <!-- Contact -->
   <url>
     <loc>https://www.flenixjewels.com/contact</loc>
     <lastmod>2026-06-09</lastmod>
@@ -60,11 +87,15 @@
     <priority>0.60</priority>
   </url>
 
+  <!-- Country Landing Pages -->
   <url>
     <loc>https://www.flenixjewels.com/usa</loc>
     <lastmod>2026-06-09</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
+    <priority>0.72</priority>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://www.flenixjewels.com/usa"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.flenixjewels.com/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.flenixjewels.com/"/>
   </url>
 
   <url>
@@ -72,6 +103,9 @@
     <lastmod>2026-06-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://www.flenixjewels.com/canada"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.flenixjewels.com/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.flenixjewels.com/"/>
   </url>
 
   <url>
@@ -79,6 +113,9 @@
     <lastmod>2026-06-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://www.flenixjewels.com/australia"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.flenixjewels.com/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.flenixjewels.com/"/>
   </url>
 
   <url>
@@ -86,6 +123,9 @@
     <lastmod>2026-06-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://www.flenixjewels.com/germany"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.flenixjewels.com/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.flenixjewels.com/"/>
   </url>
 
 </urlset>

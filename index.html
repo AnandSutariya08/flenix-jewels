@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <!-- Primary Meta Tags -->
   <title>Flenix Jewels Ltd | Natural &amp; Lab Grown Diamond Jewelry | Fine Jewellery Online</title>
@@ -15,9 +16,20 @@
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1">
   <meta name="bingbot" content="index, follow">
+  <meta name="slurp" content="index, follow">
   <meta name="language" content="English">
   <meta name="distribution" content="global">
+  <meta name="coverage" content="Worldwide">
+  <meta name="rating" content="general">
+  <meta name="revisit-after" content="7 days">
+  <meta name="referrer" content="no-referrer-when-downgrade">
   <meta http-equiv="content-language" content="en-US">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- Mobile Optimisation -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
 
   <!-- Geo Tags -->
   <meta name="geo.region" content="IN-GJ">
@@ -28,6 +40,10 @@
   <!-- Canonical & hreflang -->
   <link rel="canonical" href="https://www.flenixjewels.com/">
   <link rel="alternate" hreflang="en" href="https://www.flenixjewels.com/">
+  <link rel="alternate" hreflang="en-US" href="https://www.flenixjewels.com/usa">
+  <link rel="alternate" hreflang="en-CA" href="https://www.flenixjewels.com/canada">
+  <link rel="alternate" hreflang="en-AU" href="https://www.flenixjewels.com/australia">
+  <link rel="alternate" hreflang="de-DE" href="https://www.flenixjewels.com/germany">
   <link rel="alternate" hreflang="x-default" href="https://www.flenixjewels.com/">
 
   <!-- Sitemap & feed discovery -->
@@ -38,7 +54,19 @@
   <!-- PWA Manifest -->
   <link rel="manifest" href="/site.webmanifest">
 
-  <!-- Preconnect for Performance -->
+  <!-- Favicon set -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/flenix-logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/flenix-logo.png">
+  <link rel="shortcut icon" type="image/png" href="/flenix-logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/flenix-logo.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/flenix-logo.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/flenix-logo.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/flenix-logo.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/flenix-logo.png">
+  <link rel="mask-icon" href="/flenix-logo.png" color="#C4906A">
+
+  <!-- Critical resource preloads (LCP optimisation) -->
+  <link rel="preload" as="image" href="/hero-banner-1.jpg" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://fonts.googleapis.com">
@@ -47,6 +75,8 @@
   <link rel="preconnect" href="https://storage.googleapis.com">
   <link rel="dns-prefetch" href="https://storage.googleapis.com">
   <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+  <link rel="dns-prefetch" href="https://www.google-analytics.com">
+  <link rel="dns-prefetch" href="https://ipapi.co">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -54,13 +84,17 @@
   <meta property="og:title" content="Flenix Jewels Ltd | Natural &amp; Lab Grown Diamond Jewelry">
   <meta property="og:description"
     content="Premium natural and lab grown diamond jewelry at Flenix Jewels Ltd. GIA &amp; IGI certified engagement rings, necklaces, earrings &amp; custom designs with worldwide shipping.">
-  <meta property="og:image" content="https://www.flenixjewels.com/icon.png">
-  <meta property="og:image:secure_url" content="https://www.flenixjewels.com/icon.png">
+  <meta property="og:image" content="https://www.flenixjewels.com/og-image.jpg">
+  <meta property="og:image:secure_url" content="https://www.flenixjewels.com/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Flenix Jewels Ltd — Premium Diamond Jewelry">
+  <meta property="og:image:type" content="image/jpeg">
   <meta property="og:site_name" content="Flenix Jewels Ltd">
   <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="en_GB">
+  <meta property="og:locale:alternate" content="en_AU">
+  <meta property="og:locale:alternate" content="en_CA">
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
@@ -70,7 +104,7 @@
   <meta name="twitter:title" content="Flenix Jewels Ltd | Natural &amp; Lab Grown Diamond Jewelry">
   <meta name="twitter:description"
     content="Premium natural and lab grown diamond jewelry. GIA &amp; IGI certified engagement rings, necklaces &amp; custom designs with worldwide shipping.">
-  <meta name="twitter:image" content="https://www.flenixjewels.com/icon.png">
+  <meta name="twitter:image" content="https://www.flenixjewels.com/og-image.jpg">
   <meta name="twitter:image:alt" content="Flenix Jewels Ltd — Premium Diamond Jewelry">
 
   <!-- Pinterest -->
@@ -79,22 +113,19 @@
   <!-- Apple / PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Flenix Jewels Ltd">
+  <meta name="apple-mobile-web-app-title" content="Flenix Jewels">
   <meta name="mobile-web-app-capable" content="yes">
-  <link rel="apple-touch-icon" href="/flenix-logo.png">
 
   <!-- Microsoft -->
   <meta name="msapplication-TileColor" content="#C4906A">
   <meta name="msapplication-TileImage" content="/flenix-logo.png">
   <meta name="msapplication-config" content="/browserconfig.xml">
+  <meta name="msapplication-starturl" content="/">
 
   <!-- Theme -->
-  <meta name="theme-color" content="#C4906A">
+  <meta name="theme-color" content="#C4906A" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#130900" media="(prefers-color-scheme: dark)">
   <meta name="application-name" content="Flenix Jewels Ltd">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/flenix-logo.png">
-  <link rel="shortcut icon" type="image/png" href="/flenix-logo.png">
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-2DR5L2HL09"></script>
@@ -102,7 +133,10 @@
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', 'G-2DR5L2HL09', { send_page_view: true });
+    gtag('config', 'G-2DR5L2HL09', {
+      send_page_view: true,
+      cookie_flags: 'max-age=7200;secure;samesite=none'
+    });
   </script>
 
   <!-- ═══════════════════════════════════════════════════════════════════════════
@@ -119,15 +153,19 @@
     "@type": ["JewelryStore", "LocalBusiness"],
     "@id": "https://www.flenixjewels.com/#organization",
     "name": "Flenix Jewels Ltd",
-    "alternateName": "Flenix Jewels",
+    "alternateName": ["Flenix Jewels", "Flenix Diamond Jewelry"],
     "url": "https://www.flenixjewels.com",
     "logo": {
       "@type": "ImageObject",
       "url": "https://www.flenixjewels.com/flenix-logo.png",
       "width": 200,
-      "height": 60
+      "height": 60,
+      "caption": "Flenix Jewels Ltd Logo"
     },
-    "image": "https://www.flenixjewels.com/icon.png",
+    "image": [
+      "https://www.flenixjewels.com/og-image.jpg",
+      "https://www.flenixjewels.com/icon.png"
+    ],
     "description": "Premium diamond and gold jewelry brand established in 2015. Certified natural and lab-grown diamonds, engagement rings, wedding bands, and bespoke jewelry with worldwide delivery.",
     "priceRange": "$$$",
     "telephone": "+852 51254000",
@@ -168,7 +206,14 @@
         "closes": "16:00"
       }
     ],
-    "areaServed": ["US", "CA", "AU", "DE", "GB", "IN"],
+    "areaServed": [
+      { "@type": "Country", "name": "United States" },
+      { "@type": "Country", "name": "Canada" },
+      { "@type": "Country", "name": "Australia" },
+      { "@type": "Country", "name": "Germany" },
+      { "@type": "Country", "name": "United Kingdom" },
+      { "@type": "Country", "name": "India" }
+    ],
     "currenciesAccepted": "USD",
     "paymentAccepted": "Credit Card, Bank Transfer, Wire Transfer",
     "sameAs": [
@@ -182,25 +227,27 @@
         "telephone": "+852 51254000",
         "contactType": "sales",
         "areaServed": ["US","CA","AU","DE","GB","IN"],
-        "availableLanguage": ["English"]
+        "availableLanguage": ["English"],
+        "contactOption": "TollFree"
       },
       {
         "@type": "ContactPoint",
         "telephone": "+852 51254000",
         "contactType": "customer support",
         "areaServed": ["US","CA","AU","DE","GB","IN"],
-        "availableLanguage": ["English"]
+        "availableLanguage": ["English"],
+        "contactOption": "TollFree"
       }
     ],
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
       "name": "Fine Diamond Jewelry Collection",
       "itemListElement": [
-        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Diamond Engagement Rings" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Diamond Necklaces" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Diamond Earrings" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Diamond Bracelets" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Wedding Bands" } }
+        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Diamond Engagement Rings", "category": "Rings" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Diamond Necklaces", "category": "Necklaces" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Diamond Earrings", "category": "Earrings" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Diamond Bracelets", "category": "Bracelets" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Wedding Bands", "category": "Wedding Bands" } }
       ]
     },
     "aggregateRating": {
@@ -209,7 +256,17 @@
       "reviewCount": "1250",
       "bestRating": "5",
       "worstRating": "1"
-    }
+    },
+    "knowsAbout": [
+      "Lab Grown Diamonds",
+      "Natural Diamonds",
+      "GIA Certification",
+      "IGI Certification",
+      "Diamond 4Cs",
+      "Engagement Rings",
+      "Custom Jewelry Design",
+      "Fine Jewelry"
+    ]
   }
   </script>
 
@@ -231,6 +288,45 @@
         "urlTemplate": "https://www.flenixjewels.com/categories?search={search_term_string}"
       },
       "query-input": "required name=search_term_string"
+    },
+    "copyrightYear": 2015,
+    "copyrightHolder": { "@id": "https://www.flenixjewels.com/#organization" }
+  }
+  </script>
+
+  <!-- Custom Jewelry Service Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": "https://www.flenixjewels.com/#custom-jewelry-service",
+    "name": "Custom Jewelry Design Service",
+    "description": "Bespoke diamond jewelry design and manufacturing. Create custom engagement rings, wedding bands, and fine jewelry in 14KT and 18KT gold with GIA- and IGI-certified diamonds.",
+    "provider": { "@id": "https://www.flenixjewels.com/#organization" },
+    "serviceType": "Custom Jewelry Design",
+    "category": "Fine Jewelry",
+    "areaServed": [
+      { "@type": "Country", "name": "United States" },
+      { "@type": "Country", "name": "Canada" },
+      { "@type": "Country", "name": "Australia" },
+      { "@type": "Country", "name": "Germany" },
+      { "@type": "Country", "name": "United Kingdom" },
+      { "@type": "Country", "name": "India" }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "availability": "https://schema.org/InStock",
+      "url": "https://www.flenixjewels.com/contact",
+      "seller": { "@id": "https://www.flenixjewels.com/#organization" }
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Custom Design Options",
+      "itemListElement": [
+        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Custom Engagement Ring" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Bespoke Wedding Band" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Custom Diamond Pendant" } }
+      ]
     }
   }
   </script>

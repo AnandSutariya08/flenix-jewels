@@ -57,6 +57,10 @@ const SEOHead = ({
     isPartOf: { "@id": `${baseUrl}/#website` },
     publisher: { "@id": `${baseUrl}/#organization` },
     dateModified: today,
+    potentialAction: {
+      "@type": "ReadAction",
+      target: [pageUrl],
+    },
   };
   if (breadcrumbs?.length) {
     webPageSchema.breadcrumb = { "@id": `${pageUrl}#breadcrumb` };
@@ -123,10 +127,21 @@ const SEOHead = ({
         content={noIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1"}
       />
 
-      {/* ── Identity ── */}
+      {/* ── Identity & global signals ── */}
       <meta name="language" content="English" />
       <meta name="author" content={siteName} />
       <meta httpEquiv="content-language" content="en-US" />
+      <meta name="distribution" content="global" />
+      <meta name="coverage" content="Worldwide" />
+      <meta name="rating" content="general" />
+      <meta name="revisit-after" content="7 days" />
+      <meta name="referrer" content="no-referrer-when-downgrade" />
+
+      {/* ── Mobile ── */}
+      <meta name="HandheldFriendly" content="True" />
+      <meta name="MobileOptimized" content="320" />
+      <meta name="format-detection" content="telephone=no, address=no, email=no" />
+      <meta name="color-scheme" content="light dark" />
 
       {/* ── Geo ── */}
       <meta name="geo.region" content="IN-GJ" />
@@ -157,6 +172,7 @@ const SEOHead = ({
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+      <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       <link rel="dns-prefetch" href="https://ipapi.co" />
 
       {/* ── Open Graph ── */}
@@ -169,8 +185,10 @@ const SEOHead = ({
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content={`${siteName} — ${title}`} />
-      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:locale" content="en_US" />
+      <meta property="og:locale:alternate" content="en_GB" />
+      <meta property="og:locale:alternate" content="en_AU" />
       <meta property="og:url" content={pageUrl} />
 
       {/* ── Article OG ── */}
@@ -194,6 +212,10 @@ const SEOHead = ({
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={resolvedImage} />
       <meta name="twitter:image:alt" content={`${siteName} — ${title}`} />
+      <meta name="twitter:label1" content="Certifications" />
+      <meta name="twitter:data1" content="GIA & IGI Certified" />
+      <meta name="twitter:label2" content="Shipping" />
+      <meta name="twitter:data2" content="Worldwide Free Shipping" />
 
       {/* ── Pinterest ── */}
       <meta name="pinterest-rich-pin" content="true" />
@@ -201,12 +223,13 @@ const SEOHead = ({
       {/* ── PWA / Mobile ── */}
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-      <meta name="apple-mobile-web-app-title" content={siteName} />
+      <meta name="apple-mobile-web-app-title" content="Flenix Jewels" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="application-name" content={siteName} />
       <meta name="msapplication-TileColor" content="#C4906A" />
       <meta name="msapplication-config" content="/browserconfig.xml" />
-      <meta name="theme-color" content="#C4906A" />
+      <meta name="theme-color" content="#C4906A" media="(prefers-color-scheme: light)" />
+      <meta name="theme-color" content="#130900" media="(prefers-color-scheme: dark)" />
 
       {/* ── JSON-LD: page-level structured data ── */}
       {schemaList.map((schema, idx) => (

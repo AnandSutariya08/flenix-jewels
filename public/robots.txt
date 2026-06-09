@@ -17,7 +17,7 @@ Allow: /
 User-agent: Googlebot-Video
 Allow: /
 
-# Google AI Overviews / SGE - allow for brand visibility in AI answers
+# Google AI Overviews / SGE — allow for brand visibility in AI answers
 User-agent: Google-Extended
 Allow: /
 
@@ -54,6 +54,10 @@ Allow: /
 User-agent: Applebot
 Allow: /
 
+# Apple AI (Siri, Apple Intelligence)
+User-agent: Applebot-Extended
+Allow: /
+
 # ─── AI & LLM Crawlers (allow for brand visibility) ──────────────────────────
 # OpenAI
 User-agent: GPTBot
@@ -79,8 +83,15 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
-# Google Gemini / Bard
+# Google Gemini / AI Overviews
 User-agent: Gemini-Web
+Allow: /
+
+User-agent: Google-CloudVertexBot
+Allow: /
+
+# xAI Grok
+User-agent: xAI-Bot
 Allow: /
 
 # Meta AI
@@ -110,9 +121,30 @@ Allow: /
 User-agent: YouBot
 Allow: /
 
+# Mistral AI
+User-agent: MistralBot
+Allow: /
+
 # Common Crawl (used by many AI training datasets)
 User-agent: CCBot
 Allow: /
+
+# ─── SEO Tools (allow for analytics and auditing) ─────────────────────────────
+User-agent: AhrefsBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Allow: /
+Crawl-delay: 10
+
+User-agent: DotBot
+Allow: /
+Crawl-delay: 10
 
 # ─── Social Media Crawlers ────────────────────────────────────────────────────
 User-agent: Twitterbot
@@ -137,6 +169,9 @@ User-agent: TelegramBot
 Allow: /
 
 User-agent: Slackbot
+Allow: /
+
+User-agent: Discordbot
 Allow: /
 
 # ─── Default: allow all ───────────────────────────────────────────────────────
@@ -177,6 +212,7 @@ Allow: /sitemap-index.xml
 Allow: /site.webmanifest
 Allow: /llms.txt
 Allow: /robots.txt
+Allow: /.well-known/
 
 # ─── Sitemaps ─────────────────────────────────────────────────────────────────
 Sitemap: https://www.flenixjewels.com/sitemap-index.xml
@@ -186,8 +222,11 @@ Sitemap: https://www.flenixjewels.com/sitemap-images.xml
 # ─── RSS Feed ─────────────────────────────────────────────────────────────────
 # Feed: https://www.flenixjewels.com/feed.xml
 
+# ─── LLMs.txt (AI crawler context) ───────────────────────────────────────────
+# LLMs: https://www.flenixjewels.com/llms.txt
+
 # ─── Host preference ──────────────────────────────────────────────────────────
 Host: https://www.flenixjewels.com
 
 # Clean tracking parameters
-Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&ref&fbclid&gclid&msclkid
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&ref&fbclid&gclid&msclkid&source

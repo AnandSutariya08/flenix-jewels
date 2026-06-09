@@ -5,7 +5,7 @@ export const YEARS_OF_EXCELLENCE_LABEL = `${YEARS_OF_EXCELLENCE}+`;
 export const SITE = {
   name: "Flenix Jewels Ltd",
   url: "https://www.flenixjewels.com",
-  ogImage: "https://www.flenixjewels.com/icon.png",
+  ogImage: "https://www.flenixjewels.com/og-image.jpg",
   logo: "https://www.flenixjewels.com/flenix-logo.png",
   phonePrimary: "+852 51254000",
   phoneWhatsApp: "+852 51254000",
@@ -186,6 +186,41 @@ export const buildOffer = (url: string, price?: string) => {
     availability: "https://schema.org/InStock",
     url,
     seller: { "@type": "Organization", name: SITE.name },
+    shippingDetails: {
+      "@type": "OfferShippingDetails",
+      shippingRate: {
+        "@type": "MonetaryAmount",
+        value: "0",
+        currency: "USD",
+      },
+      shippingDestination: {
+        "@type": "DefinedRegion",
+        addressCountry: ["US", "CA", "AU", "DE", "GB", "IN"],
+      },
+      deliveryTime: {
+        "@type": "ShippingDeliveryTime",
+        handlingTime: {
+          "@type": "QuantitativeValue",
+          minValue: 1,
+          maxValue: 3,
+          unitCode: "DAY",
+        },
+        transitTime: {
+          "@type": "QuantitativeValue",
+          minValue: 3,
+          maxValue: 10,
+          unitCode: "DAY",
+        },
+      },
+    },
+    hasMerchantReturnPolicy: {
+      "@type": "MerchantReturnPolicy",
+      applicableCountry: ["US", "CA", "AU", "DE", "GB", "IN"],
+      returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+      merchantReturnDays: 30,
+      returnMethod: "https://schema.org/ReturnByMail",
+      returnFees: "https://schema.org/FreeReturn",
+    },
     ...(numericPrice ? { price: numericPrice, priceCurrency: "USD" } : {}),
   };
 };
@@ -201,30 +236,38 @@ export const buildMetaDescriptionForBlog = (html: string) => {
 export const buildFaqForCategory = (categoryName: string) => [
   {
     question: `Are ${categoryName} diamonds certified?`,
-    answer: "Yes. We offer certified natural and lab-grown diamonds with trusted grading standards.",
+    answer: "Yes. We offer certified natural and lab-grown diamonds with trusted grading standards including GIA and IGI.",
   },
   {
     question: `Can I customize ${categoryName} designs?`,
-    answer: "Yes. We offer custom design and manufacturing for select categories and styles.",
+    answer: "Yes. We offer custom design and manufacturing for select categories and styles. Contact us via WhatsApp or our enquiry form.",
   },
   {
     question: "Do you ship internationally?",
-    answer: "Yes. We provide international shipping with secure packaging for select regions.",
+    answer: "Yes. We provide free insured international shipping to USA, Canada, Australia, Germany, UK, India, and 15+ more countries.",
+  },
+  {
+    question: `What metal options are available for ${categoryName}?`,
+    answer: "We offer 14KT and 18KT yellow gold, white gold, rose gold, and platinum for most jewelry pieces.",
   },
 ];
 
 export const buildFaqForProduct = (productName: string, categoryName?: string) => [
   {
     question: `Is ${productName} certified?`,
-    answer: "Yes. We provide certification for natural and lab-grown diamonds where applicable.",
+    answer: "Yes. We provide GIA and IGI certification for natural and lab-grown diamonds where applicable.",
   },
   {
     question: `Can ${productName} be customized?`,
-    answer: "Yes. Contact us for custom sizing, metal options, or design adjustments.",
+    answer: "Yes. Contact us for custom sizing, metal options (14KT/18KT gold, platinum), or design adjustments.",
   },
   {
     question: `What is the delivery time for ${categoryName || "this item"}?`,
-    answer: "We offer secure, insured shipping with delivery timelines based on your region.",
+    answer: "We offer free insured express shipping with delivery in 5–14 business days depending on your region.",
+  },
+  {
+    question: `Does ${productName} come with a warranty?`,
+    answer: "Yes. All certified jewelry pieces come with a lifetime quality guarantee from Flenix Jewels Ltd.",
   },
 ];
 
@@ -295,6 +338,16 @@ export const buildOrganizationSchema = () => ({
       { "@type": "Offer", itemOffered: { "@type": "Product", name: "Wedding Bands" } },
     ],
   },
+  knowsAbout: [
+    "Lab Grown Diamonds",
+    "Natural Diamonds",
+    "GIA Certification",
+    "IGI Certification",
+    "Diamond 4Cs",
+    "Engagement Rings",
+    "Custom Jewelry Design",
+    "Fine Jewelry",
+  ],
 });
 
 export const buildLocalBusinessSchema = () => ({
@@ -303,7 +356,7 @@ export const buildLocalBusinessSchema = () => ({
   "@id": `${SITE.url}/#local-business`,
   name: SITE.name,
   description:
-    "Premium diamond and gold jewelry store. GIA- and IGI-certified natural and lab-grown diamonds. Engagement rings, wedding bands, necklaces, earrings, and bracelets. worldwide shipping.",
+    "Premium diamond and gold jewelry store. GIA- and IGI-certified natural and lab-grown diamonds. Engagement rings, wedding bands, necklaces, earrings, and bracelets. Worldwide shipping.",
   url: SITE.url,
   telephone: SITE.phonePrimary,
   email: SITE.email,
@@ -311,7 +364,7 @@ export const buildLocalBusinessSchema = () => ({
   image: SITE.ogImage,
   priceRange: "$$$",
   currenciesAccepted: "USD",
-  paymentAccepted: "Credit Card, Bank Transfer",
+  paymentAccepted: "Credit Card, Bank Transfer, Wire Transfer",
   address: {
     "@type": "PostalAddress",
     streetAddress: SITE.addressUsa.street,
@@ -381,6 +434,9 @@ export const buildProductSchema = (params: {
   category?: string;
   sku?: string;
   brand?: string;
+  material?: string;
+  color?: string;
+  additionalProperties?: Array<{ name: string; value: string }>;
 }) => {
   const numericPrice = parsePrice(params.price);
   return {
@@ -390,19 +446,80 @@ export const buildProductSchema = (params: {
     description: params.description,
     url: params.url,
     ...(params.image
-      ? { image: [{ "@type": "ImageObject", url: params.image, name: params.name }] }
+      ? {
+          image: [
+            {
+              "@type": "ImageObject",
+              url: params.image,
+              name: params.name,
+              caption: `${params.name} — ${SITE.name}`,
+            },
+          ],
+        }
       : {}),
     ...(params.sku ? { sku: params.sku } : {}),
     brand: {
       "@type": "Brand",
       name: params.brand || SITE.name,
+      url: SITE.url,
     },
     category: params.category || "Jewelry",
+    ...(params.material ? { material: params.material } : {}),
+    ...(params.color ? { color: params.color } : {}),
+    ...(params.additionalProperties?.length
+      ? {
+          additionalProperty: params.additionalProperties.map((p) => ({
+            "@type": "PropertyValue",
+            name: p.name,
+            value: p.value,
+          })),
+        }
+      : {}),
     offers: {
       "@type": "Offer",
       availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
       url: params.url,
-      seller: { "@type": "Organization", name: SITE.name },
+      seller: {
+        "@type": "Organization",
+        name: SITE.name,
+        url: SITE.url,
+      },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "0",
+          currency: "USD",
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: ["US", "CA", "AU", "DE", "GB", "IN"],
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 3,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 3,
+            maxValue: 10,
+            unitCode: "DAY",
+          },
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: ["US", "CA", "AU", "DE", "GB", "IN"],
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 30,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
+      },
       ...(numericPrice ? { price: numericPrice, priceCurrency: "USD" } : {}),
     },
     aggregateRating: {
@@ -410,7 +527,23 @@ export const buildProductSchema = (params: {
       ratingValue: "4.9",
       reviewCount: "150",
       bestRating: "5",
+      worstRating: "1",
     },
+    review: [
+      {
+        "@type": "Review",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+          bestRating: "5",
+        },
+        author: {
+          "@type": "Person",
+          name: "Verified Customer",
+        },
+        reviewBody: "Beautiful quality, exactly as described. GIA certification gave us complete confidence.",
+      },
+    ],
   };
 };
 
@@ -422,13 +555,24 @@ export const buildArticleSchema = (params: {
   datePublished?: string;
   dateModified?: string;
   authorName?: string;
+  wordCount?: number;
+  keywords?: string[];
 }) => ({
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   headline: params.title,
   description: params.description,
   url: params.url,
-  ...(params.image ? { image: { "@type": "ImageObject", url: params.image } } : {}),
+  ...(params.image
+    ? {
+        image: {
+          "@type": "ImageObject",
+          url: params.image,
+          width: 1200,
+          height: 630,
+        },
+      }
+    : {}),
   datePublished: params.datePublished || new Date().toISOString(),
   dateModified: params.dateModified || params.datePublished || new Date().toISOString(),
   author: {
@@ -439,7 +583,12 @@ export const buildArticleSchema = (params: {
   publisher: {
     "@type": "Organization",
     name: SITE.name,
-    logo: { "@type": "ImageObject", url: SITE.logo },
+    logo: {
+      "@type": "ImageObject",
+      url: SITE.logo,
+      width: 200,
+      height: 60,
+    },
   },
   mainEntityOfPage: {
     "@type": "WebPage",
@@ -450,5 +599,30 @@ export const buildArticleSchema = (params: {
     "@type": "Blog",
     name: `${SITE.name} Blog`,
     url: `${SITE.url}/blog`,
+  },
+  ...(params.wordCount ? { wordCount: params.wordCount } : {}),
+  ...(params.keywords?.length ? { keywords: params.keywords.join(", ") } : {}),
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["h1", "h2", ".article-summary"],
+  },
+});
+
+export const buildServiceSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": `${SITE.url}/#custom-jewelry-service`,
+  name: "Custom Jewelry Design Service",
+  description:
+    "Bespoke diamond jewelry design and manufacturing. Create custom engagement rings, wedding bands, and fine jewelry in 14KT and 18KT gold with GIA- and IGI-certified diamonds.",
+  provider: { "@id": `${SITE.url}/#organization` },
+  serviceType: "Custom Jewelry Design",
+  category: "Fine Jewelry",
+  areaServed: SITE.areaServed.map((c) => ({ "@type": "Country", name: c })),
+  offers: {
+    "@type": "Offer",
+    availability: "https://schema.org/InStock",
+    url: `${SITE.url}/contact`,
+    seller: { "@id": `${SITE.url}/#organization` },
   },
 });

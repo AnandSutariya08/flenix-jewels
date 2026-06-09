@@ -1,0 +1,5 @@
+Contact: mailto:info@flenixjewels.com
+Expires: 2027-06-09T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://www.flenixjewels.com/.well-known/security.txt
+Policy: https://www.flenixjewels.com/contact

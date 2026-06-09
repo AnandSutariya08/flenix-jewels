@@ -1,21 +1,66 @@
 {
   "name": "Flenix Jewels Ltd",
   "short_name": "Flenix Jewels",
-  "description": "Premium diamond and gold jewelry — certified natural and lab-grown diamonds with worldwide delivery.",
-  "start_url": "/",
+  "description": "Premium diamond and gold jewelry — GIA & IGI certified natural and lab-grown diamonds with worldwide delivery.",
+  "start_url": "/?source=pwa",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#fffbf5",
   "theme_color": "#C4906A",
   "lang": "en-US",
+  "dir": "ltr",
   "scope": "/",
+  "id": "flenix-jewels-pwa",
   "categories": ["shopping", "lifestyle"],
+  "prefer_related_applications": false,
   "icons": [
+    {
+      "src": "/flenix-logo.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/flenix-logo.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/flenix-logo.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/flenix-logo.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/flenix-logo.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/flenix-logo.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/flenix-logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/flenix-logo.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/flenix-logo.png",
@@ -28,20 +73,40 @@
     {
       "name": "Jewellery Collections",
       "short_name": "Collections",
-      "url": "/categories",
-      "description": "Browse all jewelry collections"
+      "url": "/categories?source=pwa-shortcut",
+      "description": "Browse all diamond and gold jewelry collections",
+      "icons": [{ "src": "/flenix-logo.png", "sizes": "96x96" }]
     },
     {
       "name": "Diamond Catalog",
       "short_name": "Diamonds",
-      "url": "/diamond",
-      "description": "Explore natural and lab grown diamonds"
+      "url": "/diamond?source=pwa-shortcut",
+      "description": "Explore GIA & IGI certified natural and lab grown diamonds",
+      "icons": [{ "src": "/flenix-logo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Buying Guide",
+      "short_name": "Guide",
+      "url": "/buying-guide?source=pwa-shortcut",
+      "description": "Learn about diamond 4Cs, lab grown vs natural, and how to buy",
+      "icons": [{ "src": "/flenix-logo.png", "sizes": "96x96" }]
     },
     {
       "name": "Contact Us",
       "short_name": "Contact",
-      "url": "/contact",
-      "description": "Get in touch with Flenix Jewels Ltd"
+      "url": "/contact?source=pwa-shortcut",
+      "description": "Get in touch with Flenix Jewels Ltd",
+      "icons": [{ "src": "/flenix-logo.png", "sizes": "96x96" }]
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Flenix Jewels Ltd — Premium Diamond Jewelry"
+    }
+  ],
+  "related_applications": []
 }
