@@ -209,6 +209,7 @@ Allow: /feed.xml
 Allow: /sitemap.xml
 Allow: /sitemap-images.xml
 Allow: /sitemap-index.xml
+Allow: /news.xml
 Allow: /site.webmanifest
 Allow: /llms.txt
 Allow: /robots.txt
@@ -218,6 +219,7 @@ Allow: /.well-known/
 Sitemap: https://www.flenixjewels.com/sitemap-index.xml
 Sitemap: https://www.flenixjewels.com/sitemap.xml
 Sitemap: https://www.flenixjewels.com/sitemap-images.xml
+Sitemap: https://www.flenixjewels.com/news.xml
 
 # ─── RSS Feed ─────────────────────────────────────────────────────────────────
 # Feed: https://www.flenixjewels.com/feed.xml

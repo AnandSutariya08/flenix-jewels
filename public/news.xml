@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+
+  <!--
+    Google News Sitemap — Flenix Jewels Ltd
+    https://www.flenixjewels.com
+    Updated: 2026-06-09
+
+    Google News indexes articles published within the last 2 days for breaking
+    news and up to 30 days for general inclusion. This sitemap covers key
+    editorial and blog content published by Flenix Jewels Ltd.
+
+    For dynamically published blog posts, re-submit this sitemap via Google
+    Search Console each time a new article is published, or add new <url>
+    entries for each post.
+  -->
+
+  <!-- Blog hub — editorial content index -->
+  <url>
+    <loc>https://www.flenixjewels.com/blog</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Flenix Jewels Ltd</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-06-09T00:00:00+00:00</news:publication_date>
+      <news:title>Flenix Jewels Blog — Diamond Jewelry Insights, Trends &amp; Buying Tips</news:title>
+      <news:keywords>diamond jewelry, lab grown diamonds, GIA certified, engagement rings, diamond trends 2026</news:keywords>
+    </news:news>
+  </url>
+
+  <!-- Diamond Buying Guide — evergreen editorial piece -->
+  <url>
+    <loc>https://www.flenixjewels.com/buying-guide</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Flenix Jewels Ltd</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-06-09T00:00:00+00:00</news:publication_date>
+      <news:title>Complete Diamond Buying Guide — 4Cs, GIA vs IGI, Lab Grown vs Natural Diamonds</news:title>
+      <news:keywords>diamond buying guide, diamond 4Cs, GIA vs IGI, lab grown vs natural diamond, how to buy diamond</news:keywords>
+    </news:news>
+  </url>
+
+  <!-- Diamond catalog — product news / new arrivals -->
+  <url>
+    <loc>https://www.flenixjewels.com/diamond</loc>
+    <news:news>
+      <news:publication>
+        <news:name>Flenix Jewels Ltd</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-06-09T00:00:00+00:00</news:publication_date>
+      <news:title>New Arrivals — GIA &amp; IGI Certified Natural and Lab-Grown Diamonds 2026</news:title>
+      <news:keywords>certified diamonds, lab grown diamonds 2026, GIA diamonds, IGI diamonds, new diamond jewelry</news:keywords>
+    </news:news>
+  </url>
+
+</urlset>
