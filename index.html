@@ -270,27 +270,204 @@
   }
   </script>
 
-  <!-- WebSite with Sitelinks SearchBox -->
+  <!-- WebSite with Sitelinks SearchBox + hasPart (key pages for Google Sitelinks) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": "https://www.flenixjewels.com/#website",
     "name": "Flenix Jewels Ltd",
+    "alternateName": "Flenix Jewels",
     "url": "https://www.flenixjewels.com",
-    "description": "Premium diamond and gold jewelry — certified natural and lab-grown diamonds with worldwide delivery.",
+    "description": "Premium diamond and gold jewelry — GIA & IGI certified natural and lab-grown diamonds with worldwide delivery to 15+ countries.",
     "inLanguage": "en-US",
     "publisher": { "@id": "https://www.flenixjewels.com/#organization" },
+    "copyrightYear": 2015,
+    "copyrightHolder": { "@id": "https://www.flenixjewels.com/#organization" },
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://www.flenixjewels.com/categories?search={search_term_string}"
+        "urlTemplate": "https://www.flenixjewels.com/diamond?q={search_term_string}"
       },
       "query-input": "required name=search_term_string"
     },
-    "copyrightYear": 2015,
-    "copyrightHolder": { "@id": "https://www.flenixjewels.com/#organization" }
+    "hasPart": [
+      {
+        "@type": "WebPage",
+        "@id": "https://www.flenixjewels.com/#webpage",
+        "name": "Flenix Jewels Ltd — Fine Diamond & Gold Jewelry",
+        "url": "https://www.flenixjewels.com/",
+        "description": "Premium GIA & IGI certified natural and lab-grown diamond jewelry. Engagement rings, necklaces, earrings, and bracelets with worldwide free shipping.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://www.flenixjewels.com/categories#webpage",
+        "name": "Jewellery Collections",
+        "url": "https://www.flenixjewels.com/categories",
+        "description": "Browse all diamond and gold jewelry collections — engagement rings, necklaces, earrings, bracelets, and wedding bands.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://www.flenixjewels.com/diamond#webpage",
+        "name": "Diamond Catalog — Natural & Lab Grown Diamonds",
+        "url": "https://www.flenixjewels.com/diamond",
+        "description": "Browse GIA and IGI certified natural and lab-grown loose diamonds. Filter by shape, carat, cut, color, clarity, and certificate.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.flenixjewels.com/buying-guide#webpage",
+        "name": "Diamond Buying Guide",
+        "url": "https://www.flenixjewels.com/buying-guide",
+        "description": "Expert guides on diamond 4Cs, lab-grown vs natural diamonds, engagement ring styles, GIA vs IGI certification, and how to buy jewelry.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.flenixjewels.com/gallery#webpage",
+        "name": "Jewelry Gallery",
+        "url": "https://www.flenixjewels.com/gallery",
+        "description": "High-resolution photos of Flenix Jewels Ltd premium diamond and gold jewelry pieces — rings, necklaces, earrings, and bracelets.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "Blog",
+        "@id": "https://www.flenixjewels.com/blog#webpage",
+        "name": "Jewelry Blog & Diamond Education",
+        "url": "https://www.flenixjewels.com/blog",
+        "description": "Expert articles on diamonds, jewelry trends, care guides, buying tips, and lab-grown diamond education.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "AboutPage",
+        "@id": "https://www.flenixjewels.com/about#webpage",
+        "name": "About Flenix Jewels Ltd",
+        "url": "https://www.flenixjewels.com/about",
+        "description": "Learn about Flenix Jewels Ltd — 10+ years of crafting GIA and IGI certified diamond jewelry from Surat, India with worldwide delivery.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "ContactPage",
+        "@id": "https://www.flenixjewels.com/contact#webpage",
+        "name": "Contact Flenix Jewels Ltd",
+        "url": "https://www.flenixjewels.com/contact",
+        "description": "Contact Flenix Jewels Ltd for diamond jewelry enquiries, custom designs, wholesale orders, and international shipping questions.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.flenixjewels.com/usa#webpage",
+        "name": "Diamond Jewelry — USA",
+        "url": "https://www.flenixjewels.com/usa",
+        "description": "GIA and IGI certified diamond jewelry delivered to the United States. Free insured express shipping to all US states.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.flenixjewels.com/canada#webpage",
+        "name": "Diamond Jewelry — Canada",
+        "url": "https://www.flenixjewels.com/canada",
+        "description": "Premium diamond jewelry delivered to Canada. Certified natural and lab-grown diamonds with free insured shipping.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.flenixjewels.com/australia#webpage",
+        "name": "Diamond Jewelry — Australia",
+        "url": "https://www.flenixjewels.com/australia",
+        "description": "Shop certified diamond jewelry delivered to Australia. Ethical natural and lab-grown diamonds with expert craftsmanship.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.flenixjewels.com/germany#webpage",
+        "name": "Diamond Jewelry — Germany",
+        "url": "https://www.flenixjewels.com/germany",
+        "description": "Certified diamond jewelry delivered to Germany. Lab-grown and natural diamonds with secure international shipping.",
+        "isPartOf": { "@id": "https://www.flenixjewels.com/#website" }
+      }
+    ]
+  }
+  </script>
+
+  <!-- SiteNavigationElement — main nav structure for Google Sitelinks -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": "https://www.flenixjewels.com/#site-navigation",
+    "name": "Flenix Jewels Ltd — Main Navigation",
+    "description": "Primary navigation sections of Flenix Jewels Ltd jewelry website",
+    "url": "https://www.flenixjewels.com",
+    "numberOfItems": 8,
+    "itemListElement": [
+      {
+        "@type": "SiteLinksSearchBox",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.flenixjewels.com/diamond?q={search_term_string}"
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Jewellery Collections",
+        "url": "https://www.flenixjewels.com/categories",
+        "description": "Browse all diamond and gold jewelry collections"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Diamond Catalog",
+        "url": "https://www.flenixjewels.com/diamond",
+        "description": "GIA & IGI certified natural and lab-grown diamond catalog"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Diamond Buying Guide",
+        "url": "https://www.flenixjewels.com/buying-guide",
+        "description": "Expert guides on buying diamonds and jewelry"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": "Jewelry Gallery",
+        "url": "https://www.flenixjewels.com/gallery",
+        "description": "High-resolution photos of our diamond jewelry collection"
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "name": "Jewelry Blog",
+        "url": "https://www.flenixjewels.com/blog",
+        "description": "Diamond education, jewelry trends, and buying tips"
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "name": "About Us",
+        "url": "https://www.flenixjewels.com/about",
+        "description": "About Flenix Jewels Ltd — 10+ years of diamond jewelry excellence"
+      },
+      {
+        "@type": "ListItem",
+        "position": 7,
+        "name": "Contact",
+        "url": "https://www.flenixjewels.com/contact",
+        "description": "Contact Flenix Jewels Ltd for enquiries and custom orders"
+      },
+      {
+        "@type": "ListItem",
+        "position": 8,
+        "name": "Engagement Rings",
+        "url": "https://www.flenixjewels.com/categories",
+        "description": "Certified diamond engagement rings in natural and lab-grown diamonds"
+      }
+    ]
   }
   </script>
 

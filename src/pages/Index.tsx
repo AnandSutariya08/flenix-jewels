@@ -39,41 +39,13 @@ import {
 } from "lucide-react";
 import { BlogPost, Testimonial, subscribeApprovedTestimonials } from "@/lib/storage";
 import { saveCustomerTestimonial } from "@/lib/storage";
-import {
-  SITE,
-  YEARS_OF_EXCELLENCE_LABEL,
-  buildOrganizationSchema,
-  buildLocalBusinessSchema,
-  buildServiceSchema,
-} from "@/lib/seo";
+import { SITE, YEARS_OF_EXCELLENCE_LABEL } from "@/lib/seo";
 
 const WHATSAPP =
   "https://wa.me/85251254000?text=Hi!%20I%20am%20interested%20in%20your%20jewelry%20collection.";
 const GOLD = "linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)";
 
 const homepageStructuredData = [
-  buildOrganizationSchema(),
-  buildLocalBusinessSchema(),
-  buildServiceSchema(),
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": `${SITE.url}/#website`,
-    url: SITE.url,
-    name: SITE.name,
-    description:
-      "Premium diamond and gold jewelry — GIA & IGI certified natural and lab-grown diamonds with worldwide delivery.",
-    publisher: { "@id": `${SITE.url}/#organization` },
-    inLanguage: "en-US",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${SITE.url}/diamond?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
-  },
   {
     "@context": "https://schema.org",
     "@type": "ItemList",
