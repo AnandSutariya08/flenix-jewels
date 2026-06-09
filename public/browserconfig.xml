@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+  <msapplication>
+    <tile>
+      <square70x70logo src="/flenix-logo.png"/>
+      <square150x150logo src="/flenix-logo.png"/>
+      <wide310x150logo src="/flenix-logo.png"/>
+      <square310x310logo src="/flenix-logo.png"/>
+      <TileColor>#C4906A</TileColor>
+      <TileImage src="/flenix-logo.png"/>
+    </tile>
+    <notification>
+      <polling-uri src="https://www.flenixjewels.com/"/>
+    </notification>
+  </msapplication>
+</browserconfig>

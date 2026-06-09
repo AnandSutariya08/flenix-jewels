@@ -1,0 +1,22 @@
+/* TEAM */
+Company: Flenix Jewels Ltd
+Website: https://www.flenixjewels.com
+Contact: info@flenixjewels.com
+Location: Surat, Gujarat, India
+
+/* THANKS */
+GIA — Gemological Institute of America — https://www.gia.edu
+IGI — International Gemological Institute — https://www.igi.org
+
+/* SITE */
+Last update: 2026-06-09
+Language: English
+Doctype: HTML5
+Framework: React 18 + Vite
+Standards: Schema.org, OpenGraph, Twitter Cards, PWA
+Software: TypeScript, TailwindCSS, Firebase, React Router v6
+
+/* ABOUT */
+Flenix Jewels Ltd is a premium diamond and gold jewelry brand established in 2015.
+Specializing in GIA and IGI certified natural and lab-grown diamonds with worldwide delivery.
+Serving 1,000+ happy clients across USA, Canada, Australia, Germany, UK, and India.
