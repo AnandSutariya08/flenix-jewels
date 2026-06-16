@@ -142,7 +142,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
                 src={primaryMedia}
                 alt={product.name}
                 className="absolute inset-0 w-full h-full object-cover"
-                loading="lazy"
+                loading="eager"
                 draggable={false}
               />
             </div>

@@ -32,7 +32,11 @@ export function OptimizedImage({
   onLoad,
   ...props
 }: OptimizedImageProps) {
-  const alreadyReady = (url: string) => Boolean(url && (sessionLoadedCache.has(url) || isImageCached(url)));
+  // Only skip skeleton when the image is CONFIRMED visible (loaded in this
+  // session or detected via img.complete below). Do NOT include isImageCached /
+  // preloadPending here — that set marks images as "downloading" not "done",
+  // and skipping the skeleton for an in-flight image shows blank white space.
+  const alreadyReady = (url: string) => Boolean(url && sessionLoadedCache.has(url));
 
   const [loaded, setLoaded] = useState(() => alreadyReady(src));
   const imgRef = useRef<HTMLImageElement>(null);

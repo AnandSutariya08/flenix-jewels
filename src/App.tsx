@@ -255,8 +255,8 @@ const AppContent = () => {
     const catImgs = data.categories.map((c) => c.image).filter(Boolean) as string[];
     const dCatImgs = data.diamondCategories.map((c) => c.image).filter(Boolean) as string[];
     if (bannerImgs.length) preloadMedia(bannerImgs, "critical");
-    if (catImgs.length) preloadMedia(catImgs, "high");
-    if (dCatImgs.length) preloadMedia(dCatImgs, "high");
+    if (catImgs.length) preloadMedia(catImgs, "critical");
+    if (dCatImgs.length) preloadMedia(dCatImgs, "critical");
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.banners, data.categories, data.diamondCategories, isAdminRoute]);
 
