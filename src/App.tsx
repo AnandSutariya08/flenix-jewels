@@ -242,61 +242,53 @@ const AppContent = () => {
   // high      → categories + ads (visible without scrolling on home)
   // normal    → products + diamonds (next pages user is likely to visit)
   // low       → gallery, instagram, testimonials, blogs (below fold / other pages)
-  const criticalUrls = useMemo(() => {
-    if (isAdminRoute) return [];
-    return [
-      ...data.banners.map((b) => b.image).filter(Boolean),
-    ] as string[];
-  }, [data.banners, isAdminRoute]);
+  // ── SYNCHRONOUS preload during render ────────────────────────────────────
+  // useMemo runs synchronously as part of the parent render, BEFORE any child
+  // component renders. This ensures keepImageAlive() is called (and the URL
+  // added to preloadPending) before OptimizedImage initialises its `loaded`
+  // state — so isImageCached() returns true and the skeleton is skipped.
+  useMemo(() => {
+    if (isAdminRoute) return;
+    const bannerImgs = data.banners
+      .filter((b) => b.image && b.mediaType !== "video")
+      .map((b) => b.image) as string[];
+    const catImgs = data.categories.map((c) => c.image).filter(Boolean) as string[];
+    const dCatImgs = data.diamondCategories.map((c) => c.image).filter(Boolean) as string[];
+    if (bannerImgs.length) preloadMedia(bannerImgs, "critical");
+    if (catImgs.length) preloadMedia(catImgs, "high");
+    if (dCatImgs.length) preloadMedia(dCatImgs, "high");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.banners, data.categories, data.diamondCategories, isAdminRoute]);
 
-  const highUrls = useMemo(() => {
-    if (isAdminRoute) return [];
-    return [
-      ...data.categories.map((c) => c.image).filter(Boolean),
-      ...data.diamondCategories.map((c) => c.image).filter(Boolean),
-      ...data.ads.map((ad) => ad.image).filter(Boolean),
-    ] as string[];
-  }, [data.categories, data.diamondCategories, data.ads, isAdminRoute]);
-
-  const normalUrls = useMemo(() => {
-    if (isAdminRoute) return [];
-    return [
-      ...data.products.flatMap((p) => [p.image, ...(p.images || [])]).filter(Boolean),
-      ...data.diamonds.flatMap((d) => [d.image, ...(d.images || [])]).filter(Boolean),
-      ...data.featuredCollection.map((f) => f.image).filter(Boolean),
-    ] as string[];
+  useMemo(() => {
+    if (isAdminRoute) return;
+    const productImgs = data.products
+      .flatMap((p) => [p.image, ...(p.images ?? [])])
+      .filter(Boolean) as string[];
+    const diamondImgs = data.diamonds
+      .flatMap((d) => [d.image, ...(d.images ?? [])])
+      .filter(Boolean) as string[];
+    const fcImgs = data.featuredCollection.map((f) => f.image).filter(Boolean) as string[];
+    if (productImgs.length) preloadMedia(productImgs, "normal");
+    if (diamondImgs.length) preloadMedia(diamondImgs, "normal");
+    if (fcImgs.length) preloadMedia(fcImgs, "normal");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.products, data.diamonds, data.featuredCollection, isAdminRoute]);
 
-  const lowUrls = useMemo(() => {
-    if (isAdminRoute) return [];
-    return [
-      ...data.galleryItems.map((g) => g.image).filter(Boolean),
-      ...data.instagramPosts.map((i) => i.image).filter(Boolean),
-      ...(data.testimonials ?? []).map((t: any) => t.image).filter(Boolean),
-      ...(data.blogs ?? []).flatMap((b: any) => [b.thumbnail, b.image].filter(Boolean)),
-      ...(data.buyingGuides ?? []).map((g: any) => g.image).filter(Boolean),
-    ] as string[];
+  useMemo(() => {
+    if (isAdminRoute) return;
+    const lowImgs = [
+      ...data.galleryItems.map((g) => g.image),
+      ...data.instagramPosts.map((i) => i.image),
+      ...(data.testimonials ?? []).map((t: { image?: string }) => t.image),
+      ...(data.blogs ?? []).flatMap((b: { thumbnail?: string; image?: string }) =>
+        [b.thumbnail, b.image].filter(Boolean)
+      ),
+      ...(data.buyingGuides ?? []).map((g: { image?: string }) => g.image),
+    ].filter(Boolean) as string[];
+    if (lowImgs.length) preloadMedia(lowImgs, "low");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.galleryItems, data.instagramPosts, data.testimonials, data.blogs, data.buyingGuides, isAdminRoute]);
-
-  useEffect(() => {
-    if (status !== "succeeded" && !hydrated) return;
-    if (criticalUrls.length > 0) preloadMedia(criticalUrls, "critical");
-  }, [criticalUrls, hydrated, status]);
-
-  useEffect(() => {
-    if (status !== "succeeded" && !hydrated) return;
-    if (highUrls.length > 0) preloadMedia(highUrls, "high");
-  }, [highUrls, hydrated, status]);
-
-  useEffect(() => {
-    if (status !== "succeeded" && !hydrated) return;
-    if (normalUrls.length > 0) preloadMedia(normalUrls, "normal");
-  }, [normalUrls, hydrated, status]);
-
-  useEffect(() => {
-    if (status !== "succeeded" && !hydrated) return;
-    if (lowUrls.length > 0) preloadMedia(lowUrls, "low");
-  }, [lowUrls, hydrated, status]);
 
   useEffect(() => {
     if (status === "succeeded" || hydrated) {

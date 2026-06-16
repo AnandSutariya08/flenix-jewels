@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { keepImageAlive, isImageCached } from '@/lib/preload';
 
@@ -35,11 +35,26 @@ export function OptimizedImage({
   const alreadyReady = (url: string) => Boolean(url && (sessionLoadedCache.has(url) || isImageCached(url)));
 
   const [loaded, setLoaded] = useState(() => alreadyReady(src));
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // ── Browser HTTP-cache detection ──────────────────────────────────────────
+  // useLayoutEffect fires synchronously after DOM mutation but BEFORE paint.
+  // If the browser already has this image in its HTTP cache, img.complete is
+  // true the instant the element mounts — so we can flip loaded→true in the
+  // same paint frame and the user never sees the skeleton.
+  useLayoutEffect(() => {
+    if (!src) return;
+    const el = imgRef.current;
+    if (el && el.complete && el.naturalWidth > 0) {
+      sessionLoadedCache.add(src);
+      keepImageAlive(src);
+      setLoaded(true);
+    }
+  }, [src]);
 
   useEffect(() => {
     if (!src) return;
     if (alreadyReady(src)) {
-      // Mark in session cache so future remounts skip even the isImageCached lookup
       sessionLoadedCache.add(src);
       setLoaded(true);
       return;
@@ -51,8 +66,6 @@ export function OptimizedImage({
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     if (src) {
       sessionLoadedCache.add(src);
-      // Keep a live HTMLImageElement reference so the browser never evicts
-      // this image from its memory cache across SPA navigation.
       keepImageAlive(src);
     }
     setLoaded(true);
@@ -70,6 +83,7 @@ export function OptimizedImage({
 
   const img = (
     <img
+      ref={imgRef}
       src={src}
       alt={alt}
       className={cn(

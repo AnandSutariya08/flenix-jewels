@@ -269,6 +269,31 @@ export const clearTestimonialsCache = () => {
 
 const cached = readSessionCache() ?? readPersistentCache();
 
+// ── Module-level preload (fires before React mounts) ───────────────────────
+// When localStorage has cached data, start downloading images immediately —
+// before the Redux store is even created and before any component renders.
+// This maximises the chance that isImageCached() returns true when
+// OptimizedImage initialises its `loaded` state, eliminating the skeleton.
+if (cached?.data && typeof window !== "undefined") {
+  // Dynamic import so this module stays free of hard browser-only deps at
+  // build time, while still resolving from the module cache instantly at runtime.
+  import("@/lib/preload").then(({ preloadMedia }) => {
+    const bannerImgs = (cached.data.banners ?? [])
+      .filter((b) => b.image && b.mediaType !== "video")
+      .map((b) => b.image)
+      .filter(Boolean) as string[];
+    const catImgs = (cached.data.categories ?? [])
+      .map((c) => c.image)
+      .filter(Boolean) as string[];
+    const dCatImgs = (cached.data.diamondCategories ?? [])
+      .map((c) => c.image)
+      .filter(Boolean) as string[];
+    if (bannerImgs.length) preloadMedia(bannerImgs, "critical");
+    if (catImgs.length) preloadMedia(catImgs, "high");
+    if (dCatImgs.length) preloadMedia(dCatImgs, "high");
+  });
+}
+
 const initialState: ContentState = {
   data: cached?.data ?? emptyData,
   status: cached ? "succeeded" : "idle",
