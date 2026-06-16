@@ -7,7 +7,7 @@ import SEOHead from "@/components/SEOHead";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadProducts, selectContentHydrated, selectContentStatus, selectGlobalData, selectProductsLoaded, selectProductsStatus } from "@/store/contentSlice";
-import { buildFaqForProduct, buildMetaDescriptionForProduct, buildMetaTitleForProduct, buildOffer } from "@/lib/seo";
+import { buildFaqForProduct, buildMetaDescriptionForProduct, buildMetaTitleForProduct, buildOffer, stripHtml } from "@/lib/seo";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { preloadMedia } from "@/lib/preload";
 import { OptimizedVideo } from "@/components/ui/optimized-video";
@@ -62,7 +62,7 @@ const ProductDetail = () => {
         "@id": `https://www.flenixjewels.com/product/${product.id}#product`,
         name: product.name,
         image: media.length > 0 ? media : undefined,
-        description: product.description || `${product.name} from Flenix Jewels Ltd`,
+        description: stripHtml(product.description || `${product.name} from Flenix Jewels Ltd`),
         sku: product.id,
         category: category?.name,
         mainEntityOfPage: `https://www.flenixjewels.com/product/${product.id}`,
@@ -70,9 +70,7 @@ const ProductDetail = () => {
           "@type": "Brand",
           name: "Flenix Jewels Ltd",
         },
-        offers: {
-          ...buildOffer(`https://www.flenixjewels.com/product/${product.id}`, product.price),
-        },
+        offers: buildOffer(`https://www.flenixjewels.com/product/${product.id}`, product.price),
       }
     : undefined;
 

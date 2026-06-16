@@ -184,10 +184,13 @@ export const buildOffer = (url: string, price?: string) => {
   return {
     "@type": "Offer",
     availability: "https://schema.org/InStock",
+    itemCondition: "https://schema.org/NewCondition",
     url,
-    seller: { "@type": "Organization", name: SITE.name },
+    seller: { "@type": "Organization", name: SITE.name, url: SITE.url },
+    ...(numericPrice ? { price: numericPrice, priceCurrency: "USD" } : {}),
     shippingDetails: {
       "@type": "OfferShippingDetails",
+      shippingLabel: "Free Worldwide Shipping",
       shippingRate: {
         "@type": "MonetaryAmount",
         value: "0",
@@ -215,13 +218,14 @@ export const buildOffer = (url: string, price?: string) => {
     },
     hasMerchantReturnPolicy: {
       "@type": "MerchantReturnPolicy",
+      name: "30-Day Return Policy",
+      url: `${SITE.url}/contact`,
       applicableCountry: ["US", "CA", "AU", "DE", "GB", "IN"],
       returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
       merchantReturnDays: 30,
       returnMethod: "https://schema.org/ReturnByMail",
       returnFees: "https://schema.org/FreeReturn",
     },
-    ...(numericPrice ? { price: numericPrice, priceCurrency: "USD" } : {}),
   };
 };
 
@@ -438,7 +442,6 @@ export const buildProductSchema = (params: {
   color?: string;
   additionalProperties?: Array<{ name: string; value: string }>;
 }) => {
-  const numericPrice = parsePrice(params.price);
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -475,53 +478,7 @@ export const buildProductSchema = (params: {
           })),
         }
       : {}),
-    offers: {
-      "@type": "Offer",
-      availability: "https://schema.org/InStock",
-      itemCondition: "https://schema.org/NewCondition",
-      url: params.url,
-      seller: {
-        "@type": "Organization",
-        name: SITE.name,
-        url: SITE.url,
-      },
-      shippingDetails: {
-        "@type": "OfferShippingDetails",
-        shippingRate: {
-          "@type": "MonetaryAmount",
-          value: "0",
-          currency: "USD",
-        },
-        shippingDestination: {
-          "@type": "DefinedRegion",
-          addressCountry: ["US", "CA", "AU", "DE", "GB", "IN"],
-        },
-        deliveryTime: {
-          "@type": "ShippingDeliveryTime",
-          handlingTime: {
-            "@type": "QuantitativeValue",
-            minValue: 1,
-            maxValue: 3,
-            unitCode: "DAY",
-          },
-          transitTime: {
-            "@type": "QuantitativeValue",
-            minValue: 3,
-            maxValue: 10,
-            unitCode: "DAY",
-          },
-        },
-      },
-      hasMerchantReturnPolicy: {
-        "@type": "MerchantReturnPolicy",
-        applicableCountry: ["US", "CA", "AU", "DE", "GB", "IN"],
-        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-        merchantReturnDays: 30,
-        returnMethod: "https://schema.org/ReturnByMail",
-        returnFees: "https://schema.org/FreeReturn",
-      },
-      ...(numericPrice ? { price: numericPrice, priceCurrency: "USD" } : {}),
-    },
+    offers: buildOffer(params.url, params.price),
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: "4.9",

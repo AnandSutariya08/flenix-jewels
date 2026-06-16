@@ -17,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAppSelector } from '@/store/hooks';
 import { selectContentHydrated, selectContentStatus, selectGlobalData } from '@/store/contentSlice';
 import { useHeaderOffset } from '@/hooks/useHeaderOffset';
-import { buildOffer } from '@/lib/seo';
+import { buildOffer, stripHtml } from '@/lib/seo';
 import { type Diamond } from '@/lib/storage';
 import { Gem, Search } from 'lucide-react';
 import diamondBanner from '@/assets/diamond-banner.png';
@@ -141,7 +141,7 @@ const DiamondPage = () => {
           '@id': `https://www.flenixjewels.com/diamond?diamond=${diamond.id}#product`,
           name: diamond.name,
           image: diamond.images && diamond.images.length > 0 ? diamond.images : [diamond.image],
-          description: diamond.description || `${diamond.name} from Flenix Jewels Ltd`,
+          description: stripHtml(diamond.description || `${diamond.name} from Flenix Jewels Ltd`),
           sku: diamond.id,
           category: diamondCategories.find((c) => c.id === diamond.diamondCategoryId)?.name || 'Diamond',
           brand: { '@type': 'Brand', name: 'Flenix Jewels Ltd' },

@@ -15,6 +15,7 @@ import {
   buildMetaDescriptionForProduct,
   buildMetaTitleForCategory,
   buildMetaTitleForProduct,
+  stripHtml,
 } from '@/lib/seo';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadProducts, selectContentHydrated, selectContentStatus, selectGlobalData, selectProductsLoaded, selectProductsStatus } from "@/store/contentSlice";
@@ -167,16 +168,14 @@ const CategoryProducts = () => {
           '@id': `https://www.flenixjewels.com/product/${p.id}#product`,
           name: p.name,
           image: (p.images && p.images.length > 0) ? p.images : [p.image],
-          description: p.description || `${p.name} from Flenix Jewels Ltd`,
+          description: stripHtml(p.description || `${p.name} from Flenix Jewels Ltd`),
           sku: p.id,
           category: category.name,
           brand: {
             '@type': 'Brand',
             name: 'Flenix Jewels Ltd',
           },
-          offers: {
-            ...buildOffer(`https://www.flenixjewels.com/category/${id}?product=${p.id}`, p.price),
-          },
+          offers: buildOffer(`https://www.flenixjewels.com/category/${id}?product=${p.id}`, p.price),
         },
       })),
     },
@@ -192,9 +191,9 @@ const CategoryProducts = () => {
           name: activeProduct.name,
           image:
             activeProduct.images && activeProduct.images.length > 0
-              ? activeProduct.images
-              : [activeProduct.image],
-          description: activeProduct.description || `${activeProduct.name} from Flenix Jewels Ltd`,
+              ? activeProduct.images.filter(Boolean)
+              : [activeProduct.image].filter(Boolean),
+          description: stripHtml(activeProduct.description || `${activeProduct.name} from Flenix Jewels Ltd`),
           sku: activeProduct.id,
           category: category.name,
           mainEntityOfPage: `https://www.flenixjewels.com/category/${id}?product=${activeProduct.id}`,
