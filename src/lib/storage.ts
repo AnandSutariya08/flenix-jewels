@@ -980,58 +980,68 @@ const getImageResizeConfig = (path: string) => {
   return { max: 1600, quality: 0.82 };
 };
 
+const getImageMaxBytes = (path: string): number => {
+  const lower = path.toLowerCase();
+  if (lower.includes('banners'))  return 900_000;
+  if (lower.includes('blogs'))    return 900_000;
+  if (lower.includes('featured')) return 900_000;
+  if (lower.includes('products')) return 700_000;
+  if (lower.includes('diamonds')) return 700_000;
+  if (lower.includes('gallery'))  return 700_000;
+  return 800_000;
+};
+
 const processImage = async (file: File, path: string, addMark: boolean): Promise<File> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const img = new Image();
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    
+
     img.onload = () => {
       const { max, quality } = getImageResizeConfig(path);
+      const maxBytes = getImageMaxBytes(path);
       const scale = Math.min(1, max / Math.max(img.width, img.height));
-      const targetWidth = Math.round(img.width * scale);
+      const targetWidth  = Math.round(img.width  * scale);
       const targetHeight = Math.round(img.height * scale);
 
-      canvas.width = targetWidth;
+      canvas.width  = targetWidth;
       canvas.height = targetHeight;
-      
-      if (!ctx) {
-        resolve(file);
-        return;
-      }
-      
-      // Draw original image
+
+      if (!ctx) { resolve(file); return; }
+
       ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-      
-      // Add watermark
+
       if (addMark) {
-        ctx.font = `${Math.max(20, targetWidth / 20)}px Cinzel`;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.20)';
-        ctx.textAlign = 'center';
+        ctx.font         = `${Math.max(20, targetWidth / 20)}px Cinzel`;
+        ctx.fillStyle    = 'rgba(255, 255, 255, 0.20)';
+        ctx.textAlign    = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('FLENIX JEWELS', canvas.width / 2, canvas.height / 2);
       }
-      
-      // Convert canvas to blob
+
       const fileName = file.name.replace(/\.\w+$/, '');
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const optimizedFile = new File([blob], `${fileName}.webp`, { type: 'image/webp' });
-          resolve(optimizedFile);
-        } else {
-          // Fallback to JPEG
-          canvas.toBlob((jpegBlob) => {
-            if (jpegBlob) {
-              const optimizedFile = new File([jpegBlob], `${fileName}.jpg`, { type: 'image/jpeg' });
-              resolve(optimizedFile);
+
+      const tryWebP = (q: number) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            if (blob.size <= maxBytes || q <= 0.45) {
+              resolve(new File([blob], `${fileName}.webp`, { type: 'image/webp' }));
             } else {
-              resolve(file);
+              tryWebP(Math.max(0.45, parseFloat((q - 0.08).toFixed(2))));
             }
-          }, 'image/jpeg', Math.min(0.9, quality + 0.08));
-        }
-      }, 'image/webp', quality);
+          } else {
+            canvas.toBlob((jpegBlob) => {
+              resolve(jpegBlob
+                ? new File([jpegBlob], `${fileName}.jpg`, { type: 'image/jpeg' })
+                : file);
+            }, 'image/jpeg', Math.min(0.9, quality + 0.08));
+          }
+        }, 'image/webp', q);
+      };
+
+      tryWebP(quality);
     };
-    
+
     img.onerror = () => resolve(file);
     img.src = URL.createObjectURL(file);
   });
@@ -1049,13 +1059,16 @@ const getSupportedVideoMimeType = () => {
   return "";
 };
 
-// Add watermark to video by rendering frames to canvas and recording
-const addVideoWatermark = async (file: File): Promise<File> => {
+// Compress video and optionally burn-in watermark via canvas + MediaRecorder.
+// Resolution is capped at 1920×1080; bitrate is chosen per output size.
+const addVideoWatermark = async (
+  file: File,
+  addMark: boolean = true,
+  onProgress?: (percent: number) => void,
+): Promise<File> => {
   return new Promise((resolve) => {
-    if (typeof MediaRecorder === "undefined") {
-      resolve(file);
-      return;
-    }
+    if (typeof MediaRecorder === "undefined") { resolve(file); return; }
+
     const url = URL.createObjectURL(file);
     const video = document.createElement("video");
     video.src = url;
@@ -1064,39 +1077,35 @@ const addVideoWatermark = async (file: File): Promise<File> => {
     video.playsInline = true;
     video.preload = "auto";
 
-    const cleanup = () => {
-      URL.revokeObjectURL(url);
-    };
+    const cleanup = () => URL.revokeObjectURL(url);
 
-    video.onerror = () => {
-      cleanup();
-      resolve(file);
-    };
+    video.onerror = () => { cleanup(); resolve(file); };
 
     video.onloadedmetadata = async () => {
       const mimeType = getSupportedVideoMimeType();
-      if (!mimeType) {
-        cleanup();
-        resolve(file);
-        return;
-      }
+      if (!mimeType) { cleanup(); resolve(file); return; }
 
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        cleanup();
-        resolve(file);
-        return;
-      }
+      if (!ctx) { cleanup(); resolve(file); return; }
 
-      canvas.width = video.videoWidth || 1280;
-      canvas.height = video.videoHeight || 720;
+      // Cap resolution to 1920×1080 (Full HD) to reduce file size
+      const MAX_W = 1920;
+      const MAX_H = 1080;
+      const srcW = video.videoWidth  || 1280;
+      const srcH = video.videoHeight || 720;
+      const ratio = Math.min(1, MAX_W / srcW, MAX_H / srcH);
+      canvas.width  = Math.round(srcW * ratio);
+      canvas.height = Math.round(srcH * ratio);
 
-      if (!("captureStream" in canvas)) {
-        cleanup();
-        resolve(file);
-        return;
-      }
+      if (!("captureStream" in canvas)) { cleanup(); resolve(file); return; }
+
+      // Pick bitrate based on output pixel count
+      const pixels = canvas.width * canvas.height;
+      const videoBitsPerSecond =
+        pixels > 1280 * 720 ? 2_500_000 :   // 1080p → 2.5 Mbps
+        pixels > 854  * 480 ? 1_500_000 :   // 720p  → 1.5 Mbps
+                              1_000_000;    // ≤480p → 1.0 Mbps
 
       const stream = canvas.captureStream();
       const audioStream =
@@ -1109,36 +1118,43 @@ const addVideoWatermark = async (file: File): Promise<File> => {
         audioStream.getAudioTracks().forEach((track) => stream.addTrack(track));
       }
 
-      const recorder = new MediaRecorder(stream, { mimeType });
+      const recorderOptions: MediaRecorderOptions = { mimeType, videoBitsPerSecond };
+      if (audioStream && audioStream.getAudioTracks().length > 0) {
+        recorderOptions.audioBitsPerSecond = 128_000;
+      }
+
+      const recorder = new MediaRecorder(stream, recorderOptions);
       const chunks: Blob[] = [];
 
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) chunks.push(event.data);
-      };
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
 
       recorder.onstop = () => {
         const blob = new Blob(chunks, { type: mimeType });
-        const extension = mimeType.includes("webm") ? "webm" : "mp4";
-        const watermarked = new File([blob], file.name.replace(/\.\w+$/, `.${extension}`), {
-          type: mimeType,
-        });
+        const ext  = mimeType.includes("webm") ? "webm" : "mp4";
+        const out  = new File([blob], file.name.replace(/\.\w+$/, `.${ext}`), { type: mimeType });
         cleanup();
-        resolve(watermarked);
+        resolve(out);
       };
+
+      // Report progress via timeupdate
+      if (onProgress && video.duration) {
+        video.ontimeupdate = () => {
+          const pct = Math.min(99, Math.round((video.currentTime / video.duration) * 100));
+          onProgress(pct);
+        };
+      }
 
       const drawFrame = () => {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        const fontSize = Math.max(24, Math.floor(canvas.width / 20));
-        ctx.font = `${fontSize}px Cinzel`;
-        ctx.fillStyle = "rgba(255, 255, 255, 0.20)";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("FLENIX JEWELS", canvas.width / 2, canvas.height / 2);
-
-        if (!video.paused && !video.ended) {
-          requestAnimationFrame(drawFrame);
+        if (addMark) {
+          const fontSize = Math.max(24, Math.floor(canvas.width / 20));
+          ctx.font         = `${fontSize}px Cinzel`;
+          ctx.fillStyle    = "rgba(255, 255, 255, 0.20)";
+          ctx.textAlign    = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("FLENIX JEWELS", canvas.width / 2, canvas.height / 2);
         }
+        if (!video.paused && !video.ended) requestAnimationFrame(drawFrame);
       };
 
       try {
@@ -1156,26 +1172,37 @@ const addVideoWatermark = async (file: File): Promise<File> => {
   });
 };
 
-export const uploadImageToStorage = async (file: File, path: string, skipWatermark: boolean = false): Promise<string> => {
+export const uploadImageToStorage = async (
+  file: File,
+  path: string,
+  skipWatermark: boolean = false,
+  onProgress?: (stage: 'compressing' | 'uploading', percent: number) => void,
+): Promise<string> => {
   try {
-    // Add watermark before uploading (unless skipped)
     let fileToUpload = file;
-    if (!skipWatermark) {
-      if (file.type.startsWith("video/")) {
-        fileToUpload = await addVideoWatermark(file);
-      } else {
-        fileToUpload = await processImage(file, path, true);
-      }
-    } else if (file.type.startsWith("image/")) {
-      // Optimize even when watermark is skipped
-      fileToUpload = await processImage(file, path, false);
+
+    if (file.type.startsWith('video/')) {
+      // Always compress videos; watermark is optional
+      onProgress?.('compressing', 0);
+      fileToUpload = await addVideoWatermark(
+        file,
+        !skipWatermark,
+        (pct) => onProgress?.('compressing', pct),
+      );
+      onProgress?.('compressing', 100);
+    } else {
+      // Always process images; watermark is optional
+      fileToUpload = await processImage(file, path, !skipWatermark);
     }
+
+    onProgress?.('uploading', 0);
     const storageRef = ref(storage, `${path}/${Date.now()}_${fileToUpload.name}`);
-    const snapshot = await uploadBytes(storageRef, fileToUpload);
+    const snapshot   = await uploadBytes(storageRef, fileToUpload);
     const downloadURL = await getDownloadURL(snapshot.ref);
+    onProgress?.('uploading', 100);
     return downloadURL;
   } catch (error) {
-    console.error('Error uploading image:', error);
+    console.error('Error uploading file:', error);
     throw error;
   }
 };

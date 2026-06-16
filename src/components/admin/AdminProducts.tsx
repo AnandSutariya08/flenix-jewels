@@ -41,6 +41,7 @@ const AdminProducts = () => {
   const isDraggingRef = useRef(false);
   const hoverIdRef = useRef<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadLabel, setUploadLabel] = useState('');
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [bulkDelta, setBulkDelta] = useState('10');
@@ -242,7 +243,18 @@ const AdminProducts = () => {
     try {
       const newFiles = mediaItems.filter(m => m.source === 'new' && m.file).map(m => m.file as File);
       const newUploads = newFiles.length > 0
-        ? await Promise.all(newFiles.map(file => uploadImageToStorage(file, 'products')))
+        ? await Promise.all(newFiles.map(file => uploadImageToStorage(
+            file,
+            'products',
+            false,
+            (stage, pct) => {
+              if (stage === 'compressing') {
+                setUploadLabel(`Compressing video\u2026 ${pct}%`);
+              } else {
+                setUploadLabel('Uploading\u2026');
+              }
+            },
+          )))
         : [];
       let uploadIndex = 0;
       const allMediaUrls = mediaItems.map(m => {
@@ -277,6 +289,7 @@ const AdminProducts = () => {
       toast.error(editingId ? 'Failed to update product' : 'Failed to add product');
     } finally {
       setIsUploading(false);
+      setUploadLabel('');
     }
   };
 
@@ -371,43 +384,43 @@ const AdminProducts = () => {
 
  
 
-	  return (
-	    <div className="space-y-8">
-	      <div className="flex items-center justify-between gap-4">
-	        <div>
-	          <h2 className="text-2xl font-semibold">Products</h2>
-	          <p className="text-sm text-muted-foreground">Add and manage products, images/videos, and pricing visibility.</p>
-	        </div>
-	        <div className="flex items-center gap-4">
-	          <div className="flex items-center gap-2">
-	            <Switch
-	              id="admin-show-prices"
-	              checked={showPrices}
-	              onCheckedChange={togglePriceVisibility}
-	              disabled={isSavingPriceSettings}
-	            />
-	            <Label htmlFor="admin-show-prices" className="cursor-pointer text-sm">
-	              Show Prices
-	            </Label>
-	          </div>
-	          <Button onClick={handleOpenCreate}>
-	            <Plus className="h-4 w-4 mr-2" />
-	            Add Product
-	          </Button>
-	        </div>
-	      </div>
+          return (
+            <div className="space-y-8">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-semibold">Products</h2>
+                  <p className="text-sm text-muted-foreground">Add and manage products, images/videos, and pricing visibility.</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id="admin-show-prices"
+                      checked={showPrices}
+                      onCheckedChange={togglePriceVisibility}
+                      disabled={isSavingPriceSettings}
+                    />
+                    <Label htmlFor="admin-show-prices" className="cursor-pointer text-sm">
+                      Show Prices
+                    </Label>
+                  </div>
+                  <Button onClick={handleOpenCreate}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Product
+                  </Button>
+                </div>
+              </div>
 
-	      <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
-	        <DialogContent className="max-w-6xl h-[90vh] overflow-y-auto">
-	          <DialogHeader>
-	            <DialogTitle>{editingId ? 'Edit Product' : 'Add New Product'}</DialogTitle>
-	          </DialogHeader>
+              <Dialog open={isFormOpen} onOpenChange={(v) => { if (!v) resetForm(); setIsFormOpen(v); }}>
+                <DialogContent className="max-w-6xl h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>{editingId ? 'Edit Product' : 'Add New Product'}</DialogTitle>
+                  </DialogHeader>
 
-	          <div className="space-y-4">
-	          <div className="space-y-2">
-	            <Label htmlFor="product-category">Category *</Label>
-	            <Select value={categoryId} onValueChange={setCategoryId}>
-	              <SelectTrigger>
+                  <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="product-category">Category *</Label>
+                    <Select value={categoryId} onValueChange={setCategoryId}>
+                      <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
@@ -568,31 +581,31 @@ const AdminProducts = () => {
             </p>
           </div>
           
-	          <div className="flex gap-2 pt-2">
-	            <Button 
-	              onClick={handleAddProduct} 
-	              className="flex-1" 
-	              disabled={isUploading}
-	            >
+                  <div className="flex gap-2 pt-2">
+                    <Button 
+                      onClick={handleAddProduct} 
+                      className="flex-1" 
+                      disabled={isUploading}
+                    >
               <Plus className="h-4 w-4 mr-2" />
               {isUploading 
-                ? (editingId ? 'Updating...' : 'Uploading...') 
+                ? (uploadLabel || (editingId ? 'Updating...' : 'Uploading...')) 
                 : (editingId ? 'Update Product' : 'Add Product')
               }
             </Button>
-	            {editingId && (
-	              <Button 
-	                onClick={handleCancelEdit} 
-	                variant="outline" 
-	                disabled={isUploading}
-	              >
-	                Cancel
-	              </Button>
-	            )}
-	          </div>
-	          </div>
-	        </DialogContent>
-	      </Dialog>
+                    {editingId && (
+                      <Button 
+                        onClick={handleCancelEdit} 
+                        variant="outline" 
+                        disabled={isUploading}
+                      >
+                        Cancel
+                      </Button>
+                    )}
+                  </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
 
       <Card>
         <CardHeader>

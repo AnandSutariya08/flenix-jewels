@@ -23,6 +23,7 @@ const AdminBanners = () => {
   const [mediaType, setMediaType] = useState<'image' | 'video' | 'gif'>('image');
   const [priority, setPriority] = useState<number>(1);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadLabel, setUploadLabel] = useState('');
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -100,7 +101,18 @@ const AdminBanners = () => {
     try {
       let imageUrl = image;
       if (imageFile) {
-        imageUrl = await uploadImageToStorage(imageFile, 'banners', true); // Skip watermark for banners
+        imageUrl = await uploadImageToStorage(
+          imageFile,
+          'banners',
+          true,
+          (stage, pct) => {
+            if (stage === 'compressing') {
+              setUploadLabel(`Compressing video\u2026 ${pct}%`);
+            } else {
+              setUploadLabel('Uploading\u2026');
+            }
+          },
+        );
       }
       
       const bannerData: Banner = {
@@ -123,6 +135,7 @@ const AdminBanners = () => {
       toast.error(editingId ? 'Failed to update banner' : 'Failed to add banner');
     } finally {
       setIsUploading(false);
+      setUploadLabel('');
     }
   };
 
@@ -232,7 +245,7 @@ const AdminBanners = () => {
               </Button>
               <Button onClick={handleAddBanner} disabled={isUploading}>
                 <Plus className="h-4 w-4 mr-2" />
-                {isUploading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Banner' : 'Add Banner')}
+                {isUploading ? (uploadLabel || (editingId ? 'Updating...' : 'Uploading...')) : (editingId ? 'Update Banner' : 'Add Banner')}
               </Button>
             </div>
           </div>
