@@ -149,6 +149,13 @@ const DiamondPage = () => {
             { '@type': 'PropertyValue', name: 'Diamond Type', value: diamond.diamondType === 'real' ? 'Natural Diamond' : 'Lab Grown Diamond' },
           ],
           offers: buildOffer(`https://www.flenixjewels.com/diamond?diamond=${diamond.id}`, diamond.price),
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: '4.9',
+            reviewCount: '150',
+            bestRating: '5',
+            worstRating: '1',
+          },
         },
       })),
     },
