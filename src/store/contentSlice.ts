@@ -83,7 +83,7 @@ const computeDeferredLoaded = (data: GlobalData) =>
 // Bump cache version to avoid stale data (especially after Firebase project changes).
 const SESSION_KEY = "flenix_global_data_v8";
 const LOCAL_KEY = "flenix_global_data_v8_persisted";
-const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 // Call this from admin after saving/deleting gallery items so the home page
 // always fetches fresh deferred data on the next visit instead of using stale cache.
