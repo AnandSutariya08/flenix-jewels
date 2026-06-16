@@ -53,7 +53,9 @@ Firebase Firestore is used as the backend database. Firebase Storage is used for
 
 Configured for Replit Autoscale deployment:
 - **Build**: `npm run build`
-- **Run**: `npm run preview` (serves the built dist/)
+- **Run**: `node server.mjs` (custom Node.js server that injects per-page meta tags before serving)
+
+`server.mjs` in the project root replaces `vite preview`. It serves `dist/` statically but injects the correct `<title>` and `<meta name="description">` per URL path so Google sees unique descriptions for every page (fixes the SPA same-description problem).
 
 ## Notes
 
