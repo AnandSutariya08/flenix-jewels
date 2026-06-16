@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, ArrowRight, Gem } from 'lucide-react';
 import { preloadMedia } from '@/lib/preload';
 import heroFallback from '@/assets/hero banner1.png';
 import { SITE } from '@/lib/seo';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 
 interface BannerCarouselProps {
   banners?: Banner[];
@@ -188,14 +189,18 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
                 preload="metadata"
                 poster={heroFallback} onLoadedData={() => markLoaded(index)} />
             ) : (
-              <img
+              <OptimizedImage
+                noWrapper
                 src={banner.image}
                 alt={banner.title}
                 className="w-full h-full object-cover object-center"
                 style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
                 loading={isCurrent ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchPriority={isCurrent ? 'high' : 'auto'} sizes="100vw" onLoad={() => markLoaded(index)} />
+                fetchPriority={isCurrent ? 'high' : 'auto'}
+                sizes="100vw"
+                onLoad={() => markLoaded(index)}
+              />
             )}
 
             {/* Multi-layer overlays for depth */}

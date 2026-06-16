@@ -4,6 +4,7 @@ import { X, MessageCircle, Calendar, ArrowRight, Sparkles, Share2, Copy, Check }
 import { BlogPost } from '@/lib/storage';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 
 interface BlogDialogProps {
   blog: BlogPost | null;
@@ -82,13 +83,13 @@ const BlogDialog = ({ blog, isOpen, onClose, whatsappNumber = '85251254000' }: B
         <div className="flex flex-col max-h-[95vh] overflow-y-auto bg-background">
           {/* Featured Image - Full Display with proper background */}
           <div className="relative w-full bg-black flex items-center justify-center">
-            <img
+            <OptimizedImage
+              noWrapper
               src={blog.image}
               alt={blog.title}
               className="w-full h-auto max-h-[50vh] object-contain"
               loading="eager"
               decoding="async"
-              fetchPriority="high"
             />
           </div>
           {/* Content Section */}

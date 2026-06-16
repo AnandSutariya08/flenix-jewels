@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { isImageCached, keepImageAlive } from '@/lib/preload';
+import { isImageCached } from '@/lib/preload';
 import { CatalogItem } from '@/lib/storage';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import WhatsAppButton from './WhatsAppButton';
 import { X, ChevronLeft, ChevronRight, Truck, Shield, Star, Pause, Volume2, VolumeX, Play, Sparkles } from 'lucide-react';
@@ -208,14 +209,16 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                   onStalled={() => setBuffering(true)}
                 />
               ) : current ? (
-                <img
+                <OptimizedImage
+                  noWrapper
                   key={current.url}
                   src={current.url}
                   alt={product.name}
                   draggable={false}
                   loading="eager"
                   className="absolute inset-0 w-full h-full object-cover"
-                  onLoad={() => { setLoaded(true); keepImageAlive(current.url); }}
+                  skeletonClassName="hidden"
+                  onLoad={() => setLoaded(true)}
                 />
               ) : null}
             </div>
@@ -419,14 +422,16 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                     onStalled={() => setBuffering(true)}
                   />
                 ) : current ? (
-                  <img
+                  <OptimizedImage
+                    noWrapper
                     key={current.url}
                     src={current.url}
                     alt={product.name}
                     draggable={false}
                     loading="eager"
                     className="absolute inset-0 w-full h-full object-cover"
-                    onLoad={() => { setLoaded(true); keepImageAlive(current.url); }}
+                    skeletonClassName="hidden"
+                    onLoad={() => setLoaded(true)}
                   />
                 ) : null}
               </div>
