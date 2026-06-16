@@ -78,15 +78,38 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
     btn?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
   }, [safeIdx]);
 
-  // Single autoplay trigger — fires when video has buffered enough to play without stalling
-  // preload="metadata" ensures this fires quickly (after first frame + duration loaded)
-  const handleCanPlay = useCallback(() => {
-    setLoaded(true); setBuffering(false);
-    if (!open || !videoRef.current) return;
-    videoRef.current.play()
-      .then(() => setPlaying(true))
-      .catch(() => setPlaying(false));
+  // Guard so play() is only called once per video URL
+  const playStartedRef = useRef(false);
+  useEffect(() => { playStartedRef.current = false; }, [current?.url, open]);
+
+  const doPlay = useCallback(() => {
+    const v = videoRef.current;
+    if (!v || playStartedRef.current || !open) return;
+    playStartedRef.current = true;
+    v.play()
+      .then(() => { setPlaying(true); setBuffering(false); })
+      .catch(() => { playStartedRef.current = false; });
   }, [open]);
+
+  // canplay = first frame decoded → hide the black screen, show poster frame
+  const handleCanPlay = useCallback(() => {
+    setLoaded(true);
+  }, []);
+
+  // canplaythrough = browser has buffered enough to play to end without stalling
+  // This is the right trigger for smooth playback
+  const handleCanPlayThrough = useCallback(() => {
+    setLoaded(true); setBuffering(false);
+    doPlay();
+  }, [doPlay]);
+
+  // Safety fallback: if canplaythrough hasn't fired in 3 s, play anyway
+  // (covers very large files or slow connections where user shouldn't wait forever)
+  useEffect(() => {
+    if (!open || current?.type !== 'video') return;
+    const t = setTimeout(() => doPlay(), 3000);
+    return () => clearTimeout(t);
+  }, [open, current?.url, current?.type, doPlay]);
 
   if (!product || count === 0) return null;
 
@@ -176,9 +199,10 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                   key={current.url}
                   ref={videoRef}
                   className="absolute inset-0 w-full h-full object-cover"
-                  loop muted={muted} playsInline preload="metadata"
+                  loop muted={muted} playsInline preload="auto"
                   src={current.url} poster={poster || undefined}
                   onCanPlay={handleCanPlay}
+                  onCanPlayThrough={handleCanPlayThrough}
                   onWaiting={() => setBuffering(true)}
                   onPlaying={() => { setBuffering(false); setLoaded(true); setPlaying(true); }}
                   onStalled={() => setBuffering(true)}
@@ -386,9 +410,10 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                     key={current.url}
                     ref={videoRef}
                     className="absolute inset-0 w-full h-full object-cover"
-                    loop muted={muted} playsInline preload="metadata"
+                    loop muted={muted} playsInline preload="auto"
                     src={current.url} poster={poster || undefined}
                     onCanPlay={handleCanPlay}
+                    onCanPlayThrough={handleCanPlayThrough}
                     onWaiting={() => setBuffering(true)}
                     onPlaying={() => { setBuffering(false); setLoaded(true); setPlaying(true); }}
                     onStalled={() => setBuffering(true)}
