@@ -51,21 +51,10 @@ function getExcerpt(content: string, maxLen = 110) {
   return plain.length > maxLen ? plain.slice(0, maxLen).trim() + '…' : plain;
 }
 
-/* ── Scroll-reveal hook ── */
-function useReveal(threshold = 0.1) {
+/* ── Scroll-reveal hook (disabled — elements show instantly) ── */
+function useReveal(_threshold = 0.1) {
   const ref = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
+  return { ref, visible: true };
 }
 
 /* ── Featured (hero) card ── */

@@ -19,20 +19,9 @@ import hero5 from "@/assets/hero5.png";
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 const CONTACT_WHATSAPP_NUMBER = '+852 51254000';
 
-function useReveal(threshold = 0.1) {
+function useReveal(_threshold = 0.1) {
   const ref = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
+  return { ref, visible: true };
 }
 
 const Contact = () => {

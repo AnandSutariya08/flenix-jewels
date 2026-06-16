@@ -16,17 +16,9 @@ import hero6 from "@/assets/hero6.png";
 const GOLD = 'linear-gradient(135deg, #9B6844 0%, #C4906A 55%, #D4A96A 100%)';
 
 /* ── Intersection Observer hook for scroll-reveal ── */
-function useReveal(threshold = 0.12) {
+function useReveal(_threshold = 0.12) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
+  return { ref, visible: true };
 }
 
 /* ── Gallery card (clean grid) ── */
