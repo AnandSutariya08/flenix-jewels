@@ -93,43 +93,34 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
       .catch(() => { playStartedRef.current = false; });
   }, [open]);
 
-  // canplay = first frame decoded → hide the black screen, show poster frame
+  // canplay = first frame decoded → show video and start playing immediately
   const handleCanPlay = useCallback(() => {
-    setLoaded(true);
-  }, []);
+    setLoaded(true); setBuffering(false);
+    doPlay();
+  }, [doPlay]);
 
-  // canplaythrough = browser has buffered enough to play to end without stalling
-  // This is the right trigger for smooth playback
+  // canplaythrough — also try play (doPlay guards against double-call)
   const handleCanPlayThrough = useCallback(() => {
     setLoaded(true); setBuffering(false);
     doPlay();
   }, [doPlay]);
 
-  // Safety fallback: if canplaythrough hasn't fired in 3 s, play anyway
-  // (covers very large files or slow connections where user shouldn't wait forever)
+  // Safety fallback: if canplay hasn't fired in 1.5 s, play anyway
   useEffect(() => {
     if (!open || current?.type !== 'video') return;
-    const t = setTimeout(() => doPlay(), 3000);
+    const t = setTimeout(() => doPlay(), 1500);
     return () => clearTimeout(t);
   }, [open, current?.url, current?.type, doPlay]);
 
   if (!product || count === 0) return null;
 
   const go = (dir: 1 | -1) => {
-    setTransitioning(true);
-    setTimeout(() => {
-      setIdx(p => (p + dir + count) % count);
-      setTransitioning(false);
-    }, 120);
+    setIdx(p => (p + dir + count) % count);
   };
 
   const goTo = (i: number) => {
     if (i === safeIdx) return;
-    setTransitioning(true);
-    setTimeout(() => {
-      setIdx(i);
-      setTransitioning(false);
-    }, 120);
+    setIdx(i);
   };
 
   const togglePlay = () => {
