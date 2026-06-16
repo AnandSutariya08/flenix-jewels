@@ -84,7 +84,6 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const handleMouseEnter = () => {
     setIsHovered(true);
     [primaryMedia, secondaryMedia].filter(Boolean).forEach(url => keepImageAlive(url as string));
-    if (hasMultiple) setCurrentIndex(1);
   };
 
   const handleMouseLeave = () => {
@@ -124,11 +123,8 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
           </div>
         ) : (
           <>
-            {/* Primary image — wrapper div controls hover-swap opacity */}
-            <div
-              className="absolute inset-0 transition-opacity duration-300"
-              style={{ opacity: isHovered && isSecondaryImage ? 0 : 1 }}
-            >
+            {/* Primary image */}
+            <div className="absolute inset-0">
               <OptimizedImage
                 noWrapper
                 src={primaryMedia}
@@ -138,23 +134,6 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
                 draggable={false}
               />
             </div>
-
-            {/* Secondary image — hover overlay */}
-            {secondaryMedia && isSecondaryImage && (
-              <div
-                className="absolute inset-0 transition-opacity duration-150"
-                style={{ opacity: isHovered ? 1 : 0 }}
-              >
-                <OptimizedImage
-                  noWrapper
-                  src={secondaryMedia}
-                  alt={product.name}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  loading="lazy"
-                  draggable={false}
-                />
-              </div>
-            )}
           </>
         )}
 
