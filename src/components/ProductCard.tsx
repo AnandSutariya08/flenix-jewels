@@ -111,6 +111,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
               src={displayMedia}
               className="w-full h-full object-cover"
               autoPlay={isHovered}
+              preload="none"
               loop
               muted
               playsInline
