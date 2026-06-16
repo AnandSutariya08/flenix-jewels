@@ -43,18 +43,38 @@ export function isImageCached(url: string): boolean {
   return imageMemoryCache.has(url);
 }
 
+const VIDEO_RE = /\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i;
+const isVideoUrl = (url: string) =>
+  VIDEO_RE.test(url) || url.includes('/video') || url.includes('vid-');
+
+/**
+ * Preloads all URLs:
+ *  - Images → keepImageAlive (fetched immediately via <img>)
+ *  - Videos → keepVideoAlive (buffered via hidden <video preload="auto">)
+ *
+ * Videos are deferred to idle time so they don't compete with
+ * critical first-paint resources.
+ */
 export const preloadMedia = (urls: string[]) => {
   if (!isBrowser) return;
   const unique = Array.from(new Set(urls.filter(Boolean)));
-  unique.forEach(keepImageAlive);
+  const images = unique.filter(u => !isVideoUrl(u));
+  const videos = unique.filter(u => isVideoUrl(u));
+
+  // Images: start immediately
+  images.forEach(keepImageAlive);
+
+  // Videos: defer to idle so they don't delay first paint
+  if (videos.length === 0) return;
+  const scheduleVideos = () => videos.forEach(keepVideoAlive);
+  if ('requestIdleCallback' in window) {
+    (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => void })
+      .requestIdleCallback(scheduleVideos, { timeout: 2000 });
+  } else {
+    setTimeout(scheduleVideos, 500);
+  }
 };
 
 export const preloadAssets = (urls: string[]) => {
-  if (!isBrowser) return;
-  const unique = Array.from(new Set(urls.filter(Boolean)));
-  if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(() => preloadMedia(unique), { timeout: 1500 });
-  } else {
-    setTimeout(() => preloadMedia(unique), 100);
-  }
+  preloadMedia(urls);
 };
