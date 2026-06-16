@@ -9,6 +9,25 @@ const isBrowser = typeof window !== "undefined";
  */
 const imageMemoryCache = new Map<string, HTMLImageElement>();
 
+/**
+ * Keeps hidden HTMLVideoElement objects alive so the browser pre-buffers
+ * video files before the dialog opens. preload="auto" tells the browser
+ * to download the full video in the background.
+ */
+const videoMemoryCache = new Map<string, HTMLVideoElement>();
+
+export function keepVideoAlive(url: string): void {
+  if (!url || !isBrowser || videoMemoryCache.has(url)) return;
+  const vid = document.createElement('video');
+  vid.preload = 'auto';
+  vid.muted = true;
+  vid.src = url;
+  vid.style.cssText = 'position:absolute;width:0;height:0;opacity:0;pointer-events:none;';
+  document.body.appendChild(vid);
+  vid.load();
+  videoMemoryCache.set(url, vid);
+}
+
 export function keepImageAlive(url: string): void {
   if (!url || !isBrowser || imageMemoryCache.has(url)) return;
   const img = new Image();

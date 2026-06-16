@@ -3,7 +3,7 @@ import type { TouchEvent } from 'react';
 import { CatalogItem, type Diamond } from '@/lib/storage';
 import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
-import { keepImageAlive } from '@/lib/preload';
+import { keepImageAlive, keepVideoAlive } from '@/lib/preload';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { OptimizedVideo } from '@/components/ui/optimized-video';
 import { stripHtml } from '@/lib/seo';
@@ -62,6 +62,14 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   useEffect(() => {
     setCurrentIndex(0);
     setIsHovered(false);
+  }, [product.id]);
+
+  // Preload any video files in the background as soon as the card renders
+  useEffect(() => {
+    media.forEach(url => {
+      if (getMediaType(url) === 'video') keepVideoAlive(url);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.id]);
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
