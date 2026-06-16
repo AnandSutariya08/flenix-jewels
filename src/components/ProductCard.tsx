@@ -5,6 +5,7 @@ import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
 import { keepImageAlive } from '@/lib/preload';
 import { OptimizedImage } from '@/components/ui/optimized-image';
+import { OptimizedVideo } from '@/components/ui/optimized-video';
 import { stripHtml } from '@/lib/seo';
 import { useAppSelector } from "@/store/hooks";
 import { selectGlobalData } from "@/store/contentSlice";
@@ -105,14 +106,14 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
       >
         {currentMediaType === 'video' ? (
           <div className="relative w-full h-full">
-            <video
+            <OptimizedVideo
+              noWrapper
               src={displayMedia}
               className="w-full h-full object-cover"
               autoPlay={isHovered}
               loop
               muted
               playsInline
-              preload="metadata"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors">
               <div className="bg-white/95 dark:bg-zinc-800/95 rounded-full p-3 shadow-lg">

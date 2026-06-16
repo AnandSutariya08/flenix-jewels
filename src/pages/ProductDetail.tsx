@@ -10,6 +10,7 @@ import { loadProducts, selectContentHydrated, selectContentStatus, selectGlobalD
 import { buildFaqForProduct, buildMetaDescriptionForProduct, buildMetaTitleForProduct, buildOffer } from "@/lib/seo";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { preloadMedia } from "@/lib/preload";
+import { OptimizedVideo } from "@/components/ui/optimized-video";
 import { useHeaderOffset } from "@/hooks/useHeaderOffset";
 import { formatPriceRounded } from "@/lib/utils";
 
@@ -145,7 +146,7 @@ const ProductDetail = () => {
           <div>
             <div className="relative aspect-square rounded-2xl bg-muted overflow-hidden flex items-center justify-center">
               {currentMedia && getMediaType(currentMedia) === "video" ? (
-                <video src={currentMedia} className="w-full h-full object-cover" controls />
+                <OptimizedVideo noWrapper src={currentMedia} className="w-full h-full object-cover" controls />
               ) : (
                 currentMedia && (
                   <img
@@ -186,7 +187,7 @@ const ProductDetail = () => {
                     className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${selectedIndex === i ? "border-primary" : "border-transparent"}`}
                   >
                     {getMediaType(item) === "video" ? (
-                      <video src={item} className="w-full h-full object-cover" muted />
+                      <OptimizedVideo noWrapper src={item} className="w-full h-full object-cover" muted />
                     ) : (
                       <img
                         src={item}

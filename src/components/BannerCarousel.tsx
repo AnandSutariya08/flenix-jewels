@@ -6,6 +6,7 @@ import { preloadMedia } from '@/lib/preload';
 import heroFallback from '@/assets/hero banner1.png';
 import { SITE } from '@/lib/seo';
 import { OptimizedImage } from '@/components/ui/optimized-image';
+import { OptimizedVideo } from '@/components/ui/optimized-video';
 
 interface BannerCarouselProps {
   banners?: Banner[];
@@ -178,7 +179,8 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
             style={{ transform, transition, zIndex, willChange: 'transform' }}
           >
             {banner.mediaType === 'video' ? (
-              <video
+              <OptimizedVideo
+                noWrapper
                 src={banner.image}
                 className="w-full h-full object-cover"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -186,8 +188,9 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
                 muted
                 loop
                 playsInline
-                preload="metadata"
-                poster={heroFallback} onLoadedData={() => markLoaded(index)} />
+                poster={heroFallback}
+                onLoadedData={() => markLoaded(index)}
+              />
             ) : (
               <OptimizedImage
                 noWrapper

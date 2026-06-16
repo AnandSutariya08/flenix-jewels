@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { isImageCached } from '@/lib/preload';
 import { CatalogItem } from '@/lib/storage';
 import { OptimizedImage } from '@/components/ui/optimized-image';
+import { OptimizedVideo } from '@/components/ui/optimized-video';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import WhatsAppButton from './WhatsAppButton';
 import { X, ChevronLeft, ChevronRight, Truck, Shield, Star, Pause, Volume2, VolumeX, Play, Sparkles } from 'lucide-react';
@@ -196,12 +197,16 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                 </div>
               )}
               {current?.type === 'video' && !isDesktop ? (
-                <video
-                  key={current.url}
+                <OptimizedVideo
+                  noWrapper
                   ref={videoRef}
+                  key={current.url}
+                  src={current.url}
                   className="absolute inset-0 w-full h-full object-cover"
-                  loop muted={muted} playsInline preload="auto"
-                  src={current.url} poster={poster || undefined}
+                  skeletonClassName="hidden"
+                  loop muted={muted} playsInline
+                  autoPlay={false}
+                  poster={poster || undefined}
                   onCanPlay={handleCanPlay}
                   onCanPlayThrough={handleCanPlayThrough}
                   onWaiting={() => setBuffering(true)}
@@ -409,12 +414,16 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                   </div>
                 )}
                 {current?.type === 'video' && isDesktop ? (
-                  <video
-                    key={current.url}
+                  <OptimizedVideo
+                    noWrapper
                     ref={videoRef}
+                    key={current.url}
+                    src={current.url}
                     className="absolute inset-0 w-full h-full object-cover"
-                    loop muted={muted} playsInline preload="auto"
-                    src={current.url} poster={poster || undefined}
+                    skeletonClassName="hidden"
+                    loop muted={muted} playsInline
+                    autoPlay={false}
+                    poster={poster || undefined}
                     onCanPlay={handleCanPlay}
                     onCanPlayThrough={handleCanPlayThrough}
                     onWaiting={() => setBuffering(true)}
