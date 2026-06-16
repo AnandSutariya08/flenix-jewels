@@ -416,7 +416,7 @@ const Gallery = () => {
                               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                               loading="eager"
                               decoding="async"
-                              fetchPriority="high"
+                              fetchpriority="high"
                               draggable={false}
                             />
                             <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to right, rgba(4,2,0,0.72) 0%, rgba(4,2,0,0.20) 55%, rgba(4,2,0,0.05) 100%)" }} />

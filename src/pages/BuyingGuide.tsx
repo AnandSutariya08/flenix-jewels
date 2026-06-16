@@ -700,7 +700,7 @@ const BuyingGuidePage = () => {
                             className="h-full w-full object-cover"
                             loading="eager"
                             decoding="async"
-                            fetchPriority="high"
+                            fetchpriority="high"
                           />
                         </div>
                       )}
@@ -803,7 +803,7 @@ const BuyingGuidePage = () => {
                           className="h-full w-full object-cover"
                           loading="eager"
                           decoding="async"
-                          fetchPriority="high"
+                          fetchpriority="high"
                         />
                       </div>
                     )}

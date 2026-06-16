@@ -201,7 +201,7 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
                 style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
                 loading={isCurrent ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchPriority={isCurrent ? 'high' : 'auto'}
+                fetchpriority={isCurrent ? 'high' : 'auto'}
                 sizes="100vw"
                 onLoad={() => markLoaded(index)}
               />

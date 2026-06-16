@@ -289,8 +289,8 @@ if (cached?.data && typeof window !== "undefined") {
       .map((c) => c.image)
       .filter(Boolean) as string[];
     if (bannerImgs.length) preloadMedia(bannerImgs, "critical");
-    if (catImgs.length) preloadMedia(catImgs, "high");
-    if (dCatImgs.length) preloadMedia(dCatImgs, "high");
+    if (catImgs.length) preloadMedia(catImgs, "critical");
+    if (dCatImgs.length) preloadMedia(dCatImgs, "critical");
   });
 }
 
