@@ -24,8 +24,11 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const [loaded, setLoaded] = useState(false);
+  const [buffering, setBuffering] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  // Separate refs for mobile + desktop layouts — prevents double-download
+  const videoRef = useRef<HTMLVideoElement>(null);        // desktop
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);  // mobile
   const thumbsRef = useRef<HTMLDivElement>(null);
 
   const media: MediaItem[] = useMemo(() => {
@@ -39,10 +42,20 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
   const current = media[safeIdx] ?? null;
   const multi = count > 1;
 
+  // Returns whichever video element is currently visible in the DOM
+  const getActiveVideo = useCallback((): HTMLVideoElement | null => {
+    const dv = videoRef.current;
+    const mv = mobileVideoRef.current;
+    // offsetParent is null when element (or ancestor) has display:none
+    if (dv && dv.offsetParent !== null) return dv;
+    if (mv && mv.offsetParent !== null) return mv;
+    return dv ?? mv;
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const firstUrl = media[0]?.url;
-    setIdx(0); setPlaying(false); setMuted(true);
+    setIdx(0); setPlaying(false); setMuted(true); setBuffering(false);
     setLoaded(Boolean(firstUrl && media[0]?.type === 'image' && isImageCached(firstUrl)));
     setTransitioning(false);
   }, [open, media]);
@@ -50,23 +63,30 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
   useEffect(() => {
     const url = media[safeIdx]?.url;
     setLoaded(Boolean(url && media[safeIdx]?.type === 'image' && isImageCached(url)));
-    setPlaying(false);
+    setPlaying(false); setBuffering(false);
     setTransitioning(false);
   }, [safeIdx, media]);
 
+  // Pause and reset when dialog closes
   useEffect(() => {
-    if (!open) { videoRef.current?.pause(); }
+    if (!open) {
+      videoRef.current?.pause();
+      mobileVideoRef.current?.pause();
+    }
   }, [open]);
 
+  // Load + play the active video when a video slide becomes current
   useEffect(() => {
     if (!open || current?.type !== 'video') return;
-    const v = videoRef.current;
-    if (!v) return;
     const t = setTimeout(() => {
-      v.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-    }, 100);
+      const v = getActiveVideo();
+      if (!v) return;
+      // With preload="none", we must call load() before play()
+      if (v.readyState === 0) { v.load(); }
+      v.play().then(() => { setPlaying(true); setBuffering(false); }).catch(() => setPlaying(false));
+    }, 120);
     return () => clearTimeout(t);
-  }, [open, current?.url, current?.type]);
+  }, [open, current?.url, current?.type, getActiveVideo]);
 
   useEffect(() => {
     const strip = thumbsRef.current;
@@ -75,10 +95,14 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
     btn?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
   }, [safeIdx]);
 
-  const handleCanPlay = useCallback(() => {
-    setLoaded(true);
-    if (!open || !videoRef.current) return;
-    videoRef.current.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+  // Called from whichever video element fires canPlay first
+  const handleCanPlay = useCallback((e: React.SyntheticEvent<HTMLVideoElement>) => {
+    setLoaded(true); setBuffering(false);
+    if (!open) return;
+    const v = e.currentTarget;
+    // Only autoplay the visible video, not the hidden-layout duplicate
+    if (v.offsetParent === null) return;
+    v.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
   }, [open]);
 
   if (!product || count === 0) return null;
@@ -101,14 +125,19 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
   };
 
   const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (playing) { videoRef.current.pause(); setPlaying(false); }
-    else { videoRef.current.play().then(() => setPlaying(true)); }
+    const v = getActiveVideo();
+    if (!v) return;
+    if (playing) { v.pause(); setPlaying(false); }
+    else { if (v.readyState === 0) { v.load(); } v.play().then(() => setPlaying(true)); }
   };
 
   const toggleMute = () => {
-    if (!videoRef.current) return;
-    videoRef.current.muted = !muted;
+    const v = getActiveVideo();
+    if (!v) return;
+    v.muted = !muted;
+    // Keep both in sync
+    if (videoRef.current) videoRef.current.muted = !muted;
+    if (mobileVideoRef.current) mobileVideoRef.current.muted = !muted;
     setMuted(!muted);
   };
 
@@ -157,19 +186,22 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
               className="absolute inset-0 transition-opacity duration-200"
               style={{ opacity: transitioning ? 0 : 1 }}
             >
-              {!loaded && (
+              {(!loaded || buffering) && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center" style={{ background: '#0f0906' }}>
                   <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'rgba(196,144,106,0.6)', borderTopColor: 'transparent' }} />
                 </div>
               )}
               {current?.type === 'video' ? (
                 <video
-                  ref={videoRef}
+                  ref={mobileVideoRef}
                   className="absolute inset-0 w-full h-full object-cover"
-                  loop muted={muted} playsInline preload="auto"
+                  loop muted={muted} playsInline preload="none"
                   src={current.url} poster={poster || undefined}
                   onLoadedData={() => setLoaded(true)}
                   onCanPlay={handleCanPlay}
+                  onWaiting={() => setBuffering(true)}
+                  onPlaying={() => { setBuffering(false); setLoaded(true); }}
+                  onStalled={() => setBuffering(true)}
                 />
               ) : current ? (
                 <img
@@ -364,7 +396,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                 className="absolute inset-0 transition-opacity duration-150"
                 style={{ opacity: transitioning ? 0 : 1 }}
               >
-                {!loaded && (
+                {(!loaded || buffering) && (
                   <div className="absolute inset-0 z-10 flex items-center justify-center" style={{ background: '#0a0705' }}>
                     <div className="w-10 h-10 rounded-full border-2 animate-spin" style={{ borderColor: 'rgba(196,144,106,0.4)', borderTopColor: '#C4906A' }} />
                   </div>
@@ -373,10 +405,13 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                   <video
                     ref={videoRef}
                     className="absolute inset-0 w-full h-full object-cover"
-                    loop muted={muted} playsInline preload="auto"
+                    loop muted={muted} playsInline preload="none"
                     src={current.url} poster={poster || undefined}
                     onLoadedData={() => setLoaded(true)}
                     onCanPlay={handleCanPlay}
+                    onWaiting={() => setBuffering(true)}
+                    onPlaying={() => { setBuffering(false); setLoaded(true); }}
+                    onStalled={() => setBuffering(true)}
                   />
                 ) : current ? (
                   <img
