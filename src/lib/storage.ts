@@ -18,6 +18,7 @@ import { db } from './firebase';
 export interface Banner {
   id: string;
   image: string;
+  lqip?: string;
   title: string;
   description: string;
   mediaType?: 'image' | 'video' | 'gif';
@@ -53,6 +54,7 @@ export interface Category {
   id: string;
   name: string;
   image: string;
+  lqip?: string;
   description: string;
   priority?: number;
   metaTitle?: string;
@@ -71,6 +73,7 @@ export interface DiamondCategory {
   id: string;
   name: string;
   image: string;
+  lqip?: string;
   description: string;
   priority?: number;
   metaTitle?: string;
@@ -121,6 +124,7 @@ export interface Diamond {
 export interface GalleryItem {
   id: string;
   image: string;
+  lqip?: string;
   description: string;
   category?: string;
   sequence?: number;
@@ -129,6 +133,7 @@ export interface GalleryItem {
 export interface FeaturedCollection {
   id: string;
   image: string;
+  lqip?: string;
   title: string;
   description: string;
   priority?: number;
@@ -967,29 +972,32 @@ import { storage } from './firebase';
 
 const getImageResizeConfig = (path: string) => {
   const lower = path.toLowerCase();
-  if (lower.includes('ads')) return { max: 1600, quality: 0.82 };
-  if (lower.includes('banners')) return { max: 1600, quality: 0.8 };
-  if (lower.includes('products')) return { max: 1400, quality: 0.8 };
-  if (lower.includes('diamonds')) return { max: 1400, quality: 0.8 };
-  if (lower.includes('categories')) return { max: 1400, quality: 0.82 };
-  if (lower.includes('diamond-categories')) return { max: 1400, quality: 0.82 };
-  if (lower.includes('gallery')) return { max: 1400, quality: 0.82 };
-  if (lower.includes('blogs')) return { max: 1600, quality: 0.82 };
-  if (lower.includes('featured')) return { max: 1600, quality: 0.82 };
-  if (lower.includes('buying-guides')) return { max: 1600, quality: 0.82 };
-  return { max: 1600, quality: 0.82 };
+  if (lower.includes('ads')) return { max: 1200, quality: 0.75 };
+  if (lower.includes('banners')) return { max: 1400, quality: 0.72 };
+  if (lower.includes('products')) return { max: 900, quality: 0.70 };
+  if (lower.includes('diamonds')) return { max: 900, quality: 0.70 };
+  if (lower.includes('categories')) return { max: 900, quality: 0.72 };
+  if (lower.includes('diamond-categories')) return { max: 900, quality: 0.72 };
+  if (lower.includes('gallery')) return { max: 1000, quality: 0.72 };
+  if (lower.includes('blogs')) return { max: 1000, quality: 0.72 };
+  if (lower.includes('featured')) return { max: 1200, quality: 0.72 };
+  if (lower.includes('buying-guides')) return { max: 1000, quality: 0.72 };
+  return { max: 1200, quality: 0.72 };
 };
 
 const getImageMaxBytes = (path: string): number => {
   const lower = path.toLowerCase();
-  if (lower.includes('banners'))  return 900_000;
-  if (lower.includes('blogs'))    return 900_000;
-  if (lower.includes('featured')) return 900_000;
-  if (lower.includes('products')) return 700_000;
-  if (lower.includes('diamonds')) return 700_000;
-  if (lower.includes('gallery'))  return 700_000;
-  return 800_000;
+  if (lower.includes('banners'))  return 300_000;
+  if (lower.includes('blogs'))    return 200_000;
+  if (lower.includes('featured')) return 250_000;
+  if (lower.includes('products')) return 130_000;
+  if (lower.includes('diamonds')) return 130_000;
+  if (lower.includes('gallery'))  return 180_000;
+  return 200_000;
 };
+
+let _lastLqip = '';
+export const getLastUploadLqip = (): string => _lastLqip;
 
 const processImage = async (file: File, path: string, addMark: boolean): Promise<File> => {
   return new Promise((resolve) => {
@@ -1017,6 +1025,20 @@ const processImage = async (file: File, path: string, addMark: boolean): Promise
         ctx.textAlign    = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('FLENIX JEWELS', canvas.width / 2, canvas.height / 2);
+      }
+
+      // Generate a tiny 20 px-wide LQIP (blur-up placeholder) before quality reduction
+      _lastLqip = '';
+      const _tinyW = 20;
+      const _tinyH = Math.max(1, Math.round(_tinyW * (targetHeight / targetWidth)));
+      const _tiny = document.createElement('canvas');
+      _tiny.width = _tinyW;
+      _tiny.height = _tinyH;
+      const _tinyCtx = _tiny.getContext('2d');
+      if (_tinyCtx) {
+        _tinyCtx.drawImage(canvas, 0, 0, _tinyW, _tinyH);
+        const _dl = _tiny.toDataURL('image/webp', 0.5);
+        _lastLqip = (_dl && _dl.length > 6) ? _dl : _tiny.toDataURL('image/jpeg', 0.5);
       }
 
       const fileName = file.name.replace(/\.\w+$/, '');

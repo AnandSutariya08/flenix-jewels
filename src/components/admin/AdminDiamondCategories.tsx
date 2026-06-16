@@ -5,6 +5,7 @@ import {
   deleteDiamondCategory,
   type DiamondCategory,
   uploadImageToStorage,
+  getLastUploadLqip,
 } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -80,11 +81,16 @@ const AdminDiamondCategories = () => {
         imageUrl = await uploadImageToStorage(imageFile, 'diamond-categories');
       }
 
+      const lqip: string | undefined = imageFile
+        ? (getLastUploadLqip() || undefined)
+        : (editingId ? categories.find(c => c.id === editingId)?.lqip : undefined);
+
       const payload: DiamondCategory = {
         id: editingId || Date.now().toString(),
         name,
         description,
         image: imageUrl,
+        ...(lqip ? { lqip } : {}),
         priority,
       };
 

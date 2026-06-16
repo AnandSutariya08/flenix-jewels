@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getCategories, saveCategory, deleteCategory, Category, uploadImageToStorage } from '@/lib/storage';
+import { getCategories, saveCategory, deleteCategory, Category, uploadImageToStorage, getLastUploadLqip } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -87,11 +87,16 @@ const AdminCategories = () => {
         imageUrl = await uploadImageToStorage(imageFile, 'categories');
       }
       
+      const lqip: string | undefined = imageFile
+        ? (getLastUploadLqip() || undefined)
+        : (editingId ? categories.find(c => c.id === editingId)?.lqip : undefined);
+
       const categoryData: Category = {
         id: editingId || Date.now().toString(),
         name,
         description,
         image: imageUrl,
+        ...(lqip ? { lqip } : {}),
         priority,
       };
 

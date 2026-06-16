@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getFeaturedCollection, saveFeaturedItem, deleteFeaturedItem, FeaturedCollection, uploadImageToStorage } from '@/lib/storage';
+import { getFeaturedCollection, saveFeaturedItem, deleteFeaturedItem, FeaturedCollection, uploadImageToStorage, getLastUploadLqip } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -75,11 +75,16 @@ const AdminFeaturedCollection = () => {
         imageUrl = await uploadImageToStorage(imageFile, 'featured-collection');
       }
       
+      const lqip: string | undefined = imageFile
+        ? (getLastUploadLqip() || undefined)
+        : (editingId ? items.find(i => i.id === editingId)?.lqip : undefined);
+
       const itemData: FeaturedCollection = {
         id: editingId || Date.now().toString(),
         title,
         description,
         image: imageUrl,
+        ...(lqip ? { lqip } : {}),
       };
 
       await saveFeaturedItem(itemData);

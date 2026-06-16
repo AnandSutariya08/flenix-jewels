@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getBanners, saveBanner, deleteBanner, Banner, uploadImageToStorage } from '@/lib/storage';
+import { getBanners, saveBanner, deleteBanner, Banner, uploadImageToStorage, getLastUploadLqip } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -115,11 +115,16 @@ const AdminBanners = () => {
         );
       }
       
+      const lqip: string | undefined = imageFile
+        ? (getLastUploadLqip() || undefined)
+        : (editingId ? banners.find(b => b.id === editingId)?.lqip : undefined);
+
       const bannerData: Banner = {
         id: editingId || Date.now().toString(),
         title,
         description,
         image: imageUrl,
+        ...(lqip ? { lqip } : {}),
         mediaType,
         priority,
       };

@@ -16,6 +16,12 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
   wrapperClassName?: string;
   skeletonClassName?: string;
   /**
+   * Low-Quality Image Placeholder — a tiny (~20×20) base64 data URL generated
+   * at upload time. Shown as a blurred background while the full image loads,
+   * giving the "instant blur-up" effect used by premium e-commerce sites.
+   */
+  lqip?: string;
+  /**
    * Skip wrapper div. Parent must have position:relative for the skeleton
    * (position:absolute inset-0) to be positioned correctly.
    */
@@ -28,6 +34,7 @@ export function OptimizedImage({
   className,
   wrapperClassName,
   skeletonClassName,
+  lqip,
   noWrapper,
   onLoad,
   ...props
@@ -77,12 +84,22 @@ export function OptimizedImage({
   };
 
   const skeleton = !loaded ? (
-    <div
-      className={cn(
-        'absolute inset-0 animate-pulse bg-gradient-to-br from-stone-100 via-amber-50/30 to-stone-100 dark:from-stone-800 dark:via-stone-700/60 dark:to-stone-800',
-        skeletonClassName
+    <div className={cn('absolute inset-0 overflow-hidden', skeletonClassName)}>
+      {lqip ? (
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${lqip})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(12px)',
+            transform: 'scale(1.08)',
+          }}
+        />
+      ) : (
+        <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-stone-100 via-amber-50/30 to-stone-100 dark:from-stone-800 dark:via-stone-700/60 dark:to-stone-800" />
       )}
-    />
+    </div>
   ) : null;
 
   const img = (

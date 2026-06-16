@@ -454,6 +454,7 @@ export default function Index() {
                     src={categories[0].image}
                     alt={categories[0].name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    lqip={categories[0].lqip}
                     fetchpriority="high"
                     loading="eager"
                   />
@@ -512,6 +513,7 @@ export default function Index() {
                     src={cat.image}
                     alt={cat.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    lqip={cat.lqip}
                     fetchpriority="high"
                     loading="eager"
                   />

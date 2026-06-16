@@ -1,0 +1,3 @@
+- [LQIP blur-up system](lqip-system.md) — LQIP generated at upload time via side-channel; stored in Firestore; shown as blurred skeleton in OptimizedImage
+- [Image size limits](image-size-limits.md) — drastically reduced upload limits (130-300KB) + max dims (900-1400px); affects all future uploads only
+- [CRLF line endings](crlf-files.md) — AdminBanners.tsx and AdminFeaturedCollection.tsx had CRLF; edit tool fails silently; strip with sed -i 's/\r//' before editing

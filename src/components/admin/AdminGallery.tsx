@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { getGallery, saveGalleryItem, clearGalleryItemSequence, deleteGalleryItem, GalleryItem, uploadImageToStorage } from '@/lib/storage';
+import { getGallery, saveGalleryItem, clearGalleryItemSequence, deleteGalleryItem, GalleryItem, uploadImageToStorage, getLastUploadLqip } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -119,10 +119,15 @@ const AdminGallery = () => {
         }
       }
 
+      const lqip: string | undefined = imageFile
+        ? (getLastUploadLqip() || undefined)
+        : (editingId ? gallery.find(g => g.id === editingId)?.lqip : undefined);
+
       const itemData: GalleryItem = {
         id: editingId || Date.now().toString(),
         description,
         image: imageUrl,
+        ...(lqip ? { lqip } : {}),
         ...(category.trim() ? { category: category.trim() } : {}),
         ...(seqNum != null ? { sequence: seqNum } : {}),
       };
