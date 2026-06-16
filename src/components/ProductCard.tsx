@@ -91,7 +91,11 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    [primaryMedia, secondaryMedia].filter(Boolean).forEach(url => keepImageAlive(url as string));
+    // Upgrade priority on hover — user is about to click, load fast
+    [primaryMedia, secondaryMedia].filter(Boolean).forEach(url => keepImageAlive(url as string, "high"));
+    if (secondaryMedia && /\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i.test(secondaryMedia)) {
+      keepVideoAlive(secondaryMedia);
+    }
   };
 
   const handleMouseLeave = () => {

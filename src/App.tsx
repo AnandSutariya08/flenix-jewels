@@ -237,46 +237,66 @@ const AppContent = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Collect important images to preload. Deferred images (gallery, featured,
-  // instagram) are added here so the browser starts caching them as soon as
-  // that data arrives — before the user ever scrolls to those sections.
-  const assetUrls = useMemo(() => {
+  // ── Priority-tiered preload ───────────────────────────────────────────────
+  // critical  → banners (hero, above fold) — <link rel="preload"> injected
+  // high      → categories + ads (visible without scrolling on home)
+  // normal    → products + diamonds (next pages user is likely to visit)
+  // low       → gallery, instagram, testimonials, blogs (below fold / other pages)
+  const criticalUrls = useMemo(() => {
     if (isAdminRoute) return [];
     return [
-      ...data.ads.map((ad) => ad.image).filter(Boolean),
       ...data.banners.map((b) => b.image).filter(Boolean),
+    ] as string[];
+  }, [data.banners, isAdminRoute]);
+
+  const highUrls = useMemo(() => {
+    if (isAdminRoute) return [];
+    return [
       ...data.categories.map((c) => c.image).filter(Boolean),
       ...data.diamondCategories.map((c) => c.image).filter(Boolean),
-      ...data.diamonds.flatMap((d) => [d.image, ...(d.images || [])]).filter(Boolean),
+      ...data.ads.map((ad) => ad.image).filter(Boolean),
+    ] as string[];
+  }, [data.categories, data.diamondCategories, data.ads, isAdminRoute]);
+
+  const normalUrls = useMemo(() => {
+    if (isAdminRoute) return [];
+    return [
       ...data.products.flatMap((p) => [p.image, ...(p.images || [])]).filter(Boolean),
+      ...data.diamonds.flatMap((d) => [d.image, ...(d.images || [])]).filter(Boolean),
       ...data.featuredCollection.map((f) => f.image).filter(Boolean),
+    ] as string[];
+  }, [data.products, data.diamonds, data.featuredCollection, isAdminRoute]);
+
+  const lowUrls = useMemo(() => {
+    if (isAdminRoute) return [];
+    return [
       ...data.galleryItems.map((g) => g.image).filter(Boolean),
       ...data.instagramPosts.map((i) => i.image).filter(Boolean),
       ...(data.testimonials ?? []).map((t: any) => t.image).filter(Boolean),
       ...(data.blogs ?? []).flatMap((b: any) => [b.thumbnail, b.image].filter(Boolean)),
       ...(data.buyingGuides ?? []).map((g: any) => g.image).filter(Boolean),
-    ];
-  }, [
-    data.ads,
-    data.banners,
-    data.categories,
-    data.diamondCategories,
-    data.diamonds,
-    data.products,
-    data.featuredCollection,
-    data.galleryItems,
-    data.instagramPosts,
-    data.testimonials,
-    data.blogs,
-    data.buyingGuides,
-    isAdminRoute,
-  ]);
+    ] as string[];
+  }, [data.galleryItems, data.instagramPosts, data.testimonials, data.blogs, data.buyingGuides, isAdminRoute]);
 
   useEffect(() => {
-    if (status === "succeeded" || hydrated) {
-      preloadMedia(assetUrls);
-    }
-  }, [assetUrls, hydrated, status]);
+    if (status !== "succeeded" && !hydrated) return;
+    if (criticalUrls.length > 0) preloadMedia(criticalUrls, "critical");
+  }, [criticalUrls, hydrated, status]);
+
+  useEffect(() => {
+    if (status !== "succeeded" && !hydrated) return;
+    if (highUrls.length > 0) preloadMedia(highUrls, "high");
+  }, [highUrls, hydrated, status]);
+
+  useEffect(() => {
+    if (status !== "succeeded" && !hydrated) return;
+    if (normalUrls.length > 0) preloadMedia(normalUrls, "normal");
+  }, [normalUrls, hydrated, status]);
+
+  useEffect(() => {
+    if (status !== "succeeded" && !hydrated) return;
+    if (lowUrls.length > 0) preloadMedia(lowUrls, "low");
+  }, [lowUrls, hydrated, status]);
 
   useEffect(() => {
     if (status === "succeeded" || hydrated) {

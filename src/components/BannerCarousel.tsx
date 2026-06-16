@@ -110,7 +110,7 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
     if (banners.length === 0) return;
     const nextIndex = (currentIndex + 1) % banners.length;
     const urls = [banners[currentIndex]?.image, banners[nextIndex]?.image].filter(Boolean) as string[];
-    preloadMedia(urls);
+    preloadMedia(urls, "critical");
   }, [banners, currentIndex]);
 
   const goToNext = useCallback(() => navigate((currentIndex + 1) % banners.length, 1), [navigate, currentIndex, banners.length]);
