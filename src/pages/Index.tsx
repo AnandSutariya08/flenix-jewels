@@ -455,7 +455,7 @@ export default function Index() {
                     alt={categories[0].name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     lqip={categories[0].lqip}
-                    fetchpriority="high"
+                    fetchPriority="high"
                     loading="eager"
                   />
                   <div
@@ -514,7 +514,7 @@ export default function Index() {
                     alt={cat.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     lqip={cat.lqip}
-                    fetchpriority="high"
+                    fetchPriority="high"
                     loading="eager"
                   />
                   <div

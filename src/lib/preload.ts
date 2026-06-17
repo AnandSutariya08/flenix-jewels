@@ -170,5 +170,27 @@ function schedule(fn: () => void, fallbackMs: number): void {
   }
 }
 
+/**
+ * Persists up to 24 critical image URLs to localStorage.
+ * On the next page load, an inline <script> in index.html reads these and
+ * injects <link rel="preload" as="image"> before any JS bundle executes —
+ * giving instant preload even before React or Firebase initialises.
+ *
+ * Call this once per session after category/banner data loads.
+ */
+export function savePreloadUrls(urls: string[]): void {
+  if (!isBrowser) return;
+  try {
+    const incoming = urls.filter((u) => typeof u === "string" && u.length > 0);
+    if (incoming.length === 0) return;
+    // Merge with existing, keeping incoming (freshest) at front, cap at 24
+    const existing = JSON.parse(localStorage.getItem("__fj_preload__") || "[]") as string[];
+    const merged = Array.from(new Set([...incoming, ...existing])).slice(0, 24);
+    localStorage.setItem("__fj_preload__", JSON.stringify(merged));
+  } catch {
+    // localStorage unavailable (private mode, quota exceeded, etc.) — ignore
+  }
+}
+
 /** @deprecated Use preloadMedia(urls, priority) directly */
 export const preloadAssets = (urls: string[]) => preloadMedia(urls, "normal");

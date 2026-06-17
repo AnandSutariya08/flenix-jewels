@@ -67,6 +67,33 @@
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-precomposed.png">
   <link rel="mask-icon" href="/flenix-logo.png" color="#C4906A">
 
+  <!-- ═══════════════════════════════════════════════════════════════
+       Instant image preload from localStorage — fires BEFORE any JS bundle.
+       On first visit: nothing to preload (URLs not yet saved).
+       On every visit after: up to 20 critical images start downloading
+       before React, Firebase, or any framework code executes.
+       URLs are saved by the app after data loads (see src/lib/preload.ts).
+       ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    (function () {
+      try {
+        var urls = JSON.parse(localStorage.getItem('__fj_preload__') || '[]');
+        if (!Array.isArray(urls) || urls.length === 0) return;
+        var frag = document.createDocumentFragment();
+        urls.slice(0, 20).forEach(function (url) {
+          if (typeof url !== 'string' || !url) return;
+          var l = document.createElement('link');
+          l.rel = 'preload';
+          l.as = 'image';
+          l.href = url;
+          l.setAttribute('fetchpriority', 'high');
+          frag.appendChild(l);
+        });
+        document.head.appendChild(frag);
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Critical resource preloads (LCP optimisation) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

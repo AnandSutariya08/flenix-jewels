@@ -51,7 +51,7 @@ import BuyingGuidePage from "./pages/BuyingGuide";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/ScrollToTop";
 import { requestLocationAndLog } from '@/lib/locationPermission';
-import { preloadMedia } from "@/lib/preload";
+import { preloadMedia, savePreloadUrls } from "@/lib/preload";
 import { pingSitemapOncePerDay } from "@/lib/seo";
 import GlobalLoader from "@/components/GlobalLoader";
 import WebsiteAdModal from "@/components/WebsiteAdModal";
@@ -73,6 +73,7 @@ const AppContent = () => {
   const isAdminRoute = location.pathname.startsWith('/aEgZjaHJvbWUyBggAEEUYOdIBCDUzMTRqMGo3');
   const didRevalidateRef = useRef(false);
   const didRevalidateDeferredRef = useRef(false);
+  const didSavePreloadRef = useRef(false);
 
   useEffect(() => {
     if (!isAdminRoute && status === "idle" && !hydrated) {
@@ -257,6 +258,10 @@ const AppContent = () => {
     if (bannerImgs.length) preloadMedia(bannerImgs, "critical");
     if (catImgs.length) preloadMedia(catImgs, "critical");
     if (dCatImgs.length) preloadMedia(dCatImgs, "critical");
+    // Persist these URLs so the next page load can inject <link rel="preload">
+    // before any JS bundle runs (index.html inline script reads __fj_preload__).
+    const toSave = [...bannerImgs, ...catImgs, ...dCatImgs];
+    if (toSave.length) savePreloadUrls(toSave);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.banners, data.categories, data.diamondCategories, isAdminRoute]);
 
