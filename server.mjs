@@ -7,8 +7,6 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const DIST = resolve(__dirname, 'dist');
 const PORT = process.env.PORT || 3000;
 
-const FIREBASE_PROJECT = 'flenix-jewels';
-const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents`;
 const SITE_URL = 'https://www.flenixjewels.com';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
@@ -35,7 +33,7 @@ const MIME = {
   '.webmanifest': 'application/manifest+json',
 };
 
-// Unique per-page meta — injected into <head> before sending HTML to crawlers
+// ── Static per-page meta ─────────────────────────────────────────────────────
 const PAGE_META = {
   '/': {
     title: 'Flenix Jewels Ltd | Natural & Lab Grown Diamond Jewelry | Fine Jewellery Online',
@@ -87,6 +85,18 @@ const PAGE_META = {
   },
 };
 
+// ── Load pre-generated product/blog meta (built at compile time) ─────────────
+let PRODUCT_META = { products: {}, blogs: {} };
+try {
+  const raw = readFileSync(join(DIST, 'product-meta.json'), 'utf-8');
+  PRODUCT_META = JSON.parse(raw);
+  const pc = Object.keys(PRODUCT_META.products || {}).length;
+  const bc = Object.keys(PRODUCT_META.blogs || {}).length;
+  console.log(`✅ product-meta.json loaded — ${pc} products, ${bc} blogs`);
+} catch {
+  console.warn('⚠️  product-meta.json not found — product/blog OG images will use site default. Run "npm run build" to generate it.');
+}
+
 function esc(str) {
   return str.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -126,46 +136,19 @@ function injectMeta(html, meta) {
   return result;
 }
 
-// Fetch a product document from Firestore REST API (no SDK needed)
-async function fetchProductMeta(productId) {
-  try {
-    const apiUrl = `${FIRESTORE_BASE}/products/${productId}`;
-    const res = await fetch(apiUrl, { signal: AbortSignal.timeout(4000) });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const fields = data.fields || {};
-    const name = fields.name?.stringValue || '';
-    const image = fields.image?.stringValue || '';
-    const description = fields.description?.stringValue || '';
-    return { name, image, description };
-  } catch {
-    return null;
-  }
-}
-
-// Fetch a blog document from Firestore REST API
-async function fetchBlogMeta(blogId) {
-  try {
-    const apiUrl = `${FIRESTORE_BASE}/blogs/${blogId}`;
-    const res = await fetch(apiUrl, { signal: AbortSignal.timeout(4000) });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const fields = data.fields || {};
-    const title = fields.title?.stringValue || '';
-    const image = fields.image?.stringValue || fields.coverImage?.stringValue || '';
-    const excerpt = fields.excerpt?.stringValue || '';
-    return { title, image, excerpt };
-  } catch {
-    return null;
-  }
-}
-
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'SAMEORIGIN',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
   'X-DNS-Prefetch-Control': 'on',
+};
+
+const SPA_HEADERS = {
+  'Content-Type': 'text/html; charset=utf-8',
+  'Cache-Control': 'no-cache, must-revalidate',
+  'Link': `<${SITE_URL}/sitemap-index.xml>; rel="sitemap"`,
+  ...SECURITY_HEADERS,
 };
 
 let template;
@@ -176,11 +159,11 @@ try {
   process.exit(1);
 }
 
-const server = createServer(async (req, res) => {
+const server = createServer((req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const pathname = url.pathname;
 
-  // Try to serve a real static file from dist/
+  // ── Static files from dist/ ──────────────────────────────────────────────────
   const filePath = join(DIST, pathname);
   try {
     const stat = statSync(filePath);
@@ -190,82 +173,56 @@ const server = createServer(async (req, res) => {
       const isAsset = ext !== '.html';
       res.writeHead(200, {
         'Content-Type': mime,
-        'Cache-Control': isAsset
-          ? 'public, max-age=31536000, immutable'
-          : 'no-cache, must-revalidate',
+        'Cache-Control': isAsset ? 'public, max-age=31536000, immutable' : 'no-cache, must-revalidate',
         ...SECURITY_HEADERS,
       });
       res.end(readFileSync(filePath));
       return;
     }
-  } catch { /* not a file — fall through to SPA */ }
+  } catch { /* not a file — fall through */ }
 
-  // ── Dynamic product pages: /product/:id ─────────────────────────────────────
+  // ── /product/:id — inject product-specific OG tags ─────────────────────────
   const productMatch = pathname.match(/^\/product\/([^/]+)$/);
   if (productMatch) {
     const productId = productMatch[1];
-    const productMeta = await fetchProductMeta(productId);
+    const p = PRODUCT_META.products?.[productId];
     const productUrl = `${SITE_URL}/product/${productId}`;
 
     const meta = {
-      title: productMeta?.name
-        ? `${productMeta.name} | Flenix Jewels Ltd`
-        : 'Diamond Jewelry | Flenix Jewels Ltd',
-      description: productMeta?.description
-        ? productMeta.description.slice(0, 160)
-        : 'Certified natural and lab-grown diamond jewelry at Flenix Jewels Ltd. GIA & IGI certified with worldwide shipping.',
-      image: productMeta?.image || DEFAULT_OG_IMAGE,
+      title: p?.name ? `${p.name} | Flenix Jewels Ltd` : 'Diamond Jewelry | Flenix Jewels Ltd',
+      description: p?.description || 'Certified natural and lab-grown diamond jewelry at Flenix Jewels Ltd. GIA & IGI certified with worldwide shipping.',
+      image: p?.image || DEFAULT_OG_IMAGE,
       url: productUrl,
     };
 
-    const html = injectMeta(template, meta);
-    res.writeHead(200, {
-      'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-cache, must-revalidate',
-      ...SECURITY_HEADERS,
-      'Link': '<https://www.flenixjewels.com/sitemap-index.xml>; rel="sitemap"',
-    });
-    res.end(html);
+    res.writeHead(200, SPA_HEADERS);
+    res.end(injectMeta(template, meta));
     return;
   }
 
-  // ── Dynamic blog pages: /blog/:id ───────────────────────────────────────────
+  // ── /blog/:id — inject blog-specific OG tags ────────────────────────────────
   const blogMatch = pathname.match(/^\/blog\/([^/]+)$/);
   if (blogMatch) {
     const blogId = blogMatch[1];
-    const blogMeta = await fetchBlogMeta(blogId);
+    const b = PRODUCT_META.blogs?.[blogId];
     const blogUrl = `${SITE_URL}/blog/${blogId}`;
 
     const meta = {
-      title: blogMeta?.title
-        ? `${blogMeta.title} | Flenix Jewels Ltd Blog`
-        : 'Jewelry Blog | Flenix Jewels Ltd',
-      description: blogMeta?.excerpt || 'Diamond education, jewelry trends, and expert buying guides from Flenix Jewels Ltd.',
-      image: blogMeta?.image || DEFAULT_OG_IMAGE,
+      title: b?.title ? `${b.title} | Flenix Jewels Ltd Blog` : 'Jewelry Blog | Flenix Jewels Ltd',
+      description: b?.description || 'Diamond education, jewelry trends, and expert buying guides from Flenix Jewels Ltd.',
+      image: b?.image || DEFAULT_OG_IMAGE,
       url: blogUrl,
     };
 
-    const html = injectMeta(template, meta);
-    res.writeHead(200, {
-      'Content-Type': 'text/html; charset=utf-8',
-      'Cache-Control': 'no-cache, must-revalidate',
-      ...SECURITY_HEADERS,
-      'Link': '<https://www.flenixjewels.com/sitemap-index.xml>; rel="sitemap"',
-    });
-    res.end(html);
+    res.writeHead(200, SPA_HEADERS);
+    res.end(injectMeta(template, meta));
     return;
   }
 
-  // ── Static known pages ───────────────────────────────────────────────────────
+  // ── Known static pages ───────────────────────────────────────────────────────
   const meta = PAGE_META[pathname] || PAGE_META['/'];
-  const html = injectMeta(template, meta);
-  res.writeHead(200, {
-    'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'no-cache, must-revalidate',
-    ...SECURITY_HEADERS,
-    'Link': '<https://www.flenixjewels.com/sitemap-index.xml>; rel="sitemap"',
-  });
-  res.end(html);
+  res.writeHead(200, SPA_HEADERS);
+  res.end(injectMeta(template, meta));
 });
 
 server.listen(PORT, '0.0.0.0', () => {

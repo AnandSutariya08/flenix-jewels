@@ -1,0 +1,61 @@
+{
+  "products": {
+    "1781594831684": {
+      "name": "#1-  Emerald Cut Lab-Grown Diamond Full Eternity Band",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/products%2F1781594812764_1.webp?alt=media&token=7a0cea05-b133-4fa2-88c2-756d9aee8d38",
+      "description": "Experience unbroken brilliance with a timeless symbol of endless luxury. This breathtaking eternity ring features a continuous, 360-degree circle of premium..."
+    },
+    "1781949704337": {
+      "name": "#7- Emerald Cut Lab-Grown Diamond Half-Eternity Band",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/products%2F1781949686198_1.webp?alt=media&token=1c886595-8539-4343-b1d8-d0079fa0216e",
+      "description": "Captivate from every angle with a modern masterpiece of sustainable luxury. This striking half-eternity ring features a continuous row of premium,..."
+    },
+    "1781951154078": {
+      "name": "#4- Emerald Cut Lab-Grown Diamond Full Eternity Band",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/products%2F1781951136078_1.webp?alt=media&token=81a40999-2251-4524-89a4-1394a6e90967",
+      "description": "Make an unforgettable statement with unparalleled grandeur and architectural brilliance. This show-stopping masterpiece features multiple rows of..."
+    },
+    "1781951505147": {
+      "name": "#8- Emerald Cut Lab-Grown Diamond Half Eternity Band",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/products%2F1781951487397_1.webp?alt=media&token=56a56f2a-4127-4a3c-80bc-65c3db46aba8",
+      "description": "Embrace the perfect harmony of striking luxury and effortless wearability. This exquisite half-eternity ring showcases a curated row of premium, hand-selected..."
+    },
+    "1781951825309": {
+      "name": "#14- Oval Cut Lab-Grown Diamond Full Eternity Band",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/products%2F1781951807825_3.webp?alt=media&token=d956367d-64a3-4a59-9de6-b71bbfc500cf",
+      "description": "Embrace the peak of modern elegance and romantic brilliance. This breathtaking eternity ring features a continuous, 360-degree circle of premium oval-cut..."
+    },
+    "1781952073335": {
+      "name": "#20-  Oval Cut Lab-Grown Diamond Full Eternity Band",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/products%2F1781952055824_3.webp?alt=media&token=3e25d5ae-651c-4f02-b244-6e3f24309bc4",
+      "description": "Command attention with a breathtaking wall of brilliant scintillation. This show-stopping masterpiece features multiple rows of premium, hand-selected oval-cut..."
+    },
+    "1781952351700": {
+      "name": "#22- Oval Cut Lab-Grown Diamond Full Eternity Band",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/products%2F1781952334380_3.webp?alt=media&token=48ef3de2-6b3d-4621-bf28-b9b7863e310c",
+      "description": "Embrace a continuous loop of modern romance and exceptional fire. This breathtaking eternity ring features a full, 360-degree circle of premium oval-cut..."
+    }
+  },
+  "blogs": {
+    "blog-diamond-guide": {
+      "title": "The 4Cs of Diamonds: Your Complete Buying Guide",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/blogs%2Fblog-diamond-guide.jpg?alt=media&token=ff07a699-3fd7-4ab0-8337-92452a2a6c93",
+      "description": "Understanding the 4Cs: Your Guide to Choosing the Perfect Diamond Whether you're shopping for an engagement ring, a milestone gift or simply treating yourself,..."
+    },
+    "blog-engagement-ring-guide": {
+      "title": "How to Choose the Perfect Engagement Ring",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/blogs%2Fblog-engagement-ring-guide.jpg?alt=media&token=86323628-a72b-4c91-939d-57bd03809eac",
+      "description": "Finding the One: How to Choose the Perfect Engagement Ring Choosing an engagement ring is one of the most meaningful purchases you will ever make. Here is our..."
+    },
+    "blog-gold-vs-platinum": {
+      "title": "Gold vs Platinum: Which Metal is Right for You?",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/blogs%2Fblog-gold-vs-platinum.jpg?alt=media&token=21221377-96d1-4eef-8573-f814292d7150",
+      "description": "Gold vs Platinum: Choosing the Right Metal for Your Fine Jewellery One of the most common questions we receive is: \"Should I choose gold or platinum?\" Both are..."
+    },
+    "blog-wedding-jewelry-trends": {
+      "title": "2026 Bridal Jewellery Trends: What's In This Season",
+      "image": "https://firebasestorage.googleapis.com/v0/b/flenix-jewels.firebasestorage.app/o/blogs%2Fblog-wedding-jewelry-trends.jpg?alt=media&token=2d1c8fb6-0663-45cc-af4d-471de5177e64",
+      "description": "2026 Bridal Jewellery Trends: Everything You Need to Know The world of bridal jewellery is evolving, and 2026 is delivering some of the most exciting trends..."
+    }
+  }
+}
