@@ -234,13 +234,17 @@ const ProductDetail = () => {
           <div className="grid grid-cols-1 lg:grid-cols-[55%_1fr] gap-8 lg:gap-12 items-start">
 
             {/* ── LEFT: Media viewer ──────────────────────────── */}
-            <div className="lg:sticky lg:top-24 flex flex-col gap-3">
+            <div className="lg:sticky lg:top-24">
+
+              {/* One unified dark card — image + thumbnails share the same
+                  black background so no grey/light gap ever shows through. */}
+              <div className="rounded-2xl overflow-hidden bg-black flex flex-col">
 
               {/* ── Main viewer ─────────────────────────────────
                   All items always in DOM — toggled via opacity only.
                   Videos stay buffered so switching back is instant.  */}
-              <div className="relative w-full rounded-2xl overflow-hidden bg-black"
-                style={{ aspectRatio: "1 / 1", maxHeight: "min(62vw, 68vh, calc(100vh - 9rem))" }}>
+              <div className="relative w-full bg-black"
+                style={{ aspectRatio: "1 / 1", maxHeight: "min(62vw, 68vh, calc(100vh - 11rem))" }}>
 
                 {media.map((item, i) => {
                   const isActive = i === selectedIndex;
@@ -315,9 +319,9 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              {/* ── Thumbnail strip — always visible ──────────── */}
+              {/* ── Thumbnail strip — inside the same dark card ── */}
               {hasMultiple && (
-                <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-none">
+                <div className="flex gap-2 px-3 py-3 overflow-x-auto scrollbar-none border-t border-white/10">
                   {media.map((item, i) => {
                     const isActive = i === selectedIndex;
                     return (
@@ -325,12 +329,12 @@ const ProductDetail = () => {
                         key={i}
                         onClick={() => setSelectedIndex(i)}
                         className={`
-                          flex-shrink-0 rounded-xl overflow-hidden bg-black
-                          w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20
+                          flex-shrink-0 rounded-lg overflow-hidden bg-stone-900
+                          w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18
                           transition-all duration-200
                           ${isActive
-                            ? "ring-2 ring-primary ring-offset-2 ring-offset-background opacity-100"
-                            : "ring-1 ring-white/10 opacity-50 hover:opacity-80"
+                            ? "ring-2 ring-primary opacity-100"
+                            : "ring-1 ring-white/10 opacity-45 hover:opacity-80"
                           }
                         `}
                         aria-label={`View ${i + 1}`}
@@ -358,6 +362,8 @@ const ProductDetail = () => {
                   })}
                 </div>
               )}
+
+              </div>{/* end unified dark card */}
             </div>
 
             {/* ── RIGHT: Product info ─────────────────────────── */}
