@@ -236,29 +236,45 @@ const ProductDetail = () => {
             {/* ── LEFT: Media viewer ──────────────────────────── */}
             <div className="lg:sticky lg:top-24 space-y-3">
 
-              {/* Main image / video */}
+              {/* Main viewer — ALL items always in DOM, toggled via opacity.
+                  This keeps videos buffered so switching back is instant. */}
               <div className="relative w-full aspect-square sm:aspect-[4/5] rounded-2xl overflow-hidden bg-black">
-                {currentMedia && getMediaType(currentMedia) === "video" ? (
-                  <OptimizedVideo
-                    noWrapper
-                    src={currentMedia}
-                    className="w-full h-full object-contain"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    controls
-                  />
-                ) : currentMedia ? (
-                  <img
-                    src={currentMedia}
-                    alt={product.name}
-                    className="w-full h-full object-contain"
-                    loading="eager"
-                    decoding="async"
-                    fetchpriority="high"
-                  />
-                ) : null}
+
+                {media.map((item, i) => {
+                  const isActive = i === selectedIndex;
+                  const type = getMediaType(item);
+                  return (
+                    <div
+                      key={i}
+                      className={`absolute inset-0 transition-opacity duration-300 ${
+                        isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                      }`}
+                    >
+                      {type === "video" ? (
+                        <OptimizedVideo
+                          noWrapper
+                          src={item}
+                          className="w-full h-full object-contain"
+                          autoPlay={isActive}
+                          muted
+                          loop
+                          playsInline
+                          controls={isActive}
+                          preload="auto"
+                        />
+                      ) : (
+                        <img
+                          src={item}
+                          alt={`${product.name} view ${i + 1}`}
+                          className="w-full h-full object-contain"
+                          loading={i === 0 ? "eager" : "lazy"}
+                          decoding="async"
+                          fetchpriority={i === 0 ? "high" : "low"}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
 
                 {/* Prev / Next */}
                 {hasMultiple && (
@@ -269,7 +285,7 @@ const ProductDetail = () => {
                           (prev) => (prev - 1 + media.length) % media.length
                         )
                       }
-                      className="absolute left-3 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-full bg-white/95 dark:bg-stone-800/95 shadow-lg hover:scale-110 transition-transform"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/95 dark:bg-stone-800/95 shadow-lg hover:scale-110 transition-transform"
                       aria-label="Previous image"
                     >
                       <ChevronLeft className="h-5 w-5 text-stone-700 dark:text-stone-200" />
@@ -280,24 +296,24 @@ const ProductDetail = () => {
                           (prev) => (prev + 1) % media.length
                         )
                       }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-full bg-white/95 dark:bg-stone-800/95 shadow-lg hover:scale-110 transition-transform"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/95 dark:bg-stone-800/95 shadow-lg hover:scale-110 transition-transform"
                       aria-label="Next image"
                     >
                       <ChevronRight className="h-5 w-5 text-stone-700 dark:text-stone-200" />
                     </button>
 
                     {/* Dot indicators on mobile */}
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 sm:hidden">
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 sm:hidden">
                       {media.map((_, i) => (
                         <button
                           key={i}
                           onClick={() => setSelectedIndex(i)}
-                          className={`w-2 h-2 rounded-full transition-all ${
+                          className={`h-2 rounded-full transition-all duration-300 ${
                             selectedIndex === i
                               ? "bg-primary w-4"
-                              : "bg-white/60"
+                              : "bg-white/60 w-2"
                           }`}
-                          aria-label={`Go to image ${i + 1}`}
+                          aria-label={`Go to item ${i + 1}`}
                         />
                       ))}
                     </div>
