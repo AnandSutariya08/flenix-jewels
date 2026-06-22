@@ -234,11 +234,13 @@ const ProductDetail = () => {
           <div className="grid grid-cols-1 lg:grid-cols-[55%_1fr] gap-8 lg:gap-12 items-start">
 
             {/* ── LEFT: Media viewer ──────────────────────────── */}
-            <div className="lg:sticky lg:top-24 space-y-3">
+            <div className="lg:sticky lg:top-24 flex flex-col gap-3">
 
-              {/* Main viewer — ALL items always in DOM, toggled via opacity.
-                  This keeps videos buffered so switching back is instant. */}
-              <div className="relative w-full aspect-square sm:aspect-[4/5] max-h-[62vw] sm:max-h-[68vh] lg:max-h-[calc(100vh-9rem)] rounded-2xl overflow-hidden bg-black">
+              {/* ── Main viewer ─────────────────────────────────
+                  All items always in DOM — toggled via opacity only.
+                  Videos stay buffered so switching back is instant.  */}
+              <div className="relative w-full rounded-2xl overflow-hidden bg-black"
+                style={{ aspectRatio: "1 / 1", maxHeight: "min(62vw, 68vh, calc(100vh - 9rem))" }}>
 
                 {media.map((item, i) => {
                   const isActive = i === selectedIndex;
@@ -276,84 +278,84 @@ const ProductDetail = () => {
                   );
                 })}
 
-                {/* Prev / Next */}
+                {/* Prev / Next arrows */}
                 {hasMultiple && (
                   <>
                     <button
-                      onClick={() =>
-                        setSelectedIndex(
-                          (prev) => (prev - 1 + media.length) % media.length
-                        )
-                      }
-                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/95 dark:bg-stone-800/95 shadow-lg hover:scale-110 transition-transform"
-                      aria-label="Previous image"
+                      onClick={() => setSelectedIndex((p) => (p - 1 + media.length) % media.length)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 rounded-full bg-white/90 dark:bg-stone-800/90 shadow-lg hover:bg-white dark:hover:bg-stone-700 hover:scale-110 transition-all"
+                      aria-label="Previous"
                     >
-                      <ChevronLeft className="h-5 w-5 text-stone-700 dark:text-stone-200" />
+                      <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-stone-700 dark:text-stone-200" />
                     </button>
                     <button
-                      onClick={() =>
-                        setSelectedIndex(
-                          (prev) => (prev + 1) % media.length
-                        )
-                      }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white/95 dark:bg-stone-800/95 shadow-lg hover:scale-110 transition-transform"
-                      aria-label="Next image"
+                      onClick={() => setSelectedIndex((p) => (p + 1) % media.length)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 rounded-full bg-white/90 dark:bg-stone-800/90 shadow-lg hover:bg-white dark:hover:bg-stone-700 hover:scale-110 transition-all"
+                      aria-label="Next"
                     >
-                      <ChevronRight className="h-5 w-5 text-stone-700 dark:text-stone-200" />
+                      <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-stone-700 dark:text-stone-200" />
                     </button>
-
-                    {/* Dot indicators on mobile */}
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 sm:hidden">
-                      {media.map((_, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setSelectedIndex(i)}
-                          className={`h-2 rounded-full transition-all duration-300 ${
-                            selectedIndex === i
-                              ? "bg-primary w-4"
-                              : "bg-white/60 w-2"
-                          }`}
-                          aria-label={`Go to item ${i + 1}`}
-                        />
-                      ))}
-                    </div>
                   </>
+                )}
+
+                {/* Dot indicators — always visible at bottom center */}
+                {hasMultiple && (
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5">
+                    {media.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedIndex(i)}
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          selectedIndex === i ? "bg-white w-5" : "bg-white/45 w-2 hover:bg-white/70"
+                        }`}
+                        aria-label={`Go to item ${i + 1}`}
+                      />
+                    ))}
+                  </div>
                 )}
               </div>
 
-              {/* Thumbnail strip — hidden on mobile (dots used instead) */}
+              {/* ── Thumbnail strip — always visible ──────────── */}
               {hasMultiple && (
-                <div className="hidden sm:flex gap-2.5 overflow-x-auto pb-1 scrollbar-none">
-                  {media.map((item, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setSelectedIndex(i)}
-                      className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 bg-stone-100 dark:bg-stone-900 ${
-                        selectedIndex === i
-                          ? "border-primary ring-1 ring-primary/50"
-                          : "border-transparent opacity-55 hover:opacity-100"
-                      }`}
-                    >
-                      {getMediaType(item) === "video" ? (
-                        <OptimizedVideo
-                          noWrapper
-                          src={item}
-                          className="w-full h-full object-contain"
-                          muted
-                          playsInline
-                          preload="metadata"
-                        />
-                      ) : (
-                        <img
-                          src={item}
-                          alt={`${product.name} view ${i + 1}`}
-                          className="w-full h-full object-contain"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      )}
-                    </button>
-                  ))}
+                <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-none">
+                  {media.map((item, i) => {
+                    const isActive = i === selectedIndex;
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedIndex(i)}
+                        className={`
+                          flex-shrink-0 rounded-xl overflow-hidden bg-black
+                          w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20
+                          transition-all duration-200
+                          ${isActive
+                            ? "ring-2 ring-primary ring-offset-2 ring-offset-background opacity-100"
+                            : "ring-1 ring-white/10 opacity-50 hover:opacity-80"
+                          }
+                        `}
+                        aria-label={`View ${i + 1}`}
+                      >
+                        {getMediaType(item) === "video" ? (
+                          <OptimizedVideo
+                            noWrapper
+                            src={item}
+                            className="w-full h-full object-contain"
+                            muted
+                            playsInline
+                            preload="metadata"
+                          />
+                        ) : (
+                          <img
+                            src={item}
+                            alt={`${product.name} ${i + 1}`}
+                            className="w-full h-full object-contain"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
