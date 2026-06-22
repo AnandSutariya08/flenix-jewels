@@ -7,6 +7,11 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const DIST = resolve(__dirname, 'dist');
 const PORT = process.env.PORT || 3000;
 
+const FIREBASE_PROJECT = 'flenix-jewels';
+const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents`;
+const SITE_URL = 'https://www.flenixjewels.com';
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
+
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'application/javascript',
@@ -87,7 +92,7 @@ function esc(str) {
 }
 
 function injectMeta(html, meta) {
-  return html
+  let result = html
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(meta.title)}</title>`)
     .replace(/<meta\s+name="description"[^>]*>/i,
       `<meta name="description" content="${esc(meta.description)}">`)
@@ -99,7 +104,69 @@ function injectMeta(html, meta) {
       `<meta name="twitter:title" content="${esc(meta.title)}">`)
     .replace(/<meta\s+name="twitter:description"[^>]*>/i,
       `<meta name="twitter:description" content="${esc(meta.description)}">`);
+
+  if (meta.image) {
+    result = result
+      .replace(/<meta\s+property="og:image"[^>]*>/i,
+        `<meta property="og:image" content="${esc(meta.image)}">`)
+      .replace(/<meta\s+property="og:image:secure_url"[^>]*>/i,
+        `<meta property="og:image:secure_url" content="${esc(meta.image)}">`)
+      .replace(/<meta\s+name="twitter:image"[^>]*>/i,
+        `<meta name="twitter:image" content="${esc(meta.image)}">`);
+  }
+
+  if (meta.url) {
+    result = result
+      .replace(/<meta\s+property="og:url"[^>]*>/i,
+        `<meta property="og:url" content="${esc(meta.url)}">`)
+      .replace(/<link\s+rel="canonical"[^>]*>/i,
+        `<link rel="canonical" href="${esc(meta.url)}">`);
+  }
+
+  return result;
 }
+
+// Fetch a product document from Firestore REST API (no SDK needed)
+async function fetchProductMeta(productId) {
+  try {
+    const apiUrl = `${FIRESTORE_BASE}/products/${productId}`;
+    const res = await fetch(apiUrl, { signal: AbortSignal.timeout(4000) });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const fields = data.fields || {};
+    const name = fields.name?.stringValue || '';
+    const image = fields.image?.stringValue || '';
+    const description = fields.description?.stringValue || '';
+    return { name, image, description };
+  } catch {
+    return null;
+  }
+}
+
+// Fetch a blog document from Firestore REST API
+async function fetchBlogMeta(blogId) {
+  try {
+    const apiUrl = `${FIRESTORE_BASE}/blogs/${blogId}`;
+    const res = await fetch(apiUrl, { signal: AbortSignal.timeout(4000) });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const fields = data.fields || {};
+    const title = fields.title?.stringValue || '';
+    const image = fields.image?.stringValue || fields.coverImage?.stringValue || '';
+    const excerpt = fields.excerpt?.stringValue || '';
+    return { title, image, excerpt };
+  } catch {
+    return null;
+  }
+}
+
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  'X-DNS-Prefetch-Control': 'on',
+};
 
 let template;
 try {
@@ -109,7 +176,7 @@ try {
   process.exit(1);
 }
 
-const server = createServer((req, res) => {
+const server = createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const pathname = url.pathname;
 
@@ -121,36 +188,81 @@ const server = createServer((req, res) => {
       const ext = extname(filePath).toLowerCase();
       const mime = MIME[ext] || 'application/octet-stream';
       const isAsset = ext !== '.html';
-      const securityHeaders = {
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'SAMEORIGIN',
-        'Referrer-Policy': 'strict-origin-when-cross-origin',
-        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-        'X-DNS-Prefetch-Control': 'on',
-      };
       res.writeHead(200, {
         'Content-Type': mime,
         'Cache-Control': isAsset
           ? 'public, max-age=31536000, immutable'
           : 'no-cache, must-revalidate',
-        ...securityHeaders,
+        ...SECURITY_HEADERS,
       });
       res.end(readFileSync(filePath));
       return;
     }
   } catch { /* not a file — fall through to SPA */ }
 
-  // SPA fallback — inject correct meta for this path
+  // ── Dynamic product pages: /product/:id ─────────────────────────────────────
+  const productMatch = pathname.match(/^\/product\/([^/]+)$/);
+  if (productMatch) {
+    const productId = productMatch[1];
+    const productMeta = await fetchProductMeta(productId);
+    const productUrl = `${SITE_URL}/product/${productId}`;
+
+    const meta = {
+      title: productMeta?.name
+        ? `${productMeta.name} | Flenix Jewels Ltd`
+        : 'Diamond Jewelry | Flenix Jewels Ltd',
+      description: productMeta?.description
+        ? productMeta.description.slice(0, 160)
+        : 'Certified natural and lab-grown diamond jewelry at Flenix Jewels Ltd. GIA & IGI certified with worldwide shipping.',
+      image: productMeta?.image || DEFAULT_OG_IMAGE,
+      url: productUrl,
+    };
+
+    const html = injectMeta(template, meta);
+    res.writeHead(200, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-cache, must-revalidate',
+      ...SECURITY_HEADERS,
+      'Link': '<https://www.flenixjewels.com/sitemap-index.xml>; rel="sitemap"',
+    });
+    res.end(html);
+    return;
+  }
+
+  // ── Dynamic blog pages: /blog/:id ───────────────────────────────────────────
+  const blogMatch = pathname.match(/^\/blog\/([^/]+)$/);
+  if (blogMatch) {
+    const blogId = blogMatch[1];
+    const blogMeta = await fetchBlogMeta(blogId);
+    const blogUrl = `${SITE_URL}/blog/${blogId}`;
+
+    const meta = {
+      title: blogMeta?.title
+        ? `${blogMeta.title} | Flenix Jewels Ltd Blog`
+        : 'Jewelry Blog | Flenix Jewels Ltd',
+      description: blogMeta?.excerpt || 'Diamond education, jewelry trends, and expert buying guides from Flenix Jewels Ltd.',
+      image: blogMeta?.image || DEFAULT_OG_IMAGE,
+      url: blogUrl,
+    };
+
+    const html = injectMeta(template, meta);
+    res.writeHead(200, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-cache, must-revalidate',
+      ...SECURITY_HEADERS,
+      'Link': '<https://www.flenixjewels.com/sitemap-index.xml>; rel="sitemap"',
+    });
+    res.end(html);
+    return;
+  }
+
+  // ── Static known pages ───────────────────────────────────────────────────────
   const meta = PAGE_META[pathname] || PAGE_META['/'];
   const html = injectMeta(template, meta);
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8',
     'Cache-Control': 'no-cache, must-revalidate',
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'SAMEORIGIN',
-    'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-    'X-DNS-Prefetch-Control': 'on',
+    ...SECURITY_HEADERS,
     'Link': '<https://www.flenixjewels.com/sitemap-index.xml>; rel="sitemap"',
   });
   res.end(html);
