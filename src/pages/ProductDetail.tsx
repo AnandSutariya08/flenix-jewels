@@ -21,7 +21,7 @@ import {
   buildOffer,
   stripHtml,
 } from "@/lib/seo";
-import { ChevronLeft, ChevronRight, Gem } from "lucide-react";
+import { ChevronLeft, ChevronRight, Gem, Shield, Star, Globe, MessageCircle } from "lucide-react";
 import { preloadMedia } from "@/lib/preload";
 import { OptimizedVideo } from "@/components/ui/optimized-video";
 import { useHeaderOffset } from "@/hooks/useHeaderOffset";
@@ -369,49 +369,80 @@ const ProductDetail = () => {
             {/* ── RIGHT: Product info ─────────────────────────── */}
             <div className="flex flex-col gap-5">
 
-              {/* Breadcrumb */}
-              <nav className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
-                <Link to="/categories" className="hover:text-foreground transition-colors">
-                  Collections
-                </Link>
-                {category && (
-                  <>
-                    <ChevronRight className="h-3 w-3 flex-shrink-0" />
-                    <Link
-                      to={`/category/${category.id}`}
-                      className="hover:text-foreground transition-colors"
-                    >
-                      {category.name}
-                    </Link>
-                  </>
-                )}
-              </nav>
+              {/* Breadcrumb + Product ID */}
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <nav className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
+                  <Link to="/categories" className="hover:text-foreground transition-colors">Collections</Link>
+                  {category && (
+                    <>
+                      <ChevronRight className="h-3 w-3 flex-shrink-0" />
+                      <Link to={`/category/${category.id}`} className="hover:text-foreground transition-colors">
+                        {category.name}
+                      </Link>
+                    </>
+                  )}
+                </nav>
+                <span className="text-[10px] font-mono tracking-wider px-2.5 py-1 rounded-full border border-border/60 text-muted-foreground/70">
+                  #{product.id.slice(-8)}
+                </span>
+              </div>
+
+              {/* Category badge */}
+              {category && (
+                <div>
+                  <span
+                    className="inline-flex items-center gap-1.5 text-[10px] font-black tracking-[0.25em] uppercase px-3 py-1.5 rounded-full"
+                    style={{ background: 'linear-gradient(135deg,rgba(196,144,106,0.15),rgba(212,169,106,0.12))', color: '#9B6844', border: '1px solid rgba(196,144,106,0.3)' }}
+                  >
+                    <Gem className="h-2.5 w-2.5" />
+                    {category.name}
+                  </span>
+                </div>
+              )}
 
               {/* Title */}
-              <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-foreground">
                 {product.name}
               </h1>
 
+              {/* Gold accent line */}
+              <div className="flex items-center gap-2">
+                <div className="h-0.5 w-16 rounded-full" style={{ background: 'linear-gradient(90deg,#C4906A,#D4A96A)' }} />
+                <div className="h-0.5 w-8 rounded-full" style={{ background: 'rgba(196,144,106,0.4)' }} />
+                <div className="h-0.5 w-4 rounded-full" style={{ background: 'rgba(196,144,106,0.2)' }} />
+              </div>
+
               {/* Price */}
               {priceSettings.showPrices && product.price && (
-                <p className="text-xl font-semibold text-foreground">
-                  ${formatPriceRounded(product.price)}
-                </p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl sm:text-3xl font-bold" style={{ color: '#9B6844' }}>
+                    ${formatPriceRounded(product.price)}
+                  </span>
+                  <span className="text-xs text-muted-foreground font-medium">Enquire for best price</span>
+                </div>
               )}
-
-              {/* Divider */}
-              <div className="border-t border-border/60" />
 
               {/* Description */}
               {product.description && (
                 <div
-                  className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: product.description }}
-                />
+                  className="rounded-2xl p-4 border border-border/40"
+                  style={{ background: 'rgba(196,144,106,0.04)' }}
+                >
+                  <div
+                    className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: product.description }}
+                  />
+                </div>
               )}
 
-              {/* CTA */}
-              <div className="pt-1">
+              {/* CTA Section */}
+              <div className="rounded-2xl p-4 border border-border/40 space-y-3" style={{ background: 'rgba(196,144,106,0.04)' }}>
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4 flex-shrink-0" style={{ color: '#9B6844' }} />
+                  <p className="text-xs text-muted-foreground leading-snug">
+                    Send us a WhatsApp message with the product link — our team responds within 30 minutes.
+                  </p>
+                </div>
                 <WhatsAppButton
                   product={product}
                   className="w-full h-12 text-sm font-bold tracking-wide"
@@ -419,20 +450,24 @@ const ProductDetail = () => {
               </div>
 
               {/* Trust badges */}
-              <div className="grid grid-cols-3 gap-3 pt-2">
+              <div className="grid grid-cols-3 gap-3">
                 {[
-                  { icon: "🔒", label: "Secure Enquiry" },
-                  { icon: "💎", label: "Premium Quality" },
-                  { icon: "🚚", label: "Worldwide Delivery" },
-                ].map((badge) => (
+                  { Icon: Shield, label: "Secure Enquiry", sub: "Private & confidential" },
+                  { Icon: Star, label: "Premium Quality", sub: "Certified fine jewels" },
+                  { Icon: Globe, label: "Worldwide", sub: "Global delivery" },
+                ].map(({ Icon, label, sub }) => (
                   <div
-                    key={badge.label}
-                    className="flex flex-col items-center gap-1.5 rounded-xl border border-border/50 py-3 px-2 text-center"
+                    key={label}
+                    className="flex flex-col items-center gap-2 rounded-xl py-4 px-2 text-center border border-border/40"
+                    style={{ background: 'rgba(196,144,106,0.04)' }}
                   >
-                    <span className="text-xl">{badge.icon}</span>
-                    <span className="text-[10px] font-medium text-muted-foreground leading-tight">
-                      {badge.label}
-                    </span>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,rgba(196,144,106,0.2),rgba(212,169,106,0.15))' }}>
+                      <Icon className="h-4 w-4" style={{ color: '#9B6844' }} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-foreground leading-tight">{label}</p>
+                      <p className="text-[9px] text-muted-foreground mt-0.5 leading-tight">{sub}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -441,10 +476,12 @@ const ProductDetail = () => {
               {category && (
                 <Link
                   to={`/category/${category.id}`}
-                  className="inline-flex items-center gap-1.5 text-sm text-primary font-medium hover:underline underline-offset-2 mt-1"
+                  className="inline-flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-border/60 text-xs font-bold tracking-wide transition-all hover:border-primary/40 hover:bg-primary/5"
+                  style={{ color: '#9B6844' }}
                 >
                   <Gem className="h-3.5 w-3.5" />
-                  Shop more {category.name} jewelry
+                  Browse all {category.name} jewelry
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </Link>
               )}
             </div>

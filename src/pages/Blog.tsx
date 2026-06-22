@@ -1,11 +1,9 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
-import MiniHeader from '@/components/MiniHeader';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import PageHero from "@/components/PageHero";
-import BlogDialog from '@/components/BlogDialog';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { loadBlogs, loadGlobalData, selectBlogsLoaded, selectBlogsStatus, selectContentStatus, selectGlobalData } from "@/store/contentSlice";
 import { useHeaderOffset } from "@/hooks/useHeaderOffset";
@@ -271,16 +269,12 @@ const SidebarCard = ({ blog, index, onClick }: { blog: BlogPost; index: number; 
 
 const Blog = () => {
   const dispatch = useAppDispatch();
-  const { categories, blogs, promoHeader, contactInfo } = useAppSelector(selectGlobalData);
+  const { categories, blogs, promoHeader } = useAppSelector(selectGlobalData);
   const status = useAppSelector(selectContentStatus);
   const blogsLoaded = useAppSelector(selectBlogsLoaded);
   const blogsStatus = useAppSelector(selectBlogsStatus);
-  const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
   const [requestedRefresh, setRequestedRefresh] = useState(false);
   const navigate = useNavigate();
-  const { id: routeBlogId } = useParams<{ id: string }>();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
@@ -292,7 +286,6 @@ const Blog = () => {
   );
 
   useEffect(() => {
-    // Avoid repeated forced refresh when the blog collection is genuinely empty.
     if (!requestedRefresh && blogs.length === 0 && status === "idle") {
       dispatch(loadGlobalData());
       setRequestedRefresh(true);
@@ -300,29 +293,12 @@ const Blog = () => {
   }, [blogs.length, dispatch, requestedRefresh, status]);
 
   useEffect(() => {
-    // Load once; an empty list is a valid state (show "Coming Soon").
     if (blogsStatus === "loading") return;
     if (!blogsLoaded && blogs.length === 0 && blogsStatus === "idle") dispatch(loadBlogs());
   }, [blogs.length, blogsLoaded, blogsStatus, dispatch]);
 
-  useEffect(() => {
-    const blogId = routeBlogId || searchParams.get('id');
-    if (blogId && blogs.length > 0) {
-      const blog = blogs.find(b => b.id === blogId);
-      if (blog) { setSelectedBlog(blog); setIsDialogOpen(true); }
-    }
-  }, [routeBlogId, searchParams, blogs]);
-
   const handleBlogClick = (blog: BlogPost) => {
-    setSelectedBlog(blog);
-    setIsDialogOpen(true);
     navigate(`/blog/${blog.id}`);
-  };
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    setSearchParams({});
-    navigate("/blog");
   };
 
   /* SEO */
@@ -342,27 +318,14 @@ const Blog = () => {
       author: { '@type': 'Organization', name: 'Flenix Jewels Ltd' }
     })),
   };
-  const blogStructuredData = selectedBlog ? {
-    '@context': 'https://schema.org', '@type': 'BlogPosting',
-    '@id': `https://www.flenixjewels.com/blog/${selectedBlog.id}#blogpost`,
-    headline: selectedBlog.title, datePublished: selectedBlog.date, dateModified: selectedBlog.date,
-    image: selectedBlog.image, description: buildMetaDescriptionForBlog(selectedBlog.content),
-    author: { '@type': 'Organization', name: 'Flenix Jewels Ltd' },
-    mainEntityOfPage: `https://www.flenixjewels.com/blog/${selectedBlog.id}`,
-  } : undefined;
-  const structuredData = [baseStructuredData, ...(blogStructuredData ? [blogStructuredData] : [])];
-  const seoTitle = selectedBlog
-    ? (selectedBlog.metaTitle || buildMetaTitleForBlog(selectedBlog.title))
-    : "Jewelry Blog - Diamond Tips, Engagement Ring Guides & Luxury Trends | Flenix Jewels Ltd";
-  const seoDescription = selectedBlog
-    ? (selectedBlog.metaDescription || buildMetaDescriptionForBlog(selectedBlog.content))
-    : "Discover expert jewelry insights, diamond buying guides, engagement ring tips, gemstone education, and the latest luxury jewelry trends from Flenix Jewels Ltd experts.";
-  const defaultFaqItems = [
+  const structuredData = [baseStructuredData];
+  const seoTitle = "Jewelry Blog - Diamond Tips, Engagement Ring Guides & Luxury Trends | Flenix Jewels Ltd";
+  const seoDescription = "Discover expert jewelry insights, diamond buying guides, engagement ring tips, gemstone education, and the latest luxury jewelry trends from Flenix Jewels Ltd experts.";
+  const faqItems = [
     { question: "What topics do you cover in the Flenix Jewels Ltd blog?", answer: "We cover diamond buying guides, engagement ring tips, jewelry care, gemstone education, and luxury jewelry trends." },
     { question: "Are your blog guides suitable for natural and lab-grown diamonds?", answer: "Yes. Our guides explain both natural and lab-grown diamond options with practical buying advice." },
     { question: "Can I request a topic?", answer: "Yes. You can contact us to request specific jewelry or diamond topics." },
   ];
-  const faqItems = selectedBlog?.seoFaq && selectedBlog.seoFaq.length > 0 ? selectedBlog.seoFaq : defaultFaqItems;
 
   /* Layout split */
   const [featured, ...rest] = sortedBlogs;
@@ -375,19 +338,11 @@ const Blog = () => {
       <SEOHead
         title={seoTitle} description={seoDescription}
         keywords="jewelry blog, diamond buying guide, engagement ring tips, jewelry trends 2024, gemstone guide, diamond education, luxury jewelry tips"
-        canonicalUrl={`https://www.flenixjewels.com/blog${selectedBlog ? `/${selectedBlog.id}` : ''}`}
-        ogType={selectedBlog ? "article" : "website"}
-        ogImage={selectedBlog?.image || undefined}
+        canonicalUrl="https://www.flenixjewels.com/blog"
+        ogType="website"
         structuredData={structuredData}
         breadcrumbs={[{ name: "Home", url: "https://www.flenixjewels.com" }, { name: "Blog", url: "https://www.flenixjewels.com/blog" }]}
         faqItems={faqItems}
-        articleMeta={selectedBlog ? {
-          publishedTime: selectedBlog.date,
-          modifiedTime: selectedBlog.date,
-          author: selectedBlog.author || "Flenix Jewels Ltd",
-          section: selectedBlog.category || "Jewelry",
-          tags: selectedBlog.tags || [],
-        } : undefined}
       />
       <Header promoHeader={promoHeader} />
       {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
@@ -557,12 +512,6 @@ const Blog = () => {
 
       <Footer />
 
-      <BlogDialog
-        blog={selectedBlog}
-        isOpen={isDialogOpen}
-        onClose={handleCloseDialog}
-        whatsappNumber={contactInfo?.whatsapp}
-      />
     </div>
   );
 };
