@@ -12,6 +12,7 @@ interface WhatsAppButtonProps {
 
 const SITE_URL = 'https://www.flenixjewels.com';
 const DEFAULT_NUMBER = '85251254000';
+const SEP = '━━━━━━━━━━━━━━━━━━━';
 
 const isDiamond = (item: CatalogItem): item is Diamond =>
   'diamondCategoryId' in item;
@@ -27,67 +28,80 @@ const stripHtml = (html: string): string =>
     .replace(/\s{2,}/g, ' ')
     .trim();
 
+const val = (v: string | number | undefined | null): string =>
+  (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : '';
+
+const buildMessage = (product: CatalogItem, productUrl: string): string => {
+  const parts: string[] = [];
+
+  parts.push('Hello Flenix Jewels! 👋');
+  parts.push('');
+
+  if (isDiamond(product)) {
+    parts.push('I am interested in the following diamond and would like more details:');
+    parts.push('');
+    parts.push(SEP);
+    parts.push(`💎 *${product.name}*`);
+    if (val(product.price)) parts.push(`💰 *Price:* ${val(product.price)}`);
+    parts.push(SEP);
+
+    const specs = [
+      val(product.carat)       ? `⚖️ *Carat:* ${val(product.carat)} ct`        : '',
+      val(product.shape)       ? `🔷 *Shape:* ${val(product.shape)}`            : '',
+      val(product.clarity)     ? `🔬 *Clarity:* ${val(product.clarity)}`        : '',
+      val(product.colorGrade)  ? `🎨 *Colour Grade:* ${val(product.colorGrade)}`: '',
+      val(product.cut)         ? `✂️ *Cut:* ${val(product.cut)}`                : '',
+      val(product.polish)      ? `✨ *Polish:* ${val(product.polish)}`          : '',
+      val(product.symmetry)    ? `🔁 *Symmetry:* ${val(product.symmetry)}`      : '',
+      val(product.certificate) ? `📋 *Certificate:* ${val(product.certificate)}`: '',
+    ].filter(Boolean);
+
+    if (specs.length > 0) {
+      parts.push('');
+      parts.push(...specs);
+    }
+
+    parts.push('');
+    parts.push(`🔗 *View Product:*\n${productUrl}`);
+    parts.push('');
+    parts.push('Could you please confirm availability, share certification details, and let me know about any customisation or setting options?');
+  } else {
+    parts.push('I am interested in the following product and would like more details:');
+    parts.push('');
+    parts.push(SEP);
+    parts.push(`🏷️ *${product.name}*`);
+    if (val(product.price)) parts.push(`💰 *Price:* ${val(product.price)}`);
+    parts.push(SEP);
+
+    const desc = stripHtml(product.description);
+    if (desc) {
+      const shortDesc = desc.length > 250
+        ? desc.slice(0, 250).replace(/\s+\S*$/, '') + '…'
+        : desc;
+      parts.push('');
+      parts.push(`📝 *Details:*`);
+      parts.push(shortDesc);
+    }
+
+    parts.push('');
+    parts.push(`🔗 *View Product:*\n${productUrl}`);
+    parts.push('');
+    parts.push('Could you please share availability, customisation options, and delivery details?');
+  }
+
+  parts.push('');
+  parts.push('Thank you!');
+
+  return parts.join('\n');
+};
+
 const WhatsAppButton = ({ product, className }: WhatsAppButtonProps) => {
   const { contactInfo } = useAppSelector(selectGlobalData);
 
   const handleWhatsAppClick = () => {
     const number = cleanWhatsApp(contactInfo?.whatsapp || DEFAULT_NUMBER);
     const productUrl = `${SITE_URL}/product/${product.id}`;
-
-    let message: string;
-
-    if (isDiamond(product)) {
-      const specs = [
-        product.carat    ? `⚖️ *Carat:* ${product.carat} ct`           : '',
-        product.shape    ? `🔷 *Shape:* ${product.shape}`               : '',
-        product.clarity  ? `🔬 *Clarity:* ${product.clarity}`           : '',
-        product.colorGrade ? `🎨 *Colour Grade:* ${product.colorGrade}` : '',
-        product.cut      ? `✂️ *Cut:* ${product.cut}`                   : '',
-        product.polish   ? `✨ *Polish:* ${product.polish}`             : '',
-        product.symmetry ? `🔁 *Symmetry:* ${product.symmetry}`        : '',
-        product.certificate ? `📋 *Certificate:* ${product.certificate}` : '',
-      ].filter(Boolean).join('\n');
-
-      message =
-`Hello Flenix Jewels! 👋
-
-I am interested in the following diamond and would like more details:
-
-━━━━━━━━━━━━━━━━━━━
-💎 *${product.name}*
-💰 *Price:* ${product.price}
-━━━━━━━━━━━━━━━━━━━
-${specs ? `\n${specs}\n` : ''}
-🔗 *View Product:*
-${productUrl}
-
-Could you please confirm availability, share certification details, and let me know about any customisation or setting options?
-
-Thank you!`;
-    } else {
-      const desc = stripHtml(product.description);
-      const shortDesc = desc.length > 250
-        ? desc.slice(0, 250).replace(/\s+\S*$/, '') + '…'
-        : desc;
-
-      message =
-`Hello Flenix Jewels! 👋
-
-I am interested in the following product and would like more details:
-
-━━━━━━━━━━━━━━━━━━━
-🏷️ *${product.name}*
-💰 *Price:* ${product.price}
-━━━━━━━━━━━━━━━━━━━
-${shortDesc ? `\n📝 *Details:*\n${shortDesc}\n` : ''}
-🔗 *View Product:*
-${productUrl}
-
-Could you please share availability, customisation options, and delivery details?
-
-Thank you!`;
-    }
-
+    const message = buildMessage(product, productUrl);
     const url = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
