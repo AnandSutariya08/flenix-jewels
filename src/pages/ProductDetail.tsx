@@ -19,6 +19,7 @@ import {
   buildMetaDescriptionForProduct,
   buildMetaTitleForProduct,
   buildOffer,
+  parsePrice,
   stripHtml,
 } from "@/lib/seo";
 import { ChevronLeft, ChevronRight, Gem, Shield, Star, Globe, MessageCircle } from "lucide-react";
@@ -199,6 +200,16 @@ const ProductDetail = () => {
           buildMetaDescriptionForProduct(product.name, category?.name)
         }
         canonicalUrl={`https://www.flenixjewels.com/product/${product.id}`}
+        ogType="product"
+        ogImage={
+          (product.images && product.images.filter(u => !u.match(/\.(mp4|webm)$/i))[0]) ||
+          product.image ||
+          undefined
+        }
+        productMeta={{
+          price: parsePrice(product.price) ?? undefined,
+          currency: "USD",
+        }}
         structuredData={structuredData}
         breadcrumbs={[
           { name: "Home", url: "https://www.flenixjewels.com" },

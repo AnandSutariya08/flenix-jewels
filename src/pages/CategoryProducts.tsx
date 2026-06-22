@@ -353,13 +353,32 @@ const CategoryProducts = () => {
         title={seoTitle}
         description={seoDescription}
         keywords={`${category.name.toLowerCase()}, ${category.name.toLowerCase()} jewelry, diamond ${category.name.toLowerCase()}, gold ${category.name.toLowerCase()}, luxury ${category.name.toLowerCase()}`}
-        canonicalUrl={`https://www.flenixjewels.com/category/${id}`}
+        canonicalUrl={
+          activeProduct
+            ? `https://www.flenixjewels.com/product/${activeProduct.id}`
+            : `https://www.flenixjewels.com/category/${id}`
+        }
+        ogType={activeProduct ? "product" : "website"}
+        ogImage={
+          activeProduct
+            ? ((activeProduct.images && activeProduct.images.filter(u => !u.match(/\.(mp4|webm)$/i))[0]) || activeProduct.image || undefined)
+            : undefined
+        }
         structuredData={structuredData}
-        breadcrumbs={[
-          { name: "Home", url: "https://www.flenixjewels.com" },
-          { name: "Categories", url: "https://www.flenixjewels.com/categories" },
-          { name: category.name, url: `https://www.flenixjewels.com/category/${id}` },
-        ]}
+        breadcrumbs={
+          activeProduct
+            ? [
+                { name: "Home", url: "https://www.flenixjewels.com" },
+                { name: "Collections", url: "https://www.flenixjewels.com/categories" },
+                { name: category.name, url: `https://www.flenixjewels.com/category/${id}` },
+                { name: activeProduct.name, url: `https://www.flenixjewels.com/product/${activeProduct.id}` },
+              ]
+            : [
+                { name: "Home", url: "https://www.flenixjewels.com" },
+                { name: "Categories", url: "https://www.flenixjewels.com/categories" },
+                { name: category.name, url: `https://www.flenixjewels.com/category/${id}` },
+              ]
+        }
         faqItems={seoFaqItems || faqItems}
       />
       <Header promoHeader={promoHeader} />

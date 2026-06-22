@@ -385,6 +385,7 @@ export default function Index() {
         keywords="diamond jewelry, gold rings, engagement rings, wedding bands, lab grown diamonds, natural diamonds, certified jewelry, luxury jewelry store"
         canonicalUrl="https://www.flenixjewels.com"
         structuredData={homepageStructuredData}
+        breadcrumbs={[{ name: "Home", url: "https://www.flenixjewels.com" }]}
         faqItems={faqItems}
       />
 

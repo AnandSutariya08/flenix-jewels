@@ -233,6 +233,28 @@ export const buildMetaTitleForBlog = (title: string) => {
   return `${title} | ${SITE.name} Blog`;
 };
 
+export const buildFaqForBlog = (title: string, category?: string, tags?: string[]) => {
+  const topic = category || (tags && tags[0]) || "jewelry";
+  return [
+    {
+      question: `What is this article about?`,
+      answer: `This guide covers "${title}" — offering expert insights on ${topic} to help you make confident, informed jewelry purchases.`,
+    },
+    {
+      question: `Does ${SITE.name} sell ${topic} products?`,
+      answer: `Yes. ${SITE.name} offers a full range of certified natural and lab-grown diamond ${topic} pieces with worldwide shipping to the USA, Canada, Australia, Germany, and more.`,
+    },
+    {
+      question: `Can I get personalised advice on ${topic}?`,
+      answer: `Absolutely. Reach our experts via WhatsApp, email, or the contact form — available 24/7 for custom design consultations and buying guidance.`,
+    },
+    {
+      question: `Are ${SITE.name} diamonds GIA or IGI certified?`,
+      answer: `Yes. We provide GIA and IGI certified natural and lab-grown diamonds, ensuring every purchase meets the highest grading standards.`,
+    },
+  ];
+};
+
 export const buildMetaDescriptionForBlog = (html: string) => {
   return buildMetaDescriptionFromHtml(html, 165);
 };

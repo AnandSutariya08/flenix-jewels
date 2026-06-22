@@ -11,7 +11,7 @@ import {
   selectGlobalData,
 } from '@/store/contentSlice';
 import { useHeaderOffset } from '@/hooks/useHeaderOffset';
-import { buildMetaDescriptionForBlog, buildMetaTitleForBlog } from '@/lib/seo';
+import { buildFaqForBlog, buildMetaDescriptionForBlog, buildMetaTitleForBlog } from '@/lib/seo';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import {
   ArrowLeft,
@@ -224,6 +224,11 @@ const BlogDetail = () => {
           { name: 'Blog', url: 'https://www.flenixjewels.com/blog' },
           { name: blog.title, url: `https://www.flenixjewels.com/blog/${blog.id}` },
         ]}
+        faqItems={
+          blog.seoFaq && blog.seoFaq.length > 0
+            ? blog.seoFaq
+            : buildFaqForBlog(blog.title, blog.category, blog.tags)
+        }
         articleMeta={{
           publishedTime: blog.date,
           modifiedTime: blog.date,

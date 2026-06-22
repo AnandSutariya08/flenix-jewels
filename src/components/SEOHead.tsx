@@ -18,6 +18,13 @@ interface SEOHeadProps {
     section?: string;
     tags?: string[];
   };
+  hreflang?: Array<{ lang: string; url: string }>;
+  productMeta?: {
+    price?: number;
+    currency?: string;
+    availability?: string;
+    condition?: string;
+  };
   noIndex?: boolean;
 }
 
@@ -32,6 +39,8 @@ const SEOHead = ({
   faqItems,
   breadcrumbs,
   articleMeta,
+  hreflang,
+  productMeta,
   noIndex = false,
 }: SEOHeadProps) => {
   const siteName = SITE.name;
@@ -162,12 +171,20 @@ const SEOHead = ({
       <meta name="ICBM" content="21.1702, 72.8311" />
 
       {/* ── Canonical & hreflang ─────────────────────────────────────────────────
-           Only self-referencing canonical + generic English + x-default.
-           Country-specific hreflang (en-US→/usa etc.) must NOT appear on
-           pages that don't have actual per-country variants — Google flags it. */}
+           Self-referencing canonical. Country pages pass explicit hreflang[];
+           all others get generic en + x-default only. */}
       <link rel="canonical" href={pageUrl} />
-      <link rel="alternate" hrefLang="en" href={pageUrl} />
-      <link rel="alternate" hrefLang="x-default" href={baseUrl} />
+      {hreflang && hreflang.length > 0
+        ? hreflang.map((h) => (
+            <link key={h.lang} rel="alternate" hrefLang={h.lang} href={h.url} />
+          ))
+        : (
+          <>
+            <link rel="alternate" hrefLang="en" href={pageUrl} />
+            <link rel="alternate" hrefLang="x-default" href={baseUrl} />
+          </>
+        )
+      }
 
       {/* ── Discovery ── */}
       <link rel="sitemap" type="application/xml" title="Sitemap" href={`${baseUrl}/sitemap-index.xml`} />
@@ -194,14 +211,28 @@ const SEOHead = ({
       <meta property="og:description" content={description} />
       <meta property="og:image" content={resolvedImage} />
       <meta property="og:image:secure_url" content={resolvedImage} />
-      <meta property="og:image:width" content="1920" />
-      <meta property="og:image:height" content="1080" />
+      <meta property="og:image:width" content={ogType === "product" ? "1200" : "1920"} />
+      <meta property="og:image:height" content={ogType === "product" ? "1200" : "1080"} />
       <meta property="og:image:alt" content={`${siteName} — ${title}`} />
-      <meta property="og:image:type" content="image/jpeg" />
+      <meta property="og:image:type" content={resolvedImage.includes(".webp") ? "image/webp" : resolvedImage.includes(".png") ? "image/png" : "image/jpeg"} />
       <meta property="og:locale" content="en_US" />
       <meta property="og:locale:alternate" content="en_GB" />
       <meta property="og:locale:alternate" content="en_AU" />
       <meta property="og:url" content={pageUrl} />
+
+      {/* ── Product OG (Facebook/Pinterest shopping signals) ── */}
+      {ogType === "product" && productMeta?.price && (
+        <meta property="product:price:amount" content={String(productMeta.price)} />
+      )}
+      {ogType === "product" && (
+        <meta property="product:price:currency" content={productMeta?.currency || "USD"} />
+      )}
+      {ogType === "product" && (
+        <meta property="product:availability" content={productMeta?.availability || "in stock"} />
+      )}
+      {ogType === "product" && (
+        <meta property="product:condition" content={productMeta?.condition || "new"} />
+      )}
 
       {/* ── Article OG ── */}
       {articleMeta?.publishedTime && (

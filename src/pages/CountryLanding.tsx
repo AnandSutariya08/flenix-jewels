@@ -224,6 +224,11 @@ const CountryLanding = () => {
           { name: "Home", url: SITE.url },
           { name: config.name, url: `${SITE.url}/${config.slug}` },
         ]}
+        hreflang={[
+          { lang: config.locale, url: `${SITE.url}/${config.slug}` },
+          { lang: "en", url: `${SITE.url}/${config.slug}` },
+          { lang: "x-default", url: SITE.url },
+        ]}
         faqItems={countryFaqItems}
       />
 
