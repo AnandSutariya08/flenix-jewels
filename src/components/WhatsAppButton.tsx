@@ -19,7 +19,7 @@ const buildMessage = (product: CatalogItem, productUrl: string): string => {
     '',
     'I am interested in the following product and would like more details:',
     '',
-    `🏷️ *#${product.id}- ${product.name}*`,
+    `🏷️ *${product.name}*`,
     '',
     `🔗 *View Product:*`,
     productUrl,
