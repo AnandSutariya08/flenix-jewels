@@ -122,8 +122,25 @@ export const OptimizedVideo = forwardRef<HTMLVideoElement, OptimizedVideoProps>(
     }, [autoPlay]);
 
     useEffect(() => {
-      if (!autoPlay || !src) return;
+      const v = internalRef.current;
+      if (!src) return;
+
+      if (!autoPlay) {
+        // Deselected — pause immediately so hidden videos don't play in background
+        if (v && !v.paused) v.pause();
+        return;
+      }
+
+      // Selected — reset guard
       playStartedRef.current = false;
+
+      // If already buffered enough, play right away (no delay needed)
+      if (v && v.readyState >= 3 /* HAVE_FUTURE_DATA */) {
+        doPlay();
+        return;
+      }
+
+      // Not yet buffered — 3-second fallback in case canplaythrough fires late
       const t = setTimeout(() => doPlay(), 3000);
       return () => clearTimeout(t);
     }, [src, autoPlay, doPlay]);
