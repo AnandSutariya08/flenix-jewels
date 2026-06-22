@@ -46,9 +46,10 @@ const SEOHead = ({
   // NOTE: Organization, LocalBusiness, and WebSite global schemas live in
   // index.html so Googlebot can read them on first-wave (pre-JS) crawl without
   // duplication. Only page-scoped schemas are injected here.
+  const isArticle = ogType === "article";
   const webPageSchema: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": ogType === "article" ? "BlogPosting" : "WebPage",
+    "@type": isArticle ? "BlogPosting" : "WebPage",
     "@id": `${pageUrl}#webpage`,
     name: fullTitle,
     description,
@@ -57,13 +58,24 @@ const SEOHead = ({
     isPartOf: { "@id": `${baseUrl}/#website` },
     publisher: { "@id": `${baseUrl}/#organization` },
     dateModified: today,
+    accessMode: ["textual", "visual"],
+    isAccessibleForFree: "True",
     potentialAction: {
       "@type": "ReadAction",
       target: [pageUrl],
     },
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: isArticle
+        ? ["h1", "h2", ".article-summary", "article > p:first-of-type"]
+        : ["h1", "h2", ".hero-title", ".page-hero-title"],
+    },
   };
   if (breadcrumbs?.length) {
     webPageSchema.breadcrumb = { "@id": `${pageUrl}#breadcrumb` };
+  }
+  if (articleMeta?.publishedTime) {
+    webPageSchema.datePublished = articleMeta.publishedTime;
   }
 
   // ── BreadcrumbList schema ─────────────────────────────────────────────────────

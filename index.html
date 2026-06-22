@@ -312,13 +312,14 @@
     "publisher": { "@id": "https://www.flenixjewels.com/#organization" },
     "copyrightYear": 2015,
     "copyrightHolder": { "@id": "https://www.flenixjewels.com/#organization" },
-    "potentialAction": {
+    "potentialAction": [{
       "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://www.flenixjewels.com/diamond?q={search_term_string}"
-      },
+      "target": "https://www.flenixjewels.com/diamond?q={search_term_string}",
       "query-input": "required name=search_term_string"
+    }],
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": ["h1", "h2", ".hero-title", ".page-hero-title"]
     },
     "hasPart": [
       {
@@ -433,62 +434,87 @@
     "numberOfItems": 8,
     "itemListElement": [
       {
-        "@type": "ListItem",
+        "@type": "SiteNavigationElement",
         "position": 1,
         "name": "Jewellery Collections",
         "url": "https://www.flenixjewels.com/categories",
         "description": "Browse all diamond and gold jewelry collections"
       },
       {
-        "@type": "ListItem",
+        "@type": "SiteNavigationElement",
         "position": 2,
         "name": "Diamond Catalog",
         "url": "https://www.flenixjewels.com/diamond",
         "description": "GIA & IGI certified natural and lab-grown diamond catalog"
       },
       {
-        "@type": "ListItem",
+        "@type": "SiteNavigationElement",
         "position": 3,
         "name": "Diamond Buying Guide",
         "url": "https://www.flenixjewels.com/buying-guide",
         "description": "Expert guides on buying diamonds and jewelry"
       },
       {
-        "@type": "ListItem",
+        "@type": "SiteNavigationElement",
         "position": 4,
         "name": "Jewelry Gallery",
         "url": "https://www.flenixjewels.com/gallery",
         "description": "High-resolution photos of our diamond jewelry collection"
       },
       {
-        "@type": "ListItem",
+        "@type": "SiteNavigationElement",
         "position": 5,
         "name": "Jewelry Blog",
         "url": "https://www.flenixjewels.com/blog",
         "description": "Diamond education, jewelry trends, and buying tips"
       },
       {
-        "@type": "ListItem",
+        "@type": "SiteNavigationElement",
         "position": 6,
         "name": "About Us",
         "url": "https://www.flenixjewels.com/about",
         "description": "About Flenix Jewels Ltd — 10+ years of diamond jewelry excellence"
       },
       {
-        "@type": "ListItem",
+        "@type": "SiteNavigationElement",
         "position": 7,
         "name": "Contact",
         "url": "https://www.flenixjewels.com/contact",
         "description": "Contact Flenix Jewels Ltd for enquiries and custom orders"
       },
       {
-        "@type": "ListItem",
+        "@type": "SiteNavigationElement",
         "position": 8,
         "name": "Engagement Rings",
         "url": "https://www.flenixjewels.com/categories",
         "description": "Certified diamond engagement rings in natural and lab-grown diamonds"
       }
     ]
+  }
+  </script>
+
+  <!-- ProfilePage — brand social profile signals for Google Knowledge Panel -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "@id": "https://www.flenixjewels.com/about#profilepage",
+    "dateCreated": "2015-01-01",
+    "dateModified": "2026-01-01",
+    "mainEntity": {
+      "@type": "Organization",
+      "@id": "https://www.flenixjewels.com/#organization",
+      "name": "Flenix Jewels Ltd",
+      "alternateName": "Flenix Jewels",
+      "description": "Premium diamond and gold jewelry brand — GIA & IGI certified natural and lab-grown diamonds with worldwide delivery.",
+      "url": "https://www.flenixjewels.com",
+      "logo": "https://www.flenixjewels.com/flenix-logo.png",
+      "sameAs": [
+        "https://instagram.com/flenixjewels",
+        "https://facebook.com/flenixjewels",
+        "https://pinterest.com/flenixjewels"
+      ]
+    }
   }
   </script>
 

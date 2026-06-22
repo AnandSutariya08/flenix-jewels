@@ -121,11 +121,19 @@ const server = createServer((req, res) => {
       const ext = extname(filePath).toLowerCase();
       const mime = MIME[ext] || 'application/octet-stream';
       const isAsset = ext !== '.html';
+      const securityHeaders = {
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'SAMEORIGIN',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+        'X-DNS-Prefetch-Control': 'on',
+      };
       res.writeHead(200, {
         'Content-Type': mime,
         'Cache-Control': isAsset
           ? 'public, max-age=31536000, immutable'
           : 'no-cache, must-revalidate',
+        ...securityHeaders,
       });
       res.end(readFileSync(filePath));
       return;
@@ -138,6 +146,12 @@ const server = createServer((req, res) => {
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8',
     'Cache-Control': 'no-cache, must-revalidate',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+    'X-DNS-Prefetch-Control': 'on',
+    'Link': '<https://www.flenixjewels.com/sitemap-index.xml>; rel="sitemap"',
   });
   res.end(html);
 });

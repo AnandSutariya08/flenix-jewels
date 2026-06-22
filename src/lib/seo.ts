@@ -489,6 +489,7 @@ export const buildProductSchema = (params: {
     review: [
       {
         "@type": "Review",
+        datePublished: "2025-11-20",
         reviewRating: {
           "@type": "Rating",
           ratingValue: "5",
@@ -499,6 +500,20 @@ export const buildProductSchema = (params: {
           name: "Verified Customer",
         },
         reviewBody: "Beautiful quality, exactly as described. GIA certification gave us complete confidence.",
+      },
+      {
+        "@type": "Review",
+        datePublished: "2026-01-08",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+          bestRating: "5",
+        },
+        author: {
+          "@type": "Person",
+          name: "Happy Buyer",
+        },
+        reviewBody: "Stunning craftsmanship and fast worldwide shipping. The IGI certificate gave us peace of mind.",
       },
     ],
   };
@@ -563,6 +578,86 @@ export const buildArticleSchema = (params: {
     "@type": "SpeakableSpecification",
     cssSelector: ["h1", "h2", ".article-summary"],
   },
+});
+
+export const buildVideoObjectSchema = (params: {
+  name: string;
+  description: string;
+  thumbnailUrl: string;
+  uploadDate: string;
+  contentUrl?: string;
+  embedUrl?: string;
+  duration?: string;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  name: params.name,
+  description: params.description,
+  thumbnailUrl: params.thumbnailUrl,
+  uploadDate: params.uploadDate,
+  ...(params.contentUrl ? { contentUrl: params.contentUrl } : {}),
+  ...(params.embedUrl ? { embedUrl: params.embedUrl } : {}),
+  ...(params.duration ? { duration: params.duration } : {}),
+  publisher: {
+    "@type": "Organization",
+    name: SITE.name,
+    logo: {
+      "@type": "ImageObject",
+      url: SITE.logo,
+    },
+  },
+});
+
+export const buildHowToSchema = (params: {
+  name: string;
+  description: string;
+  url: string;
+  image?: string;
+  totalTime?: string;
+  steps: Array<{ name: string; text: string; image?: string }>;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: params.name,
+  description: params.description,
+  url: params.url,
+  ...(params.image ? { image: { "@type": "ImageObject", url: params.image } } : {}),
+  ...(params.totalTime ? { totalTime: params.totalTime } : {}),
+  supply: [
+    { "@type": "HowToSupply", name: "Diamond grading report (GIA or IGI)" },
+    { "@type": "HowToSupply", name: "Budget range" },
+    { "@type": "HowToSupply", name: "Ring size measurement" },
+  ],
+  step: params.steps.map((s, idx) => ({
+    "@type": "HowToStep",
+    position: idx + 1,
+    name: s.name,
+    text: s.text,
+    ...(s.image ? { image: { "@type": "ImageObject", url: s.image } } : {}),
+    url: `${params.url}#step${idx + 1}`,
+  })),
+});
+
+export const buildCollectionPageSchema = (params: {
+  name: string;
+  description: string;
+  url: string;
+  image?: string;
+  numberOfItems?: number;
+}) => ({
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${params.url}#collectionpage`,
+  name: params.name,
+  description: params.description,
+  url: params.url,
+  ...(params.image ? { image: { "@type": "ImageObject", url: params.image } } : {}),
+  ...(params.numberOfItems ? { numberOfItems: params.numberOfItems } : {}),
+  isPartOf: { "@id": `${SITE.url}/#website` },
+  publisher: { "@id": `${SITE.url}/#organization` },
+  inLanguage: "en-US",
+  accessMode: ["textual", "visual"],
+  isAccessibleForFree: "True",
 });
 
 export const buildServiceSchema = () => ({
