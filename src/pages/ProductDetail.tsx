@@ -238,7 +238,7 @@ const ProductDetail = () => {
 
               {/* Main viewer — ALL items always in DOM, toggled via opacity.
                   This keeps videos buffered so switching back is instant. */}
-              <div className="relative w-full aspect-square sm:aspect-[4/5] rounded-2xl overflow-hidden bg-black">
+              <div className="relative w-full aspect-square sm:aspect-[4/5] max-h-[62vw] sm:max-h-[68vh] lg:max-h-[calc(100vh-9rem)] rounded-2xl overflow-hidden bg-black">
 
                 {media.map((item, i) => {
                   const isActive = i === selectedIndex;
