@@ -315,19 +315,7 @@ const BlogDetail = () => {
           </div>
 
           {/* Article content */}
-          <div
-            className="prose prose-base sm:prose-lg max-w-none
-              prose-headings:font-bold prose-headings:tracking-tight
-              prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
-              prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-              prose-p:leading-relaxed prose-p:text-foreground/80
-              prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-              prose-strong:font-bold prose-strong:text-foreground
-              prose-ul:pl-5 prose-ol:pl-5
-              prose-li:my-1 prose-li:text-foreground/80
-              prose-img:rounded-2xl prose-img:shadow-lg
-              dark:prose-invert"
-          >
+          <div className="blog-content">
             <div dangerouslySetInnerHTML={{ __html: cleanContent(blog.content) }} />
           </div>
 
