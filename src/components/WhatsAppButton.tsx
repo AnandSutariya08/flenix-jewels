@@ -31,8 +31,16 @@ const stripHtml = (html: string): string =>
 const val = (v: string | number | undefined | null): string =>
   (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : '';
 
+const getProductImage = (product: CatalogItem): string => {
+  if ('images' in product && Array.isArray((product as any).images) && (product as any).images.length > 0) {
+    return (product as any).images[0];
+  }
+  return (product as any).image || '';
+};
+
 const buildMessage = (product: CatalogItem, productUrl: string): string => {
   const parts: string[] = [];
+  const imageUrl = getProductImage(product);
 
   parts.push('Hello Flenix Jewels! 👋');
   parts.push('');
@@ -62,6 +70,8 @@ const buildMessage = (product: CatalogItem, productUrl: string): string => {
     }
 
     parts.push('');
+    if (imageUrl) parts.push(`📸 *Image:*\n${imageUrl}`);
+    parts.push('');
     parts.push(`🔗 *View Product:*\n${productUrl}`);
     parts.push('');
     parts.push('Could you please confirm availability, share certification details, and let me know about any customisation or setting options?');
@@ -83,6 +93,8 @@ const buildMessage = (product: CatalogItem, productUrl: string): string => {
       parts.push(shortDesc);
     }
 
+    parts.push('');
+    if (imageUrl) parts.push(`📸 *Image:*\n${imageUrl}`);
     parts.push('');
     parts.push(`🔗 *View Product:*\n${productUrl}`);
     parts.push('');
