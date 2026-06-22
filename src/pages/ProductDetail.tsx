@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Header from "@/components/Header";
-import MiniHeader from "@/components/MiniHeader";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -55,6 +54,11 @@ const ProductDetail = () => {
     preloadMedia(urls);
   }, [media]);
 
+  // Reset to first slide when product changes
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [id]);
+
   const structuredData = product
     ? {
         "@context": "https://schema.org",
@@ -81,6 +85,7 @@ const ProductDetail = () => {
       }
     : undefined;
 
+  /* ── Loading skeleton ─────────────────────────────────────────── */
   if (!product && (!isReady || !productsReady)) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -90,15 +95,16 @@ const ProductDetail = () => {
           canonicalUrl={`https://www.flenixjewels.com/product/${id}`}
         />
         <Header promoHeader={promoHeader} />
-        {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
-        <main className="flex-1 container mx-auto px-4 py-12" >
-          <div className="h-10 w-72 bg-muted rounded-md animate-pulse mb-4" />
-          <div className="grid lg:grid-cols-2 gap-10">
-            <div className="aspect-square bg-muted rounded-2xl animate-pulse" />
-            <div className="space-y-4">
-              <div className="h-6 w-2/3 bg-muted rounded-md animate-pulse" />
-              <div className="h-8 w-1/3 bg-muted rounded-md animate-pulse" />
-              <div className="h-40 bg-muted rounded-md animate-pulse" />
+        <main className="flex-1" style={{ paddingTop }}>
+          <div className="container mx-auto px-4 sm:px-6 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
+              <div className="aspect-square bg-muted rounded-2xl animate-pulse" />
+              <div className="space-y-4 pt-2">
+                <div className="h-7 w-2/3 bg-muted rounded-lg animate-pulse" />
+                <div className="h-5 w-1/3 bg-muted rounded-lg animate-pulse" />
+                <div className="h-40 bg-muted rounded-lg animate-pulse" />
+                <div className="h-12 bg-muted rounded-xl animate-pulse" />
+              </div>
             </div>
           </div>
         </main>
@@ -107,6 +113,7 @@ const ProductDetail = () => {
     );
   }
 
+  /* ── Not found ────────────────────────────────────────────────── */
   if (!product) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -116,9 +123,8 @@ const ProductDetail = () => {
           canonicalUrl={`https://www.flenixjewels.com/product/${id}`}
         />
         <Header promoHeader={promoHeader} />
-        {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
-        <main className="flex-1 container mx-auto px-4 py-12" >
-          <div className="text-center">
+        <main className="flex-1" style={{ paddingTop }}>
+          <div className="container mx-auto px-4 py-12 text-center">
             <p className="text-lg text-muted-foreground">Product not found.</p>
           </div>
         </main>
@@ -127,6 +133,7 @@ const ProductDetail = () => {
     );
   }
 
+  /* ── Main render ──────────────────────────────────────────────── */
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
@@ -144,93 +151,137 @@ const ProductDetail = () => {
       />
 
       <Header promoHeader={promoHeader} />
-      {/* <MiniHeader categories={categories} promoHeight={promoHeight} /> */}
 
-      <main className="flex-1 container mx-auto px-4 py-12" >
-        <div className="grid lg:grid-cols-2 gap-10">
-          <div>
-            <div className="relative aspect-square rounded-2xl bg-muted overflow-hidden flex items-center justify-center">
-              {currentMedia && getMediaType(currentMedia) === "video" ? (
-                <OptimizedVideo noWrapper src={currentMedia} className="w-full h-full object-cover" controls />
-              ) : (
-                currentMedia && (
-                  <img
+      <main className="flex-1" style={{ paddingTop }}>
+        <div className="container mx-auto px-4 sm:px-6 py-6 md:py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-start">
+
+            {/* ── Media column ───────────────────────────────────── */}
+            <div className="lg:sticky lg:top-24 space-y-3">
+
+              {/* Main display */}
+              <div className="relative aspect-square sm:aspect-[4/5] rounded-2xl bg-muted overflow-hidden">
+                {currentMedia && getMediaType(currentMedia) === "video" ? (
+                  <OptimizedVideo
+                    noWrapper
                     src={currentMedia}
-                    alt={product.name}
                     className="w-full h-full object-cover"
-                    loading="eager"
-                    decoding="async"
-                    fetchpriority="high"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    controls
                   />
-                )
-              )}
+                ) : (
+                  currentMedia && (
+                    <img
+                      src={currentMedia}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      loading="eager"
+                      decoding="async"
+                      fetchpriority="high"
+                    />
+                  )
+                )}
+
+                {/* Prev / Next arrows */}
+                {hasMultiple && (
+                  <>
+                    <button
+                      onClick={() => setSelectedIndex((prev) => (prev - 1 + media.length) % media.length)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 shadow-lg hover:bg-white transition-colors"
+                      aria-label="Previous"
+                    >
+                      <ChevronLeft className="h-5 w-5 text-stone-800" />
+                    </button>
+                    <button
+                      onClick={() => setSelectedIndex((prev) => (prev + 1) % media.length)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 shadow-lg hover:bg-white transition-colors"
+                      aria-label="Next"
+                    >
+                      <ChevronRight className="h-5 w-5 text-stone-800" />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Thumbnail strip */}
               {hasMultiple && (
-                <>
-                  <button
-                    onClick={() => setSelectedIndex((prev) => (prev - 1 + media.length) % media.length)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 shadow-lg"
-                    aria-label="Previous"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => setSelectedIndex((prev) => (prev + 1) % media.length)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 shadow-lg"
-                    aria-label="Next"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </>
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                  {media.map((item, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedIndex(i)}
+                      className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                        selectedIndex === i
+                          ? "border-primary ring-1 ring-primary"
+                          : "border-transparent opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      {getMediaType(item) === "video" ? (
+                        <OptimizedVideo
+                          noWrapper
+                          src={item}
+                          className="w-full h-full object-cover"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                      ) : (
+                        <img
+                          src={item}
+                          alt={`${product.name} ${i + 1}`}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      )}
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
-            {hasMultiple && (
-              <div className="mt-4 flex gap-2 overflow-x-auto">
-                {media.map((item, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedIndex(i)}
-                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${selectedIndex === i ? "border-primary" : "border-transparent"}`}
-                  >
-                    {getMediaType(item) === "video" ? (
-                      <OptimizedVideo noWrapper src={item} className="w-full h-full object-cover" muted />
-                    ) : (
-                      <img
-                        src={item}
-                        alt={`${product.name} ${i + 1}`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        decoding="async"
-                        fetchpriority="low"
-                      />
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
 
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">{product.name}</h1>
-            {priceSettings.showPrices ? (
-              <div className="mb-6 text-lg font-semibold text-foreground/90">
-                ${formatPriceRounded(product.price)}
+            {/* ── Info column ────────────────────────────────────── */}
+            <div className="flex flex-col gap-5 lg:pt-2">
+
+              {/* Category breadcrumb */}
+              {category && (
+                <Link
+                  to={`/category/${category.id}`}
+                  className="inline-flex items-center gap-1 text-sm text-primary font-medium hover:underline w-fit"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Shop more {category.name} jewelry
+                </Link>
+              )}
+
+              {/* Title */}
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
+                {product.name}
+              </h1>
+
+              {/* Price */}
+              {priceSettings.showPrices && product.price && (
+                <p className="text-xl font-semibold text-foreground/90">
+                  ${formatPriceRounded(product.price)}
+                </p>
+              )}
+
+              {/* Description */}
+              {product.description && (
+                <div
+                  className="prose prose-sm max-w-none text-foreground/80"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
+              )}
+
+              {/* CTA */}
+              <div className="pt-2">
+                <WhatsAppButton product={product} className="w-full h-12 text-sm font-bold" />
               </div>
-            ) : (
-              <div className="mb-6" />
-            )}
-            {category && (
-              <Link to={`/category/${category.id}`} className="text-sm text-primary underline">
-                Shop more {category.name} jewelry
-              </Link>
-            )}
-            {product.description && (
-              <div
-                className="prose prose-sm max-w-none mt-6"
-                dangerouslySetInnerHTML={{ __html: product.description }}
-              />
-            )}
-            <div className="mt-8">
-              <WhatsAppButton product={product} className="w-full" />
+
             </div>
           </div>
         </div>
