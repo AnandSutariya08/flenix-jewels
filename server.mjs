@@ -10,6 +10,10 @@ const PORT = process.env.PORT || 3000;
 const SITE_URL = 'https://www.flenixjewels.com';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
+// Firestore REST API — no SDK needed, uses public client API key
+const FIREBASE_API_KEY = 'AIzaSyCOkXybrDQX9TLbHs9fyLvrKLt5XWAIgwI';
+const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/flenix-jewels/databases/(default)/documents`;
+
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'application/javascript',
@@ -85,17 +89,65 @@ const PAGE_META = {
   },
 };
 
-// ── Load pre-generated product/blog meta (built at compile time) ─────────────
-let PRODUCT_META = { products: {}, blogs: {} };
-try {
-  const raw = readFileSync(join(DIST, 'product-meta.json'), 'utf-8');
-  PRODUCT_META = JSON.parse(raw);
-  const pc = Object.keys(PRODUCT_META.products || {}).length;
-  const bc = Object.keys(PRODUCT_META.blogs || {}).length;
-  console.log(`✅ product-meta.json loaded — ${pc} products, ${bc} blogs`);
-} catch {
-  console.warn('⚠️  product-meta.json not found — product/blog OG images will use site default. Run "npm run build" to generate it.');
+// ── Firestore helpers ────────────────────────────────────────────────────────
+
+function getStr(fields, key) {
+  return fields?.[key]?.stringValue || '';
 }
+
+// Fetch a single Firestore document via REST (no SDK, no admin credentials)
+async function firestoreGet(collection, docId) {
+  const url = `${FIRESTORE_BASE}/${collection}/${docId}?key=${FIREBASE_API_KEY}`;
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.fields || null;
+  } catch {
+    return null;
+  }
+}
+
+function stripHtml(html = '') {
+  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function truncate(str = '', max = 160) {
+  if (str.length <= max) return str;
+  const cut = str.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return `${cut.slice(0, lastSpace > 60 ? lastSpace : max).trim()}...`;
+}
+
+async function fetchProductMeta(productId) {
+  const fields = await firestoreGet('products', productId);
+  if (!fields) return null;
+  const name = getStr(fields, 'name');
+  // image may be a direct string or first item in the images array
+  const image =
+    getStr(fields, 'image') ||
+    fields.images?.arrayValue?.values?.[0]?.stringValue ||
+    '';
+  const description = truncate(stripHtml(getStr(fields, 'description')), 160);
+  return { name, image, description };
+}
+
+async function fetchBlogMeta(blogId) {
+  const fields = await firestoreGet('blogs', blogId);
+  if (!fields) return null;
+  const title = getStr(fields, 'title');
+  const image =
+    getStr(fields, 'image') ||
+    getStr(fields, 'coverImage') ||
+    getStr(fields, 'thumbnail') ||
+    '';
+  const description = getStr(fields, 'excerpt')
+    ? truncate(getStr(fields, 'excerpt'), 160)
+    : truncate(stripHtml(getStr(fields, 'content') || getStr(fields, 'body')), 160);
+  return { title, image, description };
+}
+
+// ── HTML meta injection ──────────────────────────────────────────────────────
 
 function esc(str) {
   return str.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -136,6 +188,8 @@ function injectMeta(html, meta) {
   return result;
 }
 
+// ── Security / common headers ────────────────────────────────────────────────
+
 const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'SAMEORIGIN',
@@ -151,6 +205,8 @@ const SPA_HEADERS = {
   ...SECURITY_HEADERS,
 };
 
+// ── Load base HTML template ──────────────────────────────────────────────────
+
 let template;
 try {
   template = readFileSync(join(DIST, 'index.html'), 'utf-8');
@@ -159,11 +215,13 @@ try {
   process.exit(1);
 }
 
-const server = createServer((req, res) => {
+// ── Request handler ──────────────────────────────────────────────────────────
+
+const server = createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const pathname = url.pathname;
 
-  // ── Static files from dist/ ──────────────────────────────────────────────────
+  // Static files from dist/
   const filePath = join(DIST, pathname);
   try {
     const stat = statSync(filePath);
@@ -179,47 +237,41 @@ const server = createServer((req, res) => {
       res.end(readFileSync(filePath));
       return;
     }
-  } catch { /* not a file — fall through */ }
+  } catch { /* not a static file */ }
 
-  // ── /product/:id — inject product-specific OG tags ─────────────────────────
+  // ── /product/:id — dynamic OG tags from Firestore ──────────────────────────
   const productMatch = pathname.match(/^\/product\/([^/]+)$/);
   if (productMatch) {
     const productId = productMatch[1];
-    const p = PRODUCT_META.products?.[productId];
-    const productUrl = `${SITE_URL}/product/${productId}`;
-
+    const p = await fetchProductMeta(productId);
     const meta = {
       title: p?.name ? `${p.name} | Flenix Jewels Ltd` : 'Diamond Jewelry | Flenix Jewels Ltd',
       description: p?.description || 'Certified natural and lab-grown diamond jewelry at Flenix Jewels Ltd. GIA & IGI certified with worldwide shipping.',
       image: p?.image || DEFAULT_OG_IMAGE,
-      url: productUrl,
+      url: `${SITE_URL}/product/${productId}`,
     };
-
     res.writeHead(200, SPA_HEADERS);
     res.end(injectMeta(template, meta));
     return;
   }
 
-  // ── /blog/:id — inject blog-specific OG tags ────────────────────────────────
+  // ── /blog/:id — dynamic OG tags from Firestore ─────────────────────────────
   const blogMatch = pathname.match(/^\/blog\/([^/]+)$/);
   if (blogMatch) {
     const blogId = blogMatch[1];
-    const b = PRODUCT_META.blogs?.[blogId];
-    const blogUrl = `${SITE_URL}/blog/${blogId}`;
-
+    const b = await fetchBlogMeta(blogId);
     const meta = {
       title: b?.title ? `${b.title} | Flenix Jewels Ltd Blog` : 'Jewelry Blog | Flenix Jewels Ltd',
       description: b?.description || 'Diamond education, jewelry trends, and expert buying guides from Flenix Jewels Ltd.',
       image: b?.image || DEFAULT_OG_IMAGE,
-      url: blogUrl,
+      url: `${SITE_URL}/blog/${blogId}`,
     };
-
     res.writeHead(200, SPA_HEADERS);
     res.end(injectMeta(template, meta));
     return;
   }
 
-  // ── Known static pages ───────────────────────────────────────────────────────
+  // ── Static known pages ──────────────────────────────────────────────────────
   const meta = PAGE_META[pathname] || PAGE_META['/'];
   res.writeHead(200, SPA_HEADERS);
   res.end(injectMeta(template, meta));
