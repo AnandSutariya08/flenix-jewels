@@ -360,7 +360,7 @@ const TrustTicker = ({ items }: { items?: string[] }) => {
   return (
     <div className="absolute bottom-0 left-0 right-0 z-30 overflow-hidden"
       style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(196,144,106,0.22)', height: 44 }}>
-      <div className="flex items-center h-full animate-[scroll_30s_linear_infinite] whitespace-nowrap">
+      <div className="flex items-center h-full animate-[scroll_15s_linear_infinite] whitespace-nowrap">
         {[...safeItems, ...safeItems, ...safeItems].map((item, i) => (
           <span key={i} className="inline-flex items-center gap-3 px-6">
             <span className="text-[9px] tracking-[0.32em] uppercase font-black" style={{ color: 'rgba(255,255,255,0.75)' }}>{item}</span>
