@@ -80,8 +80,8 @@ export default function Header({ promoHeader }: HeaderProps) {
     boxShadow: isDark
       ? '0 12px 36px -6px rgba(0,0,0,0.65), 0 4px 10px rgba(0,0,0,0.28)'
       : '0 10px 32px -6px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)',
-    backdropFilter: 'blur(32px)',
-    WebkitBackdropFilter: 'blur(32px)',
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
   };
 
   /* ─── Dropdown item style ──────────────────────────────────── */
@@ -140,11 +140,11 @@ export default function Header({ promoHeader }: HeaderProps) {
               ? (isDark ? 'rgba(14,8,4,0.62)' : 'rgba(255,252,248,0.78)')
               : (isDark ? 'rgba(12,7,3,0.78)' : 'rgba(253,248,243,0.94)'),
             backdropFilter:       isScrolled
-              ? (isDark ? 'blur(48px) saturate(200%) brightness(0.85)' : 'blur(40px) saturate(180%)')
-              : (isDark ? 'blur(28px) saturate(160%)' : 'blur(24px)'),
+              ? (isDark ? 'blur(16px) saturate(150%)' : 'blur(14px) saturate(140%)')
+              : (isDark ? 'blur(10px)' : 'blur(8px)'),
             WebkitBackdropFilter: isScrolled
-              ? (isDark ? 'blur(48px) saturate(200%) brightness(0.85)' : 'blur(40px) saturate(180%)')
-              : (isDark ? 'blur(28px) saturate(160%)' : 'blur(24px)'),
+              ? (isDark ? 'blur(16px) saturate(150%)' : 'blur(14px) saturate(140%)')
+              : (isDark ? 'blur(10px)' : 'blur(8px)'),
             border:          isScrolled ? `1px solid ${isDark ? 'rgba(196,144,106,0.32)' : 'rgba(155,104,68,0.18)'}` : 'none',
             borderBottom:    isScrolled ? undefined : `1px solid ${isDark ? 'rgba(196,144,106,0.16)' : 'rgba(196,144,106,0.14)'}`,
             boxShadow:       isScrolled

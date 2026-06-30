@@ -88,7 +88,7 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
     slideTimerRef.current = window.setTimeout(() => {
       setLeavingIndex(null);
       setAnimated(false);
-    }, 1600);
+    }, 1000);
   }, [leavingIndex, currentIndex]);
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
       const next = (currentIndex + 1) % banners.length;
       await ensureLoaded(next);
       if (isMountedRef.current) navigate(next, 1);
-    }, 2000);
+    }, 5000);
     return () => window.clearInterval(interval);
   }, [banners.length, currentIndex, ensureLoaded, navigate]);
 
@@ -158,12 +158,12 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
         if (isLeaving) {
           // outgoing slide: sits at 0 until animation fires, then slides out
           transform = animated ? `translateX(${direction === 1 ? '-100%' : '100%'})` : 'translateX(0)';
-          transition = 'transform 1.5s cubic-bezier(0.65, 0, 0.35, 1)';
+          transition = 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)';
           zIndex = 5;
         } else if (leavingIndex !== null) {
           // entering slide during an active transition: start offscreen, slide into view
           transform = animated ? 'translateX(0)' : `translateX(${direction === 1 ? '100%' : '-100%'})`;
-          transition = animated ? 'transform 1.5s cubic-bezier(0.65, 0, 0.35, 1)' : 'none';
+          transition = animated ? 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)' : 'none';
           zIndex = 10;
         } else {
           // idle current slide (no transition happening) — always fully visible
@@ -176,7 +176,7 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
           <div
             key={banner.id}
             className="absolute inset-0"
-            style={{ transform, transition, zIndex, willChange: 'transform' }}
+            style={{ transform, transition, zIndex, willChange: leavingIndex !== null ? 'transform' : 'auto' }}
           >
             {banner.mediaType === 'video' ? (
               <OptimizedVideo
@@ -201,7 +201,7 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
                 style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
                 loading={isCurrent ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchpriority={isCurrent ? 'high' : 'auto'}
+                fetchPriority={isCurrent ? 'high' : 'auto'}
                 sizes="100vw"
                 onLoad={() => markLoaded(index)}
               />
@@ -234,12 +234,12 @@ const BannerCarousel = memo(({ banners = [], tickerItems }: BannerCarouselProps)
         <>
           <button type="button" onClick={goToPrev} aria-label="Previous slide"
             className="hidden md:flex absolute left-8 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full transition-all duration-300 hover:scale-110 group"
-            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(196,144,106,0.35)', backdropFilter: 'blur(12px)' }}>
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(196,144,106,0.35)', backdropFilter: 'blur(6px)' }}>
             <ChevronLeft className="h-6 w-6 text-white group-hover:text-[#C4906A] transition-colors" />
           </button>
           <button type="button" onClick={goToNext} aria-label="Next slide"
             className="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 z-30 h-14 w-14 items-center justify-center rounded-full transition-all duration-300 hover:scale-110 group"
-            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(196,144,106,0.35)', backdropFilter: 'blur(12px)' }}>
+            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(196,144,106,0.35)', backdropFilter: 'blur(6px)' }}>
             <ChevronRight className="h-6 w-6 text-white group-hover:text-[#C4906A] transition-colors" />
           </button>
 
@@ -359,7 +359,7 @@ const TrustTicker = ({ items }: { items?: string[] }) => {
   const safeItems = Array.isArray(items) && items.length > 0 ? items : DEFAULT_TICKER;
   return (
     <div className="absolute bottom-0 left-0 right-0 z-30 overflow-hidden"
-      style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(196,144,106,0.22)', height: 44 }}>
+      style={{ background: 'rgba(0,0,0,0.70)', borderTop: '1px solid rgba(196,144,106,0.22)', height: 44 }}>
       <div className="flex items-center h-full animate-[scroll_15s_linear_infinite] whitespace-nowrap">
         {[...safeItems, ...safeItems, ...safeItems].map((item, i) => (
           <span key={i} className="inline-flex items-center gap-3 px-6">
