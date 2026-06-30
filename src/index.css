@@ -228,7 +228,7 @@
 
   .animate-marquee {
     display: inline-block;
-    animation: marquee 45s linear infinite;
+    animation: marquee 30s linear infinite;
   }
 
   .pause { animation-play-state: paused !important; }
