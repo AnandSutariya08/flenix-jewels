@@ -53,7 +53,7 @@ const AdminPromoHeader = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="e.g., SALE 20% OFF TODAY"
-            maxLength={100}
+            maxLength={500}
           />
           <p className="text-xs text-muted-foreground">
             This text will scroll continuously from right to left at the top of the page
