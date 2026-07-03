@@ -411,7 +411,7 @@ const ProductDetail = () => {
               )}
 
               {/* Title */}
-              <h1 className="text-xl sm:text-2xl font-bold leading-tight tracking-tight text-foreground">
+              <h1 className="text-lg sm:text-xl font-bold leading-tight tracking-tight text-foreground">
                 {product.name}
               </h1>
 
