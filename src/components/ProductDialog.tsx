@@ -144,11 +144,14 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
         style={{
           width: '96vw',
           maxWidth: 1260,
-          height: '82vh',
-          maxHeight: 'min(700px, calc(100vh - 90px))',
-          // Shift the center point down so the dialog clears the fixed header
-          // (ticker ~28px + nav ~72px = ~100px total; 60px nudge keeps dialog below it)
-          top: 'calc(50% + 60px)',
+          // max() keeps the dialog below the ~100px fixed header on short laptop
+          // screens while still centering it naturally on taller displays.
+          // translateX(-50%) overrides Tailwind's translate(-50%,-50%) so only
+          // horizontal centering applies; top is computed explicitly.
+          top: 'max(106px, calc(50% - 350px))',
+          transform: 'translateX(-50%)',
+          height: 'min(700px, calc(100vh - 122px))',
+          maxHeight: 700,
           borderRadius: 24,
           background: '#080504',
           boxShadow: '0 40px 120px -20px rgba(0,0,0,0.85), 0 0 0 1px rgba(196,144,106,0.18)',
