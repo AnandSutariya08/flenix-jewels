@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { TouchEvent } from 'react';
 import { CatalogItem, type Diamond } from '@/lib/storage';
-import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
 import { keepVideoAlive } from '@/lib/preload';
 import { OptimizedImage } from '@/components/ui/optimized-image';
@@ -196,11 +195,6 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
           {descriptionPreview}
         </p>
 
-        <div className="space-y-4 mt-auto">
-          <div onClick={(e) => e.stopPropagation()}>
-            <WhatsAppButton product={product} className="w-full" />
-          </div>
-        </div>
       </div>
     </div>
   );
