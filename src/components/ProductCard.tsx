@@ -140,7 +140,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
 
       {/* Content Container */}
       <div className="flex flex-col flex-1 p-4 sm:p-5 lg:p-6">
-        <h3 className="font-semibold text-base sm:text-lg lg:text-xl mb-2 line-clamp-2 min-h-[3rem] text-foreground group-hover:text-primary transition-colors">
+        <h3 className="font-semibold text-sm sm:text-base lg:text-lg mb-2 line-clamp-2 min-h-[2.5rem] text-foreground group-hover:text-primary transition-colors">
           {product.name}
         </h3>
 
@@ -190,10 +190,6 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
             ${formatPriceRounded(product.price)}
           </div>
         )}
-
-        <p className="text-xs sm:text-sm text-muted-foreground mb-4 line-clamp-3 flex-1 leading-6">
-          {descriptionPreview}
-        </p>
 
       </div>
     </div>
