@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import Header from '@/components/Header';
 import MiniHeader from '@/components/MiniHeader';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
-import ProductDialog from '@/components/ProductDialog';
 import SEOHead from '@/components/SEOHead';
 import {
   buildFaqForCategory,
@@ -41,10 +40,8 @@ const CategoryProducts = () => {
   const isReady = status === "succeeded" || hydrated;
   const productsReady = productsLoaded || productsStatus === "succeeded" || productsStatus === "failed";
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortBy, setSortBy] = useState<string>('newest');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const paddingTop = useHeaderOffset();
   const category = useMemo(
     () => categories.find((c) => c.id === id) ?? null,
@@ -124,28 +121,8 @@ const CategoryProducts = () => {
     const sorted = sortProducts(productsForCategory, sortBy);
     setFilteredProducts(sorted);
   }, [productsForCategory, sortBy]);
-  useEffect(() => {
-    if (productsForCategory.length > 0) {
-      const prodId = searchParams.get('product');
-      if (prodId) {
-        const prod = productsForCategory.find(p => p.id === prodId);
-        if (prod) {
-          setSelectedProduct(prod);
-          setIsDialogOpen(true);
-        }
-      }
-    }
-  }, [productsForCategory, searchParams]);
   const handleProductClick = (product: Product) => {
-    setSelectedProduct(product);
-    setIsDialogOpen(true);
-    setSearchParams({ product: product.id });
-  };
-  const handleDialogOpenChange = (open: boolean) => {
-    setIsDialogOpen(open);
-    if (!open) {
-      setSearchParams({});
-    }
+    navigate(`/product/${product.id}`);
   };
   const baseStructuredData = category ? {
     '@context': 'https://schema.org',
@@ -188,58 +165,18 @@ const CategoryProducts = () => {
     },
   } : undefined;
 
-  const activeProduct = selectedProduct;
-  const productStructuredData =
-    category && activeProduct
-      ? {
-          '@context': 'https://schema.org',
-          '@type': 'Product',
-          '@id': `https://www.flenixjewels.com/product/${activeProduct.id}#product`,
-          name: activeProduct.name,
-          image:
-            activeProduct.images && activeProduct.images.length > 0
-              ? activeProduct.images.filter(Boolean)
-              : [activeProduct.image].filter(Boolean),
-          description: stripHtml(activeProduct.description || `${activeProduct.name} from Flenix Jewels Ltd`),
-          sku: activeProduct.id,
-          category: category.name,
-          mainEntityOfPage: `https://www.flenixjewels.com/category/${id}?product=${activeProduct.id}`,
-          brand: {
-            '@type': 'Brand',
-            name: 'Flenix Jewels Ltd',
-          },
-          offers: buildOffer(`https://www.flenixjewels.com/category/${id}?product=${activeProduct.id}`, activeProduct.price),
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: '4.9',
-            reviewCount: '150',
-            bestRating: '5',
-            worstRating: '1',
-          },
-        }
-      : undefined;
-
-  const structuredData = [
-    ...(baseStructuredData ? [baseStructuredData] : []),
-    ...(productStructuredData ? [productStructuredData] : []),
-  ];
+  const structuredData = baseStructuredData ? [baseStructuredData] : [];
 
   const seoTitle = category
-    ? activeProduct
-      ? (activeProduct.metaTitle || buildMetaTitleForProduct(activeProduct.name))
-      : (category.metaTitle || buildMetaTitleForCategory(category.name))
+    ? (category.metaTitle || buildMetaTitleForCategory(category.name))
     : 'Category';
 
   const seoDescription = category
-    ? activeProduct
-      ? (activeProduct.metaDescription || buildMetaDescriptionForProduct(activeProduct.name, category.name))
-      : (category.metaDescription || buildMetaDescriptionForCategory(category.name, category.description))
+    ? (category.metaDescription || buildMetaDescriptionForCategory(category.name, category.description))
     : 'Category';
 
   const seoFaqItems = category
-    ? activeProduct
-      ? (activeProduct.seoFaq && activeProduct.seoFaq.length > 0 ? activeProduct.seoFaq : buildFaqForProduct(activeProduct.name, category.name))
-      : (category.seoFaq && category.seoFaq.length > 0 ? category.seoFaq : buildFaqForCategory(category.name))
+    ? (category.seoFaq && category.seoFaq.length > 0 ? category.seoFaq : buildFaqForCategory(category.name))
     : undefined;
 
   const relatedCategories = useMemo(
@@ -353,32 +290,14 @@ const CategoryProducts = () => {
         title={seoTitle}
         description={seoDescription}
         keywords={`${category.name.toLowerCase()}, ${category.name.toLowerCase()} jewelry, diamond ${category.name.toLowerCase()}, gold ${category.name.toLowerCase()}, luxury ${category.name.toLowerCase()}`}
-        canonicalUrl={
-          activeProduct
-            ? `https://www.flenixjewels.com/product/${activeProduct.id}`
-            : `https://www.flenixjewels.com/category/${id}`
-        }
-        ogType={activeProduct ? "product" : "website"}
-        ogImage={
-          activeProduct
-            ? ((activeProduct.images && activeProduct.images.filter(u => !u.match(/\.(mp4|webm)$/i))[0]) || activeProduct.image || undefined)
-            : undefined
-        }
+        canonicalUrl={`https://www.flenixjewels.com/category/${id}`}
+        ogType="website"
         structuredData={structuredData}
-        breadcrumbs={
-          activeProduct
-            ? [
-                { name: "Home", url: "https://www.flenixjewels.com" },
-                { name: "Collections", url: "https://www.flenixjewels.com/categories" },
-                { name: category.name, url: `https://www.flenixjewels.com/category/${id}` },
-                { name: activeProduct.name, url: `https://www.flenixjewels.com/product/${activeProduct.id}` },
-              ]
-            : [
-                { name: "Home", url: "https://www.flenixjewels.com" },
-                { name: "Categories", url: "https://www.flenixjewels.com/categories" },
-                { name: category.name, url: `https://www.flenixjewels.com/category/${id}` },
-              ]
-        }
+        breadcrumbs={[
+          { name: "Home", url: "https://www.flenixjewels.com" },
+          { name: "Categories", url: "https://www.flenixjewels.com/categories" },
+          { name: category.name, url: `https://www.flenixjewels.com/category/${id}` },
+        ]}
         faqItems={seoFaqItems || faqItems}
       />
       <Header promoHeader={promoHeader} />
@@ -472,11 +391,6 @@ const CategoryProducts = () => {
           </section>
         )}
       </main>
-      <ProductDialog
-        product={selectedProduct}
-        open={isDialogOpen}
-        onOpenChange={handleDialogOpenChange}
-      />
       <Footer />
     </div>
   );
