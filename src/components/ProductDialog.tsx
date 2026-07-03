@@ -145,7 +145,10 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
           width: '96vw',
           maxWidth: 1260,
           height: '82vh',
-          maxHeight: 700,
+          maxHeight: 'min(700px, calc(100vh - 90px))',
+          // Shift the center point down so the dialog clears the fixed header
+          // (ticker ~28px + nav ~72px = ~100px total; 60px nudge keeps dialog below it)
+          top: 'calc(50% + 60px)',
           borderRadius: 24,
           background: '#080504',
           boxShadow: '0 40px 120px -20px rgba(0,0,0,0.85), 0 0 0 1px rgba(196,144,106,0.18)',
