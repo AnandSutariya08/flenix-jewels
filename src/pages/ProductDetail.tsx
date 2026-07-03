@@ -276,7 +276,6 @@ const ProductDetail = () => {
                           muted
                           loop
                           playsInline
-                          controls={isActive}
                           preload="auto"
                         />
                       ) : (
