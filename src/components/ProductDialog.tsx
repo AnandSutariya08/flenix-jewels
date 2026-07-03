@@ -307,7 +307,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                 <Sparkles className="h-3 w-3" style={{ color: '#C4906A' }} />
                 <span className="text-[9px] tracking-[0.25em] uppercase font-bold" style={{ color: '#9B6844' }}>Flenix Jewels Ltd</span>
               </div>
-              <h1 className="text-xl font-bold leading-snug text-zinc-900">{product.name}</h1>
+              <h1 className="text-base font-bold leading-snug text-zinc-900">{product.name}</h1>
 
               {/* Badges */}
               <div className="flex gap-2">
@@ -518,7 +518,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
 
                 {/* Product name */}
                 <div>
-                  <h1 className="text-2xl xl:text-[1.75rem] font-bold leading-tight text-zinc-900" style={{ letterSpacing: '-0.015em' }}>
+                  <h1 className="text-lg xl:text-xl font-bold leading-tight text-zinc-900" style={{ letterSpacing: '-0.015em' }}>
                     {product.name}
                   </h1>
                   <div className="mt-3 h-px" style={{ background: 'linear-gradient(90deg, rgba(196,144,106,0.55), rgba(196,144,106,0.1), transparent)' }} />
