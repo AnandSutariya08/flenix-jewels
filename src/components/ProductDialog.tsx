@@ -310,7 +310,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
               {/* Badges */}
               <div className="flex gap-2">
                 {[
-                  { icon: <Truck className="h-3.5 w-3.5" />, label: 'Free Shipping' },
+                  { icon: <Truck className="h-3.5 w-3.5" />, label: 'Worldwide Shipping' },
                   { icon: <Shield className="h-3.5 w-3.5" />, label: 'Secure Pay' },
                   { icon: <Star className="h-3.5 w-3.5" />, label: 'Certified' },
                 ].map(b => (
@@ -525,7 +525,7 @@ export default function ProductDialog({ product, open, onOpenChange }: ProductDi
                 {/* Badges */}
                 <div className="grid grid-cols-3 gap-2.5">
                   {[
-                    { icon: <Truck className="h-4 w-4" />, label: 'Free Shipping', sub: 'Worldwide' },
+                    { icon: <Truck className="h-4 w-4" />, label: 'Worldwide Shipping', sub: 'Order Over $5000' },
                     { icon: <Shield className="h-4 w-4" />, label: 'Secure Pay', sub: '100% Safe' },
                     { icon: <Star className="h-4 w-4" />, label: 'Certified', sub: 'Authentic' },
                   ].map(b => (

@@ -3,7 +3,7 @@ import type { TouchEvent } from 'react';
 import { CatalogItem, type Diamond } from '@/lib/storage';
 import WhatsAppButton from './WhatsAppButton';
 import { Images, Play } from 'lucide-react';
-import { keepImageAlive, keepVideoAlive } from '@/lib/preload';
+import { keepVideoAlive } from '@/lib/preload';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { OptimizedVideo } from '@/components/ui/optimized-video';
 import { stripHtml } from '@/lib/seo';
@@ -29,7 +29,6 @@ interface ProductCardProps {
 const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const { priceSettings } = useAppSelector(selectGlobalData);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
   const mediaRaw = product.images && product.images.length > 0 ? product.images : [product.image];
@@ -42,7 +41,6 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   }, []);
 
   const primaryMedia = media[0];
-  const secondaryMedia = media[1] || null;
   const displayMedia = media[currentIndex] || primaryMedia;
 
   const descriptionPreview = useMemo(() => {
@@ -57,11 +55,9 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   };
 
   const currentMediaType = getMediaType(displayMedia);
-  const isSecondaryImage = secondaryMedia ? getMediaType(secondaryMedia) === 'image' : false;
 
   useEffect(() => {
     setCurrentIndex(0);
-    setIsHovered(false);
   }, [product.id]);
 
   // Preload any video files in the background as soon as the card renders
@@ -89,24 +85,9 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
     touchStartX.current = null;
   };
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    // Upgrade priority on hover — user is about to click, load fast
-    [primaryMedia, secondaryMedia].filter(Boolean).forEach(url => keepImageAlive(url as string, "high"));
-    if (secondaryMedia && /\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i.test(secondaryMedia)) {
-      keepVideoAlive(secondaryMedia);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
   return (
     <div
       onClick={onClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       className="group relative bg-card rounded-xl overflow-hidden border border-border/50 hover:border-border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col h-full cursor-pointer"
     >
       {/* Image Container */}
@@ -121,7 +102,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
               noWrapper
               src={displayMedia}
               className="w-full h-full object-cover"
-              autoPlay={isHovered}
+              autoPlay={false}
               preload="none"
               loop
               muted
