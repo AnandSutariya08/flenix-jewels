@@ -450,7 +450,7 @@ const ProductDetail = () => {
                 <div className="flex items-center gap-2">
                   <MessageCircle className="h-4 w-4 flex-shrink-0" style={{ color: '#9B6844' }} />
                   <p className="text-xs text-muted-foreground leading-snug">
-                    Send us a WhatsApp message with the product link — our team responds within 30 minutes.
+                    For more information, please reach out via WhatsApp, and we will get back to you shortly.
                   </p>
                 </div>
                 <WhatsAppButton

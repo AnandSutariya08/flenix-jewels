@@ -222,9 +222,9 @@ const CategoryProducts = () => {
             <div className="h-10 w-64 bg-muted rounded-md animate-pulse mb-3" />
             <div className="h-4 w-96 bg-muted/70 rounded-md animate-pulse" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-80 rounded-xl bg-muted animate-pulse" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="h-56 rounded-xl bg-muted animate-pulse" />
             ))}
           </div>
         </main>
@@ -248,9 +248,9 @@ const CategoryProducts = () => {
             <div className="h-10 w-64 bg-muted rounded-md animate-pulse mb-3" />
             <div className="h-4 w-96 bg-muted/70 rounded-md animate-pulse" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-80 rounded-xl bg-muted animate-pulse" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="h-56 rounded-xl bg-muted animate-pulse" />
             ))}
           </div>
         </main>
@@ -357,12 +357,13 @@ const CategoryProducts = () => {
             <p className="text-sm text-muted-foreground mt-2">Check back soon for new arrivals!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-5">
             {filteredProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
                 onClick={() => handleProductClick(product)}
+                size="compact"
               />
             ))}
           </div>

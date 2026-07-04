@@ -9,6 +9,7 @@ import SEOHead from "@/components/SEOHead";
 import ServicesSection from "@/components/ServicesSection";
 import BlogDialog from "@/components/BlogDialog";
 import InstagramJourneyCarousel from "@/components/InstagramJourneyCarousel";
+import GalleryCarousel from "@/components/GalleryCarousel";
 import EmptyState from "@/components/EmptyState";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -242,7 +243,7 @@ export default function Index() {
   const homeGalleryItems = useMemo(
     () =>
       galleryItems
-        .filter((i) => i.sequence != null && i.sequence >= 1 && i.sequence <= 5)
+        .filter((i) => i.sequence != null && i.sequence >= 1 && i.sequence <= 9)
         .sort((a, b) => (a.sequence ?? 0) - (b.sequence ?? 0)),
     [galleryItems],
   );
@@ -278,7 +279,7 @@ export default function Index() {
       dispatch(loadDeferredData({ force: true }));
       return;
     }
-    // Gallery items exist but none have sequences 1-5 — stale cache missing sequence field
+    // Gallery items exist but none have sequences 1-9 — stale cache missing sequence field
     if (homeGalleryItems.length === 0 && !didSequenceRefetchRef.current) {
       didSequenceRefetchRef.current = true;
       dispatch(loadDeferredData({ force: true }));
@@ -439,75 +440,12 @@ export default function Index() {
               className="py-10"
             />
           ) : (
-            <div
-              className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"
-              style={{ gridAutoRows: "220px" }}
-            >
-              {/* Hero card — spans 2×2 */}
-              {categories[0] && (
-                <Link
-                  to={`/category/${categories[0].id}`}
-                  className="relative col-span-2 row-span-2 overflow-hidden rounded-3xl group block"
-                  style={{ gridRow: "span 2" }}
-                >
-                  <OptimizedImage
-                    noWrapper
-                    src={categories[0].image}
-                    alt={categories[0].name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    lqip={categories[0].lqip}
-                    fetchPriority="high"
-                    loading="eager"
-                  />
-                  <div
-                    className="absolute inset-0 transition-opacity duration-500"
-                    style={{
-                      background:
-                        "linear-gradient(to top, rgba(6,3,1,0.88) 0%, rgba(6,3,1,0.28) 45%, transparent 100%)",
-                    }}
-                  />
-                  {/* Hover gold overlay */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgba(155,104,68,0.12), transparent)",
-                    }}
-                  />
-                  <div className="absolute bottom-0 left-0 p-7 md:p-9">
-                    <p className="text-[9px] tracking-[0.3em] uppercase font-black mb-2.5 text-gold">
-                      Featured
-                    </p>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight">
-                      {categories[0].name}
-                    </h3>
-                    <p className="text-white/55 text-sm mb-6 max-w-[240px] leading-relaxed hidden md:block">
-                      {categories[0].description}
-                    </p>
-                    <span
-                      className="inline-flex items-center gap-2 text-[11px] font-bold tracking-wider uppercase px-5 py-2.5 rounded-full transition-all duration-200 group-hover:shadow-xl"
-                      style={{
-                        background: GOLD,
-                        color: "#fff",
-                        boxShadow: "0 4px 20px -4px rgba(155,104,68,0.5)",
-                      }}
-                    >
-                      Explore <ArrowRight className="h-3.5 w-3.5" />
-                    </span>
-                  </div>
-                </Link>
-              )}
-
-              {/* Small cards */}
-              {categories.slice(1, 5).map((cat, i) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+              {categories.map((cat) => (
                 <Link
                   key={cat.id}
                   to={`/category/${cat.id}`}
-                  className="relative overflow-hidden group block"
-                  style={{
-                    borderRadius:
-                      i === 0 || i === 2 ? "20px 20px 20px 20px" : "20px",
-                  }}
+                  className="relative overflow-hidden rounded-2xl group block aspect-square"
                 >
                   <OptimizedImage
                     noWrapper
@@ -527,12 +465,12 @@ export default function Index() {
                   />
                   {/* Gold border on hover */}
                   <div
-                    className="absolute inset-0 rounded-[20px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                     style={{
                       boxShadow: "inset 0 0 0 2px rgba(196,144,106,0.65)",
                     }}
                   />
-                  <div className="absolute bottom-0 left-0 p-5">
+                  <div className="absolute bottom-0 left-0 p-4 md:p-5">
                     <h3 className="text-base md:text-lg font-bold text-white leading-tight">
                       {cat.name}
                     </h3>
@@ -1096,166 +1034,14 @@ export default function Index() {
                 description="We’re curating an exceptional collection for you."
                 className="py-10"
               />
-            ) : homeGalleryItems.length >= 5 ? (
-              <div
-                className="grid grid-cols-12 gap-3 md:gap-4"
-                style={{ gridAutoRows: "180px" }}
-              >
-                {/* Hero tall image — 5 cols × 3 rows */}
-                <Link
-                  to="/gallery"
-                  className="col-span-12 md:col-span-5 row-span-3 relative overflow-hidden rounded-3xl group block"
-                  style={{ gridRow: "span 3" }}
-                >
-                  <OptimizedImage
-                    noWrapper
-                    src={homeGalleryItems[0].image}
-                    alt={homeGalleryItems[0].description || "Gallery"}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                      background:
-                        "linear-gradient(to top, rgba(6,3,1,0.85) 0%, rgba(6,3,1,0.25) 50%, transparent 80%)",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgba(196,144,106,0.12), transparent)",
-                    }}
-                  />
-                  {/* Gold corner frames */}
-                  <div
-                    className="absolute top-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                    style={{
-                      borderTop: "2px solid rgba(196,144,106,0.7)",
-                      borderLeft: "2px solid rgba(196,144,106,0.7)",
-                      borderRadius: "20px 0 0 0",
-                    }}
-                  />
-                  <div
-                    className="absolute bottom-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                    style={{
-                      borderBottom: "2px solid rgba(196,144,106,0.7)",
-                      borderRight: "2px solid rgba(196,144,106,0.7)",
-                      borderRadius: "0 0 20px 0",
-                    }}
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
-                    <p
-                      className="text-[9px] tracking-[0.28em] uppercase font-black mb-1.5"
-                      style={{ color: "#C4906A" }}
-                    >
-                      ✦ Featured
-                    </p>
-                    {homeGalleryItems[0].description && (
-                      <p className="text-white text-sm leading-relaxed line-clamp-2">
-                        {homeGalleryItems[0].description}
-                      </p>
-                    )}
-                  </div>
-                </Link>
-
-                {/* Top-right wide — 7 cols × 2 rows */}
-                <Link
-                  to="/gallery"
-                  className="col-span-12 md:col-span-7 row-span-2 relative overflow-hidden rounded-2xl group block"
-                >
-                  <OptimizedImage
-                    noWrapper
-                    src={homeGalleryItems[1].image}
-                    alt={homeGalleryItems[1].description || "Gallery"}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-                    style={{
-                      background:
-                        "linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgba(196,144,106,0.10), transparent)",
-                    }}
-                  />
-                  {homeGalleryItems[1].description && (
-                    <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-400">
-                      <p className="text-white text-sm leading-relaxed line-clamp-1">
-                        {homeGalleryItems[1].description}
-                      </p>
-                    </div>
-                  )}
-                </Link>
-
-                {/* Bottom-right 3 small tiles — contained in col-span-7 wrapper */}
-                <div className="col-span-12 md:col-span-7 grid grid-cols-3 gap-3 md:gap-4">
-                  {homeGalleryItems.slice(2, 5).map((item) => (
-                    <Link
-                      key={item.id}
-                      to="/gallery"
-                      className="relative overflow-hidden group block h-full min-h-[140px] md:min-h-0"
-                      style={{ borderRadius: 16 }}
-                    >
-                      <OptimizedImage
-                        noWrapper
-                        src={item.image}
-                        alt={item.description || "Gallery"}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        style={{
-                          background:
-                            "linear-gradient(to top, rgba(6,3,1,0.80) 0%, transparent 65%)",
-                        }}
-                      />
-                      <div
-                        className="absolute inset-0 rounded-[16px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                        style={{
-                          boxShadow: "inset 0 0 0 1.5px rgba(196,144,106,0.55)",
-                        }}
-                      />
-                    </Link>
-                  ))}
-                </div>
-              </div>
             ) : homeGalleryItems.length > 0 ? (
-              /* Fewer than 5 home images assigned — editorial scroll */
-              <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-                {homeGalleryItems.map((item) => (
-                  <Link
-                    key={item.id}
-                    to="/gallery"
-                    className="flex-shrink-0 w-64 h-80 rounded-2xl overflow-hidden group relative block"
-                  >
-                    <OptimizedImage
-                      noWrapper
-                      src={item.image}
-                      alt={item.description || "Gallery"}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{
-                        background:
-                          "linear-gradient(to top, rgba(6,3,1,0.75) 0%, transparent 55%)",
-                      }}
-                    />
-                  </Link>
-                ))}
-              </div>
+              <GalleryCarousel items={homeGalleryItems} />
             ) : (
-              /* Gallery items exist but none have sequences 1–5 yet */
+              /* Gallery items exist but none have sequences 1–9 yet */
               <EmptyState
                 icon={<Gem className="h-7 w-7" />}
                 title="Set Sequences to Display Gallery"
-                description="In the admin panel, assign sequences 1–5 to the images you want displayed here."
+                description="In the admin panel, assign sequences 1–9 to the images you want displayed here."
                 className="py-10"
               />
             )}

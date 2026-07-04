@@ -10,19 +10,25 @@ const getDailyVisitorKey = () => {
   return `${VISITOR_KEY_PREFIX}:${host}:${day}`;
 };
 
+/**
+ * Logs a visitor at most once per browser per day per host.
+ * Returns true only when a new visitor doc was actually written —
+ * callers use this to avoid sending a notification email for a
+ * duplicate/repeat visit that the admin panel won't show as new.
+ */
 export const logVisitor = async (
   grantedLocation: boolean = false,
   coords?: GeolocationCoordinates
-) => {
+): Promise<boolean> => {
   // Never log admin page visits
-  if (window.location.pathname.startsWith('/admin')) return;
+  if (window.location.pathname.startsWith('/admin')) return false;
 
   const dailyKey = getDailyVisitorKey();
 
   // Log at most once per browser per day per host
   if (localStorage.getItem(dailyKey) === 'true') {
     console.log('Visitor already logged today - skipping duplicate');
-    return;
+    return false;
   }
 
   try {
@@ -76,8 +82,10 @@ export const logVisitor = async (
 
     localStorage.setItem(dailyKey, 'true');
     console.log('New daily visitor logged ✅', logData);
+    return true;
   } catch (err) {
     console.warn('Failed to log visitor', err);
+    return false;
   }
 };
 

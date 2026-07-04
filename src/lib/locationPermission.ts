@@ -22,29 +22,33 @@ export const requestLocationAndLog = async () => {
   navigator.geolocation.getCurrentPosition(
     async (position) => {
       console.log('Location permission granted ✅');
-      await logVisitor(true, position.coords);
-      sendAdminLocationEmail({
-        granted: true,
-        city: ipData.city,
-        region: ipData.region,
-        country: ipData.country_name,
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        ip: ipData.ip,
-        page: window.location.href,
-      }).catch(() => {});
+      const isNewVisitor = await logVisitor(true, position.coords);
+      if (isNewVisitor) {
+        sendAdminLocationEmail({
+          granted: true,
+          city: ipData.city,
+          region: ipData.region,
+          country: ipData.country_name,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          ip: ipData.ip,
+          page: window.location.href,
+        }).catch(() => {});
+      }
     },
     async (error) => {
       console.log('Location denied or error:', error.message);
-      await logVisitor(false);
-      sendAdminLocationEmail({
-        granted: false,
-        city: ipData.city,
-        region: ipData.region,
-        country: ipData.country_name,
-        ip: ipData.ip,
-        page: window.location.href,
-      }).catch(() => {});
+      const isNewVisitor = await logVisitor(false);
+      if (isNewVisitor) {
+        sendAdminLocationEmail({
+          granted: false,
+          city: ipData.city,
+          region: ipData.region,
+          country: ipData.country_name,
+          ip: ipData.ip,
+          page: window.location.href,
+        }).catch(() => {});
+      }
     },
     {
       enableHighAccuracy: true,

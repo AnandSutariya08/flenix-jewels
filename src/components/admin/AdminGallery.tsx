@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { useAppDispatch } from '@/store/hooks';
 import { loadDeferredData, invalidateDeferredCache } from '@/store/contentSlice';
 
-const HOME_SLOTS = 5;
+const HOME_SLOTS = 9;
 
 const AdminGallery = () => {
   const dispatch = useAppDispatch();

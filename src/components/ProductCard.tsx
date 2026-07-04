@@ -23,9 +23,11 @@ const SHAPE_LABEL: Record<string, string> = {
 interface ProductCardProps {
   product: CatalogItem;
   onClick?: () => void;
+  size?: 'default' | 'compact';
 }
 
-const ProductCard = ({ product, onClick }: ProductCardProps) => {
+const ProductCard = ({ product, onClick, size = 'default' }: ProductCardProps) => {
+  const compact = size === 'compact';
   const { priceSettings } = useAppSelector(selectGlobalData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
@@ -131,54 +133,54 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
 
         {/* Media Count Badge */}
         {hasMultiple && (
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-background/95 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-medium shadow-lg border border-border/50">
-            <Images className="h-3.5 w-3.5 text-primary" />
+          <div className={`absolute flex items-center bg-background/95 backdrop-blur-md rounded-full font-medium shadow-lg border border-border/50 ${compact ? 'top-2 right-2 gap-1 px-2 py-1 text-[10px]' : 'top-3 right-3 gap-1.5 px-3 py-1.5 text-xs'}`}>
+            <Images className={compact ? 'h-3 w-3 text-primary' : 'h-3.5 w-3.5 text-primary'} />
             <span className="font-semibold">{media.length}</span>
           </div>
         )}
       </div>
 
       {/* Content Container */}
-      <div className="flex flex-col flex-1 p-4 sm:p-5 lg:p-6">
-        <h3 className="font-semibold text-sm sm:text-base lg:text-lg mb-2 line-clamp-2 min-h-[2.5rem] text-foreground group-hover:text-primary transition-colors">
+      <div className={`flex flex-col flex-1 ${compact ? 'p-2.5 sm:p-3' : 'p-4 sm:p-5 lg:p-6'}`}>
+        <h3 className={`font-semibold line-clamp-2 text-foreground group-hover:text-primary transition-colors ${compact ? 'text-xs sm:text-sm mb-1.5 min-h-[1.9rem]' : 'text-sm sm:text-base lg:text-lg mb-2 min-h-[2.5rem]'}`}>
           {product.name}
         </h3>
 
         {/* Diamond spec badges */}
         {isDiamond(product) && (
-          <div className="flex flex-wrap gap-1.5 mb-3">
+          <div className={`flex flex-wrap ${compact ? 'gap-1 mb-2' : 'gap-1.5 mb-3'}`}>
             {product.diamondType && (
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border ${product.diamondType === 'cvd' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800' : 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800'}`}>
+              <span className={`inline-flex items-center rounded-full font-semibold tracking-wide border ${compact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-[10px]'} ${product.diamondType === 'cvd' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800' : 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800'}`}>
                 {product.diamondType === 'cvd' ? 'Lab Grown' : 'Natural'}
               </span>
             )}
             {product.shape && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground">
+              <span className={`inline-flex items-center rounded-full font-semibold tracking-wide bg-muted border border-border text-muted-foreground ${compact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-[10px]'}`}>
                 {SHAPE_LABEL[product.shape] ?? product.shape}
               </span>
             )}
             {product.carat !== undefined && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground">
+              <span className={`inline-flex items-center rounded-full font-semibold tracking-wide bg-muted border border-border text-muted-foreground ${compact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-[10px]'}`}>
                 {product.carat}ct
               </span>
             )}
             {product.clarity && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground">
+              <span className={`inline-flex items-center rounded-full font-semibold tracking-wide bg-muted border border-border text-muted-foreground ${compact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-[10px]'}`}>
                 {product.clarity}
               </span>
             )}
             {product.colorGrade && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground">
+              <span className={`inline-flex items-center rounded-full font-semibold tracking-wide bg-muted border border-border text-muted-foreground ${compact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-[10px]'}`}>
                 {product.colorGrade} Colour
               </span>
             )}
             {product.cut && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-muted border border-border text-muted-foreground capitalize">
+              <span className={`inline-flex items-center rounded-full font-semibold tracking-wide bg-muted border border-border text-muted-foreground capitalize ${compact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-[10px]'}`}>
                 {product.cut.replace('_', ' ')} Cut
               </span>
             )}
             {product.certificate && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-stone-100 text-stone-700 border border-stone-300 dark:bg-stone-800 dark:text-stone-300 dark:border-stone-600">
+              <span className={`inline-flex items-center rounded-full font-bold tracking-wide bg-stone-100 text-stone-700 border border-stone-300 dark:bg-stone-800 dark:text-stone-300 dark:border-stone-600 ${compact ? 'px-1.5 py-0.5 text-[9px]' : 'px-2 py-0.5 text-[10px]'}`}>
                 {product.certificate}
               </span>
             )}
@@ -186,7 +188,7 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
         )}
 
         {priceSettings.showPrices && (
-          <div className="mb-3 text-sm font-semibold tracking-wide text-foreground/90">
+          <div className={`font-semibold tracking-wide text-foreground/90 ${compact ? 'mb-1.5 text-xs' : 'mb-3 text-sm'}`}>
             ${formatPriceRounded(product.price)}
           </div>
         )}
