@@ -75,6 +75,16 @@ const ProductDetail = () => {
   const currentMedia = media[selectedIndex] || null;
   const hasMultiple = media.length > 1;
 
+  // Extract REF from: explicit refCode field, OR "REF : XXXXX" pattern in description HTML
+  const displayRef = (() => {
+    if (product?.refCode) return `REF : ${product.refCode}`;
+    if (product?.description) {
+      const match = product.description.match(/REF\s*:\s*([A-Za-z0-9\-_]+)/i);
+      if (match) return `REF : ${match[1]}`;
+    }
+    return `#${product?.id.slice(-8) ?? ""}`;
+  })();
+
   const getMediaType = (url: string): "image" | "video" => {
     // No $ anchor — Firebase Storage URLs end with ?alt=media&token=XXX,
     // so a $ would never match. Also check "vid-" (admin naming convention).
@@ -405,7 +415,7 @@ const ProductDetail = () => {
                   )}
                 </nav>
                 <span className="text-[10px] font-mono tracking-wider px-2.5 py-1 rounded-full border border-border/60 text-muted-foreground/70">
-                  {product.refCode ? `REF : ${product.refCode}` : `#${product.id.slice(-8)}`}
+                  {displayRef}
                 </span>
               </div>
 
