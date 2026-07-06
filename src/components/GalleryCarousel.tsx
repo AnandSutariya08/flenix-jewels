@@ -42,7 +42,7 @@ export default function GalleryCarousel({ items, durationS = 30 }: Props) {
             to="/gallery"
             draggable={false}
             className="relative overflow-hidden rounded-2xl md:rounded-3xl group block flex-shrink-0"
-            style={{ width: "clamp(220px, 28vw, 340px)", aspectRatio: "4 / 5" }}
+            style={{ width: "clamp(150px, 18vw, 220px)", aspectRatio: "4 / 5" }}
           >
             <OptimizedImage
               noWrapper
