@@ -402,14 +402,14 @@ export default function Index() {
         {/* ═══════════════════════════════════════════════════════
             3. COLLECTIONS — asymmetric editorial grid
         ═══════════════════════════════════════════════════════ */}
-        <section className="py-20 md:py-28 px-4 md:px-10 lg:px-16 max-w-[1600px] mx-auto">
+        <section className="py-12 md:py-16 px-4 md:px-10 lg:px-16 max-w-[1200px] mx-auto">
           {/* Section header */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-8">
             <div>
               <p className="text-[10px] tracking-[0.32em] uppercase font-black mb-3 text-primary">
                 ✦ Collections
               </p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-bold leading-[1.08] tracking-tight">
                 Crafted for
                 <br />
                 Every Occasion
@@ -438,12 +438,12 @@ export default function Index() {
               className="py-10"
             />
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-3">
               {categories.map((cat) => (
                 <Link
                   key={cat.id}
                   to={`/category/${cat.id}`}
-                  className="relative overflow-hidden rounded-2xl group block aspect-square"
+                  className="relative overflow-hidden rounded-xl group block aspect-square"
                 >
                   <OptimizedImage
                     noWrapper
