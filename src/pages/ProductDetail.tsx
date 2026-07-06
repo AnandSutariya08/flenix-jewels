@@ -22,7 +22,7 @@ import {
   parsePrice,
   stripHtml,
 } from "@/lib/seo";
-import { ChevronLeft, ChevronRight, Gem, Shield, Star, Globe, MessageCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Gem, Shield, Star, Globe, MessageCircle, Play } from "lucide-react";
 import { preloadMedia } from "@/lib/preload";
 import { OptimizedVideo } from "@/components/ui/optimized-video";
 import { useHeaderOffset } from "@/hooks/useHeaderOffset";
@@ -76,8 +76,13 @@ const ProductDetail = () => {
   const hasMultiple = media.length > 1;
 
   const getMediaType = (url: string): "image" | "video" => {
-    const videoExtensions = /\.(mp4|webm|ogg|mov|avi|mkv)$/i;
-    return videoExtensions.test(url) || url.includes("video")
+    // No $ anchor — Firebase Storage URLs end with ?alt=media&token=XXX,
+    // so a $ would never match. Also check "vid-" (admin naming convention).
+    const videoExtensions = /\.(mp4|webm|ogg|mov|avi|mkv)/i;
+    const lower = url.toLowerCase();
+    return videoExtensions.test(lower) ||
+      lower.includes("video") ||
+      lower.includes("vid-")
       ? "video"
       : "image";
   };
@@ -285,7 +290,6 @@ const ProductDetail = () => {
                           className="w-full h-full object-contain"
                           loading={i === 0 ? "eager" : "lazy"}
                           decoding="async"
-                          fetchpriority={i === 0 ? "high" : "low"}
                         />
                       )}
                     </div>
@@ -350,14 +354,22 @@ const ProductDetail = () => {
                         aria-label={`View ${i + 1}`}
                       >
                         {getMediaType(item) === "video" ? (
-                          <OptimizedVideo
-                            noWrapper
-                            src={item}
-                            className="w-full h-full object-contain"
-                            muted
-                            playsInline
-                            preload="metadata"
-                          />
+                          <div className="relative w-full h-full">
+                            <OptimizedVideo
+                              noWrapper
+                              src={item}
+                              className="w-full h-full object-contain"
+                              muted
+                              playsInline
+                              preload="metadata"
+                            />
+                            {/* Play badge — always visible so user knows it's a video */}
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <div className="bg-black/60 rounded-full p-1.5">
+                                <Play className="h-3 w-3 text-white fill-white" />
+                              </div>
+                            </div>
+                          </div>
                         ) : (
                           <img
                             src={item}
