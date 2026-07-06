@@ -305,6 +305,7 @@ const ProductDetail = () => {
                             loop
                             playsInline
                             preload="auto"
+                            watermark
                           />
                         ) : (
                           <img

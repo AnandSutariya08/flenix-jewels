@@ -16,6 +16,11 @@ interface OptimizedVideoProps extends Omit<React.VideoHTMLAttributes<HTMLVideoEl
    * (position:absolute inset-0) to be positioned correctly.
    */
   noWrapper?: boolean;
+  /**
+   * Render a semi-transparent "FLENIX JEWELS" CSS watermark overlay.
+   * This replaces the old canvas burn-in approach — same protection, zero encoding loss.
+   */
+  watermark?: boolean;
 }
 
 /**
@@ -27,11 +32,13 @@ interface OptimizedVideoProps extends Omit<React.VideoHTMLAttributes<HTMLVideoEl
  *                           a 3-second fallback so slow connections still play
  *  - Stall recovery       — if playback freezes mid-video, automatically seeks
  *                           back 0.25 s and resumes after 2 seconds
+ *  - CSS watermark        — optional overlay (no re-encoding quality loss)
  *  - forwardRef           — parent keeps full play/pause/mute control
  *
  * Pass autoPlay={false} to suppress internal autoplay (ProductDialog pattern).
  * Pass skeletonClassName="hidden" when the parent shows its own loading UI.
  * Pass preload="none" to defer download until play() is called (e.g. carousels).
+ * Pass watermark to show brand overlay without any video re-encoding.
  */
 export const OptimizedVideo = forwardRef<HTMLVideoElement, OptimizedVideoProps>(
   function OptimizedVideo(
@@ -41,6 +48,7 @@ export const OptimizedVideo = forwardRef<HTMLVideoElement, OptimizedVideoProps>(
       wrapperClassName,
       skeletonClassName,
       noWrapper,
+      watermark,
       autoPlay,
       onCanPlay: externalCanPlay,
       onCanPlayThrough: externalCanPlayThrough,
@@ -167,6 +175,29 @@ export const OptimizedVideo = forwardRef<HTMLVideoElement, OptimizedVideoProps>(
       />
     ) : null;
 
+    const watermarkOverlay = watermark ? (
+      <div
+        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10"
+        aria-hidden="true"
+      >
+        <span
+          style={{
+            fontFamily: 'Georgia, "Times New Roman", serif',
+            fontSize: 'clamp(11px, 2vw, 22px)',
+            color: 'rgba(255,255,255,0.18)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.28em',
+            fontWeight: 700,
+            textShadow: '0 1px 4px rgba(0,0,0,0.55)',
+            userSelect: 'none',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Flenix Jewels
+        </span>
+      </div>
+    ) : null;
+
     const video = (
       <video
         preload="auto"
@@ -185,12 +216,13 @@ export const OptimizedVideo = forwardRef<HTMLVideoElement, OptimizedVideoProps>(
       />
     );
 
-    if (noWrapper) return <>{skeleton}{video}</>;
+    if (noWrapper) return <>{skeleton}{video}{watermarkOverlay}</>;
 
     return (
       <div className={cn('relative overflow-hidden', wrapperClassName)}>
         {skeleton}
         {video}
+        {watermarkOverlay}
       </div>
     );
   }

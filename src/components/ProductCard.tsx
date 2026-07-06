@@ -108,6 +108,7 @@ const ProductCard = ({ product, onClick, size = 'default' }: ProductCardProps) =
               loop
               muted
               playsInline
+              watermark
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors">
               <div className="bg-white/95 dark:bg-zinc-800/95 rounded-full p-3 shadow-lg">

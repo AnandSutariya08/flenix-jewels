@@ -1205,13 +1205,11 @@ export const uploadImageToStorage = async (
     let fileToUpload = file;
 
     if (file.type.startsWith('video/')) {
-      // Always compress videos; watermark is optional
-      onProgress?.('compressing', 0);
-      fileToUpload = await addVideoWatermark(
-        file,
-        !skipWatermark,
-        (pct) => onProgress?.('compressing', pct),
-      );
+      // Upload original video without canvas re-encoding.
+      // Canvas + MediaRecorder causes uneven frame timing (rAF is not frame-perfect),
+      // producing stuttery WebM files. The watermark is shown as a CSS overlay
+      // in the video player instead — same protection, zero quality loss.
+      fileToUpload = file;
       onProgress?.('compressing', 100);
     } else {
       // Always process images; watermark is optional

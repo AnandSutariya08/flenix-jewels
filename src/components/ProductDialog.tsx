@@ -287,6 +287,7 @@ export default function ProductDialog({
                   muted={muted}
                   playsInline
                   autoPlay={false}
+                  watermark
                   poster={poster || undefined}
                   onCanPlay={handleCanPlay}
                   onCanPlayThrough={handleCanPlayThrough}
@@ -712,6 +713,7 @@ export default function ProductDialog({
                     muted={muted}
                     playsInline
                     autoPlay={false}
+                    watermark
                     poster={poster || undefined}
                     onCanPlay={handleCanPlay}
                     onCanPlayThrough={handleCanPlayThrough}
