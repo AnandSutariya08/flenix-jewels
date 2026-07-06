@@ -940,7 +940,7 @@ export default function ProductDialog({
                     {
                       icon: <Truck className="h-4 w-4" />,
                       label: "Worldwide Shipping",
-                      sub: "All Order Over $5000",
+                      sub: "Order Over $5000",
                     },
                     {
                       icon: <Shield className="h-4 w-4" />,

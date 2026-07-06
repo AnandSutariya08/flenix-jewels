@@ -22,7 +22,16 @@ import {
   parsePrice,
   stripHtml,
 } from "@/lib/seo";
-import { ChevronLeft, ChevronRight, Gem, Shield, Star, Globe, MessageCircle, Play } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Gem,
+  Shield,
+  Star,
+  Globe,
+  MessageCircle,
+  Play,
+} from "lucide-react";
 import { preloadMedia } from "@/lib/preload";
 import { OptimizedVideo } from "@/components/ui/optimized-video";
 import { useHeaderOffset } from "@/hooks/useHeaderOffset";
@@ -48,29 +57,29 @@ const ProductDetail = () => {
 
   const product = useMemo(
     () => products.find((p) => p.id === id) || null,
-    [products, id]
+    [products, id],
   );
   const category = useMemo(
     () => categories.find((c) => c.id === product?.categoryId) || null,
-    [categories, product?.categoryId]
+    [categories, product?.categoryId],
   );
 
   const relatedProducts = useMemo(
     () =>
       products
         .filter(
-          (p) => p.categoryId === product?.categoryId && p.id !== product?.id
+          (p) => p.categoryId === product?.categoryId && p.id !== product?.id,
         )
         .slice(0, 4),
-    [products, product]
+    [products, product],
   );
 
   const media =
     product?.images && product.images.length > 0
       ? product.images
       : product?.image
-      ? [product.image]
-      : [];
+        ? [product.image]
+        : [];
   const [selectedIndex, setSelectedIndex] = useState(0);
   const currentMedia = media[selectedIndex] || null;
   const hasMultiple = media.length > 1;
@@ -121,8 +130,7 @@ const ProductDetail = () => {
         name: product.name,
         image: media.length > 0 ? media : undefined,
         description: stripHtml(
-          product.description ||
-            `${product.name} from Flenix Jewels Ltd`
+          product.description || `${product.name} from Flenix Jewels Ltd`,
         ),
         sku: product.id,
         category: category?.name,
@@ -130,7 +138,7 @@ const ProductDetail = () => {
         brand: { "@type": "Brand", name: "Flenix Jewels Ltd" },
         offers: buildOffer(
           `https://www.flenixjewels.com/product/${product.id}`,
-          product.price
+          product.price,
         ),
         aggregateRating: {
           "@type": "AggregateRating",
@@ -162,7 +170,10 @@ const ProductDetail = () => {
                 <div className="h-5 w-1/3 bg-muted rounded-lg animate-pulse" />
                 <div className="space-y-2 mt-4">
                   {[1, 2, 3, 4].map((n) => (
-                    <div key={n} className="h-4 bg-muted rounded animate-pulse" />
+                    <div
+                      key={n}
+                      className="h-4 bg-muted rounded animate-pulse"
+                    />
                   ))}
                 </div>
                 <div className="h-12 bg-muted rounded-xl animate-pulse mt-6" />
@@ -188,9 +199,7 @@ const ProductDetail = () => {
         <main className="flex-1" style={{ paddingTop }}>
           <div className="container mx-auto px-4 py-20 text-center">
             <Gem className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-lg text-muted-foreground">
-              Product not found.
-            </p>
+            <p className="text-lg text-muted-foreground">Product not found.</p>
             <Link
               to="/categories"
               className="inline-flex items-center gap-2 mt-6 text-sm font-medium text-primary hover:underline"
@@ -217,7 +226,8 @@ const ProductDetail = () => {
         canonicalUrl={`https://www.flenixjewels.com/product/${product.id}`}
         ogType="product"
         ogImage={
-          (product.images && product.images.filter(u => !u.match(/\.(mp4|webm)$/i))[0]) ||
+          (product.images &&
+            product.images.filter((u) => !u.match(/\.(mp4|webm)$/i))[0]) ||
           product.image ||
           undefined
         }
@@ -258,157 +268,176 @@ const ProductDetail = () => {
         {/* ── Product section ─────────────────────────────────── */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
           <div className="grid grid-cols-1 lg:grid-cols-[55%_1fr] gap-8 lg:gap-12 items-start">
-
             {/* ── LEFT: Media viewer ──────────────────────────── */}
             <div className="lg:sticky lg:top-24">
-
               {/* One unified dark card — image + thumbnails share the same
                   black background so no grey/light gap ever shows through. */}
               <div className="rounded-2xl overflow-hidden bg-black flex flex-col">
-
-              {/* ── Main viewer ─────────────────────────────────
+                {/* ── Main viewer ─────────────────────────────────
                   All items always in DOM — toggled via opacity only.
                   Videos stay buffered so switching back is instant.  */}
-              <div className="relative w-full bg-black"
-                style={{ aspectRatio: "1 / 1", maxHeight: "min(62vw, 68vh, calc(100vh - 11rem))" }}>
-
-                {media.map((item, i) => {
-                  const isActive = i === selectedIndex;
-                  const type = getMediaType(item);
-                  return (
-                    <div
-                      key={i}
-                      className={`absolute inset-0 transition-opacity duration-300 ${
-                        isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
-                      }`}
-                    >
-                      {type === "video" ? (
-                        <OptimizedVideo
-                          noWrapper
-                          src={item}
-                          className="w-full h-full object-contain"
-                          autoPlay={isActive}
-                          muted
-                          loop
-                          playsInline
-                          preload="auto"
-                        />
-                      ) : (
-                        <img
-                          src={item}
-                          alt={`${product.name} view ${i + 1}`}
-                          className="w-full h-full object-contain"
-                          loading={i === 0 ? "eager" : "lazy"}
-                          decoding="async"
-                        />
-                      )}
-                    </div>
-                  );
-                })}
-
-                {/* Prev / Next arrows */}
-                {hasMultiple && (
-                  <>
-                    <button
-                      onClick={() => setSelectedIndex((p) => (p - 1 + media.length) % media.length)}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 rounded-full bg-white/90 dark:bg-stone-800/90 shadow-lg hover:bg-white dark:hover:bg-stone-700 hover:scale-110 transition-all"
-                      aria-label="Previous"
-                    >
-                      <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-stone-700 dark:text-stone-200" />
-                    </button>
-                    <button
-                      onClick={() => setSelectedIndex((p) => (p + 1) % media.length)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 rounded-full bg-white/90 dark:bg-stone-800/90 shadow-lg hover:bg-white dark:hover:bg-stone-700 hover:scale-110 transition-all"
-                      aria-label="Next"
-                    >
-                      <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-stone-700 dark:text-stone-200" />
-                    </button>
-                  </>
-                )}
-
-                {/* Dot indicators — always visible at bottom center */}
-                {hasMultiple && (
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5">
-                    {media.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setSelectedIndex(i)}
-                        className={`h-2 rounded-full transition-all duration-300 ${
-                          selectedIndex === i ? "bg-white w-5" : "bg-white/45 w-2 hover:bg-white/70"
-                        }`}
-                        aria-label={`Go to item ${i + 1}`}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* ── Thumbnail strip — inside the same dark card ── */}
-              {hasMultiple && (
-                <div className="flex gap-2 px-3 py-3 overflow-x-auto scrollbar-none border-t border-white/10">
+                <div
+                  className="relative w-full bg-black"
+                  style={{
+                    aspectRatio: "1 / 1",
+                    maxHeight: "min(62vw, 68vh, calc(100vh - 11rem))",
+                  }}
+                >
                   {media.map((item, i) => {
                     const isActive = i === selectedIndex;
+                    const type = getMediaType(item);
                     return (
-                      <button
+                      <div
                         key={i}
-                        onClick={() => setSelectedIndex(i)}
-                        className={`
-                          flex-shrink-0 rounded-lg overflow-hidden bg-stone-900
-                          w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18
-                          transition-all duration-200
-                          ${isActive
-                            ? "ring-2 ring-primary opacity-100"
-                            : "ring-1 ring-white/10 opacity-45 hover:opacity-80"
-                          }
-                        `}
-                        aria-label={`View ${i + 1}`}
+                        className={`absolute inset-0 transition-opacity duration-300 ${
+                          isActive
+                            ? "opacity-100 z-10"
+                            : "opacity-0 z-0 pointer-events-none"
+                        }`}
                       >
-                        {getMediaType(item) === "video" ? (
-                          <div className="relative w-full h-full">
-                            <OptimizedVideo
-                              noWrapper
-                              src={item}
-                              className="w-full h-full object-contain"
-                              muted
-                              playsInline
-                              preload="metadata"
-                            />
-                            {/* Play badge — always visible so user knows it's a video */}
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                              <div className="bg-black/60 rounded-full p-1.5">
-                                <Play className="h-3 w-3 text-white fill-white" />
-                              </div>
-                            </div>
-                          </div>
+                        {type === "video" ? (
+                          <OptimizedVideo
+                            noWrapper
+                            src={item}
+                            className="w-full h-full object-contain"
+                            autoPlay={isActive}
+                            muted
+                            loop
+                            playsInline
+                            preload="auto"
+                          />
                         ) : (
                           <img
                             src={item}
-                            alt={`${product.name} ${i + 1}`}
+                            alt={`${product.name} view ${i + 1}`}
                             className="w-full h-full object-contain"
-                            loading="lazy"
+                            loading={i === 0 ? "eager" : "lazy"}
                             decoding="async"
                           />
                         )}
-                      </button>
+                      </div>
                     );
                   })}
-                </div>
-              )}
 
-              </div>{/* end unified dark card */}
+                  {/* Prev / Next arrows */}
+                  {hasMultiple && (
+                    <>
+                      <button
+                        onClick={() =>
+                          setSelectedIndex(
+                            (p) => (p - 1 + media.length) % media.length,
+                          )
+                        }
+                        className="absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 rounded-full bg-white/90 dark:bg-stone-800/90 shadow-lg hover:bg-white dark:hover:bg-stone-700 hover:scale-110 transition-all"
+                        aria-label="Previous"
+                      >
+                        <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-stone-700 dark:text-stone-200" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setSelectedIndex((p) => (p + 1) % media.length)
+                        }
+                        className="absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-2.5 rounded-full bg-white/90 dark:bg-stone-800/90 shadow-lg hover:bg-white dark:hover:bg-stone-700 hover:scale-110 transition-all"
+                        aria-label="Next"
+                      >
+                        <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-stone-700 dark:text-stone-200" />
+                      </button>
+                    </>
+                  )}
+
+                  {/* Dot indicators — always visible at bottom center */}
+                  {hasMultiple && (
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5">
+                      {media.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setSelectedIndex(i)}
+                          className={`h-2 rounded-full transition-all duration-300 ${
+                            selectedIndex === i
+                              ? "bg-white w-5"
+                              : "bg-white/45 w-2 hover:bg-white/70"
+                          }`}
+                          aria-label={`Go to item ${i + 1}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* ── Thumbnail strip — inside the same dark card ── */}
+                {hasMultiple && (
+                  <div className="flex gap-2 px-3 py-3 overflow-x-auto scrollbar-none border-t border-white/10">
+                    {media.map((item, i) => {
+                      const isActive = i === selectedIndex;
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => setSelectedIndex(i)}
+                          className={`
+                          flex-shrink-0 rounded-lg overflow-hidden bg-stone-900
+                          w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18
+                          transition-all duration-200
+                          ${
+                            isActive
+                              ? "ring-2 ring-primary opacity-100"
+                              : "ring-1 ring-white/10 opacity-45 hover:opacity-80"
+                          }
+                        `}
+                          aria-label={`View ${i + 1}`}
+                        >
+                          {getMediaType(item) === "video" ? (
+                            <div className="relative w-full h-full">
+                              <OptimizedVideo
+                                noWrapper
+                                src={item}
+                                className="w-full h-full object-contain"
+                                muted
+                                playsInline
+                                preload="metadata"
+                              />
+                              {/* Play badge — always visible so user knows it's a video */}
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div className="bg-black/60 rounded-full p-1.5">
+                                  <Play className="h-3 w-3 text-white fill-white" />
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <img
+                              src={item}
+                              alt={`${product.name} ${i + 1}`}
+                              className="w-full h-full object-contain"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              {/* end unified dark card */}
             </div>
 
             {/* ── RIGHT: Product info ─────────────────────────── */}
             <div className="flex flex-col gap-5">
-
               {/* Breadcrumb + Product ID */}
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <nav className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
-                  <Link to="/categories" className="hover:text-foreground transition-colors">Collections</Link>
+                  <Link
+                    to="/categories"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    Collections
+                  </Link>
                   {category && (
                     <>
                       <ChevronRight className="h-3 w-3 flex-shrink-0" />
-                      <Link to={`/category/${category.id}`} className="hover:text-foreground transition-colors">
+                      <Link
+                        to={`/category/${category.id}`}
+                        className="hover:text-foreground transition-colors"
+                      >
                         {category.name}
                       </Link>
                     </>
@@ -424,7 +453,12 @@ const ProductDetail = () => {
                 <div>
                   <span
                     className="inline-flex items-center gap-1.5 text-[10px] font-black tracking-[0.25em] uppercase px-3 py-1.5 rounded-full"
-                    style={{ background: 'linear-gradient(135deg,rgba(196,144,106,0.15),rgba(212,169,106,0.12))', color: '#9B6844', border: '1px solid rgba(196,144,106,0.3)' }}
+                    style={{
+                      background:
+                        "linear-gradient(135deg,rgba(196,144,106,0.15),rgba(212,169,106,0.12))",
+                      color: "#9B6844",
+                      border: "1px solid rgba(196,144,106,0.3)",
+                    }}
                   >
                     <Gem className="h-2.5 w-2.5" />
                     {category.name}
@@ -439,18 +473,34 @@ const ProductDetail = () => {
 
               {/* Gold accent line */}
               <div className="flex items-center gap-2">
-                <div className="h-0.5 w-16 rounded-full" style={{ background: 'linear-gradient(90deg,#C4906A,#D4A96A)' }} />
-                <div className="h-0.5 w-8 rounded-full" style={{ background: 'rgba(196,144,106,0.4)' }} />
-                <div className="h-0.5 w-4 rounded-full" style={{ background: 'rgba(196,144,106,0.2)' }} />
+                <div
+                  className="h-0.5 w-16 rounded-full"
+                  style={{
+                    background: "linear-gradient(90deg,#C4906A,#D4A96A)",
+                  }}
+                />
+                <div
+                  className="h-0.5 w-8 rounded-full"
+                  style={{ background: "rgba(196,144,106,0.4)" }}
+                />
+                <div
+                  className="h-0.5 w-4 rounded-full"
+                  style={{ background: "rgba(196,144,106,0.2)" }}
+                />
               </div>
 
               {/* Price */}
               {priceSettings.showPrices && product.price && (
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl sm:text-3xl font-bold" style={{ color: '#9B6844' }}>
+                  <span
+                    className="text-2xl sm:text-3xl font-bold"
+                    style={{ color: "#9B6844" }}
+                  >
                     ${formatPriceRounded(product.price)}
                   </span>
-                  <span className="text-xs text-muted-foreground font-medium">Enquire for best price</span>
+                  <span className="text-xs text-muted-foreground font-medium">
+                    Enquire for best price
+                  </span>
                 </div>
               )}
 
@@ -458,26 +508,39 @@ const ProductDetail = () => {
               {product.description && (
                 <div
                   className="rounded-2xl px-4 pt-3 pb-4 border border-border/40"
-                  style={{ background: 'rgba(196,144,106,0.04)' }}
+                  style={{ background: "rgba(196,144,106,0.04)" }}
                 >
                   <div
                     className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 leading-relaxed prose-flush"
                     dangerouslySetInnerHTML={{
                       __html: product.description
-                        .replace(/<[^>]*>(\s*REF\s*:\s*[A-Za-z0-9\-_]+\s*)<\/[^>]*>/gi, '')
-                        .replace(/REF\s*:\s*[A-Za-z0-9\-_]+/gi, '')
-                        .replace(/^(\s*<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>\s*)+/gi, '')
+                        .replace(
+                          /<[^>]*>(\s*REF\s*:\s*[A-Za-z0-9\-_]+\s*)<\/[^>]*>/gi,
+                          "",
+                        )
+                        .replace(/REF\s*:\s*[A-Za-z0-9\-_]+/gi, "")
+                        .replace(
+                          /^(\s*<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>\s*)+/gi,
+                          "",
+                        ),
                     }}
                   />
                 </div>
               )}
 
               {/* CTA Section */}
-              <div className="rounded-2xl p-4 border border-border/40 space-y-3" style={{ background: 'rgba(196,144,106,0.04)' }}>
+              <div
+                className="rounded-2xl p-4 border border-border/40 space-y-3"
+                style={{ background: "rgba(196,144,106,0.04)" }}
+              >
                 <div className="flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4 flex-shrink-0" style={{ color: '#9B6844' }} />
+                  <MessageCircle
+                    className="h-4 w-4 flex-shrink-0"
+                    style={{ color: "#9B6844" }}
+                  />
                   <p className="text-xs text-muted-foreground leading-snug">
-                    For more information, please reach out via WhatsApp, and we will get back to you shortly.
+                    For more information, please reach out via WhatsApp, and we
+                    will get back to you shortly.
                   </p>
                 </div>
                 <WhatsAppButton
@@ -489,36 +552,72 @@ const ProductDetail = () => {
               {/* Trust badges */}
               <div className="grid grid-cols-3 gap-2.5">
                 {[
-                  { Icon: Shield, label: "Secure Enquiry", sub: "Private & confidential" },
-                  { Icon: Star,   label: "Premium Quality", sub: "Certified fine jewels" },
-                  { Icon: Globe,  label: "Worldwide Shipping", sub: "order over $5000 " },
+                  {
+                    Icon: Shield,
+                    label: "Secure Enquiry",
+                    sub: "Private & confidential",
+                  },
+                  {
+                    Icon: Star,
+                    label: "Premium Quality",
+                    sub: "Certified fine jewels",
+                  },
+                  {
+                    Icon: Globe,
+                    label: "Worldwide Shipping",
+                    sub: "order over $5000 Free Shipping",
+                  },
                 ].map(({ Icon, label, sub }) => (
                   <div
                     key={label}
                     className="relative flex flex-col items-center gap-2.5 rounded-2xl py-4 px-2 text-center overflow-hidden"
                     style={{
-                      background: 'linear-gradient(160deg, rgba(255,252,248,0.9) 0%, rgba(245,235,220,0.5) 100%)',
-                      border: '1px solid rgba(196,144,106,0.25)',
-                      boxShadow: '0 2px 12px rgba(196,144,106,0.08), inset 0 1px 0 rgba(255,255,255,0.8)',
+                      background:
+                        "linear-gradient(160deg, rgba(255,252,248,0.9) 0%, rgba(245,235,220,0.5) 100%)",
+                      border: "1px solid rgba(196,144,106,0.25)",
+                      boxShadow:
+                        "0 2px 12px rgba(196,144,106,0.08), inset 0 1px 0 rgba(255,255,255,0.8)",
                     }}
                   >
                     {/* top gold shimmer line */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-10 rounded-full" style={{ background: 'linear-gradient(90deg,transparent,#C4906A,transparent)' }} />
+                    <div
+                      className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-10 rounded-full"
+                      style={{
+                        background:
+                          "linear-gradient(90deg,transparent,#C4906A,transparent)",
+                      }}
+                    />
 
                     {/* icon ring */}
                     <div
                       className="w-9 h-9 rounded-full flex items-center justify-center"
                       style={{
-                        background: 'linear-gradient(135deg,rgba(212,169,106,0.22),rgba(196,144,106,0.10))',
-                        boxShadow: '0 0 0 1px rgba(196,144,106,0.3), 0 2px 8px rgba(196,144,106,0.15)',
+                        background:
+                          "linear-gradient(135deg,rgba(212,169,106,0.22),rgba(196,144,106,0.10))",
+                        boxShadow:
+                          "0 0 0 1px rgba(196,144,106,0.3), 0 2px 8px rgba(196,144,106,0.15)",
                       }}
                     >
-                      <Icon className="h-[17px] w-[17px]" style={{ color: '#A0673A' }} strokeWidth={1.6} />
+                      <Icon
+                        className="h-[17px] w-[17px]"
+                        style={{ color: "#A0673A" }}
+                        strokeWidth={1.6}
+                      />
                     </div>
 
                     <div>
-                      <p className="text-[10.5px] font-semibold leading-tight tracking-wide" style={{ color: '#6B3F1E' }}>{label}</p>
-                      <p className="text-[9px] mt-0.5 leading-tight" style={{ color: '#B07248' }}>{sub}</p>
+                      <p
+                        className="text-[10.5px] font-semibold leading-tight tracking-wide"
+                        style={{ color: "#6B3F1E" }}
+                      >
+                        {label}
+                      </p>
+                      <p
+                        className="text-[9px] mt-0.5 leading-tight"
+                        style={{ color: "#B07248" }}
+                      >
+                        {sub}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -529,7 +628,7 @@ const ProductDetail = () => {
                 <Link
                   to={`/category/${category.id}`}
                   className="inline-flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-border/60 text-xs font-bold tracking-wide transition-all hover:border-primary/40 hover:bg-primary/5"
-                  style={{ color: '#9B6844' }}
+                  style={{ color: "#9B6844" }}
                 >
                   <Gem className="h-3.5 w-3.5" />
                   Browse all {category.name} jewelry
@@ -546,7 +645,9 @@ const ProductDetail = () => {
             <div className="border-t border-border/60 pt-10 mb-6">
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
                 More from{" "}
-                <span className="text-primary">{category?.name ?? "this collection"}</span>
+                <span className="text-primary">
+                  {category?.name ?? "this collection"}
+                </span>
               </h2>
               {category && (
                 <Link
