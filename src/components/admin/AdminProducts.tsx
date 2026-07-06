@@ -51,6 +51,7 @@ const AdminProducts = () => {
   const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [bulkSelectedIds, setBulkSelectedIds] = useState<string[]>([]);
   const [seoFaq, setSeoFaq] = useState<{ question: string; answer: string }[]>([]);
+  const [refCode, setRefCode] = useState('');
   const [showPrices, setShowPrices] = useState(false);
   const [isSavingPriceSettings, setIsSavingPriceSettings] = useState(false);
   const mediaInputRef = useRef<HTMLInputElement | null>(null);
@@ -197,6 +198,7 @@ const AdminProducts = () => {
     setPrice(product.price.replace(/[^0-9.]/g, ''));
     setCategoryId(product.categoryId);
     setSeoFaq(product.seoFaq || []);
+    setRefCode(product.refCode || '');
     
     const existingUrls = product.images || [product.image];
     const existingMediaItems: MediaItem[] = existingUrls.map((url, index) => ({
@@ -218,6 +220,7 @@ const AdminProducts = () => {
     setCategoryId('');
     setMediaItems([]);
     setSeoFaq([]);
+    setRefCode('');
     if (mediaInputRef.current) mediaInputRef.current.value = '';
   };
 
@@ -274,6 +277,7 @@ const AdminProducts = () => {
         image: allMediaUrls[0],
         images: allMediaUrls,
         createdAt: existing?.createdAt ?? Date.now(),
+        refCode: refCode.trim() || undefined,
         seoFaq: seoFaq.length > 0 ? seoFaq : undefined,
       };
 
@@ -441,6 +445,18 @@ const AdminProducts = () => {
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Diamond Ring"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="product-ref">REF Code <span className="text-muted-foreground font-normal">(optional — shown on product page)</span></Label>
+            <Input
+              id="product-ref"
+              value={refCode}
+              onChange={(e) => setRefCode(e.target.value.toUpperCase())}
+              placeholder="e.g., FLRG14"
+              maxLength={20}
+            />
+            <p className="text-xs text-muted-foreground">If left blank, the product ID number is shown instead.</p>
           </div>
           
           <div className="space-y-2">

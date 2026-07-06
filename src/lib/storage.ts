@@ -89,6 +89,7 @@ export interface Product {
   images?: string[]; // Multiple product images
   description: string;
   price: string;
+  refCode?: string; // Optional reference code e.g. "FLRG14"
   priority?: number;
   createdAt?: number | string | { seconds: number; nanoseconds?: number };
   metaTitle?: string;

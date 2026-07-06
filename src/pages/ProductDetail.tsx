@@ -422,6 +422,15 @@ const ProductDetail = () => {
                 </div>
               )}
 
+              {/* REF / Product ID */}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/60">REF</span>
+                <span className="text-[10px] text-muted-foreground/60">:</span>
+                <span className="text-[10px] font-mono tracking-wider text-muted-foreground/80">
+                  {product.refCode ? product.refCode : `#${product.id.slice(-8)}`}
+                </span>
+              </div>
+
               {/* Title */}
               <h1 className="text-lg sm:text-xl font-bold leading-tight tracking-tight text-foreground">
                 {product.name}
