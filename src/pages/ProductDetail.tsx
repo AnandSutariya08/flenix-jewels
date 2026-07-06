@@ -461,12 +461,12 @@ const ProductDetail = () => {
                   style={{ background: 'rgba(196,144,106,0.04)' }}
                 >
                   <div
-                    className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 leading-relaxed"
+                    className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 leading-relaxed [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
                     dangerouslySetInnerHTML={{
-                      __html: product.description.replace(
-                        /<[^>]*>(\s*REF\s*:\s*[A-Za-z0-9\-_]+\s*)<\/[^>]*>/gi,
-                        ''
-                      ).replace(/REF\s*:\s*[A-Za-z0-9\-_]+/gi, '')
+                      __html: product.description
+                        .replace(/<[^>]*>(\s*REF\s*:\s*[A-Za-z0-9\-_]+\s*)<\/[^>]*>/gi, '')
+                        .replace(/REF\s*:\s*[A-Za-z0-9\-_]+/gi, '')
+                        .replace(/^(\s*<(p|br)[^>]*>\s*<\/(p)>\s*)+/gi, '')
                     }}
                   />
                 </div>
