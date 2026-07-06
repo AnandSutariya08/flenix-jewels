@@ -552,9 +552,9 @@ const ProductDetail = () => {
               {/* Trust badges */}
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { Icon: Shield, label: "Secure Enquiry",    sub: "Private & confidential" },
-                  { Icon: Star,   label: "Premium Quality",   sub: "Certified fine jewels"  },
-                  { Icon: Globe,  label: "Worldwide Shipping", sub: "All Order Over $5000"   },
+                  { Icon: Shield, label: "Discreet Service",     sub: "Your privacy guaranteed"    },
+                  { Icon: Star,   label: "GIA · IGI Certified", sub: "Authentic fine diamonds"    },
+                  { Icon: Globe,  label: "Global Delivery",     sub: "Insured & fully tracked"    },
                 ].map(({ Icon, label, sub }) => (
                   <div
                     key={label}
