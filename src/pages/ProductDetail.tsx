@@ -487,23 +487,38 @@ const ProductDetail = () => {
               </div>
 
               {/* Trust badges */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2.5">
                 {[
                   { Icon: Shield, label: "Secure Enquiry", sub: "Private & confidential" },
-                  { Icon: Star, label: "Premium Quality", sub: "Certified fine jewels" },
-                  { Icon: Globe, label: "Worldwide Shipping", sub: "All Order Over $5000" },
+                  { Icon: Star,   label: "Premium Quality", sub: "Certified fine jewels" },
+                  { Icon: Globe,  label: "Worldwide Shipping", sub: "order over $5000 " },
                 ].map(({ Icon, label, sub }) => (
                   <div
                     key={label}
-                    className="flex flex-col items-center gap-2 rounded-xl py-4 px-2 text-center border border-border/40"
-                    style={{ background: 'rgba(196,144,106,0.04)' }}
+                    className="relative flex flex-col items-center gap-2.5 rounded-2xl py-4 px-2 text-center overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(160deg, rgba(255,252,248,0.9) 0%, rgba(245,235,220,0.5) 100%)',
+                      border: '1px solid rgba(196,144,106,0.25)',
+                      boxShadow: '0 2px 12px rgba(196,144,106,0.08), inset 0 1px 0 rgba(255,255,255,0.8)',
+                    }}
                   >
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,rgba(196,144,106,0.2),rgba(212,169,106,0.15))' }}>
-                      <Icon className="h-4 w-4" style={{ color: '#9B6844' }} />
+                    {/* top gold shimmer line */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-10 rounded-full" style={{ background: 'linear-gradient(90deg,transparent,#C4906A,transparent)' }} />
+
+                    {/* icon ring */}
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center"
+                      style={{
+                        background: 'linear-gradient(135deg,rgba(212,169,106,0.22),rgba(196,144,106,0.10))',
+                        boxShadow: '0 0 0 1px rgba(196,144,106,0.3), 0 2px 8px rgba(196,144,106,0.15)',
+                      }}
+                    >
+                      <Icon className="h-[17px] w-[17px]" style={{ color: '#A0673A' }} strokeWidth={1.6} />
                     </div>
+
                     <div>
-                      <p className="text-[10px] font-bold text-foreground leading-tight">{label}</p>
-                      <p className="text-[9px] text-muted-foreground mt-0.5 leading-tight">{sub}</p>
+                      <p className="text-[10.5px] font-semibold leading-tight tracking-wide" style={{ color: '#6B3F1E' }}>{label}</p>
+                      <p className="text-[9px] mt-0.5 leading-tight" style={{ color: '#B07248' }}>{sub}</p>
                     </div>
                   </div>
                 ))}
