@@ -27,11 +27,20 @@ const AdminCategories = () => {
   }, []);
 
   // Get used priorities (excluding current editing item)
-  const getUsedPriorities = () => {
+  const getUsedPriorities = (excludeId: string | null = editingId) => {
     return categories
-      .filter(c => c.id !== editingId)
+      .filter(c => c.id !== excludeId)
       .map(c => c.priority)
       .filter((p): p is number => p !== undefined);
+  };
+
+  const getNextAvailablePriority = (excludeId: string | null = null) => {
+    const used = getUsedPriorities(excludeId);
+    let next = 1;
+    while (used.includes(next)) {
+      next += 1;
+    }
+    return next;
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +80,7 @@ const AdminCategories = () => {
 
   const handleOpenCreate = () => {
     resetForm();
+    setPriority(getNextAvailablePriority());
     setIsFormOpen(true);
   };
 

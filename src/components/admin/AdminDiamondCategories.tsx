@@ -33,10 +33,22 @@ const AdminDiamondCategories = () => {
     getDiamondCategories().then(setCategories);
   }, []);
 
-  const usedPriorities = categories
-    .filter((category) => category.id !== editingId)
-    .map((category) => category.priority)
-    .filter((value): value is number => value !== undefined);
+  const getUsedPriorities = (excludeId: string | null = editingId) =>
+    categories
+      .filter((category) => category.id !== excludeId)
+      .map((category) => category.priority)
+      .filter((value): value is number => value !== undefined);
+
+  const usedPriorities = getUsedPriorities();
+
+  const getNextAvailablePriority = (excludeId: string | null = null) => {
+    const used = getUsedPriorities(excludeId);
+    let next = 1;
+    while (used.includes(next)) {
+      next += 1;
+    }
+    return next;
+  };
 
   const resetForm = () => {
     setEditingId(null);
@@ -131,6 +143,7 @@ const AdminDiamondCategories = () => {
         <Button
           onClick={() => {
             resetForm();
+            setPriority(getNextAvailablePriority());
             setIsFormOpen(true);
           }}
         >

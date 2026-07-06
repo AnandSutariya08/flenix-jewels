@@ -32,11 +32,20 @@ const AdminBanners = () => {
   }, []);
 
   // Get used priorities (excluding current editing item)
-  const getUsedPriorities = () => {
+  const getUsedPriorities = (excludeId: string | null = editingId) => {
     return banners
-      .filter(b => b.id !== editingId)
+      .filter(b => b.id !== excludeId)
       .map(b => b.priority)
       .filter((p): p is number => p !== undefined);
+  };
+
+  const getNextAvailablePriority = (excludeId: string | null = null) => {
+    const used = getUsedPriorities(excludeId);
+    let next = 1;
+    while (used.includes(next)) {
+      next += 1;
+    }
+    return next;
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +97,7 @@ const AdminBanners = () => {
 
   const handleOpenCreate = () => {
     resetForm();
+    setPriority(getNextAvailablePriority());
     setIsFormOpen(true);
   };
 
