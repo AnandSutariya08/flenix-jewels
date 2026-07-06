@@ -38,7 +38,11 @@ import {
   Send,
   Loader2,
 } from "lucide-react";
-import { BlogPost, Testimonial, subscribeApprovedTestimonials } from "@/lib/storage";
+import {
+  BlogPost,
+  Testimonial,
+  subscribeApprovedTestimonials,
+} from "@/lib/storage";
 import { saveCustomerTestimonial } from "@/lib/storage";
 import { SITE, YEARS_OF_EXCELLENCE_LABEL } from "@/lib/seo";
 
@@ -65,10 +69,15 @@ const homepageStructuredData = [
         item: {
           "@type": "Product",
           name: "Diamond Engagement Rings",
-          description: "GIA & IGI certified natural and lab-grown diamond engagement rings in 14KT and 18KT gold.",
+          description:
+            "GIA & IGI certified natural and lab-grown diamond engagement rings in 14KT and 18KT gold.",
           brand: { "@type": "Brand", name: SITE.name },
           category: "Rings",
-          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+          offers: {
+            "@type": "Offer",
+            availability: "https://schema.org/InStock",
+            url: `${SITE.url}/categories`,
+          },
         },
       },
       {
@@ -79,10 +88,15 @@ const homepageStructuredData = [
         item: {
           "@type": "Product",
           name: "Diamond Necklaces",
-          description: "Certified diamond pendants, tennis necklaces, and solitaire necklaces in gold and platinum.",
+          description:
+            "Certified diamond pendants, tennis necklaces, and solitaire necklaces in gold and platinum.",
           brand: { "@type": "Brand", name: SITE.name },
           category: "Necklaces",
-          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+          offers: {
+            "@type": "Offer",
+            availability: "https://schema.org/InStock",
+            url: `${SITE.url}/categories`,
+          },
         },
       },
       {
@@ -93,10 +107,15 @@ const homepageStructuredData = [
         item: {
           "@type": "Product",
           name: "Diamond Earrings",
-          description: "Certified diamond studs, hoop earrings, and drop earrings in 14KT and 18KT gold.",
+          description:
+            "Certified diamond studs, hoop earrings, and drop earrings in 14KT and 18KT gold.",
           brand: { "@type": "Brand", name: SITE.name },
           category: "Earrings",
-          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+          offers: {
+            "@type": "Offer",
+            availability: "https://schema.org/InStock",
+            url: `${SITE.url}/categories`,
+          },
         },
       },
       {
@@ -107,10 +126,15 @@ const homepageStructuredData = [
         item: {
           "@type": "Product",
           name: "Diamond Bracelets",
-          description: "Certified diamond tennis bracelets, bangles, and cuff bracelets in gold and platinum.",
+          description:
+            "Certified diamond tennis bracelets, bangles, and cuff bracelets in gold and platinum.",
           brand: { "@type": "Brand", name: SITE.name },
           category: "Bracelets",
-          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+          offers: {
+            "@type": "Offer",
+            availability: "https://schema.org/InStock",
+            url: `${SITE.url}/categories`,
+          },
         },
       },
       {
@@ -121,10 +145,15 @@ const homepageStructuredData = [
         item: {
           "@type": "Product",
           name: "Wedding Bands",
-          description: "Diamond and plain wedding bands, eternity rings, and stackable bands for him and her.",
+          description:
+            "Diamond and plain wedding bands, eternity rings, and stackable bands for him and her.",
           brand: { "@type": "Brand", name: SITE.name },
           category: "Wedding Bands",
-          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/categories` },
+          offers: {
+            "@type": "Offer",
+            availability: "https://schema.org/InStock",
+            url: `${SITE.url}/categories`,
+          },
         },
       },
       {
@@ -135,10 +164,15 @@ const homepageStructuredData = [
         item: {
           "@type": "Product",
           name: "Lab Grown Diamonds",
-          description: "IGI certified CVD and HPHT lab-grown loose diamonds. Environmentally conscious, conflict-free.",
+          description:
+            "IGI certified CVD and HPHT lab-grown loose diamonds. Environmentally conscious, conflict-free.",
           brand: { "@type": "Brand", name: SITE.name },
           category: "Lab Grown Diamonds",
-          offers: { "@type": "Offer", availability: "https://schema.org/InStock", url: `${SITE.url}/diamond` },
+          offers: {
+            "@type": "Offer",
+            availability: "https://schema.org/InStock",
+            url: `${SITE.url}/diamond`,
+          },
         },
       },
     ],
@@ -238,11 +272,14 @@ export default function Index() {
 
   // Always fetch approved testimonials directly from Firestore on mount — no cache, no loop.
   const [freshTestimonials, setFreshTestimonials] = useState<Testimonial[]>([]);
-  const testimonials = freshTestimonials.length > 0 ? freshTestimonials : cachedTestimonials;
+  const testimonials =
+    freshTestimonials.length > 0 ? freshTestimonials : cachedTestimonials;
 
   const homeGalleryItems = useMemo(
     () =>
-      [...galleryItems].sort((a, b) => (a.sequence ?? 999) - (b.sequence ?? 999)),
+      [...galleryItems].sort(
+        (a, b) => (a.sequence ?? 999) - (b.sequence ?? 999),
+      ),
     [galleryItems],
   );
   const blogsLoaded = useAppSelector(selectBlogsLoaded);
@@ -366,7 +403,7 @@ export default function Index() {
       setFreshTestimonials(fresh);
     });
     return () => unsub();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const paddingTop = useHeaderOffset();
@@ -1439,8 +1476,7 @@ export default function Index() {
                   Thank you for your review!
                 </h3>
                 <p className="text-sm text-[#9B8070] dark:text-[#7A6050] max-w-sm">
-                  Your review has been submitted and will appear on the website
-                  once approved by our team.
+                  Your review has been submitted and will appear on the website.
                 </p>
                 <button
                   onClick={() => setReviewSubmitted(false)}
