@@ -549,44 +549,30 @@ const ProductDetail = () => {
                 />
               </div>
 
-              {/* Trust features — editorial horizontal strip */}
-              <div className="py-1">
-                {/* thin gold rule above */}
-                <div className="mb-3 h-px w-full" style={{ background: "linear-gradient(90deg,transparent,rgba(196,144,106,0.4),transparent)" }} />
-
-                <div className="flex items-stretch justify-between">
-                  {[
-                    { Icon: Shield, label: "Secure Enquiry",    sub: "Private & confidential" },
-                    { Icon: Star,   label: "Premium Quality",   sub: "Certified fine jewels"  },
-                    { Icon: Globe,  label: "Worldwide Shipping", sub: "Free over $5000"        },
-                  ].map(({ Icon, label, sub }, i) => (
-                    <>
-                      {i > 0 && (
-                        <div key={`div-${i}`} className="self-stretch w-px mx-1" style={{ background: "rgba(196,144,106,0.22)" }} />
-                      )}
-                      <div key={label} className="flex-1 flex items-center gap-2.5 px-2">
-                        {/* icon */}
-                        <div
-                          className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
-                          style={{
-                            background: "linear-gradient(135deg,rgba(212,169,106,0.18),rgba(196,144,106,0.06))",
-                            border: "1px solid rgba(196,144,106,0.3)",
-                          }}
-                        >
-                          <Icon className="h-[15px] w-[15px]" style={{ color: "#A0673A" }} strokeWidth={1.7} />
-                        </div>
-                        {/* text */}
-                        <div className="min-w-0">
-                          <p className="text-[10px] font-bold leading-tight tracking-wide uppercase" style={{ color: "#7A4520" }}>{label}</p>
-                          <p className="text-[9px] mt-0.5 leading-tight" style={{ color: "#B07248" }}>{sub}</p>
-                        </div>
-                      </div>
-                    </>
-                  ))}
-                </div>
-
-                {/* thin gold rule below */}
-                <div className="mt-3 h-px w-full" style={{ background: "linear-gradient(90deg,transparent,rgba(196,144,106,0.4),transparent)" }} />
+              {/* Trust badges */}
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { Icon: Shield, label: "Secure Enquiry",    sub: "Private & confidential" },
+                  { Icon: Star,   label: "Premium Quality",   sub: "Certified fine jewels"  },
+                  { Icon: Globe,  label: "Worldwide Shipping", sub: "All Order Over $5000"   },
+                ].map(({ Icon, label, sub }) => (
+                  <div
+                    key={label}
+                    className="flex flex-col items-center gap-2 rounded-xl py-4 px-2 text-center border border-border/40"
+                    style={{ background: "rgba(196,144,106,0.04)" }}
+                  >
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ background: "linear-gradient(135deg,rgba(196,144,106,0.2),rgba(212,169,106,0.15))" }}
+                    >
+                      <Icon className="h-4 w-4" style={{ color: "#9B6844" }} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-foreground leading-tight">{label}</p>
+                      <p className="text-[9px] text-muted-foreground mt-0.5 leading-tight">{sub}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {/* Category shop link */}
