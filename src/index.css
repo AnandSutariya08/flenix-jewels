@@ -205,6 +205,8 @@
   .prose { font-family: inherit; }
   .prose :where(h1, h2, h3, h4, h5, h6) { font-family: inherit; }
   .prose :where(h2, h3, h4) { scroll-margin-top: 120px; }
+  .prose-flush > *:first-child { margin-top: 0 !important; }
+  .prose-flush > *:last-child  { margin-bottom: 0 !important; }
 
   @keyframes shimmer {
     0% { transform: translateX(-100%); }

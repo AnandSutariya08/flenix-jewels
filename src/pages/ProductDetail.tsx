@@ -457,16 +457,16 @@ const ProductDetail = () => {
               {/* Description */}
               {product.description && (
                 <div
-                  className="rounded-2xl p-4 border border-border/40"
+                  className="rounded-2xl px-4 pt-3 pb-4 border border-border/40"
                   style={{ background: 'rgba(196,144,106,0.04)' }}
                 >
                   <div
-                    className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 leading-relaxed [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
+                    className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 leading-relaxed prose-flush"
                     dangerouslySetInnerHTML={{
                       __html: product.description
                         .replace(/<[^>]*>(\s*REF\s*:\s*[A-Za-z0-9\-_]+\s*)<\/[^>]*>/gi, '')
                         .replace(/REF\s*:\s*[A-Za-z0-9\-_]+/gi, '')
-                        .replace(/^(\s*<(p|br)[^>]*>\s*<\/(p)>\s*)+/gi, '')
+                        .replace(/^(\s*<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>\s*)+/gi, '')
                     }}
                   />
                 </div>
