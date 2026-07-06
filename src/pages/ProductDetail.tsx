@@ -462,7 +462,12 @@ const ProductDetail = () => {
                 >
                   <div
                     className="prose prose-sm dark:prose-invert max-w-none text-foreground/80 leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: product.description }}
+                    dangerouslySetInnerHTML={{
+                      __html: product.description.replace(
+                        /<[^>]*>(\s*REF\s*:\s*[A-Za-z0-9\-_]+\s*)<\/[^>]*>/gi,
+                        ''
+                      ).replace(/REF\s*:\s*[A-Za-z0-9\-_]+/gi, '')
+                    }}
                   />
                 </div>
               )}
