@@ -242,9 +242,7 @@ export default function Index() {
 
   const homeGalleryItems = useMemo(
     () =>
-      galleryItems
-        .filter((i) => i.sequence != null && i.sequence >= 1 && i.sequence <= 9)
-        .sort((a, b) => (a.sequence ?? 0) - (b.sequence ?? 0)),
+      [...galleryItems].sort((a, b) => (a.sequence ?? 999) - (b.sequence ?? 999)),
     [galleryItems],
   );
   const blogsLoaded = useAppSelector(selectBlogsLoaded);
@@ -1035,13 +1033,12 @@ export default function Index() {
                 className="py-10"
               />
             ) : homeGalleryItems.length > 0 ? (
-              <GalleryCarousel items={homeGalleryItems} />
+              <GalleryCarousel items={homeGalleryItems} autoplayMs={2500} />
             ) : (
-              /* Gallery items exist but none have sequences 1–9 yet */
               <EmptyState
                 icon={<Gem className="h-7 w-7" />}
-                title="Set Sequences to Display Gallery"
-                description="In the admin panel, assign sequences 1–9 to the images you want displayed here."
+                title="Gallery Coming Soon"
+                description="We're curating an exceptional collection for you."
                 className="py-10"
               />
             )}
