@@ -177,6 +177,7 @@ export const OptimizedVideo = forwardRef<HTMLVideoElement, OptimizedVideoProps>(
         className={cn(
           'transition-opacity duration-500',
           loaded ? 'opacity-100' : 'opacity-0',
+          noWrapper ? 'absolute inset-0 w-full h-full' : '',
           className
         )}
         onCanPlay={handleCanPlay}
