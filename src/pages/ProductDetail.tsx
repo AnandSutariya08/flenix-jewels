@@ -405,7 +405,7 @@ const ProductDetail = () => {
                   )}
                 </nav>
                 <span className="text-[10px] font-mono tracking-wider px-2.5 py-1 rounded-full border border-border/60 text-muted-foreground/70">
-                  #{product.id.slice(-8)}
+                  {product.refCode ? `REF : ${product.refCode}` : `#${product.id.slice(-8)}`}
                 </span>
               </div>
 
@@ -421,15 +421,6 @@ const ProductDetail = () => {
                   </span>
                 </div>
               )}
-
-              {/* REF / Product ID */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/60">REF</span>
-                <span className="text-[10px] text-muted-foreground/60">:</span>
-                <span className="text-[10px] font-mono tracking-wider text-muted-foreground/80">
-                  {product.refCode ? product.refCode : `#${product.id.slice(-8)}`}
-                </span>
-              </div>
 
               {/* Title */}
               <h1 className="text-lg sm:text-xl font-bold leading-tight tracking-tight text-foreground">
