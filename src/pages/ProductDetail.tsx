@@ -554,7 +554,7 @@ const ProductDetail = () => {
                 {[
                   { Icon: Shield, label: "Discreet Service",     sub: "Your privacy guaranteed"    },
                   { Icon: Star,   label: "GIA · IGI Certified", sub: "Authentic fine diamonds"    },
-                  { Icon: Globe,  label: "Global Delivery",     sub: "Insured & fully tracked"    },
+                  { Icon: Globe,  label: "Worldwide Shipping", sub: "Order over $5000 Free Shipping" },
                 ].map(({ Icon, label, sub }) => (
                   <div
                     key={label}
