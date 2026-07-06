@@ -491,7 +491,7 @@ const ProductDetail = () => {
                 {[
                   { Icon: Shield, label: "Secure Enquiry", sub: "Private & confidential" },
                   { Icon: Star, label: "Premium Quality", sub: "Certified fine jewels" },
-                  { Icon: Globe, label: "Worldwide Shipping", sub: "Order Over $5000" },
+                  { Icon: Globe, label: "Worldwide Shipping", sub: "All Order Over $5000" },
                 ].map(({ Icon, label, sub }) => (
                   <div
                     key={label}
