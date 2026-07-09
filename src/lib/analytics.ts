@@ -3,18 +3,23 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 
 const VISITOR_KEY_PREFIX = 'flenix_visitor_logged';
+const VISITOR_WINDOW_MS = 24 * 60 * 60 * 1000;
 
-const getDailyVisitorKey = () => {
+const getVisitorKey = () => {
   const host = window.location.hostname;
-  const day = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  return `${VISITOR_KEY_PREFIX}:${host}:${day}`;
+  return `${VISITOR_KEY_PREFIX}:${host}`;
 };
 
 /**
- * Logs a visitor at most once per browser per day per host.
- * Returns true only when a new visitor doc was actually written —
- * callers use this to avoid sending a notification email for a
- * duplicate/repeat visit that the admin panel won't show as new.
+ * Logs a visitor at most once per device per rolling 24-hour window,
+ * regardless of how many times they visit or whether location/coords
+ * change in that window. Shared by every trigger (page load, chat widget)
+ * so "unique visitor" means the same thing for both the admin table and
+ * the notification emails. Once 24 hours have passed since the last log,
+ * the same device counts as a fresh visitor again. Returns true only when
+ * a new visitor doc was actually written — callers use this to avoid
+ * sending a notification email for a repeat visit that the admin panel
+ * won't show as new.
  */
 export const logVisitor = async (
   grantedLocation: boolean = false,
@@ -23,13 +28,18 @@ export const logVisitor = async (
   // Never log admin page visits
   if (window.location.pathname.startsWith('/admin')) return false;
 
-  const dailyKey = getDailyVisitorKey();
+  const visitorKey = getVisitorKey();
+  const now = Date.now();
 
-  // Log at most once per browser per day per host
-  if (localStorage.getItem(dailyKey) === 'true') {
-    console.log('Visitor already logged today - skipping duplicate');
+  // Log at most once per device per rolling 24h. Claimed synchronously
+  // (before any await) so two triggers firing close together — e.g. the
+  // page-load flow and the chat widget — can't both pass this check.
+  const lastLoggedAt = Number(localStorage.getItem(visitorKey));
+  if (lastLoggedAt && now - lastLoggedAt < VISITOR_WINDOW_MS) {
+    console.log('Visitor already logged within the last 24h - skipping duplicate');
     return false;
   }
+  localStorage.setItem(visitorKey, String(now));
 
   try {
     const ipResponse = await fetch('https://ipapi.co/json/');
@@ -80,10 +90,11 @@ export const logVisitor = async (
 
     await addDoc(collection(db, 'visitors'), logData);
 
-    localStorage.setItem(dailyKey, 'true');
-    console.log('New daily visitor logged ✅', logData);
+    console.log('New visitor logged ✅', logData);
     return true;
   } catch (err) {
+    // Writing failed — release the claim so a later trigger can retry.
+    localStorage.removeItem(visitorKey);
     console.warn('Failed to log visitor', err);
     return false;
   }

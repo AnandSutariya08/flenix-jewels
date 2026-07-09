@@ -4,6 +4,7 @@ import { useAppSelector } from '@/store/hooks';
 import { selectGlobalData } from '@/store/contentSlice';
 import { getProductsByCategory, getDiamondsByCategory, saveContactSubmission } from '@/lib/storage';
 import { sendAdminChatStartEmail, sendAdminInquiryEmail, sendCustomerConfirmationEmail } from '@/lib/emailService';
+import { logVisitor } from '@/lib/analytics';
 import type { Product, Diamond, Category, DiamondCategory } from '@/lib/storage';
 
 type ChatStep =
@@ -59,7 +60,7 @@ const validateEmail = (v: string) => {
   return '';
 };
 
-let adminNotified = false;
+let notifyInFlight = false;
 
 const AIChatWidget = () => {
   const { categories, diamondCategories, products, diamonds } = useAppSelector(selectGlobalData);
@@ -111,9 +112,18 @@ const AIChatWidget = () => {
           ]
         );
         setStep('interest');
-        if (!adminNotified) {
-          adminNotified = true;
-          sendAdminChatStartEmail(window.location.href, navigator.userAgent).catch(() => {});
+        if (!notifyInFlight) {
+          notifyInFlight = true;
+          // Only notify admin if this is a genuinely new/unique visitor —
+          // shares the same lifetime dedupe key as the page-load location
+          // flow, so email count always matches the admin visitor table.
+          logVisitor()
+            .then((isNewVisitor) => {
+              if (isNewVisitor) {
+                sendAdminChatStartEmail(window.location.href, navigator.userAgent).catch(() => {});
+              }
+            })
+            .catch(() => {});
         }
       }, 200);
     }

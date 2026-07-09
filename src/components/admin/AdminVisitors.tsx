@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { collection, getDocs, query, orderBy, deleteDoc, doc, limit } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, deleteDoc, doc, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { format } from "date-fns";
 import {
@@ -51,33 +51,32 @@ const AdminVisitors = () => {
 
   const currentHost = useMemo(() => window.location.hostname, []);
 
-  const fetchVisitors = async () => {
-    setLoading(true);
-    try {
-      // No Firestore composite index required: fetch recent visitors and filter client-side.
-      const q = query(collection(db, "visitors"), orderBy("timestamp", "desc"), limit(1000));
-      const snapshot = await getDocs(q);
-      const data = snapshot.docs.map((docSnap) => ({
-        id: docSnap.id,
-        ...docSnap.data(),
-      } as Visitor));
-
-      // Show only visitors that were logged from THIS website host
-      const filtered = data.filter((v) => (v.hostname || null) === currentHost);
-
-      setVisitors(filtered);
-      setSelectedIds([]);
-    } catch (err) {
-      console.error(err);
-      toast({ title: "Error", description: "Failed to fetch visitors", variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchVisitors();
-  }, []);
+    setLoading(true);
+    // No Firestore composite index required: fetch recent visitors and filter client-side.
+    const q = query(collection(db, "visitors"), orderBy("timestamp", "desc"), limit(1000));
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const data = snapshot.docs.map((docSnap) => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+        } as Visitor));
+
+        // Show only visitors that were logged from THIS website host
+        const filtered = data.filter((v) => (v.hostname || null) === currentHost);
+
+        setVisitors(filtered);
+        setLoading(false);
+      },
+      (err) => {
+        console.error(err);
+        toast({ title: "Error", description: "Failed to fetch visitors", variant: "destructive" });
+        setLoading(false);
+      }
+    );
+    return unsubscribe;
+  }, [currentHost, toast]);
 
   const total = visitors.length;
   const allowed = visitors.filter((v) => v.grantedLocation).length;
@@ -105,7 +104,7 @@ const AdminVisitors = () => {
     try {
       await Promise.all(selectedIds.map(id => deleteDoc(doc(db, "visitors", id))));
       toast({ title: "Deleted", description: `${selectedIds.length} visitor(s) removed` });
-      fetchVisitors();
+      setSelectedIds([]);
     } catch (err) {
       console.error(err);
       toast({ title: "Error", description: "Failed to delete visitors", variant: "destructive" });
@@ -118,7 +117,6 @@ const AdminVisitors = () => {
     try {
       await deleteDoc(doc(db, "visitors", id));
       toast({ title: "Deleted", description: "Visitor removed" });
-      setVisitors(prev => prev.filter(v => v.id !== id));
       setSelectedIds(prev => prev.filter(i => i !== id));
     } catch (err) {
       console.error(err);
@@ -139,12 +137,8 @@ const AdminVisitors = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Visitor Analytics</h2>
-          <p className="text-sm text-muted-foreground">Real unique visitors from your website</p>
+          <p className="text-sm text-muted-foreground">Real unique visitors from your website · updates live</p>
         </div>
-        <Button variant="outline" size="sm" onClick={fetchVisitors}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh
-        </Button>
       </div>
 
       {/* Stats */}
