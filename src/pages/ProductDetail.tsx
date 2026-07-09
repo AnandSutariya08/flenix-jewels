@@ -304,7 +304,7 @@ const ProductDetail = () => {
                             muted
                             loop
                             playsInline
-                            preload="auto"
+                            preload={isActive ? "auto" : "none"}
                             watermark
                           />
                         ) : (
