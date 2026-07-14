@@ -1070,129 +1070,135 @@ const processImage = async (file: File, path: string, addMark: boolean): Promise
   });
 };
 
-const getSupportedVideoMimeType = () => {
-  const candidates = [
-    "video/webm;codecs=vp9,opus",
-    "video/webm;codecs=vp8,opus",
-    "video/webm",
-  ];
-  for (const type of candidates) {
-    if (MediaRecorder.isTypeSupported(type)) return type;
+// ── MP4 "faststart" remux ────────────────────────────────────────────────
+// Camera/phone MP4s usually store the moov index atom at the END of the file,
+// which forces browsers to make extra round-trips before playback can begin.
+// This losslessly moves moov before mdat (identical bytes otherwise) so videos
+// start playing immediately while streaming. On ANY parse anomaly the original
+// file is returned untouched — this can never corrupt an upload.
+
+interface Mp4Box { type: string; start: number; size: number; headerSize: number }
+
+const MP4_CONTAINER_BOXES = new Set(['moov', 'trak', 'mdia', 'minf', 'stbl', 'edts', 'udta']);
+
+const parseTopLevelMp4Boxes = (view: DataView): Mp4Box[] | null => {
+  const boxes: Mp4Box[] = [];
+  let off = 0;
+  while (off + 8 <= view.byteLength) {
+    let size = view.getUint32(off);
+    const type = String.fromCharCode(
+      view.getUint8(off + 4), view.getUint8(off + 5),
+      view.getUint8(off + 6), view.getUint8(off + 7),
+    );
+    let headerSize = 8;
+    if (size === 1) {
+      if (off + 16 > view.byteLength) return null;
+      size = view.getUint32(off + 8) * 4294967296 + view.getUint32(off + 12);
+      headerSize = 16;
+    } else if (size === 0) {
+      size = view.byteLength - off; // box extends to EOF
+    }
+    if (size < headerSize || off + size > view.byteLength) return null;
+    if (!/^[\x20-\x7e]{4}$/.test(type)) return null;
+    boxes.push({ type, start: off, size, headerSize });
+    off += size;
   }
-  return "";
+  return off === view.byteLength ? boxes : null;
 };
 
-// Compress video and optionally burn-in watermark via canvas + MediaRecorder.
-// Resolution is capped at 1920×1080; bitrate is chosen per output size.
-const addVideoWatermark = async (
-  file: File,
-  addMark: boolean = true,
-  onProgress?: (percent: number) => void,
-): Promise<File> => {
-  return new Promise((resolve) => {
-    if (typeof MediaRecorder === "undefined") { resolve(file); return; }
+// Recursively find stco/co64 chunk-offset tables inside moov.
+// Returns absolute offsets (within the moov buffer) of each table's payload,
+// or null on any anomaly (including compressed cmov, which we can't patch).
+const findChunkOffsetBoxes = (
+  view: DataView, start: number, end: number, depth = 0,
+): { type: string; start: number }[] | null => {
+  if (depth > 8) return null;
+  const found: { type: string; start: number }[] = [];
+  let off = start;
+  while (off + 8 <= end) {
+    let size = view.getUint32(off);
+    const type = String.fromCharCode(
+      view.getUint8(off + 4), view.getUint8(off + 5),
+      view.getUint8(off + 6), view.getUint8(off + 7),
+    );
+    let headerSize = 8;
+    if (size === 1) {
+      if (off + 16 > end) return null;
+      size = view.getUint32(off + 8) * 4294967296 + view.getUint32(off + 12);
+      headerSize = 16;
+    } else if (size === 0) {
+      size = end - off;
+    }
+    if (size < headerSize || off + size > end) return null;
+    if (type === 'stco' || type === 'co64') {
+      found.push({ type, start: off + headerSize });
+    } else if (type === 'cmov') {
+      return null;
+    } else if (MP4_CONTAINER_BOXES.has(type)) {
+      const inner = findChunkOffsetBoxes(view, off + headerSize, off + size, depth + 1);
+      if (inner === null) return null;
+      found.push(...inner);
+    }
+    off += size;
+  }
+  return found;
+};
 
-    const url = URL.createObjectURL(file);
-    const video = document.createElement("video");
-    video.src = url;
-    video.crossOrigin = "anonymous";
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = "auto";
+const makeMp4Faststart = async (file: File): Promise<File> => {
+  try {
+    const buffer = await file.arrayBuffer();
+    const view = new DataView(buffer);
+    const boxes = parseTopLevelMp4Boxes(view);
+    if (!boxes) return file;
 
-    const cleanup = () => URL.revokeObjectURL(url);
+    const moov = boxes.find((b) => b.type === 'moov');
+    const mdat = boxes.find((b) => b.type === 'mdat');
+    const ftyp = boxes.find((b) => b.type === 'ftyp');
+    if (!moov || !mdat || !ftyp || boxes[0].type !== 'ftyp') return file;
+    if (moov.start < mdat.start) return file; // already faststart
 
-    video.onerror = () => { cleanup(); resolve(file); };
+    // Patch a copy of moov: moving it to just after ftyp shifts everything
+    // behind it forward by moov.size, so all absolute chunk offsets grow by it.
+    const moovBytes = new Uint8Array(buffer.slice(moov.start, moov.start + moov.size));
+    const moovView = new DataView(moovBytes.buffer);
+    const offsetBoxes = findChunkOffsetBoxes(moovView, moov.headerSize, moov.size);
+    if (!offsetBoxes || offsetBoxes.length === 0) return file;
 
-    video.onloadedmetadata = async () => {
-      const mimeType = getSupportedVideoMimeType();
-      if (!mimeType) { cleanup(); resolve(file); return; }
-
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) { cleanup(); resolve(file); return; }
-
-      // Cap resolution to 1920×1080 (Full HD) to reduce file size
-      const MAX_W = 1920;
-      const MAX_H = 1080;
-      const srcW = video.videoWidth  || 1280;
-      const srcH = video.videoHeight || 720;
-      const ratio = Math.min(1, MAX_W / srcW, MAX_H / srcH);
-      canvas.width  = Math.round(srcW * ratio);
-      canvas.height = Math.round(srcH * ratio);
-
-      if (!("captureStream" in canvas)) { cleanup(); resolve(file); return; }
-
-      // Pick bitrate based on output pixel count
-      const pixels = canvas.width * canvas.height;
-      const videoBitsPerSecond =
-        pixels > 1280 * 720 ? 2_500_000 :   // 1080p → 2.5 Mbps
-        pixels > 854  * 480 ? 1_500_000 :   // 720p  → 1.5 Mbps
-                              1_000_000;    // ≤480p → 1.0 Mbps
-
-      const stream = canvas.captureStream();
-      const audioStream =
-        (video as HTMLVideoElement & { captureStream?: () => MediaStream })
-          .captureStream?.() ||
-        (video as HTMLVideoElement & { mozCaptureStream?: () => MediaStream })
-          .mozCaptureStream?.();
-
-      if (audioStream) {
-        audioStream.getAudioTracks().forEach((track) => stream.addTrack(track));
-      }
-
-      const recorderOptions: MediaRecorderOptions = { mimeType, videoBitsPerSecond };
-      if (audioStream && audioStream.getAudioTracks().length > 0) {
-        recorderOptions.audioBitsPerSecond = 128_000;
-      }
-
-      const recorder = new MediaRecorder(stream, recorderOptions);
-      const chunks: Blob[] = [];
-
-      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-
-      recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: mimeType });
-        const ext  = mimeType.includes("webm") ? "webm" : "mp4";
-        const out  = new File([blob], file.name.replace(/\.\w+$/, `.${ext}`), { type: mimeType });
-        cleanup();
-        resolve(out);
-      };
-
-      // Report progress via timeupdate
-      if (onProgress && video.duration) {
-        video.ontimeupdate = () => {
-          const pct = Math.min(99, Math.round((video.currentTime / video.duration) * 100));
-          onProgress(pct);
-        };
-      }
-
-      const drawFrame = () => {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        if (addMark) {
-          const fontSize = Math.max(24, Math.floor(canvas.width / 20));
-          ctx.font         = `${fontSize}px Cinzel`;
-          ctx.fillStyle    = "rgba(255, 255, 255, 0.20)";
-          ctx.textAlign    = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText("FLENIX JEWELS", canvas.width / 2, canvas.height / 2);
+    const delta = moov.size;
+    for (const { type, start } of offsetBoxes) {
+      const count = moovView.getUint32(start + 4); // skip version/flags
+      let p = start + 8;
+      for (let i = 0; i < count; i++) {
+        if (type === 'stco') {
+          if (p + 4 > moov.size) return file;
+          const v = moovView.getUint32(p) + delta;
+          if (v > 0xffffffff) return file; // would overflow 32-bit stco
+          moovView.setUint32(p, v);
+          p += 4;
+        } else {
+          if (p + 8 > moov.size) return file;
+          const v = moovView.getUint32(p) * 4294967296 + moovView.getUint32(p + 4) + delta;
+          moovView.setUint32(p, Math.floor(v / 4294967296));
+          moovView.setUint32(p + 4, v >>> 0);
+          p += 8;
         }
-        if (!video.paused && !video.ended) requestAnimationFrame(drawFrame);
-      };
-
-      try {
-        recorder.start(250);
-        await video.play();
-        drawFrame();
-      } catch {
-        recorder.stop();
       }
+    }
 
-      video.onended = () => {
-        if (recorder.state !== "inactive") recorder.stop();
-      };
-    };
-  });
+    const parts: Uint8Array<ArrayBuffer>[] = [
+      new Uint8Array(buffer.slice(ftyp.start, ftyp.start + ftyp.size)),
+      moovBytes,
+    ];
+    for (const b of boxes) {
+      if (b === ftyp || b === moov) continue;
+      parts.push(new Uint8Array(buffer.slice(b.start, b.start + b.size)));
+    }
+    if (parts.reduce((n, part) => n + part.length, 0) !== buffer.byteLength) return file;
+
+    return new File(parts, file.name, { type: file.type || 'video/mp4' });
+  } catch {
+    return file;
+  }
 };
 
 export const uploadImageToStorage = async (
@@ -1205,11 +1211,14 @@ export const uploadImageToStorage = async (
     let fileToUpload = file;
 
     if (file.type.startsWith('video/')) {
-      // Upload original video without canvas re-encoding.
-      // Canvas + MediaRecorder causes uneven frame timing (rAF is not frame-perfect),
-      // producing stuttery WebM files. The watermark is shown as a CSS overlay
-      // in the video player instead — same protection, zero quality loss.
-      fileToUpload = file;
+      // Never re-encode video (canvas + MediaRecorder produced uneven frame
+      // timing and permanent stutter). The watermark is a CSS overlay in the
+      // player instead. For MP4/MOV, losslessly move the moov index to the
+      // front (faststart) so playback starts without extra round-trips.
+      onProgress?.('compressing', 0);
+      fileToUpload = /mp4|quicktime/i.test(file.type) || /\.(mp4|mov)$/i.test(file.name)
+        ? await makeMp4Faststart(file)
+        : file;
       onProgress?.('compressing', 100);
     } else {
       // Always process images; watermark is optional
