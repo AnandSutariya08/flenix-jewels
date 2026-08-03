@@ -382,7 +382,7 @@ export const buildLocalBusinessSchema = () => ({
   "@id": `${SITE.url}/#local-business`,
   name: SITE.name,
   description:
-    "Premium diamond and gold jewelry store. GIA- and IGI-certified natural and lab-grown diamonds. Engagement rings, wedding bands, necklaces, earrings, and bracelets. Worldwide shipping.",
+    "Buy & Order natural and lab-grown diamond jewelry at Flenix Jewels Ltd. Engagement Ring, Bracelet, Necklace, Earrings, Pendant & Custom Design. Worldwide Shipping.",
   url: SITE.url,
   telephone: SITE.phonePrimary,
   email: SITE.email,
