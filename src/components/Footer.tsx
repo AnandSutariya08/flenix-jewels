@@ -18,9 +18,10 @@ import { useTheme } from "next-themes";
 import { cleanWhatsApp } from "@/lib/utils";
 import { FaWhatsapp } from "react-icons/fa";
 import GIA from "@/assets/paylogo/GIA_Logo.png";
-import Rapaport from "@/assets/paylogo/Rapaport-header-20250120083212-20250210092659-20250227142926-20250310094122.svg";
+import Rapaport from "@/assets/paylogo/rapaport-logo-new.png";
 import IGI from "@/assets/igi-logo.png";
 import VDB from "@/assets/vdb-logo.png";
+import Nivoda from "@/assets/paylogo/nivoda-logo.png";
 
 const FOOTER_WHATSAPP_NUMBER = "+852 51254000";
 
@@ -71,6 +72,7 @@ export default function Footer() {
       { name: "IGI", logo: IGI },
       { name: "Rapaport", logo: Rapaport },
       { name: "VDB", logo: VDB },
+      { name: "Nivoda", logo: Nivoda },
     ],
     [],
   );

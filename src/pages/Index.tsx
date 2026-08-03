@@ -417,7 +417,7 @@ export default function Index() {
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHead
         title="Fine Jewellery | Natural & Lab Grown Diamonds | Flenix Jewels Ltd"
-        description="Shop certified natural and lab-grown diamond jewelry at Flenix Jewels Ltd. Explore GIA certified engagement rings, wedding bands, necklaces, earrings & bracelets. worldwide shipping."
+        description="Buy &amp; Order natural and lab-grown diamond jewelry at Flenix Jewels Ltd. Engagement Ring, Bracelet, Necklace, Earrings, Pendant &amp; Custom Design. Worldwide Shipping."
         keywords="diamond jewelry, gold rings, engagement rings, wedding bands, lab grown diamonds, natural diamonds, certified jewelry, luxury jewelry store"
         canonicalUrl="https://www.flenixjewels.com"
         structuredData={homepageStructuredData}
