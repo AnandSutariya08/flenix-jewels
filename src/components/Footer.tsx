@@ -68,11 +68,11 @@ export default function Footer() {
 
   const certifications = useMemo(
     () => [
-      { name: "GIA", logo: GIA, imgClass: "max-h-8 w-auto" },
-      { name: "IGI", logo: IGI, imgClass: "max-h-8 w-auto" },
-      { name: "Rapaport", logo: Rapaport, imgClass: "max-h-8 w-auto" },
-      { name: "VDB", logo: VDB, imgClass: "max-h-8 w-auto" },
-      { name: "Nivoda", logo: Nivoda, imgClass: "max-h-8 w-auto" },
+      { name: "GIA", logo: GIA, imgClass: "max-h-8 w-auto", invert: false },
+      { name: "IGI", logo: IGI, imgClass: "max-h-8 w-auto", invert: false },
+      { name: "Rapaport", logo: Rapaport, imgClass: "max-h-8 w-auto", invert: false },
+      { name: "VDB", logo: VDB, imgClass: "max-h-8 w-auto", invert: false },
+      { name: "Nivoda", logo: Nivoda, imgClass: "max-h-8 w-auto", invert: true },
     ],
     [],
   );
@@ -138,7 +138,13 @@ export default function Footer() {
                   alt={cert.name}
                   className={`${cert.imgClass} object-contain`}
                   style={{
-                    filter: isDark ? "brightness(0.85) saturate(0.65)" : "none",
+                    filter: cert.invert
+                      ? isDark
+                        ? "none"
+                        : "invert(1)"
+                      : isDark
+                        ? "brightness(0.85) saturate(0.65)"
+                        : "none",
                   }}
                   loading="lazy"
                 />
