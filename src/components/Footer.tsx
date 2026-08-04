@@ -68,11 +68,11 @@ export default function Footer() {
 
   const certifications = useMemo(
     () => [
-      { name: "GIA", logo: GIA, imgClass: "max-h-8" },
-      { name: "IGI", logo: IGI, imgClass: "max-h-8" },
-      { name: "Rapaport", logo: Rapaport, imgClass: "max-h-10 w-36" },
-      { name: "VDB", logo: VDB, imgClass: "max-h-8" },
-      { name: "Nivoda", logo: Nivoda, imgClass: "max-h-10 w-28" },
+      { name: "GIA", logo: GIA, imgClass: "max-h-8 w-auto" },
+      { name: "IGI", logo: IGI, imgClass: "max-h-8 w-auto" },
+      { name: "Rapaport", logo: Rapaport, imgClass: "max-h-8 w-auto" },
+      { name: "VDB", logo: VDB, imgClass: "max-h-8 w-auto" },
+      { name: "Nivoda", logo: Nivoda, imgClass: "max-h-8 w-auto" },
     ],
     [],
   );
