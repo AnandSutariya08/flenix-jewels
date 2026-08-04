@@ -140,8 +140,8 @@ export default function Footer() {
                   style={{
                     filter: cert.invert
                       ? isDark
-                        ? "none"
-                        : "invert(1)"
+                        ? "invert(1)"
+                        : "none"
                       : isDark
                         ? "brightness(0.85) saturate(0.65)"
                         : "none",
